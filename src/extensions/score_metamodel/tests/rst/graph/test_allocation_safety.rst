@@ -39,8 +39,7 @@ Feature allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. feat:: QM feat with QM requirements
    :id: feat__safety_alloc__feat_qm_qm
@@ -48,8 +47,7 @@ Feature allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. feat_req:: QM requirement allocated to QM feat
    :id: feat_req__safety_alloc__feat_qm_qm_qm
@@ -70,8 +68,7 @@ Feature allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. feat_req:: ASIL_B requirement allocated to QM feat
    :id: feat_req__safety_alloc__feat_qm_asil_asil_b
@@ -92,8 +89,7 @@ Feature allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. feat_req:: QM requirement allocated to QM feat
    :id: feat_req__safety_alloc__feat_qm_mixed_qm
@@ -127,9 +123,8 @@ Feature allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info: must have at least one safety requirement allocated via satisfied_by.
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
-   :expect_info_not: No linked need in `fulfils`
+   :expect: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: No linked need in `fulfils`
 
 .. feat:: ASIL_B feat with QM requirements
    :id: feat__safety_alloc__feat_asil_b_qm
@@ -137,9 +132,8 @@ Feature allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info: must have at least one safety requirement allocated via satisfied_by.
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
-   :expect_info_not: No linked need in `fulfils`
+   :expect: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: No linked need in `fulfils`
 
 .. feat_req:: QM requirement allocated to ASIL_B feat
    :id: feat_req__safety_alloc__feat_asil_b_qm_qm
@@ -160,8 +154,7 @@ Feature allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. feat_req:: ASIL_B requirement allocated to ASIL_B feat
    :id: feat_req__safety_alloc__feat_asil_b_asil_asil_b
@@ -182,8 +175,7 @@ Feature allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. feat_req:: QM requirement allocated to ASIL_B feat
    :id: feat_req__safety_alloc__feat_asil_b_mixed_qm
@@ -220,8 +212,7 @@ Component allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. comp:: QM comp with QM requirements
    :id: comp__safety_alloc__comp_qm_qm
@@ -229,8 +220,7 @@ Component allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. comp_req:: QM requirement allocated to QM comp
    :id: comp_req__safety_alloc__comp_qm_qm_qm
@@ -250,8 +240,7 @@ Component allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. comp_req:: ASIL_B requirement allocated to QM comp
    :id: comp_req__safety_alloc__comp_qm_asil_asil_b
@@ -271,8 +260,7 @@ Component allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. comp_req:: QM requirement allocated to QM comp
    :id: comp_req__safety_alloc__comp_qm_mixed_qm
@@ -304,9 +292,8 @@ Component allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info: must have at least one safety requirement allocated via satisfied_by.
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
-   :expect_info_not: No linked need in `fulfils`
+   :expect: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: No linked need in `fulfils`
 
 .. comp:: ASIL_B comp with QM requirements
    :id: comp__safety_alloc__comp_asil_b_qm
@@ -314,9 +301,8 @@ Component allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info: must have at least one safety requirement allocated via satisfied_by.
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
-   :expect_info_not: No linked need in `fulfils`
+   :expect: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: No linked need in `fulfils`
 
 .. comp_req:: QM requirement allocated to ASIL_B comp
    :id: comp_req__safety_alloc__comp_asil_b_qm_qm
@@ -336,8 +322,7 @@ Component allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. comp_req:: ASIL_B requirement allocated to ASIL_B comp
    :id: comp_req__safety_alloc__comp_asil_b_asil_asil_b
@@ -357,8 +342,7 @@ Component allocations via satisfied_by
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
-   :expect_not: must have at least one safety requirement allocated via satisfied_by.
+   :expect_not: must have at least one safety requirement allocated via satisfied_by., No linked need in `fulfils`
 
 .. comp_req:: QM requirement allocated to ASIL_B comp
    :id: comp_req__safety_alloc__comp_asil_b_mixed_qm
@@ -455,7 +439,8 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
 
 .. feat_arc_sta:: QM feat_arc_sta with QM fulfils targets
    :id: feat_arc_sta__safety_alloc__fulfils_feat_arc_sta_qm_qm
@@ -463,7 +448,8 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
    :fulfils: feat_req__safety_alloc__fulfils_qm
 
 .. feat_arc_sta:: QM feat_arc_sta with safety fulfils targets
@@ -473,7 +459,7 @@ Optional fulfils links
    :status: valid
    :version: 1
    :expect_info: A QM architecture element cannot fulfil safety requirements.
-   :expect_info_not: must be linked to at least one safety requirement via fulfils.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
    :fulfils: feat_req__safety_alloc__fulfils_asil_b
 
 .. feat_arc_sta:: QM feat_arc_sta with mixed fulfils targets
@@ -483,7 +469,7 @@ Optional fulfils links
    :status: valid
    :version: 1
    :expect_info: A QM architecture element cannot fulfil safety requirements.
-   :expect_info_not: must be linked to at least one safety requirement via fulfils.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
    :fulfils: feat_req__safety_alloc__fulfils_qm, feat_req__safety_alloc__fulfils_asil_b
 
 .. feat_arc_sta:: ASIL_B feat_arc_sta without fulfils targets
@@ -493,7 +479,7 @@ Optional fulfils links
    :status: valid
    :version: 1
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
 
 .. feat_arc_sta:: ASIL_B feat_arc_sta with QM fulfils targets
    :id: feat_arc_sta__safety_alloc__fulfils_feat_arc_sta_asil_b_qm
@@ -502,7 +488,7 @@ Optional fulfils links
    :status: valid
    :version: 1
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
    :fulfils: feat_req__safety_alloc__fulfils_qm
 
 .. feat_arc_sta:: ASIL_B feat_arc_sta with safety fulfils targets
@@ -511,7 +497,8 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
    :fulfils: feat_req__safety_alloc__fulfils_asil_b
 
 .. feat_arc_sta:: ASIL_B feat_arc_sta with mixed fulfils targets
@@ -520,7 +507,8 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
    :fulfils: feat_req__safety_alloc__fulfils_qm, feat_req__safety_alloc__fulfils_asil_b
 
 .. comp:: QM comp without fulfils targets
@@ -529,7 +517,8 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., No linked need in `fulfils`
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: No linked need in `fulfils`
 
 .. comp:: QM comp with QM fulfils targets
    :id: comp__safety_alloc__fulfils_comp_qm_qm
@@ -537,7 +526,8 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., No linked need in `fulfils`
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: No linked need in `fulfils`
    :fulfils: aou_req__safety_alloc__fulfils_qm
 
 .. comp:: QM comp with safety fulfils targets
@@ -547,7 +537,7 @@ Optional fulfils links
    :status: valid
    :version: 1
    :expect_info: A QM architecture element cannot fulfil safety requirements.
-   :expect_info_not: No linked need in `fulfils`
+   :expect_not: No linked need in `fulfils`
    :fulfils: aou_req__safety_alloc__fulfils_asil_b
 
 .. comp:: QM comp with mixed fulfils targets
@@ -557,7 +547,7 @@ Optional fulfils links
    :status: valid
    :version: 1
    :expect_info: A QM architecture element cannot fulfil safety requirements.
-   :expect_info_not: No linked need in `fulfils`
+   :expect_not: No linked need in `fulfils`
    :fulfils: aou_req__safety_alloc__fulfils_qm, aou_req__safety_alloc__fulfils_asil_b
 
 .. comp:: ASIL_B comp without fulfils targets
@@ -566,8 +556,9 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., No linked need in `fulfils`
-   :expect_info: must have at least one safety requirement allocated via satisfied_by.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: No linked need in `fulfils`
+   :expect: must have at least one safety requirement allocated via satisfied_by.
 
 .. comp:: ASIL_B comp with QM fulfils targets
    :id: comp__safety_alloc__fulfils_comp_asil_b_qm
@@ -575,8 +566,9 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., No linked need in `fulfils`
-   :expect_info: must have at least one safety requirement allocated via satisfied_by.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: No linked need in `fulfils`
+   :expect: must have at least one safety requirement allocated via satisfied_by.
    :fulfils: aou_req__safety_alloc__fulfils_qm
 
 .. comp:: ASIL_B comp with safety fulfils targets
@@ -585,8 +577,9 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., No linked need in `fulfils`
-   :expect_info: must have at least one safety requirement allocated via satisfied_by.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: No linked need in `fulfils`
+   :expect: must have at least one safety requirement allocated via satisfied_by.
    :fulfils: aou_req__safety_alloc__fulfils_asil_b
 
 .. comp:: ASIL_B comp with mixed fulfils targets
@@ -595,8 +588,9 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., No linked need in `fulfils`
-   :expect_info: must have at least one safety requirement allocated via satisfied_by.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: No linked need in `fulfils`
+   :expect: must have at least one safety requirement allocated via satisfied_by.
    :fulfils: aou_req__safety_alloc__fulfils_qm, aou_req__safety_alloc__fulfils_asil_b
 
 .. feat_arc_dyn:: QM feat_arc_dyn cannot fulfil a safety requirement
@@ -654,7 +648,8 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :fulfils: feat_req__safety_alloc__fulfils_qm
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
 
 .. feat_arc_dyn:: ASIL_B feat_arc_dyn with none requirements
    :id: feat_arc_dyn__safety_alloc__completeness_asil_b_none
@@ -663,7 +658,7 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
 
 .. feat_arc_dyn:: ASIL_B feat_arc_dyn with qm requirements
    :id: feat_arc_dyn__safety_alloc__completeness_asil_b_qm
@@ -673,7 +668,7 @@ Completeness of other views and interfaces
    :version: 1
    :fulfils: feat_req__safety_alloc__fulfils_qm
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
 
 .. feat_arc_dyn:: ASIL_B feat_arc_dyn with mixed requirements
    :id: feat_arc_dyn__safety_alloc__completeness_asil_b_mixed
@@ -682,7 +677,8 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :fulfils: feat_req__safety_alloc__fulfils_qm, feat_req__safety_alloc__fulfils_asil_b
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
 
 .. logic_arc_int:: QM logic_arc_int with qm requirements
    :id: logic_arc_int__safety_alloc__completeness_qm_qm
@@ -691,7 +687,8 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :fulfils: feat_req__safety_alloc__fulfils_qm
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
 
 .. logic_arc_int:: ASIL_B logic_arc_int with none requirements
    :id: logic_arc_int__safety_alloc__completeness_asil_b_none
@@ -700,7 +697,7 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
 
 .. logic_arc_int:: ASIL_B logic_arc_int with qm requirements
    :id: logic_arc_int__safety_alloc__completeness_asil_b_qm
@@ -710,7 +707,7 @@ Completeness of other views and interfaces
    :version: 1
    :fulfils: feat_req__safety_alloc__fulfils_qm
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
 
 .. logic_arc_int:: ASIL_B logic_arc_int with mixed requirements
    :id: logic_arc_int__safety_alloc__completeness_asil_b_mixed
@@ -719,7 +716,8 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :fulfils: feat_req__safety_alloc__fulfils_qm, feat_req__safety_alloc__fulfils_asil_b
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
 
 .. comp_arc_sta:: QM comp_arc_sta with qm requirements
    :id: comp_arc_sta__safety_alloc__completeness_qm_qm
@@ -728,7 +726,8 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :fulfils: comp_req__safety_alloc__fulfils_qm
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
 
 .. comp_arc_sta:: ASIL_B comp_arc_sta with none requirements
    :id: comp_arc_sta__safety_alloc__completeness_asil_b_none
@@ -737,7 +736,7 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
 
 .. comp_arc_sta:: ASIL_B comp_arc_sta with qm requirements
    :id: comp_arc_sta__safety_alloc__completeness_asil_b_qm
@@ -747,7 +746,7 @@ Completeness of other views and interfaces
    :version: 1
    :fulfils: comp_req__safety_alloc__fulfils_qm
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
 
 .. comp_arc_sta:: ASIL_B comp_arc_sta with mixed requirements
    :id: comp_arc_sta__safety_alloc__completeness_asil_b_mixed
@@ -756,7 +755,8 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :fulfils: comp_req__safety_alloc__fulfils_qm, comp_req__safety_alloc__fulfils_asil_b
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
 
 .. comp_arc_dyn:: QM comp_arc_dyn with qm requirements
    :id: comp_arc_dyn__safety_alloc__completeness_qm_qm
@@ -765,7 +765,8 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :fulfils: comp_req__safety_alloc__fulfils_qm
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
 
 .. comp_arc_dyn:: ASIL_B comp_arc_dyn with none requirements
    :id: comp_arc_dyn__safety_alloc__completeness_asil_b_none
@@ -774,7 +775,7 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
 
 .. comp_arc_dyn:: ASIL_B comp_arc_dyn with qm requirements
    :id: comp_arc_dyn__safety_alloc__completeness_asil_b_qm
@@ -784,7 +785,7 @@ Completeness of other views and interfaces
    :version: 1
    :fulfils: comp_req__safety_alloc__fulfils_qm
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
 
 .. comp_arc_dyn:: ASIL_B comp_arc_dyn with mixed requirements
    :id: comp_arc_dyn__safety_alloc__completeness_asil_b_mixed
@@ -793,7 +794,8 @@ Completeness of other views and interfaces
    :status: valid
    :version: 1
    :fulfils: comp_req__safety_alloc__fulfils_qm, comp_req__safety_alloc__fulfils_asil_b
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
 
 .. real_arc_int:: QM real_arc_int with qm requirements
    :id: real_arc_int__safety_alloc__completeness_qm_qm
@@ -803,7 +805,8 @@ Completeness of other views and interfaces
    :version: 1
    :language: cpp
    :fulfils: comp_req__safety_alloc__fulfils_qm
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
 
 .. real_arc_int:: ASIL_B real_arc_int with none requirements
    :id: real_arc_int__safety_alloc__completeness_asil_b_none
@@ -813,7 +816,7 @@ Completeness of other views and interfaces
    :version: 1
    :language: cpp
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
 
 .. real_arc_int:: ASIL_B real_arc_int with qm requirements
    :id: real_arc_int__safety_alloc__completeness_asil_b_qm
@@ -824,7 +827,7 @@ Completeness of other views and interfaces
    :language: cpp
    :fulfils: comp_req__safety_alloc__fulfils_qm
    :expect_info_not: A QM architecture element cannot fulfil safety requirements.
-   :expect_info: must be linked to at least one safety requirement via fulfils.
+   :expect: must be linked to at least one safety requirement via fulfils.
 
 .. real_arc_int:: ASIL_B real_arc_int with mixed requirements
    :id: real_arc_int__safety_alloc__completeness_asil_b_mixed
@@ -834,7 +837,8 @@ Completeness of other views and interfaces
    :version: 1
    :language: cpp
    :fulfils: comp_req__safety_alloc__fulfils_qm, comp_req__safety_alloc__fulfils_asil_b
-   :expect_info_not: A QM architecture element cannot fulfil safety requirements., must be linked to at least one safety requirement via fulfils.
+   :expect_info_not: A QM architecture element cannot fulfil safety requirements.
+   :expect_not: must be linked to at least one safety requirement via fulfils.
 
 Safety requirements allocated to multiple elements
 --------------------------------------------------
