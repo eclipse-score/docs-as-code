@@ -13,59 +13,65 @@
 """Regression tests for Matplotlib initialization in restricted environments."""
 
 import os
-import subprocess
-import sys
 from pathlib import Path
 
+import matplotlib
 
-def test_mpl_uses_temp_fallback_when_explicit_config_is_not_writable(
-    tmp_path: Path,
+
+def test_mpl_config_default_does_not_overwrite_explicit_value(
+    monkeypatch, tmp_path: Path
 ) -> None:
-    """Matplotlib should retain its fallback for an unusable MPLCONFIGDIR."""
-    unwritable = tmp_path / "unwritable"
-    unwritable.mkdir()
-    unwritable.chmod(0o500)
-    script = """
-import os
-os.environ.setdefault("MPLCONFIGDIR", os.path.abspath(".matplotlib"))
-import matplotlib
-print(matplotlib.get_configdir())
-"""
-    env = os.environ.copy()
-    env["MPLCONFIGDIR"] = str(unwritable / "config")
-    result = subprocess.run(
-        [sys.executable, "-c", script],
-        capture_output=True,
-        check=False,
-        text=True,
-        cwd=tmp_path,
-        env=env,
-    )
-    unwritable.chmod(0o700)
+    """The extension preserves a caller-provided Matplotlib config path."""
+    from src.extensions.score_sphinx_bundle import setup
 
-    assert result.returncode == 0, result.stderr
-    assert result.stdout.strip()
+    configured = tmp_path / "chosen-config"
+    monkeypatch.setenv("MPLCONFIGDIR", str(configured))
+    monkeypatch.chdir(tmp_path)
+    app = _FakeSphinxApp()
+
+    setup(app)
+
+    assert Path(os.environ["MPLCONFIGDIR"]) == configured
+    assert not configured.exists()
 
 
-def test_mpl_does_not_require_home_when_config_is_unset(tmp_path: Path) -> None:
-    """The default config path avoids Matplotlib consulting HOME."""
-    script = """
-import os
-os.environ.setdefault("MPLCONFIGDIR", os.path.abspath(".matplotlib"))
-import matplotlib
-print(matplotlib.get_configdir())
-"""
-    env = os.environ.copy()
-    env.pop("HOME", None)
-    env.pop("MPLCONFIGDIR", None)
-    result = subprocess.run(
-        [sys.executable, "-c", script],
-        capture_output=True,
-        check=False,
-        text=True,
-        cwd=tmp_path,
-        env=env,
-    )
+def test_mpl_config_default_avoids_home_lookup(monkeypatch, tmp_path: Path) -> None:
+    """The extension sets a default before importing Matplotlib."""
+    from src.extensions.score_sphinx_bundle import setup
 
-    assert result.returncode == 0, result.stderr
-    assert result.stdout.strip()
+    monkeypatch.delenv("HOME", raising=False)
+    monkeypatch.delenv("MPLCONFIGDIR", raising=False)
+    monkeypatch.chdir(tmp_path)
+    app = _FakeSphinxApp()
+
+    setup(app)
+
+    assert os.environ["MPLCONFIGDIR"] == str(tmp_path / ".matplotlib")
+    assert matplotlib.get_configdir() == str(tmp_path / ".matplotlib")
+
+
+class _FakeConfig:
+    def __init__(self) -> None:
+        self.templates_path = []
+        self.exclude_patterns = []
+        self.source_suffix = {}
+        self.myst_enable_extensions = []
+
+
+class _FakeBuilder:
+    name = "html"
+
+
+class _FakeSphinxApp:
+    def __init__(self) -> None:
+        self.config = _FakeConfig()
+        self.builder = _FakeBuilder()
+
+    def add_config_value(self, name, default, rebuild) -> None:
+        setattr(self.config, name, default)
+
+    def setup_extension(self, extension) -> None:
+        pass
+
+    def connect(self, event, callback, priority=None) -> None:
+        pass
