@@ -10,7 +10,7 @@ Sphinx
 # Sphinx-Needs 8.x pins its heavier transitive dependencies:
 #   minijinja 3.x needs Sphinx-Needs 9
 #   jsonschema-rs 0.53+ needs Sphinx-Needs 9
-sphinx-needs[plotting]<9
+sphinx-needs[plotting]<10
 sphinxcontrib-plantuml
 pydata-sphinx-theme
 sphinx-design
@@ -32,7 +32,7 @@ needs-config-writer
 # Mount external source trees into the Sphinx project without copying.
 # sphinx-mounts 0.3.0 adds a new 'ub-project' dependency, so keep 0.2.x until
 # the Sphinx-Needs 9 migration (which brings the same dependency family) lands.
-sphinx-mounts<0.3
+sphinx-mounts<0.4
 
 # Need this to enable non bazel execution
 bazel-runfiles
