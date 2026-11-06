@@ -39,6 +39,10 @@ from src.helper_lib import Environment, config_setdefault
 
 logger = logging.get_logger(__name__)
 env = Environment()
+GITHUB_TRACKING_LINK_REGEX = (
+    r"(?P<url>https://github\.com/eclipse-score/"
+    r"(?P<repo>[^/]+)/(?:issues|pull)/(?P<number>\d+))"
+)
 
 local_check_function = Callable[[Sphinx, NeedItem, CheckLogger], None]
 graph_check_function = Callable[[Sphinx, NeedsView, CheckLogger], None]
@@ -282,7 +286,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         app.config.needs_string_links.setdefault(
             "github_issue_linker",
             {
-                "regex": r"(?P<url>https://github\.com/[^/]+/(?P<repo>[^/]+)/issues/(?P<number>\d+))",
+                "regex": GITHUB_TRACKING_LINK_REGEX,
                 "link_url": "{{url}}",
                 "link_name": "{{repo}}#{{number}}",
                 "options": github_issue_options,
