@@ -25,7 +25,7 @@ def test_mpl_config_default_does_not_overwrite_explicit_value(
     monkeypatch: MonkeyPatch, tmp_path: Path
 ) -> None:
     """The extension preserves a caller-provided Matplotlib config path."""
-    setup = import_module("src.extensions.score_sphinx_bundle").setup
+    setup = import_module("src.extensions.score_sphinx_bundle.__init__").setup
 
     configured = tmp_path / "chosen-config"
     monkeypatch.setenv("MPLCONFIGDIR", str(configured))
@@ -42,7 +42,7 @@ def test_mpl_config_default_avoids_home_lookup(
     monkeypatch: MonkeyPatch, tmp_path: Path
 ) -> None:
     """The extension sets a default before importing Matplotlib."""
-    setup = import_module("src.extensions.score_sphinx_bundle").setup
+    setup = import_module("src.extensions.score_sphinx_bundle.__init__").setup
 
     monkeypatch.delenv("HOME", raising=False)
     monkeypatch.delenv("MPLCONFIGDIR", raising=False)
