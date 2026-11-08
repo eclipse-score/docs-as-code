@@ -853,7 +853,7 @@ Testing
    :version: 2
    :implemented: PARTIAL
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_2, tool_req__docs_test_metadata_link_levels
-   :satisfies: gd_req__verification_checks[version==2]
+   :satisfies: gd_req__verification_checks[version==1]
 
    Docs-as-Code shall ensure that each test case has TestType and DerivationTechnique set.
    Each may contain multiple comma-separated tags of the following:
@@ -899,7 +899,7 @@ for an overview.
    :version: 1
    :implemented: PARTIAL
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_link_levels
-   :satisfies: gd_req__verification_checks[version==2]
+   :satisfies: gd_req__verification_checks[version==1]
    :status: invalid
 
    Docs-as-Code shall ensure that each test case has a non empty description.
@@ -912,7 +912,7 @@ for an overview.
    :version: 3
    :implemented: NO
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_mandatory_2
-   :satisfies: gd_req__verification_checks[version==2]
+   :satisfies: gd_req__verification_checks[version==1]
 
    Docs-as-Code shall ensure that test cases use only allowed requirement types for their test level.
    Platform Integration Tests shall link to at least one stakeholder requirement.
