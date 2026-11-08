@@ -12,8 +12,8 @@
 # *******************************************************************************
 """Regression tests for Matplotlib initialization in restricted environments."""
 
+import importlib.util
 import os
-from importlib import import_module
 from pathlib import Path
 from typing import Any
 
@@ -25,7 +25,7 @@ def test_mpl_config_default_does_not_overwrite_explicit_value(
     monkeypatch: MonkeyPatch, tmp_path: Path
 ) -> None:
     """The extension preserves a caller-provided Matplotlib config path."""
-    setup = import_module("src.extensions.score_sphinx_bundle.__init__").setup
+    setup = _load_bundle_extension().setup
 
     configured = tmp_path / "chosen-config"
     monkeypatch.setenv("MPLCONFIGDIR", str(configured))
@@ -42,7 +42,7 @@ def test_mpl_config_default_avoids_home_lookup(
     monkeypatch: MonkeyPatch, tmp_path: Path
 ) -> None:
     """The extension sets a default before importing Matplotlib."""
-    setup = import_module("src.extensions.score_sphinx_bundle.__init__").setup
+    setup = _load_bundle_extension().setup
 
     monkeypatch.delenv("HOME", raising=False)
     monkeypatch.delenv("MPLCONFIGDIR", raising=False)
@@ -54,6 +54,22 @@ def test_mpl_config_default_avoids_home_lookup(
     assert os.environ["MPLCONFIGDIR"] == str(tmp_path / ".matplotlib")
     monkeypatch.setattr(matplotlib, "get_configdir", lambda: os.environ["MPLCONFIGDIR"])
     assert matplotlib.get_configdir() == str(tmp_path / ".matplotlib")
+
+
+def _load_bundle_extension():
+    """Load the extension source directly, independently of Python imports."""
+    extension_path = Path(__file__).with_name("__init__.py")
+    if not extension_path.exists():
+        extension_path = (
+            Path(__file__).parents[1] / "score_sphinx_bundle" / "__init__.py"
+        )
+    spec = importlib.util.spec_from_file_location(
+        "score_sphinx_bundle_test", extension_path
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 class _FakeConfig:

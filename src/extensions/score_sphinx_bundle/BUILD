@@ -17,8 +17,9 @@ load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 score_pytest(
     name = "mpl_config_tests",
     srcs = ["test_mpl_config.py"],
+    data = ["__init__.py"],
     pytest_config = "//:pyproject.toml",
-    deps = ["@docs_as_code_hub_env//matplotlib:pkg"],
+    deps = all_requirements + ["//src/helper_lib"],
 )
 
 filegroup(
