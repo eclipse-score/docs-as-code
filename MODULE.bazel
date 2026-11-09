@@ -68,7 +68,6 @@ pip.parse(
 )
 use_repo(pip, "docs_as_code_hub_env")
 
-
 # Additional Python rules provided by aspect, e.g. an improved version of
 bazel_dep(name = "aspect_rules_py", version = "1.4.0")
 bazel_dep(name = "score_tools", version = "0.0.4")
