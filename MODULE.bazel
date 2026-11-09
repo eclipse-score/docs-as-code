@@ -15,7 +15,7 @@
 module(name = "score_docs_as_code")
 
 # For bzl-unittests
-bazel_dep(name = "bazel_skylib", version = "1.8.2", dev_dependency = True)
+bazel_dep(name = "bazel_skylib", version = "1.8.2")
 
 ###############################################################################
 #
@@ -68,12 +68,6 @@ pip.parse(
 )
 use_repo(pip, "docs_as_code_hub_env")
 
-register_toolchains(
-    "//src:_plantuml_toolchain_linux_amd64",
-    "//src:_plantuml_toolchain_linux_arm64",
-    "//src:_plantuml_toolchain_macos_arm64",
-    "//src:_plantuml_toolchain_windows_amd64",
-)
 
 # Additional Python rules provided by aspect, e.g. an improved version of
 bazel_dep(name = "aspect_rules_py", version = "1.4.0")

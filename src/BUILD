@@ -15,7 +15,6 @@ load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 load(":plantuml.bzl", "plantuml_binary")
-load(":plantuml_toolchains.bzl", "declare_plantuml_toolchains")
 
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
@@ -53,9 +52,25 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
-toolchain_type(name = "plantuml_toolchain_type")
+config_setting(
+    name = "plantuml_linux_x86_64",
+    constraint_values = ["@platforms//os:linux", "@platforms//cpu:x86_64"],
+)
 
-declare_plantuml_toolchains()
+config_setting(
+    name = "plantuml_linux_arm64",
+    constraint_values = ["@platforms//os:linux", "@platforms//cpu:aarch64"],
+)
+
+config_setting(
+    name = "plantuml_macos_arm64",
+    constraint_values = ["@platforms//os:macos", "@platforms//cpu:aarch64"],
+)
+
+config_setting(
+    name = "plantuml_windows_x86_64",
+    constraint_values = ["@platforms//os:windows", "@platforms//cpu:x86_64"],
+)
 
 plantuml_binary(
     name = "plantuml",
@@ -65,6 +80,12 @@ plantuml_binary(
 score_pytest(
     name = "plantuml_regression_test",
     srcs = ["plantuml_regression_test.py"],
+    pytest_config = "//:pyproject.toml",
+)
+
+score_pytest(
+    name = "plantuml_select_test",
+    srcs = ["plantuml_select_test.py"],
     pytest_config = "//:pyproject.toml",
 )
 
