@@ -137,6 +137,7 @@ def _needs_sphinx_docs(
         score_source_code_linker_plain_links = None,
         mounts_manifest = None,
         score_metamodel_yaml = None,
+        score_dependable_element_needs = [],
         tools = [],
         sphinx_build_data = [],
         visibility = None):
@@ -181,9 +182,12 @@ def _needs_sphinx_docs(
         score_sourcelinks_json = score_sourcelinks_json,
         mounts_manifest = mounts_manifest,
         score_metamodel_yaml = score_metamodel_yaml,
+        score_dependable_element_needs = score_dependable_element_needs,
         sphinx = sphinx_build,
         tools = tools,
         visibility = visibility,
+        # Dependable elements run tests, so their outputs are testonly.
+        testonly = bool(score_dependable_element_needs),
         tags = ["manual"],
     )
 
@@ -559,6 +563,7 @@ def docs_bundle(
         code_targets = [],
         primary_need_id = None,
         root_docs = None,
+        external_needs = [],
         visibility = None,
         **kwargs):
     """Declare a reusable documentation bundle.
@@ -569,7 +574,8 @@ def docs_bundle(
     the project root. ``root_docs`` associates the bundle with the root
     documentation project's structured configuration, including
     ``required_in_id``, without making it depend on the root bundle's composed
-    documentation sources.
+    documentation sources. ``external_needs`` resolves links of the bundle's
+    local Needs export like ``docs(external_needs = [...])``.
     """
     bundle = _declare_docs_bundle(
         name = name,
@@ -598,6 +604,7 @@ def docs_bundle(
         mounts_manifest = bundle.local_manifest,
         data = data,
         visibility = visibility,
+        resolved_external_needs_labels = _resolve_external_needs_labels(external_needs),
     )
 
 def _missing_requirements(deps):
@@ -651,7 +658,7 @@ def _sphinx_runtime_deps(deps):
             result.append(fixed_dep)
     return result
 
-def _declare_docs_binary(name, data, deps, env, action):
+def _declare_docs_binary(name, data, deps, env, action, testonly = False):
     """Declare one of the interactive documentation command targets."""
     docs_cli_src = Label("//src/docs_cli:cli.py")
     command_env = env | {"ACTION": action}
@@ -661,6 +668,7 @@ def _declare_docs_binary(name, data, deps, env, action):
         data = data,
         deps = deps,
         env = command_env,
+        testonly = testonly,
         tags = ["manual"],
     )
 
@@ -676,7 +684,8 @@ def docs(
         test_sources = [],
         known_good = None,
         metamodel = None,
-        bundles = []):
+        bundles = [],
+        dependable_elements = []):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -724,6 +733,12 @@ def docs(
                 }.
               Note: a bundle label may also point at another module's auto-exposed
               bundle, e.g. "@score_process_description//:docs_bundle".
+      dependable_elements: ``dependable_element`` targets (see
+              ``bzl/dependable_element.bzl``). Their executed test cases
+              become ``testcase`` Needs linked to the verified requirements,
+              taking precedence over ``bazel-testlogs``/``tests-report``.
+              Because tests are ``testonly``, the documentation targets
+              become ``testonly`` as well.
 
     ``docs(data = [...])`` owns files in the root ``:docs_bundle``. A child
     bundle uses the same ``data`` attribute and may omit ``source_dir`` when it
@@ -857,8 +872,9 @@ def docs(
     docs_data = (
         data + external_needs_labels + metamodel_label +
         [":sourcelinks_json", ":_external_docs_runfiles"] +
-        [mounts_manifest]
+        [mounts_manifest] + dependable_elements
     )
+    testonly = bool(dependable_elements)
 
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
@@ -870,6 +886,10 @@ def docs(
         # resolved by score_mounts through ``RUNFILES_DIR``.
         "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if mounts_manifest else "",
         "SCORE_SOURCELINKS": "$(rlocationpath :sourcelinks_json)",
+        "SCORE_DEPENDABLE_ELEMENT_NEEDS": json.encode([
+            "$(rlocationpath " + str(de) + ")"
+            for de in dependable_elements
+        ]),
         "SPHINX_CONFIG_OPTS": json.encode(interactive_config_options),
     }
     if metamodel:
@@ -899,11 +919,13 @@ def docs(
         deps = deps,
         env = coverage_env,
         action = "incremental",
+        testonly = testonly,
     )
 
     native.alias(
         name = "docs",
         actual = ":_score_docs_cli",
+        testonly = testonly,
         tags = ["manual"],
     )
 
@@ -913,6 +935,7 @@ def docs(
         deps = deps,
         env = docs_env,
         action = "linkcheck",
+        testonly = testonly,
     )
     _declare_docs_binary(
         name = "docs_check",
@@ -920,6 +943,7 @@ def docs(
         deps = deps,
         env = docs_env,
         action = "check",
+        testonly = testonly,
     )
     _declare_docs_binary(
         name = "live_preview",
@@ -927,6 +951,7 @@ def docs(
         deps = deps,
         env = coverage_env,
         action = "live_preview",
+        testonly = testonly,
     )
 
     py_venv(
@@ -951,6 +976,7 @@ def docs(
         score_source_code_linker_plain_links = "1",
         mounts_manifest = mounts_manifest,
         score_metamodel_yaml = metamodel,
+        score_dependable_element_needs = dependable_elements,
         tools = external_needs_labels + [":docs_bundle"],
         visibility = ["//visibility:public"],
     )
@@ -964,6 +990,7 @@ def docs(
         # action, and $@ is the path of the metrics.json output created here.
         cmd = "cp $(execpath :needs_json)/metrics.json $@",
         visibility = ["//visibility:public"],
+        testonly = testonly,
         tags = ["manual"],
     )
 
@@ -978,6 +1005,7 @@ def docs(
         # $@ is the path of the needs.json output created here.
         cmd = "cp $(execpath :needs_json)/needs.json $@",
         visibility = ["//visibility:public"],
+        testonly = testonly,
         tags = ["manual"],
     )
 

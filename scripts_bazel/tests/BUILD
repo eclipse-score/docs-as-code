@@ -34,6 +34,16 @@ score_pytest(
 )
 
 score_pytest(
+    name = "dependable_element_trace_test",
+    srcs = ["dependable_element_trace_test.py"],
+    pytest_config = "//:pyproject.toml",
+    deps = [
+        "//scripts_bazel:dependable_element_trace",
+        "//src/extensions/score_source_code_linker",
+    ] + all_requirements,
+)
+
+score_pytest(
     name = "merge_needs_json_tests",
     srcs = ["merge_needs_json_tests.py"],
     pytest_config = "//:pyproject.toml",

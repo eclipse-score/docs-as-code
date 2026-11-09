@@ -169,6 +169,15 @@ Minimal example (root ``BUILD``)
   for extension processing.
   When ``metamodel`` is omitted the default metamodel is used unchanged.
 
+- ``dependable_elements`` (list of bazel labels, optional)
+  :ref:`dependable_element <dependable_element_rules>` targets. Their executed
+  test cases become ``testcase`` Needs linked to the verified requirements,
+  exactly like test cases found in ``tests-report`` or ``bazel-testlogs``,
+  which they take precedence over. The tests run as build actions, so the
+  documentation build does not depend on a previous ``bazel test``. Because test
+  targets are ``testonly``, all generated documentation targets become
+  ``testonly`` when this list is not empty.
+
 Coverage input
 ~~~~~~~~~~~~~~
 
@@ -211,7 +220,7 @@ site).
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], primary_need_id = None, root_docs = None, visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], primary_need_id = None, root_docs = None, external_needs = [], visibility = None)``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
@@ -268,11 +277,15 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
 
 - ``needs_local`` (internal target)
   A source-bearing bundle creates ``<name>.__internal__.needs_local`` with the
-  ``needs.json`` file for Needs declared by its own sources. The standalone
-  build is intentionally self-contained in this version: references to Needs
-  defined outside the bundle remain unresolved and fail strict builds.
-  Cross-bundle imports and merged exports are planned for a later change.
+  ``needs.json`` file for Needs declared by its own sources. References to
+  Needs defined outside the bundle fail strict builds unless the owning
+  inventories are listed in ``external_needs``; imported Needs are not part of
+  the export. Merged exports are planned for a later change.
   Data-only bundles do not create a Needs target.
+
+- ``external_needs`` (list of bazel labels, optional)
+  Same as ``docs(external_needs = [...])``, but only for this bundle's local
+  Needs export.
 
 .. note::
 
@@ -310,3 +323,52 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
 
   The root project's ``project_url`` is resolved for the declaring bundle by
   appending its workspace-relative Bazel package path.
+
+.. _dependable_element_rules:
+
+Bazel rules: ``component`` and ``dependable_element`` (prototype)
+-----------------------------------------------------------------
+
+``bzl/dependable_element.bzl`` provides a dependable element whose traceability
+is based on Sphinx-Needs instead of TRLC and LOBSTER. Requirements are the Needs
+exported by ``docs_bundle`` targets; verification evidence is the ``test.xml``
+of the component tests, which are executed as build actions.
+
+.. code-block:: python
+
+   load("@score_docs_as_code//:bzl/dependable_element.bzl", "component", "dependable_element")
+
+   component(
+       name = "component",
+       requirements = [":docs"],  # docs_bundle with comp_req / aou_req Needs
+       tests = [":my_test"],
+       implementation = [":my_lib"],
+   )
+
+   dependable_element(
+       name = "dependable_element",
+       components = ["//my/pkg:component"],
+       integrity_level = "B",
+   )
+
+``dependable_element`` creates:
+
+- ``<name>``: ``needs.json`` with one ``testcase`` Need per executed test case
+  (``partially_verifies``/``fully_verifies``, ``result``), usable in
+  ``docs(dependable_elements = [...])`` and by other dependable elements.
+  The output group ``report`` contains ``trace_report.json`` and
+  ``trace_report.txt``.
+- ``<name>_test``: fails if a check reports an error.
+
+Checks:
+
+- every valid ``comp_req`` of a component is verified by one of its test cases
+  (error with ``release = True``, otherwise a warning),
+- every referenced Need exists in the requirement bundles,
+- no test case failed (skipped and disabled test cases are warnings),
+- no ``comp_req`` has a ``safety`` level above ``integrity_level``,
+- test cases without a requirement reference are reported as warnings.
+
+The ``requirements`` attribute of ``dependable_element`` adds further bundles
+(for example with feature requirements) to resolve references. Test, component
+and dependable element targets are ``testonly``.

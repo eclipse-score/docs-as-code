@@ -255,6 +255,17 @@ def sphinx_arguments(
         sourcelinks_json = _resolve_runfiles_relative_path(config, sourcelinks_json)
         base_arguments.append(f"--define=score_sourcelinks_json={sourcelinks_json}")
 
+    if dependable_element_needs := env.string_list(
+        "SCORE_DEPENDABLE_ELEMENT_NEEDS", "[]"
+    ):
+        resolved = [
+            str(_resolve_runfiles_relative_path(config, Path(p)))
+            for p in dependable_element_needs
+        ]
+        base_arguments.append(
+            f"--define=score_dependable_element_needs={json.dumps(resolved)}"
+        )
+
     if github_repository := env.get("GITHUB_REPOSITORY", ""):
         # GITHUB_REPOSITORY is expected as "owner/repo"; partition("/") splits
         # once into (owner, separator, repo), so we can ignore the separator.

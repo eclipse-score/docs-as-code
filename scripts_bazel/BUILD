@@ -42,6 +42,16 @@ py_binary(
 )
 
 py_binary(
+    name = "dependable_element_trace",
+    srcs = ["dependable_element_trace.py"],
+    main = "dependable_element_trace.py",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/extensions/score_source_code_linker",
+    ] + all_requirements,
+)
+
+py_binary(
     name = "merge_needs_json",
     srcs = ["merge_needs_json.py"],
     main = "merge_needs_json.py",
