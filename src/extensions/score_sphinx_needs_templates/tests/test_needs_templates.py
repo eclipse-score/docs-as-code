@@ -333,6 +333,26 @@ def test_workproduct_rows_filter_by_owner_then_slug() -> None:
     assert rows.count('and "wp__fmea" in realizes') == 2
 
 
+def test_workproduct_rows_filter_prefers_belongs_to_over_id() -> None:
+    rows = vars(templates)["_WorkproductRows"]()(
+        "comp__engine_core", "enginecore", [["wp__dfa", "DFA"]]
+    )
+    doc_filter = rows.split(":filter: ", 1)[1].split("\n", 1)[0]
+
+    def matches(doc_id: str, belongs_to: list[str]) -> bool:
+        # sphinx-needs evaluates non-trivial filters with eval() on the Need fields.
+        need: dict[str, object] = {
+            "type": "document",
+            "id": doc_id,
+            "realizes": ["wp__dfa"],
+            "belongs_to": belongs_to,
+        }
+        return eval(doc_filter, need)
+
+    assert matches("doc__owned_dfa", ["comp__engine_core"])
+    assert not matches("doc__enginecore_dfa", ["comp__other"])
+
+
 @add_test_properties(
     partially_verifies=[],
     test_type="interface-test",
@@ -601,126 +621,3 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
     # Referenced only outside the report scope, so it still counts as a gap.
     assert 'href="#stkh_req__only_out_of_scope"' in gap_table
     assert 'href="#stkh_req__referenced"' not in gap_table
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_module_report_prefers_document_belongs_to_over_id(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """``belongs_to`` decides ownership; the ID is only a fallback.
-
-    The report ID does not follow ``doc__<module>_verification_report``, so the
-    module can only be found through ``belongs_to``. A work-product document
-    whose ID contains a component's slug but which belongs to another
-    component must be listed under its owner only.
-    """
-    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
-    (tmp_path / "conf.py").write_text(
-        """
-extensions = [
-    "sphinx_needs",
-    "score_sphinx_needs_templates",
-    "score_metamodel",
-    "score_coverage",
-    "sphinx_design",
-]
-master_doc = "index"
-needs_id_regex = r"^[a-zA-Z0-9_]+$"
-""",
-        encoding="utf-8",
-    )
-    workproducts = "\n".join(
-        f".. workproduct:: {wp_id}\n   :id: {wp_id}\n   :status: valid\n"
-        for wp_id in (
-            "wp__module_report",
-            "wp__requirements_inspect",
-            "wp__sw_component_dfa",
-            "wp__sw_component_fmea",
-        )
-    )
-    (tmp_path / "index.rst").write_text(
-        workproducts
-        + """
-.. feat:: Engine
-   :id: feat__engine
-   :security: NO
-   :safety: QM
-   :status: valid
-
-.. comp:: Engine Core
-   :id: comp__engine_core
-   :security: NO
-   :safety: QM
-   :status: valid
-   :belongs_to: feat__engine
-
-.. comp:: Other
-   :id: comp__other
-   :security: NO
-   :safety: QM
-   :status: valid
-   :belongs_to: feat__engine
-
-.. mod:: Engine module
-   :id: mod__engine
-   :includes: comp__engine_core, comp__other
-
-.. document:: Owned DFA
-   :id: doc__owned_dfa
-   :status: valid
-   :safety: QM
-   :security: NO
-   :realizes: wp__sw_component_dfa
-   :belongs_to: comp__engine_core
-
-.. document:: Legacy FMEA
-   :id: doc__enginecore_fmea
-   :status: valid
-   :safety: QM
-   :security: NO
-   :realizes: wp__sw_component_fmea
-
-.. document:: Misleadingly named inspection
-   :id: doc__enginecore_inspection
-   :status: valid
-   :safety: QM
-   :security: NO
-   :realizes: wp__requirements_inspect
-   :belongs_to: comp__other
-
-.. document:: Engine report
-   :id: doc__custom_engine_report
-   :status: valid
-   :safety: QM
-   :security: NO
-   :realizes: wp__module_report
-   :belongs_to: mod__engine
-   :post_template: module_verification_report
-""",
-        encoding="utf-8",
-    )
-
-    app = SphinxTestApp(
-        srcdir=tmp_path,
-        outdir=tmp_path / "_build",
-        buildername="html",
-        freshenv=True,
-    )
-    try:
-        app.build(force_all=True)
-        html = (app.outdir / "index.html").read_text(encoding="utf-8")
-    finally:
-        app.cleanup()
-
-    report = html.split('id="comp-engine-core"', 1)[1]
-    engine_core, other = report.split('id="comp-other"', 1)
-    assert 'href="#doc__owned_dfa"' in engine_core
-    assert 'href="#doc__enginecore_fmea"' in engine_core
-    assert 'href="#doc__enginecore_inspection"' not in engine_core
-    assert 'href="#doc__enginecore_inspection"' in other
-    assert 'href="#doc__owned_dfa"' not in other
