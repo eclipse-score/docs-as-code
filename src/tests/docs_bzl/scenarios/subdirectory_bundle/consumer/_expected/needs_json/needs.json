@@ -22,7 +22,10 @@
           "title": "Consumer requirement",
           "type": "gd_req",
           "type_name": "Process Requirements",
-          "version": 1
+          "version": 1,
+          "satisfies": [
+            "wf__test_workflow"
+          ]
         },
         "gd_req__embedded": {
           "content": "The embedded documentation is supplied by a docs_bundle in a subdirectory.",
@@ -37,7 +40,10 @@
           "title": "Embedded requirement",
           "type": "gd_req",
           "type_name": "Process Requirements",
-          "version": 1
+          "version": 1,
+          "satisfies": [
+            "wf__test_embedded"
+          ]
         },
         "gd_req__producer_root": {
           "content": "The producer's regular documentation is part of its public docs bundle.",
@@ -52,6 +58,222 @@
           "title": "Producer root requirement",
           "type": "gd_req",
           "type_name": "Process Requirements",
+          "version": 1,
+          "satisfies": [
+            "wf__test_producer_root"
+          ]
+        },
+        "wp__test_workproduct": {
+          "docname": "index",
+          "external_css": "external_link",
+          "id": "wp__test_workproduct",
+          "input_back": [
+            "wf__test_workflow"
+          ],
+          "lineno": 20,
+          "output_back": [
+            "wf__test_workflow"
+          ],
+          "section_name": "Consumer documentation",
+          "sections": [
+            "Consumer documentation"
+          ],
+          "status": "valid",
+          "title": "Test workproduct",
+          "type": "workproduct",
+          "type_name": "Workproduct",
+          "version": 1
+        },
+        "wp__test_embedded": {
+          "docname": "producer/embedded/index",
+          "external_css": "external_link",
+          "id": "wp__test_embedded",
+          "input_back": [
+            "wf__test_embedded"
+          ],
+          "lineno": 20,
+          "output_back": [
+            "wf__test_embedded"
+          ],
+          "section_name": "Embedded documentation",
+          "sections": [
+            "Embedded documentation"
+          ],
+          "status": "valid",
+          "title": "Test workproduct",
+          "type": "workproduct",
+          "type_name": "Workproduct",
+          "version": 1
+        },
+        "wp__test_producer_root": {
+          "docname": "producer/index",
+          "external_css": "external_link",
+          "id": "wp__test_producer_root",
+          "input_back": [
+            "wf__test_producer_root"
+          ],
+          "lineno": 20,
+          "output_back": [
+            "wf__test_producer_root"
+          ],
+          "section_name": "Producer documentation",
+          "sections": [
+            "Producer documentation"
+          ],
+          "status": "valid",
+          "title": "Test workproduct",
+          "type": "workproduct",
+          "type_name": "Workproduct",
+          "version": 1
+        },
+        "rl__test_workflow": {
+          "approved_by_back": [
+            "wf__test_workflow"
+          ],
+          "docname": "index",
+          "external_css": "external_link",
+          "id": "rl__test_workflow",
+          "lineno": 25,
+          "responsible_back": [
+            "wf__test_workflow"
+          ],
+          "section_name": "Consumer documentation",
+          "sections": [
+            "Consumer documentation"
+          ],
+          "title": "Test role",
+          "type": "role",
+          "type_name": "Role",
+          "version": 1
+        },
+        "rl__test_embedded": {
+          "approved_by_back": [
+            "wf__test_embedded"
+          ],
+          "docname": "producer/embedded/index",
+          "external_css": "external_link",
+          "id": "rl__test_embedded",
+          "lineno": 25,
+          "responsible_back": [
+            "wf__test_embedded"
+          ],
+          "section_name": "Embedded documentation",
+          "sections": [
+            "Embedded documentation"
+          ],
+          "title": "Test role",
+          "type": "role",
+          "type_name": "Role",
+          "version": 1
+        },
+        "rl__test_producer_root": {
+          "approved_by_back": [
+            "wf__test_producer_root"
+          ],
+          "docname": "producer/index",
+          "external_css": "external_link",
+          "id": "rl__test_producer_root",
+          "lineno": 25,
+          "responsible_back": [
+            "wf__test_producer_root"
+          ],
+          "section_name": "Producer documentation",
+          "sections": [
+            "Producer documentation"
+          ],
+          "title": "Test role",
+          "type": "role",
+          "type_name": "Role",
+          "version": 1
+        },
+        "wf__test_workflow": {
+          "approved_by": [
+            "rl__test_workflow"
+          ],
+          "docname": "index",
+          "external_css": "external_link",
+          "id": "wf__test_workflow",
+          "input": [
+            "wp__test_workproduct"
+          ],
+          "lineno": 29,
+          "output": [
+            "wp__test_workproduct"
+          ],
+          "responsible": [
+            "rl__test_workflow"
+          ],
+          "satisfies_back": [
+            "gd_req__consumer"
+          ],
+          "section_name": "Consumer documentation",
+          "sections": [
+            "Consumer documentation"
+          ],
+          "status": "valid",
+          "title": "Test workflow",
+          "type": "workflow",
+          "type_name": "Workflow",
+          "version": 1
+        },
+        "wf__test_embedded": {
+          "approved_by": [
+            "rl__test_embedded"
+          ],
+          "docname": "producer/embedded/index",
+          "external_css": "external_link",
+          "id": "wf__test_embedded",
+          "input": [
+            "wp__test_embedded"
+          ],
+          "lineno": 29,
+          "output": [
+            "wp__test_embedded"
+          ],
+          "responsible": [
+            "rl__test_embedded"
+          ],
+          "satisfies_back": [
+            "gd_req__embedded"
+          ],
+          "section_name": "Embedded documentation",
+          "sections": [
+            "Embedded documentation"
+          ],
+          "status": "valid",
+          "title": "Test workflow",
+          "type": "workflow",
+          "type_name": "Workflow",
+          "version": 1
+        },
+        "wf__test_producer_root": {
+          "approved_by": [
+            "rl__test_producer_root"
+          ],
+          "docname": "producer/index",
+          "external_css": "external_link",
+          "id": "wf__test_producer_root",
+          "input": [
+            "wp__test_producer_root"
+          ],
+          "lineno": 29,
+          "output": [
+            "wp__test_producer_root"
+          ],
+          "responsible": [
+            "rl__test_producer_root"
+          ],
+          "satisfies_back": [
+            "gd_req__producer_root"
+          ],
+          "section_name": "Producer documentation",
+          "sections": [
+            "Producer documentation"
+          ],
+          "status": "valid",
+          "title": "Test workflow",
+          "type": "workflow",
+          "type_name": "Workflow",
           "version": 1
         }
       },
