@@ -52,10 +52,36 @@ docs_bundle(
 # still covers the standalone Needs export.
 docs_bundle(
     name = "docs_bundle",
-    source_dir = ".",
     bundles = [{
         "bundle": ":generated_metamodel",
         "mount_at": "generated_metamodel",
     }],
+    source_dir = ".",
     visibility = ["//visibility:public"],
+)
+
+# This sibling component exposes a library and public headers. Other components
+# may depend on it without taking ownership of its implementation sources.
+cc_library(
+    name = "implementation",
+    srcs = ["implementation.cc"],
+    hdrs = [":public_headers"],
+    visibility = ["//visibility:public"],
+    # This dependency returns to the linked component's package subtree.
+    deps = ["//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/detail:support"],
+)
+
+filegroup(
+    name = "public_headers",
+    srcs = ["api.h"],
+    visibility = ["//visibility:public"],
+)
+
+# The API can be explicitly selected without claiming ownership of its sibling
+# implementation dependency. Both are outside the selecting bundle's package.
+cc_library(
+    name = "api",
+    hdrs = [":public_headers"],
+    visibility = ["//visibility:public"],
+    deps = [":implementation"],
 )

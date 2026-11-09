@@ -59,6 +59,7 @@ load(
 )
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
+    "collect_bundle_code_files",
     "create_bundle",
     "declare_docs_config_target",
     "external_docs_runfiles",
@@ -67,9 +68,14 @@ load(
     "sphinx_config_options",
 )
 load(
+    "@score_docs_as_code//:bzl/code_file_lists.bzl",
+    "declare_code_file_lists",
+)
+load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
     "create_composition_manifest",
 )
+
 # Keep the low-level action behind this name so this macro owns the shared
 # Sphinx policy while ``needs_rules.bzl`` owns Bazel's input/output plumbing.
 load("@score_docs_as_code//:bzl/needs_rules.bzl", "sphinx_docs")
@@ -89,15 +95,16 @@ def _needs_sphinx_extra_opts(
     These values cross the Bazel action boundary as command-line options. The
     shared warning and traceback flags are supplied by the launcher instead.
     """
+
     # The launcher supplies diagnostics shared by every builder. Keep only
     # target-specific defines here so the action does not receive duplicate
     # ``-W``, ``--keep-going``, and ``-T`` options after JSON transport.
     return [
         option
         for name, value in [
-        ("master_doc", master_doc),
-        ("score_bundle_needs_export", score_bundle_needs_export),
-        ("score_source_code_linker_plain_links", score_source_code_linker_plain_links),
+            ("master_doc", master_doc),
+            ("score_bundle_needs_export", score_bundle_needs_export),
+            ("score_source_code_linker_plain_links", score_source_code_linker_plain_links),
         ]
         for option in _sphinx_define(name, value)
     ]
@@ -138,7 +145,8 @@ def _needs_sphinx_docs(
     String settings travel as Sphinx ``--define`` options. Bazel labels stay
     typed until the private rule can declare them as sandbox inputs.
     """
-    # These three files use typed rule attributes below so the private rule can
+
+    # These files use typed rule attributes below so the private rule can
     # pass their paths to the action. Add them to ``tools`` as well: that puts
     # the files in the Sphinx executable's runfiles (for Python-side lookup)
     # and declares them as action inputs (for sandbox availability). Callers
@@ -198,6 +206,7 @@ def _bundle_needs_local_label(bundle):
     that implementation name directly.
     """
     label = str(bundle)
+
     # A package-local label is meaningful inside the BUILD file invoking the
     # macro. Turn it into an absolute workspace label before passing it to the
     # Python extension, which resolves inventory paths from Bazel runfiles.
@@ -213,6 +222,7 @@ def _bundle_needs_local_label(bundle):
         )
 
     package, target = label.rsplit(":", 1)
+
     # Bundle callers name public targets. Keep generated implementation names
     # private as more internal targets are added over time.
     if "__internal__" in target:
@@ -282,18 +292,18 @@ def _is_needs_inventory_target(label):
     return str(label).rsplit(":", 1)[-1] in ("needs_json", "needs_json_file")
 
 def _declare_docs_bundle(
-    name,
-    source_dir = None,
-    srcs = [],
-    data = [],
-    entry_doc = "index",
-    bundles = [],
-    code_targets = [],
-    primary_need_id = None,
-    root_docs_config = None,
-    is_root_bundle = False,
-    visibility = None,
-    **kwargs):
+        name,
+        source_dir = None,
+        srcs = [],
+        data = [],
+        entry_doc = "index",
+        bundles = [],
+        code_targets = [],
+        primary_need_id = None,
+        root_docs_config = None,
+        is_root_bundle = False,
+        visibility = None,
+        **kwargs):
     """Declare the shared bundle target implementation.
 
     This helper performs the bundle declaration used by both public entry
@@ -328,7 +338,9 @@ def _declare_docs_bundle(
         }.
       code_targets: Implementation targets or filegroups to scan for source-code
                     links. Implementation target source files and their dependencies
-                    are collected recursively; filegroups expand to their files.
+                    are collected recursively within this bundle's repository and
+                    BUILD package, including subpackages; filegroups expand to
+                    their files.
       primary_need_id: Sphinx-Needs ID of the primary Need representing this
                        bundle. Other Needs may remain in the bundle; only this
                        Need receives bundle-level target metadata.
@@ -357,11 +369,19 @@ def _declare_docs_bundle(
     # Keep directory-discovered sources separate from explicit Bazel targets so
     # each kind can retain its own runtime path and staging behavior.
     source_dir_globbed = glob_doc_sources(source_dir) if source_dir != None else []
+
+    # The private file set is the single source of implementation artifacts.
+    # Sourcelinks scan these same bounded files; consumers can inspect the
+    # internal target without adding a field to the public bundle manifest.
+    code_files = collect_bundle_code_files(
+        name = _bundle_internal_target(name, "files"),
+        code_targets = code_targets,
+    )
     sourcelinks_json = None
     if code_targets:
         sourcelinks_json = generate_code_target_sourcelinks(
             name = _bundle_internal_target(name, "sourcelinks_json"),
-            code_targets = code_targets,
+            code_files = code_files,
         )
 
     # ``needs_json`` is an inventory consumed by score_metamodel, not content
@@ -388,11 +408,20 @@ def _declare_docs_bundle(
         bundles = bundles,
         data = bundle_data,
         code_targets = code_targets,
+        code_files = code_files,
         primary_need_id = primary_need_id,
         root_docs_config = root_docs_config,
         is_root_bundle = is_root_bundle,
         visibility = visibility,
         **kwargs
+    )
+
+    # File identities are intrinsic bundle metadata, independent of whether a
+    # coverage report is available. Export the composed view under the bundle's
+    # own internal name so docs() can consume it without a separate user target.
+    code_file_lists = declare_code_file_lists(
+        name = _bundle_internal_target(name, "code_file_lists"),
+        bundle = ":" + name,
     )
 
     # The public provider above represents the complete documentation tree:
@@ -419,6 +448,7 @@ def _declare_docs_bundle(
         primary_need_id = primary_need_id,
         data = bundle_data,
         code_targets = code_targets,
+        code_files = code_files,
         root_docs_config = root_docs_config,
         is_root_bundle = is_root_bundle,
         visibility = visibility,
@@ -441,6 +471,7 @@ def _declare_docs_bundle(
         sourcelinks_json = sourcelinks_json,
         source_bundle = source_bundle,
         local_manifest = local_manifest,
+        code_file_lists = code_file_lists,
     )
 
 def _declare_bundle_local_needs(
@@ -479,6 +510,7 @@ def _declare_bundle_local_needs(
 
     needs_local = _bundle_internal_target(name, "needs_local")
     needs_local_builder = _bundle_internal_target(name, "needs_local_builder")
+
     # The source provider and local manifest describe the same owner-only
     # document set. Pass both to Sphinx so mounted descendants are neither
     # loaded as local sources nor assigned to this bundle's Needs export.
@@ -518,17 +550,17 @@ def _declare_bundle_local_needs(
     )
 
 def docs_bundle(
-    name,
-    source_dir = None,
-    srcs = [],
-    data = [],
-    entry_doc = "index",
-    bundles = [],
-    code_targets = [],
-    primary_need_id = None,
-    root_docs = None,
-    visibility = None,
-    **kwargs):
+        name,
+        source_dir = None,
+        srcs = [],
+        data = [],
+        entry_doc = "index",
+        bundles = [],
+        code_targets = [],
+        primary_need_id = None,
+        root_docs = None,
+        visibility = None,
+        **kwargs):
     """Declare a reusable documentation bundle.
 
     The declaration itself is delegated to the shared helper. Keeping this
@@ -552,6 +584,7 @@ def docs_bundle(
         visibility = visibility,
         **kwargs
     )
+
     # The public bundle target above is composable and may contain nested
     # bundles. The local Needs inventory must instead use its source-only
     # sibling, so exported Needs reflect this bundle's ownership boundary.
@@ -607,11 +640,12 @@ def _sphinx_deps(deps):
     return deps + _missing_requirements(deps)
 
 def _sphinx_runtime_deps(deps):
-    """Add the extensions required by every Sphinx invocation."""
+    """Add the shared Sphinx dependencies and the CLI's summary library."""
     result = _sphinx_deps(deps)
     for fixed_dep in [
         Label("//src:plantuml_for_python"),
         Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
+        Label("//src/docs_cli:lcov_summary_lib"),
     ]:
         if fixed_dep not in result:
             result.append(fixed_dep)
@@ -670,8 +704,9 @@ def docs(
                       form, without a warning for now. ``needs_json_file`` is
                       also supported for directly naming an inventory file.
       code_targets: Implementation targets or filegroups to scan for source code
-                    links. Implementation targets are scanned recursively; filegroups
-                    expand to their files.
+                    links. Dependencies are scanned within this bundle's repository
+                    and BUILD package, including subpackages; filegroups expand
+                    to their files.
       primary_need_id: Sphinx-Needs ID of the primary Need representing this
                        documentation project and its root bundle. Other Needs
                        remain unchanged.
@@ -721,6 +756,7 @@ def docs(
     if config_is_missing:
         if not project or not project_url:
             fail("docs(): no " + config_file_path + " found; provide both project and project_url to docs().")
+
         # Sphinx can run without a configuration file when ``-C`` is used.
         # Keep the macro's structured values as command-line overrides instead
         # of materializing a generated ``conf.py`` in the output tree.
@@ -755,11 +791,7 @@ def docs(
     # list-valued attributes such as ``data`` and ``tools``.
     metamodel_label = [metamodel] if metamodel else []
 
-    deps = _sphinx_deps(deps)
-    deps = deps + [
-        Label("//src:plantuml_for_python"),
-        Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
-    ]
+    deps = _sphinx_runtime_deps(deps)
 
     known_good_label = [known_good] if known_good else []
 
@@ -776,8 +808,9 @@ def docs(
         root_docs_config = root_docs_config,
         is_root_bundle = True,
         visibility = ["//visibility:public"],
-        tags = ["manual"]
+        tags = ["manual"],
     )
+
     # The runtime manifest must be generated from the actual root bundle. The
     # root entry carries the project's direct code_targets and gives Python a
     # complete composition snapshot alongside the nested mounts.
@@ -785,6 +818,7 @@ def docs(
         name = "_mounts_manifest",
         bundle = ":docs_bundle",
     )
+
     # As with child docs_bundle targets, export Needs from the root's direct
     # source provider. Nested bundles are rendered by docs_bundle but keep
     # separate ownership and separate local Needs inventories.
@@ -847,14 +881,23 @@ def docs(
         docs_env["KNOWN_GOOD_JSON"] = "$(rlocationpath " + known_good_str + ")"
         docs_data += known_good_label
 
+    # The CLI combines these declared file identities with the optional report
+    # in the workspace when bazel run starts. Coverage collection and summary
+    # generation therefore leave sandboxed Needs inventories independent of
+    # downloaded artifacts. Fast validation uses the base data/environment.
+    coverage_data = docs_data + [root_bundle.code_file_lists]
+    coverage_env = docs_env | {
+        "SCORE_CODE_FILE_LISTS": "$(rlocationpath " + root_bundle.code_file_lists + ")",
+    }
+
     # Generated documentation artifacts may live below ``docs/``.  A
     # py_binary named ``docs`` would own the conflicting Bazel output path
     # ``docs``; expose this binary via the alias below instead.
     _declare_docs_binary(
         name = "_score_docs_cli",
-        data = docs_data,
+        data = coverage_data,
         deps = deps,
-        env = docs_env,
+        env = coverage_env,
         action = "incremental",
     )
 
@@ -880,9 +923,9 @@ def docs(
     )
     _declare_docs_binary(
         name = "live_preview",
-        data = docs_data,
+        data = coverage_data,
         deps = deps,
-        env = docs_env,
+        env = coverage_env,
         action = "live_preview",
     )
 

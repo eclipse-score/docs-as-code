@@ -23,3 +23,18 @@ integration.
    :hidden:
 
    components
+
+.. mod:: Modern module
+   :id: mod__modern_module
+   :version: 1
+   :includes: comp__modern_component
+
+.. mod_ver_report:: Modern module verification report
+   :id: mod_vrep__docs_as_code__modern_module
+   :version: 1
+   :safety: QM
+   :security: NO
+   :status: valid
+   :verification_method: Automated tests
+   :belongs_to: mod__modern_module
+   :post_template: module_verification_report

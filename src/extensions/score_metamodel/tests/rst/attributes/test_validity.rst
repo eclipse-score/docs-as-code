@@ -74,6 +74,7 @@
    :valid_from: v1.0
    :valid_until: v1.0.0-beta
    :expect: valid_until (v1.0.0-beta): does not follow pattern
+   :expect_not: inconsistent validity
 
 
 .. stkh_req:: valid_from is after valid_until
@@ -120,6 +121,15 @@
    :status: valid
    :safety: QM
    :security: NO
+
+
+.. comp:: Validity target component
+   :id: comp__validity_target
+   :version: 1
+   :status: valid
+   :safety: QM
+   :security: NO
+   :belongs_to: feat__validity_target
 
 
 .. feat_req:: Valid feature requirement milestones
@@ -196,3 +206,78 @@
    :expect_not: inconsistent validity
 
    This feature requirement is used to check the validity attributes.
+
+
+.. comp_req:: Valid component requirement milestones
+   :id: comp_req__attributes__validity_aaaa
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :satisfied_by: comp__validity_target
+   :valid_from: v1.0
+   :valid_until: v2.0
+   :expect_not: does not follow pattern, inconsistent validity
+
+   This component requirement is used to check the validity attributes.
+
+
+.. comp_req:: Component requirement without validity bounds
+   :id: comp_req__attributes__validity_aaae
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :satisfied_by: comp__validity_target
+   :expect_not: is missing required attribute: `valid_from`, is missing required attribute: `valid_until`, inconsistent validity
+
+   Component requirements may omit validity bounds.
+
+
+.. comp_req:: Component requirement with malformed valid_from
+   :id: comp_req__attributes__validity_aaab
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :satisfied_by: comp__validity_target
+   :valid_from: v01.0
+   :valid_until: v2.0
+   :expect: valid_from (v01.0): does not follow pattern
+   :expect_not: inconsistent validity
+
+   This component requirement checks the valid_from pattern.
+
+
+.. comp_req:: Component requirement with malformed valid_until
+   :id: comp_req__attributes__validity_aaac
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :satisfied_by: comp__validity_target
+   :valid_from: v1.0
+   :valid_until: v01.0
+   :expect: valid_until (v01.0): does not follow pattern
+   :expect_not: inconsistent validity
+
+   This component requirement checks the valid_until pattern.
+
+
+.. comp_req:: Component requirement with inconsistent validity
+   :id: comp_req__attributes__validity_aaad
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :satisfied_by: comp__validity_target
+   :valid_from: v1.1
+   :valid_until: v1.0
+   :expect: inconsistent validity: valid_from (v1.1) >= valid_until (v1.0)
+
+   This component requirement checks the validity ordering.

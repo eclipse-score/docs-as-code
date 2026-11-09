@@ -17,7 +17,8 @@ import os
 import shutil
 import subprocess
 import time
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import cast
@@ -34,6 +35,25 @@ def repo_root() -> Path:
     root = find_git_root()
     assert root is not None, "git root not found"
     return root
+
+
+@contextmanager
+def staged_coverage_report(source: Path) -> Iterator[Path]:
+    """Stage a fixture at the workflow input path and restore any local report."""
+    report = repo_root() / "coverage-report/coverage_report.dat"
+    saved = report.read_bytes() if report.exists() else None
+    directory_existed = report.parent.exists()
+    report.parent.mkdir(exist_ok=True)
+    report.write_bytes(source.read_bytes())
+    try:
+        yield report
+    finally:
+        if saved is None:
+            report.unlink(missing_ok=True)
+        else:
+            report.write_bytes(saved)
+        if not directory_existed:
+            report.parent.rmdir()
 
 
 def run_bazel(

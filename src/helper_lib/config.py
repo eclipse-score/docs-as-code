@@ -143,7 +143,24 @@ class DocsCliConfig:
             # bazel run and direct invocations are interactive and do not have
             # a declared action output tree. They keep their reusable build
             # cache below the resolved package directory instead.
-            return self.package_dir / "_build"
+            # DOCS_BUILD_DIR may override it; an absolute value is used as-is.
+            build_dir = self.package_dir / (
+                self._env.get("DOCS_BUILD_DIR", "") or "_build"
+            )
+            self._require_safe_build_dir(build_dir)
+            return build_dir
+
+    def _require_safe_build_dir(self, build_dir: Path) -> None:
+        """Reject build dirs whose stale-cache cleanup would delete sources."""
+        resolved = build_dir.resolve()
+        protected = [self.source_dir.resolve(), self.package_dir.resolve()]
+        if self.ws_root:
+            protected.append(self.ws_root.resolve())
+        if any(resolved == p or resolved in p.parents for p in protected):
+            raise ValueError(
+                f"DOCS_BUILD_DIR must not be or contain the workspace, package "
+                f"or source directory: {build_dir}"
+            )
 
     @cached_property
     def source_dir(self) -> Path:

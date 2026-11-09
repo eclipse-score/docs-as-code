@@ -35,6 +35,7 @@ score_extensions = [
     "score_source_code_linker",
     "score_draw_uml_funcs",
     "score_layout",
+    "score_coverage",
     "sphinxcontrib.mermaid",
     "needs_config_writer",
     "score_sync_toml",

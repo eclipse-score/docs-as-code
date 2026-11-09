@@ -29,10 +29,6 @@
 {{ ((value|default("", true)|replace("\n", " ")|trim) or fallback)|replace("\\", "\\\\")|replace('"', '\\"') }}
 {%- endmacro %}
 
-{% macro id_filter_list(ids) -%}
-[{% for need_id in ids %}"{{ need_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-{%- endmacro %}
-
 {% set usecase_malfunction_scope = namespace(with_malfunctions=[], without_malfunctions=[]) %}
 {% for usecase in usecases %}
 {% if linked_needs(usecase["id"], "parent_needs_back")|list %}

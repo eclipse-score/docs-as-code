@@ -44,8 +44,18 @@ def dirname(path):
 def glob_doc_sources(prefix):
     """Return glob patterns for documentation sources below ``prefix``."""
     extensions = [
-        "png", "svg", "md", "rst", "html", "css",
-        "puml", "need", "yaml", "json", "csv", "inc",
+        "png",
+        "svg",
+        "md",
+        "rst",
+        "html",
+        "css",
+        "puml",
+        "need",
+        "yaml",
+        "json",
+        "csv",
+        "inc",
     ]
     param = [join_path(prefix, "**/*." + ext) for ext in extensions]
     srcs = native.glob(param, allow_empty = True)

@@ -11,15 +11,18 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+from types import SimpleNamespace
 from typing import Any, cast
+from unittest.mock import MagicMock
 
 import pytest
 import score_metrics.traceability_metrics as metrics
 from score_metamodel import ScoreNeedType
 from score_metamodel.tests import need as test_need
 from score_pytest.attribute_plugin import add_test_properties
-from sphinx_needs.data import NeedsView
-from sphinx_needs.need_item import NeedItem
+from sphinx.environment import BuildEnvironment
+from sphinx_needs.data import NeedsView, SphinxNeedsData
+from sphinx_needs.need_item import NeedItem, NeedItemSourceExternal
 
 
 @add_test_properties(
@@ -266,3 +269,91 @@ def test_calculate_test_metrics_counts_linked_tests_and_broken_refs() -> None:
     assert result["broken_references"] == [
         {"testcase": "TC_2", "missing_need": "REQ_404"}
     ]
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    test_type="requirements-based",
+    derivation_technique="equivalence-classes",
+)
+@pytest.mark.parametrize(
+    ("include_external", "feature_ids", "feature_total", "component_total"),
+    [
+        (False, None, 1, 1),
+        (True, None, 6, 2),
+        (True, [], 6, 2),
+        (False, ["feat__lifecycle"], 1, 1),
+        (True, ["feat__lifecycle"], 4, 1),
+        (True, ["feat__lifecycle", "feat__other"], 5, 1),
+        (True, ["feat__missing"], 1, 1),
+    ],
+)
+def test_calculate_full_need_metrics_optional_external_feature_scope(
+    monkeypatch: pytest.MonkeyPatch,
+    include_external: bool,
+    feature_ids: list[str] | None,
+    feature_total: int,
+    component_total: int,
+) -> None:
+    """Scope external requirements by feature without hiding untested requirements."""
+    external_requirements = [
+        test_need(
+            id="feat_req__linked",
+            type="feat_req",
+            satisfied_by=["feat__lifecycle"],
+            testlink="TC_1",
+        ),
+        test_need(
+            id="feat_req__untested",
+            type="feat_req",
+            satisfied_by=["feat__lifecycle"],
+        ),
+        test_need(
+            id="feat_req__unrelated",
+            type="feat_req",
+            satisfied_by=["feat__other"],
+        ),
+        test_need(
+            id="feat_req__shared",
+            type="feat_req",
+            satisfied_by=["feat__lifecycle", "feat__other"],
+        ),
+        test_need(id="feat_req__unassigned", type="feat_req"),
+        test_need(id="comp_req__external", type="comp_req"),
+    ]
+    for need in external_requirements:
+        monkeypatch.setattr(
+            need,
+            "_source",
+            NeedItemSourceExternal(url=f"https://example.org/{need.id}"),
+        )
+    needs = [
+        *external_requirements,
+        test_need(id="feat_req__local", type="feat_req"),
+        test_need(id="comp_req__local", type="comp_req"),
+        test_need(id="TC_1", type="testcase", fully_verifies=["feat_req__linked"]),
+    ]
+    monkeypatch.setattr(metrics, "CALCULATED_METRICS", {})
+    app = MagicMock()
+    app.env = MagicMock(spec=BuildEnvironment)
+    needs_data = SphinxNeedsData(app.env)
+    for need in needs:
+        needs_data.add_need(need)
+    needs_data.needs_is_post_processed = True
+    app.config = SimpleNamespace(
+        score_metamodel_yaml=None,
+        score_metrics_requirement_types="feat_req,comp_req",
+    )
+    if feature_ids is not None:
+        app.config.score_metrics_external_feature_ids = feature_ids
+
+    metrics.calculate_full_need_metrics(app, include_external)
+
+    result = metrics.CALCULATED_METRICS
+    assert result["metrics_by_type"]["feat_req"]["total"] == feature_total
+    assert result["metrics_by_type"]["comp_req"]["total"] == component_total
+    assert result["overall_metrics"]["total"] == feature_total + component_total
+    expected_linked = int(include_external and feature_ids != ["feat__missing"])
+    assert result["metrics_by_type"]["feat_req"]["with_test_link"] == expected_linked
+    assert result["tests"]["linked_to_requirements"] == 1
+    assert result["tests"]["broken_references"] == []

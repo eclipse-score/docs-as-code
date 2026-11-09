@@ -33,8 +33,9 @@ def fake_check_logger():
             self._mock_logger = MagicMock(spec=SphinxLoggerAdapter)
             self._mock_logger.warning = MagicMock()
             self._mock_logger.info = MagicMock()
-            app_path = MagicMock()
-            super().__init__(self._mock_logger, app_path)
+            # Direct pytest uses the source-root prefix; Bazel runfiles omit it.
+            # A concrete root keeps both location formats meaningful to assert.
+            super().__init__(self._mock_logger, ".")
 
         def assert_no_warnings(self):
             if self.warnings:
@@ -75,7 +76,9 @@ def fake_check_logger():
             assert kwargs["type"] == "score_metamodel"
 
             if expect_location:
-                assert kwargs["location"] == "docname.rst:42", kwargs
+                assert kwargs["location"] in ("docname.rst:42", "./docname.rst:42"), (
+                    kwargs
+                )
 
         def assert_info(self, expected_substring: str, expect_location: bool = True):
             """
@@ -102,7 +105,9 @@ def fake_check_logger():
             assert kwargs["type"] == "score_metamodel"
 
             if expect_location:
-                assert kwargs["location"] == "docname.rst:42", kwargs
+                assert kwargs["location"] in ("docname.rst:42", "./docname.rst:42"), (
+                    kwargs
+                )
 
     return FakeCheckLogger()
 

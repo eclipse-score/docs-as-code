@@ -26,8 +26,8 @@ docs_bundle(
     # Deliberately keep the Bazel target name independent from the Need ID.
     # The explicit primary_need_id is the only association used for metadata.
     name = "docs_bundle",
-    source_dir = ".",
     code_targets = [":component_sources"],
     primary_need_id = "tool_req__legacy_component",
+    source_dir = ".",
     visibility = ["//visibility:public"],
 )

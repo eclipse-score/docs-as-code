@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import cast
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 
 from src.extensions.score_mounts._resolver import (
     BazelTarget,
@@ -71,7 +72,13 @@ def _write_manifest(
     return manifest
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_single_entry(tmp_path: Path) -> None:
+    """Load one mount from a manifest."""
     manifest = _write_manifest(
         tmp_path,
         {
@@ -99,7 +106,13 @@ def test_load_single_entry(tmp_path: Path) -> None:
     ]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_entry_with_attach_to_and_entry_doc(tmp_path: Path) -> None:
+    """Load mount attachment and entry-document metadata."""
     manifest = _write_manifest(
         tmp_path,
         {
@@ -119,6 +132,11 @@ def test_load_entry_with_attach_to_and_entry_doc(tmp_path: Path) -> None:
     assert spec.entry_doc == "start"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_bundle_metadata_and_direct_targets(tmp_path: Path) -> None:
     """Decode bundle identity and direct target pairs from the manifest."""
     manifest = _write_manifest(
@@ -158,7 +176,13 @@ def test_load_bundle_metadata_and_direct_targets(tmp_path: Path) -> None:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_entry_with_toctree_index(tmp_path: Path) -> None:
+    """Load the configured toctree index."""
     manifest = _write_manifest(
         tmp_path,
         {
@@ -177,6 +201,11 @@ def test_load_entry_with_toctree_index(tmp_path: Path) -> None:
     assert spec.toctree_index == 1
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_entry_without_toctree_index_defaults_to_zero(tmp_path: Path) -> None:
     """Older manifests lack the field; they must extend the first toctree."""
     manifest = _write_manifest(
@@ -196,7 +225,13 @@ def test_load_entry_without_toctree_index_defaults_to_zero(tmp_path: Path) -> No
     assert spec.toctree_index == 0
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path) -> None:
+    """Preserve both source locations for an external mount."""
     manifest = _write_manifest(
         tmp_path,
         {
@@ -223,9 +258,15 @@ def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path) ->
     assert specs[1].repository == "score_process_description+"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_external_mount_uses_execroot_path_in_sandbox(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Resolve external mount paths from the execroot in a sandbox."""
     monkeypatch.chdir(tmp_path)
     manifest = _write_manifest(
         tmp_path,
@@ -246,7 +287,13 @@ def test_external_mount_uses_execroot_path_in_sandbox(
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_external_mount_uses_runfiles_root_under_bazel_run(tmp_path: Path) -> None:
+    """Resolve external mount paths from the runfiles root."""
     manifest = _write_manifest(
         tmp_path / "_main" / "package",
         {
@@ -269,6 +316,11 @@ def test_external_mount_uses_runfiles_root_under_bazel_run(tmp_path: Path) -> No
     ) == (tmp_path / "score_process_description+" / "docs_as_mount")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generated_source_mount_uses_bazel_bin_under_bazel_run(tmp_path: Path) -> None:
     """Translate an execroot-relative generated source to workspace bazel-bin."""
     manifest = _write_manifest(
@@ -297,6 +349,11 @@ def test_generated_source_mount_uses_bazel_bin_under_bazel_run(tmp_path: Path) -
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generated_root_source_mount_uses_bazel_bin_under_bazel_run(
     tmp_path: Path,
 ) -> None:
@@ -322,6 +379,11 @@ def test_generated_root_source_mount_uses_bazel_bin_under_bazel_run(
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_explicit_source_files_resolve_below_original_root(tmp_path: Path) -> None:
     """Resolve an explicit file allowlist without copying its source files."""
     source_root = tmp_path / "workspace" / "docs"
@@ -350,6 +412,11 @@ def test_explicit_source_files_resolve_below_original_root(tmp_path: Path) -> No
     ) == [source_root / "index.rst", source_root / "guide.rst"]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generated_source_mount_uses_execroot_in_sandbox(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

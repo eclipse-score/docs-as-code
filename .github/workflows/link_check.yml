@@ -24,11 +24,11 @@ permissions:
 
 jobs:
   link-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: 🛡️ Harden Runner
         if: github.repository_owner == 'eclipse-score'
-        uses: step-security/harden-runner@v2.21.1
+        uses: step-security/harden-runner@v2.22.3
         with:
           egress-policy: audit
       - name: Checkout repo

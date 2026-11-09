@@ -15,6 +15,7 @@ from types import SimpleNamespace
 from typing import cast
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
 from sphinx_needs.need_item import NeedItem, NeedItemSourceUnknown, NeedsContent
@@ -77,6 +78,11 @@ def _bundle() -> BundleMetadata:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_multiple_bundle_targets_keep_declaration_order_in_json() -> None:
     """Multiple targets use matching compact JSON arrays in source order."""
     bundle = BundleMetadata(
@@ -98,6 +104,11 @@ def test_multiple_bundle_targets_keep_declaration_order_in_json() -> None:
     }
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_explicit_primary_need_is_updated_in_place_and_returns_affected_document(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -134,6 +145,11 @@ def test_explicit_primary_need_is_updated_in_place_and_returns_affected_document
     assert need["bazel_type"] == "cc_library"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_external_bundle_updates_local_need_like_internal_bundle(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -168,6 +184,11 @@ def test_external_bundle_updates_local_need_like_internal_bundle(
     assert need["bazel_type"] == "cc_library"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_unchanged_bundle_metadata_does_not_rewrite_the_document(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -199,6 +220,11 @@ def test_unchanged_bundle_metadata_does_not_rewrite_the_document(
     assert need["bazel_type"] == "cc_library"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_bundle_metadata_is_cleared_when_primary_need_is_missing(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -236,6 +262,11 @@ def test_bundle_metadata_is_cleared_when_primary_need_is_missing(
     assert need["bazel_type"] == ""
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_current_bundle_metadata_replaces_old_values(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

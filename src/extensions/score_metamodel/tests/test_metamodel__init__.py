@@ -95,6 +95,11 @@ def test_raises_assertion_for_invalid_check():
 class TestNeedHelper:
     """Tests for the need() convenience function that creates NeedItem objects."""
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_default_values(self):
         """Verify default values are set when no arguments provided."""
         n = need()
@@ -106,6 +111,11 @@ class TestNeedHelper:
         assert n["collapse"] is False
         assert n["hide"] is False
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_custom_values_override_defaults(self):
         """Verify custom values override the defaults."""
         n = need(
@@ -121,6 +131,11 @@ class TestNeedHelper:
         assert n["status"] == "valid"
         assert n["tags"] == ["tag1", "tag2"]
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_link_fields_extracted(self):
         """Verify link fields use NeedItem's link storage and accessors."""
         n = need(
@@ -138,6 +153,11 @@ class TestNeedHelper:
         assert n.get("satisfies", []) == ["req_1"]
         assert n.get_links("satisfies", as_str=True) == ["req_1"]
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_extra_fields_in_extras(self):
         """Verify extra fields (not core, not links) go into extras."""
         n = need(
@@ -150,6 +170,11 @@ class TestNeedHelper:
         assert n.get("security") == "YES"
         assert n.get("custom_field") == "custom_value"
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_empty_links_not_in_kwargs(self):
         """Verify that link keys not provided default to empty list."""
         n = need()
@@ -158,6 +183,11 @@ class TestNeedHelper:
         assert n.get("input", []) == []
         assert n.get("output", []) == []
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_combined_core_links_and_extras(self):
         """Verify a need with core, link, and extra fields works correctly."""
         n = need(

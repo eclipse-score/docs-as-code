@@ -82,6 +82,30 @@ def test_eval_need_check_missing_attribute_logs_and_returns_false() -> None:
     # assert "Attribute not defined: priority" in msg
 
 
+@pytest.mark.parametrize(
+    ("links", "condition", "expected"),
+    [
+        ([], "included_by == []", True),
+        ([], "included_by != []", False),
+        (["feat__test"], "included_by == []", False),
+        (["feat__test"], "included_by != []", True),
+    ],
+    ids=["empty-equals", "empty-differs", "linked-equals", "linked-differs"],
+)
+def test_link_conditions_compare_against_an_empty_list(
+    links: list[str], condition: str, expected: bool
+) -> None:
+    """Empty-list literals must select needs by link presence, not string equality."""
+    log = fake_check_logger()
+
+    result = graph_checks.eval_need_condition(
+        test_need(included_by=links), condition, log
+    )
+
+    assert result is expected
+    assert log.warnings == 0
+
+
 def test_eval_need_condition_invalid_type_raises_value_error() -> None:
     """Raise error for condition values that are neither string nor dict."""
     log = fake_check_logger()
@@ -257,8 +281,8 @@ def test_check_all_warns_once_per_failing_parent() -> None:
     [
         (["qm_1", "safe_1"], 0),
         (["qm_1", "qm_2"], 1),
-        ([], 0),
-        (["unknown_parent"], 0),
+        ([], 1),
+        (["unknown_parent"], 1),
     ],
     ids=["one_fulfills", "none_fulfill", "no_parents", "unknown_parent"],
 )
@@ -269,7 +293,9 @@ def test_check_one(parent_ids: list[str], expected_warnings: int) -> None:
     assert log.warnings == expected_warnings
     if expected_warnings:
         log.assert_warning(
-            "No linked need in `implements` fulfills condition `safety != QM`."
+            "No linked need in `implements`. Explanation: Test explanation."
+            if not parent_ids or parent_ids == ["unknown_parent"]
+            else "No linked need in `implements` fulfills condition `safety != QM`."
             " Explanation: Test explanation."
         )
 

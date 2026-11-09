@@ -17,12 +17,12 @@ load("//:docs.bzl", "docs")
 # transitive bundle assembled by producer/docs(), including its subdirectory
 # bundle, without adding the producer's needs_json separately.
 docs(
-    source_dir = "docs",
-    project = "Subdirectory Bundle Consumer",
-    project_url = "https://example.invalid/subdirectory-bundle-consumer",
-    test_sources = ["src/tests/docs_bzl/scenarios/subdirectory_bundle/consumer"],
     bundles = [{
         "bundle": "//src/tests/docs_bzl/scenarios/subdirectory_bundle/producer:docs_bundle",
         "mount_at": "producer",
     }],
+    project = "Subdirectory Bundle Consumer",
+    project_url = "https://example.invalid/subdirectory-bundle-consumer",
+    source_dir = "docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/subdirectory_bundle/consumer"],
 )

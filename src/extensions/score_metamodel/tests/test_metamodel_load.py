@@ -27,6 +27,11 @@ def load_model_data(model_file: str) -> str:
         return f.read()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_metamodel_data_explicit_path():
     """When an explicit path is given, load_metamodel_data reads that file."""
     explicit_path = MODEL_DIR / "simple_model.yaml"
@@ -36,7 +41,13 @@ def test_load_metamodel_data_explicit_path():
     assert result.needs_types[0]["directive"] == "type1"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_metamodel_data():
+    """Test load metamodel data."""
     model_data: str = load_model_data("simple_model.yaml")
 
     with patch("builtins.open", mock_open(read_data=model_data)):
@@ -134,6 +145,11 @@ _DECLARED_KNOWN = """  known_link:
 """
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_declared_link_is_accepted(tmp_path: Path):
     """A link declared in needs_extra_links may be used by a type."""
     model = _write_model(
@@ -148,6 +164,11 @@ def test_declared_link_is_accepted(tmp_path: Path):
 
 
 @pytest.mark.parametrize("section", ["mandatory_links", "optional_links"])
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_undeclared_link_is_rejected(tmp_path: Path, section: str):
     """Using a link that needs_extra_links does not declare must fail parsing.
 
@@ -168,6 +189,11 @@ def test_undeclared_link_is_rejected(tmp_path: Path, section: str):
     assert "type1" in message
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_sphinx_needs_builtin_links_are_accepted(tmp_path: Path):
     """'links' and 'parent_needs' are provided by sphinx-needs itself.
 

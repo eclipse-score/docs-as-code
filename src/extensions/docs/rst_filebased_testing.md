@@ -123,6 +123,20 @@ You only need to match a unique substring, not the full message. For example:
    For `:expect:` use as much as possible of the error message, however for `:expect_not:` use as little as possible
    to catch all other issues that MIGHT occur and to avoid for typos etc.
 
+### Informational diagnostics
+
+Checks marked `info_only` report to the Sphinx status stream. Use
+`:expect_info:` and `:expect_info_not:` to assert these diagnostics at the
+need's own location. The existing `:expect:` and `:expect_not:` options continue
+to check warnings, so a fixture can distinguish compatibility errors from
+informational allocation-completeness diagnostics.
+
+    .. comp:: Safety component without an allocated safety requirement
+       :id: comp__example__missing_allocation
+       :safety: ASIL_B
+       :expect_info: must have at least one safety requirement allocated via satisfied_by.
+       :expect_not: must have at least one safety requirement allocated via satisfied_by.
+
 ### Setup needs
 
 Prerequisite needs (link targets, shared fixtures) carry no `:expect:` /
