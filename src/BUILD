@@ -54,22 +54,34 @@ filegroup(
 
 config_setting(
     name = "plantuml_linux_x86_64",
-    constraint_values = ["@platforms//os:linux", "@platforms//cpu:x86_64"],
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
 )
 
 config_setting(
     name = "plantuml_linux_arm64",
-    constraint_values = ["@platforms//os:linux", "@platforms//cpu:aarch64"],
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
 )
 
 config_setting(
     name = "plantuml_macos_arm64",
-    constraint_values = ["@platforms//os:macos", "@platforms//cpu:aarch64"],
+    constraint_values = [
+        "@platforms//os:macos",
+        "@platforms//cpu:aarch64",
+    ],
 )
 
 config_setting(
     name = "plantuml_windows_x86_64",
-    constraint_values = ["@platforms//os:windows", "@platforms//cpu:x86_64"],
+    constraint_values = [
+        "@platforms//os:windows",
+        "@platforms//cpu:x86_64",
+    ],
 )
 
 plantuml_binary(
