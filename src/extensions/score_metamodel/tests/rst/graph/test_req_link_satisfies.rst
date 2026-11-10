@@ -40,6 +40,9 @@
 .. gd_req:: Process requirement
    :id: gd_req__test_satisfies
    :satisfies: wf__test_satisfies
+   :expect_not: must reference
+
+   Some content.
 
 .. workproduct:: Workproduct
    :id: wp__test_satisfies
