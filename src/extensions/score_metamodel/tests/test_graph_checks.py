@@ -214,10 +214,13 @@ def test_filter_needs_by_criteria_unknown_type_logs_warning() -> None:
 
 
 NEEDS_TYPES = [NeedType({"title": "testtype", "prefix": "t", "directive": "req"})]
+# Parents get their own line numbers, so the location assertions in
+# fake_check_logger() fail if a finding is reported on a parent instead of the
+# child (which keeps the default location).
 PARENTS = [
-    test_need(id="safe_1", type="parent", safety="ASIL_B"),
-    test_need(id="qm_1", type="parent", safety="QM"),
-    test_need(id="qm_2", type="parent", safety="QM"),
+    test_need(id="safe_1", type="parent", safety="ASIL_B", lineno=10),
+    test_need(id="qm_1", type="parent", safety="QM", lineno=11),
+    test_need(id="qm_2", type="parent", safety="QM", lineno=12),
 ]
 
 
