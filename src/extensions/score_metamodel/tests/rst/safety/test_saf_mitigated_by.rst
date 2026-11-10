@@ -29,7 +29,7 @@
    * ``plat_saf_dfa``
 
 
---- Setup: Architecture stubs (for violates mandatory link) ---
+.. Setup: Architecture stubs (for violates mandatory link)
 
 .. feat_arc_sta:: Stub Feature Static Architecture
    :id: feat_arc_sta__mit__001
@@ -44,7 +44,7 @@
    :id: comp_arc_dyn__mit__001
 
 
---- Setup: Requirement stubs for mitigated_by links ---
+.. Setup: Requirement stubs for mitigated_by links
 
 .. feat_req:: Feature Requirement ASIL_B
    :id: feat_req__mit__asil_b
@@ -97,7 +97,7 @@
    :rationale: platform QM
 
 
---- Positive Tests: Each SAF type links to ASIL_B requirement or aou_req ---
+.. Positive Tests: Each SAF type links to ASIL_B requirement or aou_req
 
 .. feat_saf_dfa:: feat DFA mitigated by ASIL_B feat_req
    :id: feat_saf_dfa__mit__pos_01
@@ -180,7 +180,7 @@
    :expect_not: No linked need
 
 
---- Negative Tests: Missing mitigated_by or only QM requirements ---
+.. Negative Tests: Missing mitigated_by or only QM requirements
 
 .. feat_saf_dfa:: feat DFA no mitigated_by
    :id: feat_saf_dfa__mit__neg_01
@@ -230,7 +230,7 @@
    :mitigated_by: aou_req__mit__qm
    :expect: No linked need in `mitigated_by` fulfills condition
 
---- Positive Tests: plat_saf_dfa ---
+.. Positive Tests: plat_saf_dfa
 
 .. plat_saf_dfa:: plat DFA mitigated by ASIL_B stkh_req
    :id: plat_saf_dfa__mit__pos_01
@@ -253,7 +253,7 @@
    :expect_not: No linked need
 
 
---- Negative Tests: plat_saf_dfa ---
+.. Negative Tests: plat_saf_dfa
 
 .. plat_saf_dfa:: plat DFA no mitigated_by
    :id: plat_saf_dfa__mit__neg_01
@@ -275,7 +275,7 @@
    :expect: No linked need in `mitigated_by` fulfills condition
 
 
---- Positive Tests: Invalid status SAF needs are not checked ---
+.. Positive Tests: Invalid status SAF needs are not checked
 
 .. feat_saf_dfa:: feat DFA invalid status, no mitigated_by
    :id: feat_saf_dfa__mit__status_invalid
