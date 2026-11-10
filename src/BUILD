@@ -27,6 +27,7 @@ exports_files(
         "requirements.in",
         "dummy.py",
         "generate_sourcelinks_cli.py",
+        "plantuml_launcher.sh",
     ],
     visibility = ["//visibility:public"],
 )
@@ -108,7 +109,19 @@ score_pytest(
 py_library(
     name = "plantuml_for_python",
     srcs = ["@score_docs_as_code//src:dummy.py"],
-    data = ["@score_docs_as_code//src:plantuml"],
+    data = [":plantuml_py_data"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "plantuml_py_data",
+    srcs = [
+        ":plantuml",
+        "@plantuml_native_linux_amd64//:runtime",
+        "@plantuml_native_linux_arm64//:runtime",
+        "@plantuml_native_macos_arm64//:runtime",
+        "@plantuml_native_windows_amd64//:runtime",
+    ],
     visibility = ["//visibility:public"],
 )
 

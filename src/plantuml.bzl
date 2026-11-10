@@ -11,17 +11,18 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-"""Platform-selected native PlantUML executable target using select()."""
+"""Platform-selected PlantUML launcher."""
 
 def plantuml_binary(name, visibility = None):
-    """Declare a public PlantUML alias for the current execution platform."""
-    native.alias(
+    """Declare PlantUML with one native artifact chosen using select()."""
+    native.sh_binary(
         name = name,
-        actual = select({
-            "//src:plantuml_linux_x86_64": "@plantuml_native_linux_amd64//:plantuml",
-            "//src:plantuml_linux_arm64": "@plantuml_native_linux_arm64//:plantuml",
-            "//src:plantuml_macos_arm64": "@plantuml_native_macos_arm64//:plantuml",
-            "//src:plantuml_windows_x86_64": "@plantuml_native_windows_amd64//:plantuml.exe",
+        srcs = ["//src:plantuml_launcher.sh"],
+        data = select({
+            "//src:plantuml_linux_x86_64": ["@plantuml_native_linux_amd64//:runtime", "@plantuml_native_linux_amd64//:plantuml"],
+            "//src:plantuml_linux_arm64": ["@plantuml_native_linux_arm64//:runtime", "@plantuml_native_linux_arm64//:plantuml"],
+            "//src:plantuml_macos_arm64": ["@plantuml_native_macos_arm64//:runtime", "@plantuml_native_macos_arm64//:plantuml"],
+            "//src:plantuml_windows_x86_64": ["@plantuml_native_windows_amd64//:runtime", "@plantuml_native_windows_amd64//:plantuml.exe"],
         }),
         visibility = visibility,
     )
