@@ -737,8 +737,8 @@ def docs(
     # and explicit ``external_needs`` labels are combined for the Needs builder,
     # so their origin is no longer available.
     if any([_is_needs_inventory_target(label) for label in data]):
-        print(
-            "INFO: ⚠️ DEPRECATED: Passing a Needs inventory through " +
+        fail(
+            "WARNING: ⚠️ DEPRECATED: Passing a Needs inventory through " +
             "docs(data = [...]) is deprecated!!! Move it to " +
             "external_needs = [...] instead.",
         )
@@ -864,7 +864,6 @@ def docs(
         "SOURCE_DIRECTORY": source_dir,
         "PACKAGE_DIR": native.package_name(),
         "TEST_SOURCES": str(test_sources),
-        "DATA": str(data),
         "EXTERNAL_NEEDS_FILES": str(external_needs_labels),
         # `bazel run` starts from a runfiles tree, so this logical path is
         # resolved by score_mounts through ``RUNFILES_DIR``.
@@ -946,7 +945,7 @@ def docs(
         config = sphinx_config,
         sphinx_build_deps = deps,
         sphinx_build_data = data + external_needs_labels + metamodel_label + [":docs_bundle"],
-        external_needs_labels = str(data + external_needs_labels),
+        external_needs_labels = str(external_needs_labels),
         score_sourcelinks_json = ":sourcelinks_json",
         score_source_code_linker_plain_links = "1",
         mounts_manifest = mounts_manifest,
