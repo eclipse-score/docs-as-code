@@ -15,7 +15,8 @@
 
 .. test_metadata:: Document and TVR Attribute Validation
    :id: test_metadata__doc_tool_attrs
-   :fully_verifies_list: tool_req__docs_doc_generic_mandatory,tool_req__docs_tvr_safety,tool_req__docs_tvr_security,tool_req__docs_tvr_status,tool_req__docs_tvr_confidence_level,tool_req__docs_tvr_version
+   :fully_verifies_list: tool_req__docs_doc_generic_mandatory,tool_req__docs_doc_generic_optional,tool_req__docs_tvr_safety,tool_req__docs_tvr_security,tool_req__docs_tvr_status,tool_req__docs_tvr_confidence_level
+   :partially_verifies_list: tool_req__docs_tvr_version
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -23,6 +24,11 @@
    Verification Reports (doc_tool), plus validation of TVR summary attribute
    values, as defined in the metamodel. Every mandatory attribute is
    exercised with an accepted value, an unaccepted value, and an omitted value.
+
+   Generic Documents accept optional belongs_to links to modules, components,
+   and features, reject workproduct targets, and remain valid without an owner.
+
+   The tool_version attribute is not enforced yet for migration purposes.
 
 
 .. Generic workproduct used as the realizes target of the documents below
@@ -32,6 +38,23 @@
    :version: 1
    :status: valid
 
+.. feat:: Document Owner Feature
+   :id: feat__doc_owner
+   :security: NO
+   :safety: QM
+   :status: valid
+
+.. comp:: Document Owner Component
+   :id: comp__doc_owner
+   :security: NO
+   :safety: QM
+   :status: valid
+   :belongs_to: feat__doc_owner
+
+.. mod:: Document Owner Module
+   :id: mod__doc_owner
+   :includes: comp__doc_owner
+
 .. document:: Generic Document With All Mandatory Attributes
    :id: doc__attr_ok
    :version: 1
@@ -40,6 +63,46 @@
    :security: YES
    :realizes: wp__doc_attrs
    :expect_not: is missing required attribute, is missing required link, does not follow pattern
+
+.. document:: Generic Document Belonging to a Module
+   :id: doc__attr_belongs_to_module
+   :version: 1
+   :status: valid
+   :safety: QM
+   :security: NO
+   :realizes: wp__doc_attrs
+   :belongs_to: mod__doc_owner
+   :expect_not: is missing required attribute, is missing required link, does not follow pattern, references
+
+.. document:: Generic Document Belonging to a Component
+   :id: doc__attr_belongs_to_component
+   :version: 1
+   :status: valid
+   :safety: QM
+   :security: NO
+   :realizes: wp__doc_attrs
+   :belongs_to: comp__doc_owner
+   :expect_not: is missing required attribute, is missing required link, does not follow pattern, references
+
+.. document:: Generic Document Belonging to a Feature
+   :id: doc__attr_belongs_to_feature
+   :version: 1
+   :status: valid
+   :safety: QM
+   :security: NO
+   :realizes: wp__doc_attrs
+   :belongs_to: feat__doc_owner
+   :expect_not: is missing required attribute, is missing required link, does not follow pattern, references
+
+.. document:: Generic Document Belonging to a Workproduct Is Invalid
+   :id: doc__attr_bad_belongs_to
+   :version: 1
+   :status: valid
+   :safety: QM
+   :security: NO
+   :realizes: wp__doc_attrs
+   :belongs_to: wp__doc_attrs
+   :expect: references 'wp__doc_attrs' as 'belongs_to'
 
 .. document:: Generic Document With Invalid Status
    :id: doc__attr_bad_status

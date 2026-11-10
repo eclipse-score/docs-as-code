@@ -8,10 +8,10 @@
   ``linked_needs`` helper resolves this graph during the post-collection
   reread, so titles and report sections stay driven by the Need model.
 
-  Consumers that still declare the report as a generic ``document`` have no
-  ``belongs_to`` link available. For those the module id is recovered from the
-  report id (``doc__<module>_verification_report``) as before, until they have
-  migrated to ``mod_ver_report``.
+  Consumers that still declare the report as a generic ``document`` may set
+  the optional ``belongs_to`` link to the module as well. Only if no Module is
+  linked, the module id is recovered from the report id
+  (``doc__<module>_verification_report``) as before.
 
   This report is module- and component-scoped only. The platform-wide,
   feature-scoped counterpart (all Features and their statistics) lives in the
@@ -23,10 +23,10 @@
   work — and real headings are what give the report its TOC entries and
   per-component navigation.
 #}
-{# ``belongs_to`` may carry a ``[version==N]`` selector; only the id part
-   identifies the module Need. Empty for legacy ``document`` reports. #}
-{% set module_link = belongs_to|first|default("", true) %}
-{% set module_id = module_link|split("[")|first if module_link
+{# A ``document`` may also belong to a Component or Feature, so only a
+   ``mod`` target names the module. #}
+{% set linked_modules = linked_needs(id, "belongs_to")|selectattr("type", "eq", "mod")|list %}
+{% set module_id = linked_modules[0]["id"] if linked_modules
      else ("mod__" ~ id|replace("doc__", "")|replace("_verification_report", "")) %}
 {# Unset/empty ``applies_to_module_version`` keeps the report unscoped (all
    components and requirements shown), which is what the "_latest" report
@@ -164,8 +164,8 @@ Component Overview
 {% for component in components_in_mod %}
 {% set component_id = component["id"] %}
 {% set component_title = component["title"] %}
-{# The component Need reached through the graph supplies the component's
-   document selector and navigation anchor. #}
+{# Work-product documents are matched by ``belongs_to``; the title slug only
+   matches documents without that link. It also gives the navigation anchor. #}
 {% set component_slug_norm = component_title|replace("_", "")|replace(" ", "")|lower %}
 {% set component_anchor = component_title|replace("_", "-")|replace(" ", "-")|lower %}
 
@@ -271,5 +271,5 @@ this component. A dash (``—``) means the corresponding document is missing.
         - Kind
         - Realized by
         - Status
-{{ workproduct_rows(component_slug_norm, component_workproducts) }}
+{{ workproduct_rows(component_id, component_slug_norm, component_workproducts) }}
 {% endfor %}
