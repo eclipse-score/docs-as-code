@@ -96,12 +96,6 @@ score_pytest(
     pytest_config = "//:pyproject.toml",
 )
 
-score_pytest(
-    name = "plantuml_select_test",
-    srcs = ["plantuml_select_test.py"],
-    pytest_config = "//:pyproject.toml",
-)
-
 # This makes it possible for py_venv to depend on plantuml.
 # Note: py_venv can only depend on py_library.
 # TODO: This can be removed with the next
