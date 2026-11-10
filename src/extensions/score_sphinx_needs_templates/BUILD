@@ -16,7 +16,10 @@ load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
 filegroup(
     name = "all_sources",
-    srcs = ["__init__.py"],
+    srcs = [
+        "__init__.py",
+        "report_pie.py",
+    ],
     visibility = ["//visibility:public"],
 )
 
@@ -26,6 +29,7 @@ py_library(
     data = ["@score_docs_as_code//src/needs_templates:files"],
     visibility = ["//visibility:public"],
     deps = all_requirements + [
+        "//src/extensions:score_coverage",
         "@score_docs_as_code//src/helper_lib",
     ],
 )
@@ -35,10 +39,13 @@ score_pytest(
     # The template regression test builds a temporary Sphinx HTML project,
     # so it needs more time than a pure Python unit test.
     size = "medium",
-    srcs = ["tests/test_needs_templates.py"],
-    deps = [
-        ":score_sphinx_needs_templates",
-        "//src/extensions/score_metamodel:score_metamodel",
+    srcs = [
+        "tests/test_needs_templates.py",
+        "tests/test_report_pie.py",
     ],
     pytest_config = "//:pyproject.toml",
+    deps = [
+        ":score_sphinx_needs_templates",
+        "//src/extensions/score_metamodel",
+    ],
 )

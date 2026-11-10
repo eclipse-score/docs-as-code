@@ -17,9 +17,9 @@ load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 score_pytest(
     name = "module_verification_reports_test",
     srcs = ["module_verification_reports_test.py"],
-    deps = [
-        "//tools:module_verification_reports",
-        "//src/helper_lib",
-    ] + all_requirements,
     pytest_config = "//:pyproject.toml",
+    deps = [
+        "//src/helper_lib",
+        "//tools:module_verification_reports",
+    ] + all_requirements,
 )

@@ -11,19 +11,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+load("@aspect_rules_py//py:defs.bzl", "py_binary")
 load("//:bzl/mount_rules.bzl", "create_composition_manifest")
 load("//:docs.bzl", "docs", "docs_bundle")
-load("@aspect_rules_py//py:defs.bzl", "py_binary")
 
 docs_bundle(
     name = "child",
-    source_dir = "child",
-    entry_doc = "landing",
     code_targets = [
         ":example_binary",
         ":example_executable",
         ":nested_filegroup_sources",
     ],
+    entry_doc = "landing",
+    source_dir = "child",
 )
 
 filegroup(
@@ -67,12 +67,12 @@ cc_binary(
 # BEGIN docs-bundle-howto: parent-composition
 docs_bundle(
     name = "parent",
-    source_dir = "parent",
     bundles = [{
         "bundle": ":child",
         "mount_at": "child",
     }],
     data = [":generated_doc_output"],
+    source_dir = "parent",
     visibility = ["//visibility:public"],
 )
 # END docs-bundle-howto: parent-composition
@@ -82,8 +82,14 @@ docs_bundle(
 docs_bundle(
     name = "ordered_aggregate",
     bundles = [
-        {"bundle": ":other", "mount_at": "first"},
-        {"bundle": ":child", "mount_at": "second"},
+        {
+            "bundle": ":other",
+            "mount_at": "first",
+        },
+        {
+            "bundle": ":child",
+            "mount_at": "second",
+        },
     ],
 )
 
@@ -100,13 +106,13 @@ create_composition_manifest(
 # A complete docs() invocation is the synthetic host project driven by the
 # pytest integration test in //src/tests/docs_bzl.
 docs(
-    source_dir = "host_docs",
-    code_targets = [":example_binary"],
-    test_sources = ["src/tests/docs_bzl/scenarios/nested_bundles"],
     bundles = [{
         "bundle": ":parent",
         "mount_at": "concepts/example_bundle",
         # Attach to the second toctree (index 1) of concepts/index.rst.
         "toctree_index": 1,
     }],
+    code_targets = [":example_binary"],
+    source_dir = "host_docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/nested_bundles"],
 )

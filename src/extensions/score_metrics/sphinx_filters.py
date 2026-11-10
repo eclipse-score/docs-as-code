@@ -42,7 +42,34 @@ from __future__ import annotations
 from typing import Any
 
 from score_metrics.traceability_metrics import CALCULATED_METRICS
+
+# Import the public version-scoping helper for filtering by valid_from
+from score_sphinx_needs_templates import req_in_report_version
 from sphinx_needs.need_item import NeedItem
+
+# Import shared verification metrics helpers
+from src.helper_lib.verification_metrics import (
+    count_coverage_filtered,
+    count_status_filtered,
+)
+
+
+def _arg(kwargs: dict[str, Any], name: str, default: str = "") -> str:
+    """Return a filter-func argument without surrounding whitespace and quotes.
+
+    sphinx-needs splits the argument string on ``,`` and passes the parts
+    verbatim, so ``f("a", "b")`` arrives as ``'"a"'`` and ``' "b"'``.
+    """
+    return str(kwargs.get(name, default)).strip().strip("\"'")
+
+
+def _version_arg(kwargs: dict[str, Any]) -> str | None:
+    """Return ``arg3`` as a version, with ``_`` turned back into ``.``.
+
+    sphinx-needs resolves the module with ``rsplit(".", 1)`` over the whole
+    call, so a version such as ``v1.0`` must be passed as ``v1_0``.
+    """
+    return _arg(kwargs, "arg3").replace("_", ".") or None
 
 
 def _matches_source_selector(need: NeedItem, selector: str) -> bool:
@@ -247,3 +274,69 @@ def get_non_overlapping_link_metrics(
     only_code = with_code - fully
 
     results.extend([remaining, only_test, only_code, fully])
+
+
+def get_component_status_metrics(
+    needs: list[Any], results: list[int], **kwargs: Any
+) -> None:
+    """Get status distribution for a component's requirements or architecture.
+
+    Arguments are passed via ``arg1`` .. ``arg4``:
+        - ``arg1`` – component_id: The component ID (e.g., "comp__my_component")
+        - ``arg2`` – category: Either "requirements" or "architecture"
+        - ``arg3`` – version: Optional, see :func:`_version_arg`
+        - ``arg4`` – safety: Optional safety class, e.g. ``ASIL_B`` or ``QM``
+
+    Returns ``[valid, valid_inspected, invalid]`` without a safety class,
+    ``[valid_inspected, valid, invalid]`` for an ASIL class and
+    ``[valid, invalid]`` for ``QM``, where ``valid_inspected`` counts as
+    ``valid`` because QM Needs are not formally inspected.
+    """
+    results.clear()
+    safety = _arg(kwargs, "arg4") or None
+    status = count_status_filtered(
+        needs,
+        _arg(kwargs, "arg1"),
+        _arg(kwargs, "arg2", "requirements"),
+        _version_arg(kwargs),
+        req_in_report_version,
+        safety,
+    )
+
+    if safety == "QM":
+        results.extend([status["valid"] + status["valid_inspected"], status["invalid"]])
+    elif safety:
+        results.extend([status["valid_inspected"], status["valid"], status["invalid"]])
+    else:
+        results.extend([status["valid"], status["valid_inspected"], status["invalid"]])
+
+
+def get_component_coverage_metrics(
+    needs: list[Any], results: list[int], **kwargs: Any
+) -> None:
+    """Get verification coverage for a component's requirements or architecture.
+
+    Uses the verification coverage axis (fully_verifies_back / partially_verifies_back),
+    not the link coverage axis (testlink / source_code_link).
+
+    Arguments are the same as for :func:`get_component_status_metrics`.
+
+    Returns [fully_covered, partially_covered, not_covered].
+    """
+    results.clear()
+    coverage = count_coverage_filtered(
+        needs,
+        _arg(kwargs, "arg1"),
+        _arg(kwargs, "arg2", "requirements"),
+        _version_arg(kwargs),
+        req_in_report_version,
+        _arg(kwargs, "arg4") or None,
+    )
+
+    results.extend(
+        [
+            coverage["fully_covered"],
+            coverage["partially_covered"],
+            coverage["not_covered"],
+        ]
+    )

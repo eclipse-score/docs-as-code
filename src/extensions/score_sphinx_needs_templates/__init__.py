@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+from collections.abc import Mapping
 from pathlib import Path
 
 from sphinx.application import Sphinx
@@ -18,6 +19,8 @@ from sphinx_needs.data import SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
 from src.helper_lib import config_setdefault
+
+from . import report_pie
 
 _build_environment: BuildEnvironment | None = None
 
@@ -37,7 +40,7 @@ def _base_need_id(need_id: str) -> str:
     return need_id.split("[", 1)[0]
 
 
-def _find_need(needs: dict[str, NeedItem], need_id: str) -> NeedItem | None:
+def _find_need(needs: Mapping[str, NeedItem], need_id: str) -> NeedItem | None:
     """Find a Need by its address, tolerating version-qualified collection keys."""
     base_id = _base_need_id(need_id)
     for candidate_id in (need_id, base_id):
@@ -53,14 +56,22 @@ def _find_need(needs: dict[str, NeedItem], need_id: str) -> NeedItem | None:
     return None
 
 
-def _get_available_needs() -> dict[str, NeedItem]:
+def _get_available_needs() -> Mapping[str, NeedItem]:
     """Return the current Needs, including temporarily removed Needs."""
     if _build_environment is None:
         # The render helpers are registered before ``builder-inited`` captures
         # the environment. There is no Need collection to query before then.
         return {}
 
-    needs = SphinxNeedsData(_build_environment).get_needs_mutable()
+    needs_data = SphinxNeedsData(_build_environment)
+    # ``get_needs_mutable()`` raises once the Needs are frozen, which is the
+    # case in the write phase (e.g. ``doctree-resolved`` handlers). Calling
+    # ``get_needs_view()`` earlier would freeze them prematurely.
+    needs: Mapping[str, NeedItem] = (
+        needs_data.get_needs_view()
+        if needs_data.needs_is_post_processed
+        else needs_data.get_needs_mutable()
+    )
     if _temporarily_removed_needs:
         # ``env.clear_doc()`` removes the Needs belonging to the page being
         # reread. Preserve the live collection and overlay the saved entries
@@ -97,7 +108,7 @@ class _LinkedNeeds:
 
     @staticmethod
     def _resolve_backlinks(
-        needs: dict[str, NeedItem],
+        needs: Mapping[str, NeedItem],
         source: NeedItem | None,
         need_id: str,
         link_type: str,
@@ -178,12 +189,14 @@ class _NeedsOfType:
 _needs_of_type_callable = _NeedsOfType()
 
 
-def _parse_version(value: str) -> tuple[int, int, int]:
+def parse_version(value: str) -> tuple[int, int, int]:
     """Parse a ``valid_from``/``report_version``-style milestone string.
 
     Accepts ``vMAJOR.MINOR`` or ``vMAJOR.MINOR.PATCH`` (e.g. ``v0.8`` or
     ``v1.0.1``), matching the format enforced by the metamodel for
     ``valid_from``/``valid_until``/``report_version``.
+
+    Public API for use by other extensions that need version comparison.
     """
     numbers = [int(part) for part in value.strip().lstrip("vV").split(".")]
     while len(numbers) < 3:
@@ -191,7 +204,11 @@ def _parse_version(value: str) -> tuple[int, int, int]:
     return (numbers[0], numbers[1], numbers[2])
 
 
-class _RequirementInReportVersion:
+# Keep private alias for backwards compatibility with internal code
+_parse_version = parse_version
+
+
+class RequirementInReportVersion:
     """Decide whether a requirement Need belongs to a ``report_version`` scope.
 
     ``feat_req`` (and ``stkh_req``) carry ``valid_from`` directly. ``comp_req``
@@ -205,6 +222,8 @@ class _RequirementInReportVersion:
     Calling with an empty/``None`` ``report_version`` always returns ``True``,
     which keeps unscoped reports (e.g. "latest") showing every requirement as
     before.
+
+    Public API for use by other extensions that need version-scoped filtering.
     """
 
     def __call__(self, need: NeedItem, report_version: str | None) -> bool:
@@ -222,10 +241,14 @@ class _RequirementInReportVersion:
         return any(self(feat_req, report_version) for feat_req in linked_feat_reqs)
 
 
-_req_in_report_version_callable = _RequirementInReportVersion()
+# Public instance for direct import
+req_in_report_version = RequirementInReportVersion()
+
+# Private alias for backwards compatibility with internal code
+_req_in_report_version_callable = req_in_report_version
 
 
-class _AnyRequirementInReportVersion:
+class AnyRequirementInReportVersion:
     """Decide whether a Feature/Component has any requirement in scope.
 
     Used to drop an entire Feature/Component section from the report when
@@ -233,6 +256,8 @@ class _AnyRequirementInReportVersion:
     rendering an empty section. An empty/``None`` ``report_version`` always
     returns ``True`` (unscoped reports keep every Feature/Component, even
     ones without any requirement at all, as before).
+
+    Public API for use by other extensions that need version-scoped filtering.
     """
 
     def __call__(self, reqs: list[NeedItem], report_version: str | None) -> bool:
@@ -241,7 +266,11 @@ class _AnyRequirementInReportVersion:
         return any(_req_in_report_version_callable(req, report_version) for req in reqs)
 
 
-_any_req_in_report_version_callable = _AnyRequirementInReportVersion()
+# Public instance for direct import
+any_req_in_report_version = AnyRequirementInReportVersion()
+
+# Private alias for backwards compatibility with Jinja context
+_any_req_in_report_version_callable = any_req_in_report_version
 
 
 class _ReferencedIds:
@@ -288,6 +317,216 @@ class _SplitByReference:
 
 
 _split_by_reference_callable = _SplitByReference()
+
+
+class _IdFilterList:
+    """Render Need IDs as the quoted ``[...]`` literal of an ``id in`` filter."""
+
+    def __call__(self, ids: list[str]) -> str:
+        return "[" + ", ".join(f'"{need_id}"' for need_id in ids) + "]"
+
+
+_id_filter_list_callable = _IdFilterList()
+
+
+class _WorkproductRows:
+    """Render work-product rows for a six-space indented ``list-table``.
+
+    Each row links the work product, its kind, the realising document and its
+    status. Both document cells are needtables over the same filter, differing
+    only in ``:columns:``, so a missing document renders as an empty cell.
+
+    A document's ``belongs_to`` link decides which owner it belongs to. Only a
+    document without that link is matched by ``slug_norm`` in its ID.
+    """
+
+    def __call__(
+        self, owner_id: str, slug_norm: str, workproducts: list[list[str]]
+    ) -> str:
+        rows: list[str] = []
+        for wp_id, kind in workproducts:
+            doc_filter = (
+                f'type == "document" and "{wp_id}" in realizes'
+                f' and ("{owner_id}" in belongs_to or (not belongs_to'
+                f' and "{slug_norm}" in id.replace("_", "").lower()))'
+            )
+            rows.append(
+                "\n".join(
+                    [
+                        f"      * - :need:`{wp_id}`",
+                        f"        - {kind}",
+                        "        - .. needtable::",
+                        f"             :filter: {doc_filter}",
+                        "             :columns: id",
+                        "             :style: table",
+                        "        - .. needtable::",
+                        f"             :filter: {doc_filter}",
+                        "             :columns: status",
+                        "             :style: table",
+                    ]
+                )
+            )
+        return "".join(f"\n{row}" for row in rows) + "\n"
+
+
+_workproduct_rows_callable = _WorkproductRows()
+
+
+class _SafetyPieRow:
+    """Render one row of pies restricted to a single safety class.
+
+    Shared by the module and platform verification reports, so that QM and
+    ASIL figures are never mixed in one chart. QM Needs are not formally
+    inspected, so there ``valid`` already is the green "done" slice rather
+    than the yellow "not inspected yet" one; a QM Need that is nevertheless
+    ``valid_inspected`` counts as ``valid``, as in the metamodel graph checks.
+
+    ``with_reference`` adds a third, reference-coverage pie; ``referenced`` and
+    ``missing`` must already be partitioned over this safety class alone. The
+    raster stays at three columns either way, so that a two-pie row renders
+    its charts at exactly the same size as a three-pie one.
+
+    ``count`` decides between pies and placeholders only; it is deliberately
+    not shown, because it is resolved through the Need graph while the pies
+    count through Sphinx-Needs filters, and the two can disagree on links
+    carrying a ``[version==N]`` selector.
+
+    With ``component`` and ``category`` the status and coverage pies are
+    counted by the shared ``score_metrics`` filter functions instead of the
+    inline ``base`` filters; ``version`` then scopes the requirements.
+
+    This is a render helper instead of a Jinja macro because the MiniJinja
+    environment has no template loader, so macros cannot be shared between
+    templates.
+    """
+
+    def __call__(
+        self,
+        title: str,
+        subject: str,
+        base: str,
+        safety: str,
+        safety_label: str,
+        count: int,
+        with_reference: bool = False,
+        referenced: list[str] | None = None,
+        missing: list[str] | None = None,
+        component: str | None = None,
+        category: str | None = None,
+        version: str | None = None,
+    ) -> str:
+        scope = f'{base} and safety == "{safety}"'
+        # (slice label, status condition) per pie slice; green "done" comes first.
+        statuses = (
+            [
+                ("valid", '(status == "valid" or status == "valid_inspected")'),
+                ("invalid", 'status == "invalid"'),
+            ]
+            if safety == "QM"
+            else [
+                (state, f'status == "{state}"')
+                for state in ("valid_inspected", "valid", "invalid")
+            ]
+        )
+        status_colors = (
+            "#37a12d, #ca2828" if safety == "QM" else "#37a12d, #f5c518, #ca2828"
+        )
+        # docutils normalises ``:class:`` values, so avoid underscores in them.
+        safety_css = safety.lower().replace("_", "-")
+        chart_prefix = f"{title} {subject}".strip()
+
+        lines = [
+            "",
+            f".. rubric:: {safety_label} — {subject}",
+            f"   :class: safety-class-heading safety-{safety_css}",
+            "",
+        ]
+        if count == 0:
+            lines.extend(
+                [
+                    ".. raw:: html",
+                    "",
+                    f'   <div class="empty-pie">no {safety_label} {subject.lower()}</div>',
+                ]
+            )
+            return "\n".join(lines) + "\n"
+
+        lines.extend(
+            [
+                ".. grid:: 1 2 3 3",
+                "   :gutter: 2",
+                "   :class-row: score-pie-row",
+            ]
+        )
+
+        def grid_item(name: str, pie: list[str]) -> None:
+            # The continuation line keeps the chart title on two narrow lines.
+            lines.extend(
+                [
+                    "",
+                    "   .. grid-item::",
+                    "",
+                    f"      .. score-report-pie:: {chart_prefix}",
+                    f"         {name} ({safety_label})",
+                ]
+            )
+            lines.extend(f"         {line}".rstrip() for line in pie)
+
+        def counted_by(func: str) -> list[str]:
+            # sphinx-needs splits the call on its last ".", so encode the version.
+            encoded_version = (version or "").replace(".", "_")
+            return [
+                f":filter-func: score_metrics.sphinx_filters.{func}"
+                f"({component}, {category}, {encoded_version}, {safety})"
+            ]
+
+        grid_item(
+            "Status",
+            [
+                f":labels: {', '.join(label for label, _ in statuses)}",
+                f":colors: {status_colors}",
+                *(
+                    counted_by("get_component_status_metrics")
+                    if component
+                    else [
+                        "",
+                        *(f"{scope} and {condition}" for _, condition in statuses),
+                    ]
+                ),
+            ],
+        )
+        grid_item(
+            "Test Coverage",
+            [
+                ":labels: fully covered, partially covered, not covered",
+                ":colors: #37a12d, #f0a500, #ca2828",
+                *(
+                    counted_by("get_component_coverage_metrics")
+                    if component
+                    else [
+                        "",
+                        f"{scope} and fully_verifies_back",
+                        f"{scope} and partially_verifies_back and not fully_verifies_back",
+                        f"{scope} and not fully_verifies_back and not partially_verifies_back",
+                    ]
+                ),
+            ],
+        )
+        if with_reference:
+            grid_item(
+                "Reference Coverage",
+                [
+                    ":labels: referenced by lower, not referenced",
+                    ":colors: #37a12d, #ca2828",
+                    "",
+                    f"id in {_id_filter_list_callable(referenced or [])}",
+                    f"id in {_id_filter_list_callable(missing or [])}",
+                ],
+            )
+        return "\n".join(lines) + "\n"
+
+
+_safety_pie_row_callable = _SafetyPieRow()
 
 
 def _post_templates_requiring_reread(app: Sphinx) -> set[str]:
@@ -386,6 +625,16 @@ def setup(app: Sphinx) -> dict[str, object]:
     app.config.needs_render_context.setdefault(
         "split_by_reference", _split_by_reference_callable
     )
+    app.config.needs_render_context.setdefault(
+        "id_filter_list", _id_filter_list_callable
+    )
+    app.config.needs_render_context.setdefault(
+        "workproduct_rows", _workproduct_rows_callable
+    )
+    app.config.needs_render_context.setdefault(
+        "safety_pie_row", _safety_pie_row_callable
+    )
+    report_pie.setup(app)
     app.connect("builder-inited", _capture_build_environment)
     # Run after the source-code linker has injected generated testcase Needs and
     # their verification backlinks (priority 525), so report templates can

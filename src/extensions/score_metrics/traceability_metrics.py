@@ -28,6 +28,13 @@ from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsView, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
+# Import shared verification metrics helpers
+from src.helper_lib.verification_metrics import (
+    count_coverage_filtered,
+    count_status_filtered,
+    is_need_in_component,
+)
+
 CALCULATED_METRICS: dict[str, Any] = {}
 
 
@@ -119,6 +126,115 @@ def calculate_test_metrics(
     }
 
 
+def calculate_status_and_coverage_metrics(
+    needs_list: list[NeedItem],
+) -> dict[str, dict[str, int]]:
+    """Calculate status distribution and test coverage for a list of needs.
+
+    Version scoping is done by the callers via ``req_in_report_version``.
+
+    Returns a dict with:
+    - status: {valid: int, valid_inspected: int, invalid: int}
+    - coverage: {fully_covered: int, partially_covered: int, not_covered: int}
+    """
+    status_counts = {"valid": 0, "valid_inspected": 0, "invalid": 0}
+    coverage_counts = {"fully_covered": 0, "partially_covered": 0, "not_covered": 0}
+
+    for need in needs_list:
+        # Status distribution
+        status = str(need.get("status", ""))
+        if status in status_counts:
+            status_counts[status] += 1
+
+        # Test coverage (based on verifies_back links)
+        has_fully = bool(need.get("fully_verifies_back"))
+        has_partially = bool(need.get("partially_verifies_back"))
+
+        if has_fully:
+            coverage_counts["fully_covered"] += 1
+        elif has_partially:
+            coverage_counts["partially_covered"] += 1
+        else:
+            coverage_counts["not_covered"] += 1
+
+    return {"status": status_counts, "coverage": coverage_counts}
+
+
+def calculate_verification_metrics(  # noqa: C901
+    all_needs: NeedsView, report_version: str | None = None
+) -> dict[str, dict[str, dict[str, dict[str, int]]]]:
+    """Calculate per-component verification metrics for verification reports.
+
+    Args:
+        all_needs: All needs view from Sphinx build.
+        report_version: Optional version to filter requirements by valid_from.
+            Note: Architecture elements are NOT version-filtered as they have
+            no valid_from or derived_from attributes.
+
+    Looks for needs that have belongs_to links to components and calculates
+    status/coverage metrics for requirements and architecture elements.
+    """
+    verification_metrics: dict[str, dict[str, dict[str, dict[str, int]]]] = {}
+
+    # Find all components by looking at Needs with type "comp"
+    component_ids: set[str] = {
+        n["id"] for n in all_needs.values() if n.get("type") == "comp"
+    }
+
+    # Simple version filter function for use with shared helpers
+    def version_filter_func(need: NeedItem, version: str) -> bool:
+        """Simple passthrough to req_in_report_version for shared helpers."""
+        from score_sphinx_needs_templates import req_in_report_version
+
+        return req_in_report_version(need, version)
+
+    # Calculate metrics per component
+    for component_id in component_ids:
+        # Requirements (comp_req with satisfied_by pointing to this component)
+        # Version filtering is applied to requirements
+        reqs = [
+            n
+            for n in all_needs.values()
+            if is_need_in_component(n, component_id, "requirements")
+        ]
+
+        if report_version:
+            req_metrics = {
+                "status": count_status_filtered(
+                    reqs,
+                    component_id,
+                    "requirements",
+                    report_version,
+                    version_filter_func,
+                ),
+                "coverage": count_coverage_filtered(
+                    reqs,
+                    component_id,
+                    "requirements",
+                    report_version,
+                    version_filter_func,
+                ),
+            }
+        else:
+            req_metrics = calculate_status_and_coverage_metrics(reqs)
+
+        # Architecture elements (comp_arc_sta, comp_arc_dyn with belongs_to this component)
+        # Version filtering is NOT applied to architecture elements
+        arch = [
+            n
+            for n in all_needs.values()
+            if is_need_in_component(n, component_id, "architecture")
+        ]
+        arch_metrics = calculate_status_and_coverage_metrics(arch)
+
+        verification_metrics[component_id] = {
+            "requirements": req_metrics,
+            "architecture": arch_metrics,
+        }
+
+    return verification_metrics
+
+
 def calculate_full_need_metrics(app: Sphinx, include_external: bool):
     """
     Calculate all tracked metrics for requirements and tests.
@@ -139,6 +255,9 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
     filter_reqs = [t.strip() for t in raw.split(",") if t.strip()]
     if not filter_reqs:
         filter_reqs = get_need_types_by_tags(metamodel.needs_types, {"requirement"})
+    external_feature_ids = set(
+        getattr(app.config, "score_metrics_external_feature_ids", [])
+    )
     #            ──────────────────[ Calculate Test Metrics ]──────────────────
 
     test_needs = list(all_needs.filter_types(["testcase"]).values())
@@ -162,10 +281,21 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
             needs_of_req_type = all_needs.filter_types([req_type]).filter_is_external(
                 False
             )
+        selected_requirements = list(needs_of_req_type.values())
+        if include_external and external_feature_ids:
+            selected_requirements = [
+                need
+                for need in selected_requirements
+                if not need.get("is_external")
+                or (
+                    req_type == "feat_req"
+                    and external_feature_ids.intersection(need.get("satisfied_by", []))
+                )
+            ]
         # We do not care if there is no requirements of this type.
-        if not list(needs_of_req_type.values()):
+        if not selected_requirements:
             continue
-        req_metrics = calculate_requirement_metrics(list(needs_of_req_type.values()))
+        req_metrics = calculate_requirement_metrics(selected_requirements)
         overall_metrics["total"] += req_metrics["total"]
         overall_metrics["with_code_link"] += req_metrics["with_code_link"]
         overall_metrics["with_test_link"] += req_metrics["with_test_link"]
@@ -188,6 +318,7 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
         "overall_metrics": overall_metrics,
         "metrics_by_type": metrics_by_type,
         "tests": test_metrics,
+        "verification_metrics": calculate_verification_metrics(all_needs),
     }
     # Save the metrics in a Global Variable to enable access from other parts.
     # Not a great solution but it is needed, as needpie filter functions for example

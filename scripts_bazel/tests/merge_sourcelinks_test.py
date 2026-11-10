@@ -19,6 +19,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 
 import scripts_bazel.merge_sourcelinks
 
@@ -122,9 +123,15 @@ def create_external_repo_json_files(tmp_path: Path) -> tuple[Path, Path, Path]:
     return file1, file2, output_file
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_merge_sourcelinks_basic(
     create_local_json_files: tuple[Path, Path, Path], monkeypatch: pytest.MonkeyPatch
 ):
+    """Test merge sourcelinks basic."""
     file1, file2, output_file = create_local_json_files
 
     test_args: list[Path | str] = [
@@ -159,9 +166,15 @@ def test_merge_sourcelinks_basic(
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_merge_sourcelinks_deduplicates_identical_references(
     create_local_json_files: tuple[Path, Path, Path], monkeypatch: pytest.MonkeyPatch
 ):
+    """Test merge sourcelinks deduplicates identical references."""
     file1, _, output_file = create_local_json_files
 
     monkeypatch.setattr(
@@ -191,9 +204,15 @@ def test_merge_sourcelinks_deduplicates_identical_references(
     ]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_merge_sourcelinks_with_one_empty_file(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
+    """Test merge sourcelinks with one empty file."""
     file1 = tmp_path / "links1.json"
     file1_text: list[dict[str, str | int]] = [
         {"repo_name": "local_repo", "hash": "", "url": ""},
@@ -248,9 +267,15 @@ def test_merge_sourcelinks_with_one_empty_file(
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_merge_sourcelinks_wrong_schema(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
 ):
+    """Test merge sourcelinks wrong schema."""
     file1 = tmp_path / "links1.json"
     file1_text: list[dict[str, str | int]] = [
         {
@@ -303,11 +328,17 @@ VALID_KNOWN_GOOD = {
 }
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_merge_sourcelinks_with_known_good(
     tmp_path: Path,
     create_external_repo_json_files: tuple[Path, Path, Path],
     monkeypatch: pytest.MonkeyPatch,
 ):
+    """Test merge sourcelinks with known good."""
     file1, file2, output_file = create_external_repo_json_files
     known_good_file = tmp_path / "known_good.json"
     known_good_file.write_text(json.dumps(VALID_KNOWN_GOOD))
@@ -355,10 +386,16 @@ def test_merge_sourcelinks_with_known_good(
     assert expected_dict2 in data
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_merge_sourcelinks_without_known_good_preserves_external_metadata(
     create_external_repo_json_files: tuple[Path, Path, Path],
     monkeypatch: pytest.MonkeyPatch,
 ):
+    """Test merge sourcelinks without known good preserves external metadata."""
     file1, file2, output_file = create_external_repo_json_files
     test_args: list[Path | str] = [
         _MY_PATH.parent / "merge_sourcelinks.py",

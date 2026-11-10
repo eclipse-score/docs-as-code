@@ -169,6 +169,24 @@ Minimal example (root ``BUILD``)
   for extension processing.
   When ``metamodel`` is omitted the default metamodel is used unchanged.
 
+Coverage input
+~~~~~~~~~~~~~~
+
+The CLI used by ``bazel run :docs`` and ``:live_preview``
+reads ``coverage-report/coverage_report.dat`` relative to the workspace root.
+The documentation workflow can download this artifact with its optional
+``coverage-report-artifact`` input. The CLI calculates coverage per primary Need
+from the bundles' code-file lists and writes
+``<build-output>/coverage_summary.json``.
+This generated input participates in the local documentation cache check and
+remains available when stale output is removed.
+
+When the report is absent, selected files have missing coverage. Measurements
+are raw, without applied justifications. A compact display-only attribute is
+added to the matching primary Need's metadata area, for example
+``coverage: lines 67% · branches 100% · files 2/6``. ``needs_json``,
+``docs_check`` and ``docs_link_check`` retain their existing inputs.
+
 .. _docs_bundle_macro:
 
 Bazel macro: ``docs_bundle``

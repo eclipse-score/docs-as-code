@@ -17,13 +17,13 @@ on:
 
 jobs:
   check-links:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       should_create_issue: ${{ steps.detect.outputs.issue_needed }}
     steps:
       - name: 🛡️ Harden Runner
         if: github.repository_owner == 'eclipse-score'
-        uses: step-security/harden-runner@v2.21.1
+        uses: step-security/harden-runner@v2.22.3
         with:
           egress-policy: audit
 
@@ -67,7 +67,7 @@ jobs:
   create-issue:
     needs: check-links
     if: needs.check-links.outputs.should_create_issue == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Download issue body artifact
         uses: actions/download-artifact@v8

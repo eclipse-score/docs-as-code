@@ -25,6 +25,10 @@ from src.extensions.score_metamodel.checks.tool_qualification import (
 )
 from src.extensions.score_metamodel.tests import fake_check_logger, need
 
+# The report keeps need()'s default location; the other needs get their own
+# lines, so location assertions catch findings reported on the wrong need.
+MALFUNCTION_LOCATION = "docs/docname.rst:4"
+
 
 def _run_local(malfunction: NeedItem, logger: Any = None) -> Any:
     logger = logger or fake_check_logger()
@@ -56,10 +60,12 @@ def _low_report(
         id="tool_usecase__test_report__context",
         type="tool_usecase",
         belongs_to=["doc_tool__test_report"],
+        lineno=2,
     )
     requirement = need(
         id="tool_req__test_report__requirement",
         type="tool_req",
+        lineno=3,
     )
     malfunction = need(
         id="potential_tool_malfunction__test_report__failure",
@@ -68,6 +74,7 @@ def _low_report(
         detection_sufficient="NO",
         parent_needs=["tool_usecase__test_report__context"],
         violates=violated or ["tool_req__test_report__requirement"],
+        lineno=4,
     )
     needs = [report, usecase, requirement, malfunction]
     if testcase is not None:
@@ -206,7 +213,9 @@ def test_low_malfunction_with_only_upstream_requirement_is_invalid():
 
     check_tool_qualification_workflow(MagicMock(), all_needs, logger)
 
-    logger.assert_warning("must violate at least one `tool_req`")
+    logger.assert_warning(
+        "must violate at least one `tool_req`", location=MALFUNCTION_LOCATION
+    )
 
 
 def test_mixed_use_cases_derive_low_from_one_low_malfunction():
@@ -266,10 +275,12 @@ def test_qualified_low_report_requires_evidence_for_each_requirement():
         type="testcase",
         result="passed",
         fully_verifies=["tool_req__test_report__requirement"],
+        lineno=5,
     )
     second_requirement = need(
         id="tool_req__test_report__second_requirement",
         type="tool_req",
+        lineno=6,
     )
     second_malfunction = need(
         id="potential_tool_malfunction__test_report__second_failure",
@@ -278,6 +289,7 @@ def test_qualified_low_report_requires_evidence_for_each_requirement():
         detection_sufficient="NO",
         parent_needs=["tool_usecase__test_report__context"],
         violates=[second_requirement["id"]],
+        lineno=7,
     )
     all_needs = _low_report(status="qualified", testcase=testcase)
     all_needs.values.return_value.extend([second_requirement, second_malfunction])
@@ -295,6 +307,7 @@ def test_partial_evidence_alone_does_not_complete_low_qualification():
         type="testcase",
         result="passed",
         partially_verifies=["tool_req__test_report__requirement"],
+        lineno=5,
     )
     all_needs = _low_report(status="qualified", testcase=testcase)
     logger = fake_check_logger()
