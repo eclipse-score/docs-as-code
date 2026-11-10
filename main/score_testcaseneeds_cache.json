@@ -2856,7 +2856,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_workproduct_rows_filter_by_slug_and_work_product",
+    "name": "test_needs_templates__test_workproduct_rows_filter_by_owner_then_slug",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "317",
     "result": "passed",
@@ -2870,9 +2870,23 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_needs_templates__test_workproduct_rows_filter_prefers_belongs_to_over_id",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
+    "line": "336",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_needs_templates__test_tool_qualification_matrix_groups_shared_requirements",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "328",
+    "line": "356",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2886,7 +2900,7 @@
   {
     "name": "test_needs_templates__test_platform_report_gap_table_is_report_version_scoped",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "477",
+    "line": "505",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
