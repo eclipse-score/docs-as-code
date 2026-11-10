@@ -473,7 +473,6 @@ needs_types:
       status: ^(valid|invalid|valid_inspected)$
     optional_links:
       # req-Id: tool_req__arch_linkage_safety
-      includes: logic_arc_int, logic_arc_int_op
       uses: logic_arc_int, logic_arc_int_op
       provides: logic_arc_int, logic_arc_int_op # preparation for linking change according to DR-005
     tags:

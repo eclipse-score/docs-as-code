@@ -14,7 +14,7 @@
 
 .. test_metadata:: Architectural link correlations
    :id: test_metadata__arch_linkage_safety
-   :fully_verifies_list: tool_req__arch_linkage_safety[version==2]
+   :fully_verifies_list: tool_req__arch_linkage_safety[version==3]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 

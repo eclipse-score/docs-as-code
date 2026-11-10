@@ -753,7 +753,7 @@ but for ease of traceability this is a separate one.
 .. tool_req:: Correlations of the architectural building blocks
   :id: tool_req__arch_linkage_safety
   :implemented: YES
-  :version: 2
+  :version: 3
   :satisfies: gd_req__arch_linkage_safety[version==1], gd_req__arch_build_blocks_corr[version==3]
   :parent_covered: YES
 
