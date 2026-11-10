@@ -14,7 +14,10 @@
           "docname": "embedded/index",
           "external_css": "external_link",
           "id": "gd_req__embedded",
-          "lineno": 18,
+          "lineno": 38,
+          "satisfies": [
+            "wf__test_embedded"
+          ],
           "section_name": "Embedded documentation",
           "sections": [
             "Embedded documentation"
@@ -22,17 +25,17 @@
           "title": "Embedded requirement",
           "type": "gd_req",
           "type_name": "Process Requirements",
-          "version": 1,
-          "satisfies": [
-            "wf__test_embedded"
-          ]
+          "version": 1
         },
         "gd_req__producer_root": {
           "content": "The producer's regular documentation is part of its public docs bundle.",
           "docname": "index",
           "external_css": "external_link",
           "id": "gd_req__producer_root",
-          "lineno": 18,
+          "lineno": 38,
+          "satisfies": [
+            "wf__test_producer_root"
+          ],
           "section_name": "Producer documentation",
           "sections": [
             "Producer documentation"
@@ -40,51 +43,26 @@
           "title": "Producer root requirement",
           "type": "gd_req",
           "type_name": "Process Requirements",
-          "version": 1,
-          "satisfies": [
-            "wf__test_producer_root"
-          ]
-        },
-        "wp__test_producer_root": {
-          "docname": "index",
-          "external_css": "external_link",
-          "id": "wp__test_producer_root",
-          "input_back": [
-            "wf__test_producer_root"
-          ],
-          "lineno": 20,
-          "output_back": [
-            "wf__test_producer_root"
-          ],
-          "section_name": "Producer documentation",
-          "sections": [
-            "Producer documentation"
-          ],
-          "status": "valid",
-          "title": "Test workproduct",
-          "type": "workproduct",
-          "type_name": "Workproduct",
           "version": 1
         },
-        "wp__test_embedded": {
-          "docname": "embedded/index",
-          "external_css": "external_link",
-          "id": "wp__test_embedded",
-          "input_back": [
+        "rl__test_embedded": {
+          "approved_by_back": [
             "wf__test_embedded"
           ],
-          "lineno": 20,
-          "output_back": [
+          "docname": "embedded/index",
+          "external_css": "external_link",
+          "id": "rl__test_embedded",
+          "lineno": 25,
+          "responsible_back": [
             "wf__test_embedded"
           ],
           "section_name": "Embedded documentation",
           "sections": [
             "Embedded documentation"
           ],
-          "status": "valid",
-          "title": "Test workproduct",
-          "type": "workproduct",
-          "type_name": "Workproduct",
+          "title": "Test role",
+          "type": "role",
+          "type_name": "Role",
           "version": 1
         },
         "rl__test_producer_root": {
@@ -107,24 +85,34 @@
           "type_name": "Role",
           "version": 1
         },
-        "rl__test_embedded": {
-          "approved_by_back": [
-            "wf__test_embedded"
+        "wf__test_embedded": {
+          "approved_by": [
+            "rl__test_embedded"
           ],
           "docname": "embedded/index",
           "external_css": "external_link",
-          "id": "rl__test_embedded",
-          "lineno": 25,
-          "responsible_back": [
-            "wf__test_embedded"
+          "id": "wf__test_embedded",
+          "input": [
+            "wp__test_embedded"
+          ],
+          "lineno": 29,
+          "output": [
+            "wp__test_embedded"
+          ],
+          "responsible": [
+            "rl__test_embedded"
+          ],
+          "satisfies_back": [
+            "gd_req__embedded"
           ],
           "section_name": "Embedded documentation",
           "sections": [
             "Embedded documentation"
           ],
-          "title": "Test role",
-          "type": "role",
-          "type_name": "Role",
+          "status": "valid",
+          "title": "Test workflow",
+          "type": "workflow",
+          "type_name": "Workflow",
           "version": 1
         },
         "wf__test_producer_root": {
@@ -157,38 +145,50 @@
           "type_name": "Workflow",
           "version": 1
         },
-        "wf__test_embedded": {
-          "approved_by": [
-            "rl__test_embedded"
-          ],
+        "wp__test_embedded": {
           "docname": "embedded/index",
           "external_css": "external_link",
-          "id": "wf__test_embedded",
-          "input": [
-            "wp__test_embedded"
+          "id": "wp__test_embedded",
+          "input_back": [
+            "wf__test_embedded"
           ],
-          "lineno": 29,
-          "output": [
-            "wp__test_embedded"
-          ],
-          "responsible": [
-            "rl__test_embedded"
-          ],
-          "satisfies_back": [
-            "gd_req__embedded"
+          "lineno": 20,
+          "output_back": [
+            "wf__test_embedded"
           ],
           "section_name": "Embedded documentation",
           "sections": [
             "Embedded documentation"
           ],
           "status": "valid",
-          "title": "Test workflow",
-          "type": "workflow",
-          "type_name": "Workflow",
+          "title": "Test workproduct",
+          "type": "workproduct",
+          "type_name": "Workproduct",
+          "version": 1
+        },
+        "wp__test_producer_root": {
+          "docname": "index",
+          "external_css": "external_link",
+          "id": "wp__test_producer_root",
+          "input_back": [
+            "wf__test_producer_root"
+          ],
+          "lineno": 20,
+          "output_back": [
+            "wf__test_producer_root"
+          ],
+          "section_name": "Producer documentation",
+          "sections": [
+            "Producer documentation"
+          ],
+          "status": "valid",
+          "title": "Test workproduct",
+          "type": "workproduct",
+          "type_name": "Workproduct",
           "version": 1
         }
       },
-      "needs_amount": 2,
+      "needs_amount": 8,
       "needs_defaults_removed": true,
       "needs_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
