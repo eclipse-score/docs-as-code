@@ -25,27 +25,24 @@ else
   exit 1
 fi
 
-# Bazel may canonicalize repository names in runfiles. Translate the apparent
-# repo name through the root mapping when available, then try the direct name.
-mapping="${RUNFILES_MANIFEST_FILE:-$runfiles/MANIFEST}"
-for repo in plantuml_native_linux_amd64 plantuml_native_linux_arm64 plantuml_native_macos_arm64 plantuml_native_windows_amd64; do
-  canonical="$repo"
-  if [[ -f "$runfiles/_repo_mapping" ]]; then
-    mapped="$(awk -F, -v repo="$repo" '$1 == "" && $2 == repo { print $3; exit }' "$runfiles/_repo_mapping")"
-    [[ -z "$mapped" ]] || canonical="$mapped"
+# Find the artifact selected by Bazel. The main-repository mapping contains
+# only apparent-to-canonical external repo mappings; runfiles entries use the
+# canonical name such as +_repo_rules+plantuml_native_linux_amd64.
+for candidate in \
+  +_repo_rules+plantuml_native_linux_amd64/plantuml \
+  +_repo_rules+plantuml_native_linux_arm64/plantuml \
+  +_repo_rules+plantuml_native_macos_arm64/plantuml \
+  +_repo_rules+plantuml_native_windows_amd64/plantuml.exe; do
+  path="$runfiles/$candidate"
+  if [[ -x "$path" ]]; then
+    exec "$path" "$@"
   fi
-  for candidate in "$canonical/plantuml" "$canonical/plantuml.exe" "$repo/plantuml" "$repo/plantuml.exe"; do
-    path="$runfiles/$candidate"
-    if [[ -f "$path" ]]; then
-      exec "$path" "$@"
+  if [[ -n "${RUNFILES_MANIFEST_FILE:-}" ]]; then
+    resolved="$(awk -v key="$candidate" 'index($0, key " ") == 1 { print substr($0, length(key) + 2); exit }' "$RUNFILES_MANIFEST_FILE")"
+    if [[ -n "$resolved" && -x "$resolved" ]]; then
+      exec "$resolved" "$@"
     fi
-    if [[ -f "$mapping" ]]; then
-      resolved="$(awk -v key="$candidate" 'index($0, key " ") == 1 { print substr($0, length(key) + 2); exit }' "$mapping")"
-      if [[ -n "$resolved" && -f "$resolved" ]]; then
-        exec "$resolved" "$@"
-      fi
-    fi
-  done
+  fi
 done
 
 echo "Selected PlantUML binary was not found in runfiles" >&2
