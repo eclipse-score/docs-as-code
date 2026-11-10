@@ -27,17 +27,17 @@ load("//:docs.bzl", "docs")
 # The component package is physically below this module's ``docs`` source tree,
 # so the module's primary Sphinx walk must leave ownership to the child mount.
 docs(
-    project = "S-CORE Legacy Module",
-    project_url = "https://example.invalid/score-legacy-module",
-    source_dir = "docs",
-    test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
-    data = [
-        "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json_file",
-        "@score_process_description//:needs_json",
-    ],
     bundles = [{
         "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/legacy_module/docs/components/component:docs_bundle",
         "mount_at": "components/component",
         "attach_to": "components",
     }],
+    data = [
+        "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json_file",
+        "@score_process_description//:needs_json",
+    ],
+    project = "S-CORE Legacy Module",
+    project_url = "https://example.invalid/score-legacy-module",
+    source_dir = "docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
 )

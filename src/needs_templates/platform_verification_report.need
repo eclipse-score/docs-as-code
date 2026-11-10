@@ -214,8 +214,8 @@ Feature Overview
 {% for feature in report_features %}
 {% set feature_id = feature["id"] %}
 {% set feature_title = feature["title"] %}
-{# The feature Need supplies the work-product document selector and the
-   navigation anchor, the same way components do in module_verification_report. #}
+{# Work-product documents are matched by ``belongs_to``; the title slug only
+   matches documents without that link. It also gives the navigation anchor. #}
 {% set feature_slug_norm = feature_title|replace("_", "")|replace(" ", "")|lower %}
 {% set feature_anchor = feature_title|replace("_", "-")|replace(" ", "-")|lower %}
 
@@ -318,5 +318,5 @@ Presence of the feature-level inspection work products.
         - Kind
         - Realized by
         - Status
-{{ workproduct_rows(feature_slug_norm, feature_workproducts) }}
+{{ workproduct_rows(feature_id, feature_slug_norm, feature_workproducts) }}
 {% endfor %}

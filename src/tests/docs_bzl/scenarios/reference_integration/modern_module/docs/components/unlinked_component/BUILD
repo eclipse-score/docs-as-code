@@ -52,11 +52,11 @@ docs_bundle(
 # still covers the standalone Needs export.
 docs_bundle(
     name = "docs_bundle",
-    source_dir = ".",
     bundles = [{
         "bundle": ":generated_metamodel",
         "mount_at": "generated_metamodel",
     }],
+    source_dir = ".",
     visibility = ["//visibility:public"],
 )
 
@@ -66,9 +66,9 @@ cc_library(
     name = "implementation",
     srcs = ["implementation.cc"],
     hdrs = [":public_headers"],
+    visibility = ["//visibility:public"],
     # This dependency returns to the linked component's package subtree.
     deps = ["//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/detail:support"],
-    visibility = ["//visibility:public"],
 )
 
 filegroup(
@@ -82,6 +82,6 @@ filegroup(
 cc_library(
     name = "api",
     hdrs = [":public_headers"],
-    deps = [":implementation"],
     visibility = ["//visibility:public"],
+    deps = [":implementation"],
 )

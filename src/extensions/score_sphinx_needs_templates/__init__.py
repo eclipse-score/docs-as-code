@@ -335,14 +335,20 @@ class _WorkproductRows:
     Each row links the work product, its kind, the realising document and its
     status. Both document cells are needtables over the same filter, differing
     only in ``:columns:``, so a missing document renders as an empty cell.
+
+    A document's ``belongs_to`` link decides which owner it belongs to. Only a
+    document without that link is matched by ``slug_norm`` in its ID.
     """
 
-    def __call__(self, slug_norm: str, workproducts: list[list[str]]) -> str:
+    def __call__(
+        self, owner_id: str, slug_norm: str, workproducts: list[list[str]]
+    ) -> str:
         rows: list[str] = []
         for wp_id, kind in workproducts:
             doc_filter = (
-                f'type == "document" and "{slug_norm}" in id.replace("_", "").lower()'
-                f' and "{wp_id}" in realizes'
+                f'type == "document" and "{wp_id}" in realizes'
+                f' and ("{owner_id}" in belongs_to or (not belongs_to'
+                f' and "{slug_norm}" in id.replace("_", "").lower()))'
             )
             rows.append(
                 "\n".join(

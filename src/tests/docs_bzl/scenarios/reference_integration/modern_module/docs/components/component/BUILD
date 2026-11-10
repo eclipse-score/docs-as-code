@@ -72,12 +72,12 @@ docs_bundle(
     # The component Need is selected explicitly even though this page contains
     # feature, component, requirement, and tool Needs.
     name = "docs_bundle",
-    source_dir = ".",
     code_targets = [
         ":component_sources",
         ":implementation",
     ],
     primary_need_id = "comp__modern_component",
+    source_dir = ".",
     visibility = ["//visibility:public"],
 )
 
