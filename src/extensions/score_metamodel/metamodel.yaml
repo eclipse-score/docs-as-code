@@ -233,6 +233,9 @@ needs_types:
       approver: ^.*$
       reviewer: ^.*$
       report_version: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
+    # req-Id: tool_req__docs_doc_generic_optional
+    optional_links:
+      belongs_to: mod, comp, feat
     # req-Id: tool_req__docs_doc_generic_mandatory
     mandatory_links:
       realizes: workproduct
@@ -246,6 +249,8 @@ needs_types:
       status: ^(draft|evaluated|qualified|released|rejected)$
       # req-Id: tool_req__docs_tvr_security
       security_affected: "^(YES|NO)$"
+      # req-Id: tool_req__docs_tvr_version
+      tool_version: ^.+$
     optional_options:
       # These summary fields are rendered from the owned malfunction graph by
       # the structured TVR workflow. They are optional so process templates
@@ -257,9 +262,6 @@ needs_types:
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
-      # FIXME: temp optional for migration. Will be made mandatory in future releases.
-      # req-Id: tool_req__docs_tvr_version
-      tool_version: ^.*$
     optional_links:
       realizes: workproduct
     parts: 2
@@ -1327,4 +1329,14 @@ graph_checks:
       mitigated_by:
         safety == ASIL_B
     explanation: Valid safety analyses should link to at least one same-level or higher-safety requirement.
+    info_only: true
+
+  # req-Id: tool_req__arch_consistency_interf
+  tool_req__arch_consistency_interf:
+    needs:
+      include: logic_arc_int
+      condition: included_by != []
+    check_one:
+      implements_back: id != ""
+    explanation: A logical interface included by a feature must be implemented by at least one component.
     info_only: true

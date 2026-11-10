@@ -314,15 +314,43 @@ def test_id_filter_list_renders_quoted_literal() -> None:
     assert id_filter_list([]) == "[]"
 
 
-def test_workproduct_rows_filter_by_slug_and_work_product() -> None:
+def test_workproduct_rows_filter_by_owner_then_slug() -> None:
     workproduct_rows = vars(templates)["_WorkproductRows"]()
 
-    rows = workproduct_rows("mycomp", [["wp__dfa", "DFA"], ["wp__fmea", "FMEA"]])
+    rows = workproduct_rows(
+        "comp__my_comp", "mycomp", [["wp__dfa", "DFA"], ["wp__fmea", "FMEA"]]
+    )
 
     assert rows.count("      * - :need:`") == 2
     assert "        - DFA\n" in rows
-    assert rows.count('"mycomp" in id.replace("_", "").lower()') == 4
+    assert (
+        rows.count(
+            '("comp__my_comp" in belongs_to or (not belongs_to'
+            ' and "mycomp" in id.replace("_", "").lower()))'
+        )
+        == 4
+    )
     assert rows.count('and "wp__fmea" in realizes') == 2
+
+
+def test_workproduct_rows_filter_prefers_belongs_to_over_id() -> None:
+    rows = vars(templates)["_WorkproductRows"]()(
+        "comp__engine_core", "enginecore", [["wp__dfa", "DFA"]]
+    )
+    doc_filter = rows.split(":filter: ", 1)[1].split("\n", 1)[0]
+
+    def matches(doc_id: str, belongs_to: list[str]) -> bool:
+        # sphinx-needs evaluates non-trivial filters with eval() on the Need fields.
+        need: dict[str, object] = {
+            "type": "document",
+            "id": doc_id,
+            "realizes": ["wp__dfa"],
+            "belongs_to": belongs_to,
+        }
+        return eval(doc_filter, need)
+
+    assert matches("doc__owned_dfa", ["comp__engine_core"])
+    assert not matches("doc__enginecore_dfa", ["comp__other"])
 
 
 @add_test_properties(
