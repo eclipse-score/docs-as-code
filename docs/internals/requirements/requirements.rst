@@ -760,8 +760,7 @@ but for ease of traceability this is a separate one.
   .. csv-table::
      :header: "Link source", "Relation", "Link Target", "Mandatory"
 
-     logic_arc_int, included_by, feat, no
-     feat, includes, logic_arc_int, no
+     logic_arc_int, included_by, feat, yes
      mod, includes, comp, yes
      comp, implements, logic_arc_int, no
      comp, belongs_to, feat, yes
@@ -770,11 +769,6 @@ but for ease of traceability this is a separate one.
      real_arc_int_op, included_by, real_arc_int, yes
      real_arc_int_op, implements, logic_arc_int_op, no
      logic_arc_int_op, included_by, logic_arc_int, yes
-
-  .. note::
-     The link direction between ``feat`` and ``logic_arc_int`` is being switched from
-     ``feat includes logic_arc_int`` to ``logic_arc_int included_by feat``. Both directions
-     are currently accepted as optional links to avoid migration problems.
 
 
 .. tool_req:: Check consistency of interfaces in modules
