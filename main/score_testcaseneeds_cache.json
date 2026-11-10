@@ -2298,7 +2298,7 @@
   {
     "name": "test_traceability_metrics__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
-    "line": "115",
+    "line": "124",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3194,7 +3194,7 @@
   {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
-    "line": "115",
+    "line": "124",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3432,7 +3432,7 @@
   {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
-    "line": "115",
+    "line": "124",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3908,7 +3908,7 @@
   {
     "name": "test_graph_checks__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
-    "line": "115",
+    "line": "124",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4090,7 +4090,7 @@
   {
     "name": "test_graph_checks__test_invalid_check_keys_raise_value_error[missing]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "247",
+    "line": "250",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4104,7 +4104,7 @@
   {
     "name": "test_graph_checks__test_invalid_check_keys_raise_value_error[old_check_key]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "247",
+    "line": "250",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4118,7 +4118,7 @@
   {
     "name": "test_graph_checks__test_invalid_check_keys_raise_value_error[both]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "247",
+    "line": "250",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4132,7 +4132,7 @@
   {
     "name": "test_graph_checks__test_check_all_warns_once_per_failing_parent",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "267",
+    "line": "270",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4146,7 +4146,7 @@
   {
     "name": "test_graph_checks__test_check_one[one_fulfills]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "279",
+    "line": "282",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4160,7 +4160,7 @@
   {
     "name": "test_graph_checks__test_check_one[none_fulfill]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "279",
+    "line": "282",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4174,7 +4174,7 @@
   {
     "name": "test_graph_checks__test_check_one[no_parents]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "279",
+    "line": "282",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4188,7 +4188,7 @@
   {
     "name": "test_graph_checks__test_check_one[unknown_parent]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "279",
+    "line": "282",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4202,7 +4202,7 @@
   {
     "name": "test_graph_checks__test_info_only[all_default]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "303",
+    "line": "306",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4216,7 +4216,7 @@
   {
     "name": "test_graph_checks__test_info_only[all_false]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "303",
+    "line": "306",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4230,7 +4230,7 @@
   {
     "name": "test_graph_checks__test_info_only[all_true]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "303",
+    "line": "306",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4244,7 +4244,7 @@
   {
     "name": "test_graph_checks__test_info_only[one_default]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "303",
+    "line": "306",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4258,7 +4258,7 @@
   {
     "name": "test_graph_checks__test_info_only[one_true]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "303",
+    "line": "306",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4272,7 +4272,105 @@
   {
     "name": "test_graph_checks__test_info_only_keeps_message",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "326",
+    "line": "329",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_log__test_location_uses_given_prefix[docs-docs/docname.rst:42]",
+    "file": "src/extensions/score_metamodel/tests/test_log.py",
+    "line": "24",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_log__test_location_uses_given_prefix[-docname.rst:42]",
+    "file": "src/extensions/score_metamodel/tests/test_log.py",
+    "line": "24",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_log__test_location_without_source_info_is_none",
+    "file": "src/extensions/score_metamodel/tests/test_log.py",
+    "line": "35",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_log__test_location_prefix_is_empty_in_bazel_runfiles[RUNFILES_DIR]",
+    "file": "src/extensions/score_metamodel/tests/test_log.py",
+    "line": "50",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_log__test_location_prefix_is_empty_in_bazel_runfiles[RUNFILES_MANIFEST_FILE]",
+    "file": "src/extensions/score_metamodel/tests/test_log.py",
+    "line": "50",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_log__test_location_prefix_is_relative_to_workspace",
+    "file": "src/extensions/score_metamodel/tests/test_log.py",
+    "line": "58",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_log__test_location_prefix_is_relative_to_cwd",
+    "file": "src/extensions/score_metamodel/tests/test_log.py",
+    "line": "65",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4720,7 +4818,7 @@
   {
     "name": "test_tool_qualification__test_safety_malfunction_requires_conditional_evaluation_data[YES-None-None-safety-relevant malfunctions]",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "78",
+    "line": "85",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4734,7 +4832,7 @@
   {
     "name": "test_tool_qualification__test_safety_malfunction_requires_conditional_evaluation_data[YES-YES--non-empty `safety_measures`]",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "78",
+    "line": "85",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4748,7 +4846,7 @@
   {
     "name": "test_tool_qualification__test_positive_detection_with_measure_is_valid",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "105",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4762,7 +4860,7 @@
   {
     "name": "test_tool_qualification__test_safety_malfunction_with_insufficient_detection_needs_no_measure",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "120",
+    "line": "127",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4776,7 +4874,7 @@
   {
     "name": "test_tool_qualification__test_non_safety_malfunction_does_not_need_detection",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "134",
+    "line": "141",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4790,7 +4888,7 @@
   {
     "name": "test_tool_qualification__test_non_safety_malfunction_rejects_meaningless_detection",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "147",
+    "line": "154",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4804,7 +4902,7 @@
   {
     "name": "test_tool_qualification__test_low_malfunction_with_tool_requirement_is_valid",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "161",
+    "line": "168",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4818,7 +4916,7 @@
   {
     "name": "test_tool_qualification__test_report_summary_is_derived_when_summary_fields_are_omitted",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "169",
+    "line": "176",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4832,7 +4930,7 @@
   {
     "name": "test_tool_qualification__test_report_without_usecase_is_left_unchanged",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "182",
+    "line": "189",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4846,7 +4944,7 @@
   {
     "name": "test_tool_qualification__test_low_malfunction_with_only_upstream_requirement_is_invalid",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "200",
+    "line": "207",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4860,7 +4958,7 @@
   {
     "name": "test_tool_qualification__test_mixed_use_cases_derive_low_from_one_low_malfunction",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "212",
+    "line": "221",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4874,7 +4972,7 @@
   {
     "name": "test_tool_qualification__test_qualified_low_report_requires_successful_full_evidence",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "236",
+    "line": "245",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4888,7 +4986,7 @@
   {
     "name": "test_tool_qualification__test_qualified_low_report_with_passed_full_evidence_is_valid",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "246",
+    "line": "255",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4902,7 +5000,7 @@
   {
     "name": "test_tool_qualification__test_qualified_low_report_requires_evidence_for_each_requirement",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "262",
+    "line": "271",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4916,7 +5014,7 @@
   {
     "name": "test_tool_qualification__test_partial_evidence_alone_does_not_complete_low_qualification",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "291",
+    "line": "303",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4930,7 +5028,7 @@
   {
     "name": "test_tool_qualification__test_released_low_report_also_requires_successful_full_evidence",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "307",
+    "line": "320",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4944,7 +5042,7 @@
   {
     "name": "test_tool_qualification__test_high_report_does_not_require_qualification",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "317",
+    "line": "330",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4958,7 +5056,7 @@
   {
     "name": "test_tool_qualification__test_qualification_does_not_reclassify_detection_or_tcl",
     "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
-    "line": "346",
+    "line": "359",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5098,7 +5196,7 @@
   {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
-    "line": "115",
+    "line": "124",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5238,7 +5336,7 @@
   {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
-    "line": "115",
+    "line": "124",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5294,7 +5392,7 @@
   {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
-    "line": "115",
+    "line": "124",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5420,7 +5518,7 @@
   {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
-    "line": "115",
+    "line": "124",
     "result": "passed",
     "repo_name": null,
     "hash": null,

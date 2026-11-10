@@ -604,7 +604,7 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_metamodel/log.py",
-              "line": 108,
+              "line": 103,
               "tag": "# req-Id:",
               "need": "tool_req__docs_common_attr_status_invalid",
               "full_line": "# req-Id: tool_req__docs_common_attr_status_invalid"
