@@ -733,8 +733,8 @@ def docs(
                 }.
               Note: a bundle label may also point at another module's auto-exposed
               bundle, e.g. "@score_process_description//:docs_bundle".
-      dependable_elements: ``dependable_element`` targets (see
-              ``bzl/dependable_element.bzl``). Their executed test cases
+      dependable_elements: ``<name>_needs.json`` targets of score_tooling's
+              rules_score ``dependable_element``. Their test cases
               become ``testcase`` Needs linked to the verified requirements,
               taking precedence over ``bazel-testlogs``/``tests-report``.
               Because tests are ``testonly``, the documentation targets

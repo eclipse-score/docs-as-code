@@ -170,8 +170,9 @@ Minimal example (root ``BUILD``)
   When ``metamodel`` is omitted the default metamodel is used unchanged.
 
 - ``dependable_elements`` (list of bazel labels, optional)
-  :ref:`dependable_element <dependable_element_rules>` targets. Their executed
-  test cases become ``testcase`` Needs linked to the verified requirements,
+  ``<name>_needs.json`` targets of a
+  :ref:`dependable_element <dependable_element_rules>`. Their test cases
+  become ``testcase`` Needs linked to the verified requirements,
   exactly like test cases found in ``tests-report`` or ``bazel-testlogs``,
   which they take precedence over. The tests run as build actions, so the
   documentation build does not depend on a previous ``bazel test``. Because test
@@ -326,49 +327,28 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
 
 .. _dependable_element_rules:
 
-Bazel rules: ``component`` and ``dependable_element`` (prototype)
------------------------------------------------------------------
+Dependable elements (score_tooling ``rules_score``)
+---------------------------------------------------
 
-``bzl/dependable_element.bzl`` provides a dependable element whose traceability
-is based on Sphinx-Needs instead of TRLC and LOBSTER. Requirements are the Needs
-exported by ``docs_bundle`` targets; verification evidence is the ``test.xml``
-of the component tests, which are executed as build actions.
+The ``dependable_element`` of score_tooling's ``rules_score`` checks
+traceability with LOBSTER. Its requirement macros read Sphinx-Needs
+requirements from ``docs_bundle`` exports (``needs = [...]``,
+``feat_id``/``comp_id``). The executed test cases of its LOBSTER report are
+exported as ``<name>_needs.json`` and imported back into this documentation:
 
 .. code-block:: python
 
-   load("@score_docs_as_code//:bzl/dependable_element.bzl", "component", "dependable_element")
-
-   component(
-       name = "component",
-       requirements = [":docs"],  # docs_bundle with comp_req / aou_req Needs
-       tests = [":my_test"],
-       implementation = [":my_lib"],
-   )
-
    dependable_element(
-       name = "dependable_element",
-       components = ["//my/pkg:component"],
-       integrity_level = "B",
+       name = "my_element",
+       docs = False,  # no separate rules_score Sphinx build
+       ...
    )
 
-``dependable_element`` creates:
+   docs(
+       dependable_elements = ["//my/pkg:my_element_needs.json"],
+       ...
+   )
 
-- ``<name>``: ``needs.json`` with one ``testcase`` Need per executed test case
-  (``partially_verifies``/``fully_verifies``, ``result``), usable in
-  ``docs(dependable_elements = [...])`` and by other dependable elements.
-  The output group ``report`` contains ``trace_report.json`` and
-  ``trace_report.txt``.
-- ``<name>_test``: fails if a check reports an error.
-
-Checks:
-
-- every valid ``comp_req`` of a component is verified by one of its test cases
-  (error with ``release = True``, otherwise a warning),
-- every referenced Need exists in the requirement bundles,
-- no test case failed (skipped and disabled test cases are warnings),
-- no ``comp_req`` has a ``safety`` level above ``integrity_level``,
-- test cases without a requirement reference are reported as warnings.
-
-The ``requirements`` attribute of ``dependable_element`` adds further bundles
-(for example with feature requirements) to resolve references. Test, component
-and dependable element targets are ``testonly``.
+The ``testcase`` Needs use the ID scheme and fields of the ``test.xml`` parser
+(``partially_verifies``/``fully_verifies``, ``result``, ``test_type``,
+``derivation_technique``).
