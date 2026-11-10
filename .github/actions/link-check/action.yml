@@ -44,31 +44,37 @@ runs:
           const body = fs.readFileSync(path.join(process.cwd(), 'issue_body.md'), 'utf-8');
           const title = "Automated Issue: Broken Documentation Links";
 
-          // Find existing open issue with the same title created by GitHub Actions bot
-          const { data: issues } = await github.rest.issues.listForRepo({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            state: "open",
-            creator: "github-actions[bot]",
-            labels: undefined,
-          });
-
-          const issue = issues.find(i => i.title === title);
-
-          if (issue) {
-            // Update the existing issue
-            await github.rest.issues.update({
+          try {
+            // Find existing open issue with the same title created by GitHub Actions bot
+            const { data: issues } = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: issue.number,
-              body,
+              state: "open",
+              creator: "github-actions[bot]",
+              labels: undefined,
             });
-          } else {
-            // Create a new issue
-            await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title,
-              body,
-            });
+
+            const issue = issues.find(i => i.title === title);
+
+            if (issue) {
+              // Update the existing issue
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body,
+              });
+            } else {
+              // Create a new issue
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+              });
+            }
+          } catch (error) {
+            // Issues may be disabled in some repos; continue gracefully
+            core.warning(`Could not create or update issue: ${error.message}`);
+            core.info("Continuing without creating an issue.");
           }
