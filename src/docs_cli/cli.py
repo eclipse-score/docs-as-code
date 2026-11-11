@@ -44,20 +44,17 @@ env = Environment()
 def _build_external_needs_source_config() -> str:
     """Build the JSON label list for Sphinx's ``external_needs_source`` config.
 
-    ``DATA`` contains all data dependencies of the documentation target,
     ``EXTERNAL_NEEDS_FILES`` contains explicitly declared external-needs
     dependencies, and the sandboxed Needs action uses
     ``EXTERNAL_NEEDS_LABELS`` for its explicitly declared label list. All
     variables contain JSON arrays of Bazel labels.
 
-    The metamodel extension filters ordinary data dependencies and resolves
-    supported labels against the runfiles directory supplied as a separate
+    The metamodel extension resolves supported labels against the runfiles directory supplied as a separate
     Sphinx configuration value.
     """
-    data = env.string_list("DATA", "[]")
     external = env.string_list("EXTERNAL_NEEDS_FILES", "[]")
     labels = env.string_list("EXTERNAL_NEEDS_LABELS", "[]")
-    return json.dumps(data + external + labels)
+    return json.dumps(external + labels)
 
 
 def _compute_hash(files: list[Path]) -> str:
