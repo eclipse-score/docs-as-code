@@ -47,7 +47,6 @@
    :security: YES
    :safety: ASIL_B
    :status: invalid
-   :includes: logic_arc_int__test_feature_1__test_interface_1, logic_arc_int_op__test_feature_1__test_operation_1
    :consists_of: comp__test_component_1, comp__test_component_2
 
 .. feat_arc_sta:: Test Feature Static View Feature 1
@@ -79,13 +78,6 @@
    :safety: ASIL_B
    :status: invalid
    :included_by: feat__test_feature_1
-
-.. logic_arc_int_op:: Logic Operation Test 1
-   :id: logic_arc_int_op__test_feature_1__test_operation_1
-   :security: YES
-   :safety: ASIL_B
-   :status: invalid
-   :included_by: logic_arc_int__test_feature_1__test_interface_1
 
 .. logic_arc_int:: Logic Interface Test 2
    :id: logic_arc_int__test_feature_1__test_interface_2

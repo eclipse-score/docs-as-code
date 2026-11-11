@@ -46,10 +46,17 @@ The documentation build is exposed via a Bazel macro that accepts an
 ``:docs_bundle`` target. ``docs()`` resolves that label to the target's locally
 owned Needs inventory. The ``:needs_json`` label remains accepted as a
 deprecated form without a warning for now. ``:needs_json_file`` remains a
-supported way to name an inventory file directly. Passing a Needs inventory
-through ``data`` is deprecated and prints an INFO message; use
-``external_needs`` instead. Reserve ``data`` for non-needs runfiles such as
-custom tool outputs.
+supported way to name an inventory file directly. Reserve ``data`` for
+non-needs runfiles such as custom tool outputs; a Needs inventory in ``data``
+fails the build.
+
+.. admonition:: Migrating from ``data``
+
+   Older setups passed ``:needs_json`` or ``:needs_json_file`` through
+   ``docs(data = [...])``. This now fails with
+   ``Needs inventories are not accepted in data``. Move each listed label from
+   ``data`` to ``external_needs``. Where possible, name the module's public
+   ``:docs`` target instead of its inventory label.
 
 Example `BUILD` snippet (consumer module):
 
@@ -70,8 +77,7 @@ Example `BUILD` snippet (consumer module):
 The documentation build in this project is exposed via a Bazel macro that accepts
 a ``bundles`` parameter. Mount the external module's auto-exposed
 ``:docs_bundle`` bundle. The mounted sources define their Needs in the host
-build, so do **not** also add that module's ``:needs_json`` to ``data``. The
-deprecated path prints an INFO message and can create duplicate Need IDs.
+build, so that module's Needs do not need to be imported separately.
 
 Example `BUILD` snippet (consumer module):
 

@@ -14,7 +14,10 @@
           "docname": "index",
           "external_css": "external_link",
           "id": "gd_req__modern_unlinked_self_contained",
-          "lineno": 30,
+          "lineno": 50,
+          "satisfies": [
+            "wf__modern_workflow"
+          ],
           "satisfies_back": [
             "tool_req__modern_unlinked_component"
           ],
@@ -25,6 +28,26 @@
           "title": "Self-contained components build without external needs",
           "type": "gd_req",
           "type_name": "Process Requirements",
+          "version": 1
+        },
+        "rl__modern_workflow": {
+          "approved_by_back": [
+            "wf__modern_workflow"
+          ],
+          "docname": "index",
+          "external_css": "external_link",
+          "id": "rl__modern_workflow",
+          "lineno": 37,
+          "responsible_back": [
+            "wf__modern_workflow"
+          ],
+          "section_name": "S-CORE Modern Unlinked Component",
+          "sections": [
+            "S-CORE Modern Unlinked Component"
+          ],
+          "title": "Modern test role",
+          "type": "role",
+          "type_name": "Role",
           "version": 1
         },
         "tool_req__modern_unlinked_component": {
@@ -44,9 +67,60 @@
           "type": "tool_req",
           "type_name": "Tool Requirement",
           "version": 1
+        },
+        "wf__modern_workflow": {
+          "approved_by": [
+            "rl__modern_workflow"
+          ],
+          "docname": "index",
+          "external_css": "external_link",
+          "id": "wf__modern_workflow",
+          "input": [
+            "wp__modern_workproduct"
+          ],
+          "lineno": 41,
+          "output": [
+            "wp__modern_workproduct"
+          ],
+          "responsible": [
+            "rl__modern_workflow"
+          ],
+          "satisfies_back": [
+            "gd_req__modern_unlinked_self_contained"
+          ],
+          "section_name": "S-CORE Modern Unlinked Component",
+          "sections": [
+            "S-CORE Modern Unlinked Component"
+          ],
+          "status": "valid",
+          "title": "Modern test workflow",
+          "type": "workflow",
+          "type_name": "Workflow",
+          "version": 1
+        },
+        "wp__modern_workproduct": {
+          "docname": "index",
+          "external_css": "external_link",
+          "id": "wp__modern_workproduct",
+          "input_back": [
+            "wf__modern_workflow"
+          ],
+          "lineno": 32,
+          "output_back": [
+            "wf__modern_workflow"
+          ],
+          "section_name": "S-CORE Modern Unlinked Component",
+          "sections": [
+            "S-CORE Modern Unlinked Component"
+          ],
+          "status": "valid",
+          "title": "Modern test workproduct",
+          "type": "workproduct",
+          "type_name": "Workproduct",
+          "version": 1
         }
       },
-      "needs_amount": 2,
+      "needs_amount": 5,
       "needs_defaults_removed": true,
       "needs_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",

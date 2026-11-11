@@ -751,15 +751,14 @@ but for ease of traceability this is a separate one.
 .. tool_req:: Correlations of the architectural building blocks
   :id: tool_req__arch_linkage_safety
   :implemented: YES
-  :version: 2
+  :version: 3
   :satisfies: gd_req__arch_linkage_safety[version==1], gd_req__arch_build_blocks_corr[version==3]
   :parent_covered: YES
 
   .. csv-table::
      :header: "Link source", "Relation", "Link Target", "Mandatory"
 
-     logic_arc_int, included_by, feat, no
-     feat, includes, logic_arc_int, no
+     logic_arc_int, included_by, feat, yes
      mod, includes, comp, yes
      comp, implements, logic_arc_int, no
      comp, belongs_to, feat, yes
@@ -768,11 +767,6 @@ but for ease of traceability this is a separate one.
      real_arc_int_op, included_by, real_arc_int, yes
      real_arc_int_op, implements, logic_arc_int_op, no
      logic_arc_int_op, included_by, logic_arc_int, yes
-
-  .. note::
-     The link direction between ``feat`` and ``logic_arc_int`` is being switched from
-     ``feat includes logic_arc_int`` to ``logic_arc_int included_by feat``. Both directions
-     are currently accepted as optional links to avoid migration problems.
 
 
 .. tool_req:: Check consistency of interfaces in modules
@@ -891,6 +885,8 @@ Testing
 See `more verification methods <https://eclipse-score.github.io/score/main/platform_management_plan/software_verification.html#verification-methods>`__
 for an overview.
 
+   .. note:: implemented as info-only for smooth migration
+
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_2
    :tags: Testing
@@ -937,6 +933,7 @@ for an overview.
          - Unit
          - `comp_req`, `feat_req`
 
+   .. note:: implemented as info-only for smooth migration
 
 `The folder structure <https://eclipse-score.github.io/score/main/contribute/general/folder.html>`__
 is described in the platform.
@@ -1184,7 +1181,7 @@ is described in the platform.
 
 .. tool_req:: Safety Analysis Mitigation Attribute
   :id: tool_req__docs_saf_attrs_mitigated_by
-  :implemented: PARTIAL
+  :implemented: YES
   :tags: Safety Analysis
   :version: 1
   :satisfies:
@@ -1205,8 +1202,6 @@ is described in the platform.
   the same ASIL level or a higher one.
 
   It can be ``comp_req`` or ``aou_req``.
-
-  .. note:: implemented as info to enable non-breaking transition
 
 
 .. tool_req:: Safety Analysis Mitigation Issue Attribute
