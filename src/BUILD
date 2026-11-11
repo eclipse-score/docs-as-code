@@ -93,6 +93,7 @@ plantuml_binary(
 score_pytest(
     name = "plantuml_regression_test",
     srcs = ["plantuml_regression_test.py"],
+    data = [":plantuml"],
     pytest_config = "//:pyproject.toml",
 )
 
@@ -111,10 +112,6 @@ filegroup(
     name = "plantuml_py_data",
     srcs = [
         ":plantuml",
-        "@plantuml_native_linux_amd64//:runtime",
-        "@plantuml_native_linux_arm64//:runtime",
-        "@plantuml_native_macos_arm64//:runtime",
-        "@plantuml_native_windows_amd64//:runtime",
     ],
     visibility = ["//visibility:public"],
 )

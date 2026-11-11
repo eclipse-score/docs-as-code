@@ -23,8 +23,7 @@ elif [[ -d "${0%/*}.runfiles" ]]; then
 elif [[ "$0" == *.runfiles/* ]]; then
   runfiles="${0%.runfiles/*}.runfiles"
 else
-  echo "Cannot locate PlantUML runfiles directory" >&2
-  exit 1
+  runfiles=""
 fi
 
 runfiles_library="$runfiles/bazel_tools/tools/bash/runfiles/runfiles.bash"
@@ -35,22 +34,19 @@ if [[ ! -f "$runfiles_library" ]]; then
   echo "Cannot find Bazel runfiles library" >&2
   exit 1
 fi
+# rlocation reads the environment, including when the containing runfiles tree
+# was discovered from this executable's path rather than supplied by the caller.
+if [[ -n "$runfiles" ]]; then
+  export RUNFILES_DIR="$runfiles"
+fi
 # shellcheck disable=SC1090
 source "$runfiles_library"
 
-# Bazel passes the platform-selected canonical runfiles path as an argument.
-for candidate in "$@"; do
-  path="$runfiles/$candidate"
-  if [[ -x "$path" ]]; then
-    exec "$path" "$@"
-  fi
-  if [[ -n "${RUNFILES_MANIFEST_FILE:-}" ]]; then
-    resolved="$(awk -v key="$candidate" 'index($0, key " ") == 1 { print substr($0, length(key) + 2); exit }' "$RUNFILES_MANIFEST_FILE")"
-    if [[ -n "$resolved" && -x "$resolved" ]]; then
-      exec "$resolved"
-    fi
-  fi
-done
-
-echo "Selected PlantUML binary was not found in runfiles" >&2
-exit 1
+# The build embeds the selected artifact's canonical runfiles key. rlocation
+# handles both directory trees and manifest-only runfiles without changing args.
+binary="$(rlocation '@@PLANTUML_RUNFILE@@')"
+if [[ ! -x "$binary" ]]; then
+  echo "Selected PlantUML binary was not found in runfiles: $binary" >&2
+  exit 1
+fi
+exec "$binary" "$@"

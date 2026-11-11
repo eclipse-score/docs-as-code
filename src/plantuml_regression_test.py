@@ -10,45 +10,52 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Regression tests for PlantUML's Bazel launcher runfiles resolution."""
+"""Exercise the built PlantUML launcher through Sphinx's direct invocation."""
 
 import os
+import shutil
 import subprocess
 from pathlib import Path
 
+import pytest
 
-def test_launcher_resolves_binary_from_containing_runfiles_tree(tmp_path: Path) -> None:
-    """The IDE launcher is nested in another target's runfiles tree."""
-    runfiles = tmp_path / "ide_support.runfiles"
-    launcher = runfiles / "_main" / "src" / "plantuml"
-    binary = runfiles / "plantuml_native_linux_amd64" / "plantuml"
-    launcher.parent.mkdir(parents=True)
-    binary.parent.mkdir(parents=True)
-    binary.write_text("#!/usr/bin/env bash\nprintf '%s\\n' \"$*\"\n")
-    binary.chmod(0o755)
-    launcher.write_text(
-        """#!/usr/bin/env bash
-set -euo pipefail
-if [[ -n \"${RUNFILES_DIR:-}\" ]]; then
-  runfiles=\"$RUNFILES_DIR\"
-elif [[ -d \"$0.runfiles\" ]]; then
-  runfiles=\"$0.runfiles\"
-elif [[ \"$0\" == *.runfiles/* ]]; then
-  runfiles=\"${0%.runfiles/*}.runfiles\"
-else
-  echo \"Cannot locate PlantUML runfiles directory\" >&2
-  exit 1
-fi
-exec \"$runfiles/plantuml_native_linux_amd64/plantuml\" \"$@\"
-"""
-    )
-    launcher.chmod(0o755)
 
+@pytest.mark.parametrize("runfiles_mode", ["directory", "inferred", "manifest"])
+def test_direct_launcher_renders_svg_without_bazel_args(
+    runfiles_mode: str,
+    tmp_path: Path,
+) -> None:
+    """A nested launcher must find its native binary and preserve renderer arguments.
+
+    This runs against the generated executable in the test's real runfiles tree,
+    including when this test target is used from a downstream Bazel module.
+    """
+    launcher = Path(__file__).absolute().with_name("plantuml")
     env = os.environ.copy()
     for key in ("RUNFILES_DIR", "RUNFILES_MANIFEST_FILE", "JAVA_RUNFILES"):
         env.pop(key, None)
+    runfiles = Path(os.environ["TEST_SRCDIR"])
+    if runfiles_mode == "directory":
+        env["RUNFILES_DIR"] = str(runfiles)
+    elif runfiles_mode == "manifest":
+        # Copy the real generated script outside the tree so discovery must use
+        # the manifest, as on systems without runfiles directory symlinks.
+        launcher = Path(shutil.copyfile(launcher, tmp_path / "plantuml"))
+        launcher.chmod(0o755)
+        # Sandboxed tests need not contain Bazel's outer MANIFEST. Map the
+        # actual inputs from this test's tree into a standalone manifest.
+        manifest = tmp_path / "MANIFEST"
+        manifest.write_text(
+            "".join(
+                f"{file.relative_to(runfiles)} {file}\n"
+                for file in runfiles.rglob("*")
+                if file.is_file()
+            )
+        )
+        env["RUNFILES_MANIFEST_FILE"] = str(manifest)
     result = subprocess.run(
-        [str(launcher), "-version"],
+        [str(launcher), "-tsvg", "-pipe"],
+        input="@startuml\nAlice -> Bob: direct launcher\n@enduml\n",
         capture_output=True,
         check=False,
         text=True,
@@ -56,4 +63,5 @@ exec \"$runfiles/plantuml_native_linux_amd64/plantuml\" \"$@\"
     )
 
     assert result.returncode == 0, result.stderr
-    assert result.stdout.strip() == "-version"
+    assert "<svg" in result.stdout, result.stdout
+    assert "direct launcher" in result.stdout
