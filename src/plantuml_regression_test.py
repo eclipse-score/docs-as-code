@@ -21,7 +21,8 @@ import pytest
 
 
 @pytest.mark.parametrize(
-    "runfiles_mode", ["directory", "inferred", "standalone", "manifest"]
+    "runfiles_mode",
+    ["directory", "inferred", "standalone", "manifest", "adjacent_manifest"],
 )
 def test_direct_launcher_renders_svg_without_bazel_args(
     runfiles_mode: str,
@@ -39,17 +40,21 @@ def test_direct_launcher_renders_svg_without_bazel_args(
     runfiles = Path(os.environ["TEST_SRCDIR"])
     if runfiles_mode == "directory":
         env["RUNFILES_DIR"] = str(runfiles)
-    elif runfiles_mode in {"standalone", "manifest"}:
+    elif runfiles_mode in {"standalone", "manifest", "adjacent_manifest"}:
         launcher = Path(shutil.copyfile(launcher, tmp_path / "plantuml"))
         launcher.chmod(0o755)
     if runfiles_mode == "standalone":
         # A built executable has its own adjacent runfiles tree.
         launcher.with_suffix(".runfiles").symlink_to(runfiles, target_is_directory=True)
-    elif runfiles_mode == "manifest":
+    elif runfiles_mode in {"manifest", "adjacent_manifest"}:
         # With no adjacent tree, only the manifest can resolve the inputs.
         # Sandboxed tests need not contain Bazel's outer MANIFEST. Map the
         # actual inputs from this test's tree into a standalone manifest.
-        manifest = tmp_path / "MANIFEST"
+        manifest = (
+            tmp_path / "MANIFEST"
+            if runfiles_mode == "manifest"
+            else launcher.with_suffix(".runfiles_manifest")
+        )
         manifest.write_text(
             "".join(
                 f"{file.relative_to(runfiles)} {file}\n"
@@ -57,7 +62,8 @@ def test_direct_launcher_renders_svg_without_bazel_args(
                 if file.is_file()
             )
         )
-        env["RUNFILES_MANIFEST_FILE"] = str(manifest)
+        if runfiles_mode == "manifest":
+            env["RUNFILES_MANIFEST_FILE"] = str(manifest)
     result = subprocess.run(
         [str(launcher), "-tsvg", "-pipe"],
         input="@startuml\nAlice -> Bob: direct launcher\n@enduml\n",

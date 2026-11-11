@@ -81,27 +81,17 @@ config_setting(
     ],
 )
 
-config_setting(
-    name = "plantuml_windows_x86_64",
-    constraint_values = [
-        "@platforms//os:windows",
-        "@platforms//cpu:x86_64",
-    ],
-)
-
 plantuml_binary(
     name = "plantuml",
     binary = select({
         ":plantuml_linux_x86_64": "@plantuml_native_linux_amd64//:plantuml",
         ":plantuml_linux_arm64": "@plantuml_native_linux_arm64//:plantuml",
         ":plantuml_macos_arm64": "@plantuml_native_macos_arm64//:plantuml",
-        ":plantuml_windows_x86_64": "@plantuml_native_windows_amd64//:plantuml.exe",
     }),
     runtime = select({
         ":plantuml_linux_x86_64": "@plantuml_native_linux_amd64//:runtime",
         ":plantuml_linux_arm64": "@plantuml_native_linux_arm64//:runtime",
         ":plantuml_macos_arm64": "@plantuml_native_macos_arm64//:runtime",
-        ":plantuml_windows_x86_64": "@plantuml_native_windows_amd64//:runtime",
     }),
     visibility = ["//visibility:public"],
 )

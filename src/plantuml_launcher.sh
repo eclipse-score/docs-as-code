@@ -14,6 +14,16 @@
 
 set -euo pipefail
 
+# Direct invocations do not necessarily inherit Bazel's runfiles environment.
+# Manifest-only builds place the manifest beside the public executable.
+if [[ -z "${RUNFILES_MANIFEST_FILE:-}" ]]; then
+  if [[ -f "$0.runfiles_manifest" ]]; then
+    export RUNFILES_MANIFEST_FILE="$0.runfiles_manifest"
+  elif [[ -f "$0.runfiles/MANIFEST" ]]; then
+    export RUNFILES_MANIFEST_FILE="$0.runfiles/MANIFEST"
+  fi
+fi
+
 if [[ -n "${RUNFILES_DIR:-}" ]]; then
   runfiles="$RUNFILES_DIR"
 elif [[ -d "$0.runfiles" ]]; then

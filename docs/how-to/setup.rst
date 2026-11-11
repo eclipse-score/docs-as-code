@@ -36,8 +36,7 @@ Add the S-CORE Bazel registry to the ``.bazelrc`` file::
 
 Bazel downloads a native `PlantUML <https://www.plantuml.com>`_ distribution
 for the platform running Sphinx. PlantUML does not require a separate Java
-installation. Supported platforms are Linux x86-64 and ARM64, macOS ARM64,
-and Windows x86-64.
+installation. Supported platforms are Linux x86-64, Linux ARM64 and macOS ARM64.
 
 Install `Graphviz <https://graphviz.org/download/>`_ and make its ``dot``
 executable available on ``PATH`` for diagrams that require Graphviz layout.
