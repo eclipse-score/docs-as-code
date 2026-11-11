@@ -12,6 +12,10 @@
 # *******************************************************************************
 """Golden-output verification for public ``docs.bzl`` scenarios.
 
+Only ``reference_integration`` keeps golden samples: there, protecting the whole
+generated output of a representative S-CORE composition is intended. Every other
+scenario asserts the specific behavior it protects in its own test module.
+
 Expected output names are discovered below the scenario's ``_expected``
 directory. The target catalog below is the only place that maps a short
 expected-output name to the Bazel target and to the output location used by the
@@ -88,42 +92,6 @@ TARGETS: dict[str, ExpectedTarget] = {
         command="build",
         output_kind="file",
         output_path="docs.__internal__.needs_local/needs.json",
-    ),
-    "data_bundle_needs": ExpectedTarget(
-        label=":data_bundle.__internal__.needs_local",
-        command="build",
-        output_kind="file",
-        output_path="data_bundle.__internal__.needs_local/needs.json",
-    ),
-    "isolated_source_bundle_needs": ExpectedTarget(
-        label=":isolated_source_bundle.__internal__.needs_local",
-        command="build",
-        output_kind="file",
-        output_path="isolated_source_bundle.__internal__.needs_local/needs.json",
-    ),
-    "sourcelinks_json": ExpectedTarget(
-        label=":sourcelinks_json",
-        command="build",
-        output_kind="file",
-        output_path="sourcelinks_json.json",
-    ),
-    "metrics_json": ExpectedTarget(
-        label=":metrics_json",
-        command="build",
-        output_kind="file",
-        output_path="metrics.json",
-    ),
-    "mounts_manifest": ExpectedTarget(
-        label=":_mounts_manifest",
-        command="build",
-        output_kind="file",
-        output_path="_mounts_manifest.json",
-    ),
-    "ordered_aggregate_manifest": ExpectedTarget(
-        label=":ordered_aggregate_manifest",
-        command="build",
-        output_kind="file",
-        output_path="ordered_aggregate_manifest.json",
     ),
 }
 

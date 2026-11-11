@@ -30,9 +30,20 @@ Build-only expected outputs are marked `bazel_cached`; outputs that execute
 Sphinx through `bazel run`, as well as expected-failure tests, are marked
 `bazel_slow`.
 
-## Expected outputs
+## Explicit assertions first
 
-Positive scenarios may check in files below a fixture's `_expected/` directory:
+Each scenario has its own `test_<scenario>.py`. Every test is named after the
+behavior it protects and asserts only the facts that matter for it (a Need ID,
+a link target, a manifest entry, a file that must not exist). Tests that share a
+render or build use a module-scoped fixture, so each scenario runs once.
+
+## Expected outputs (reference_integration only)
+
+Golden samples are kept only for `reference_integration`, where protecting the
+whole output of a representative S-CORE composition is intended. Do not add
+`_expected/` directories to other scenarios; write a named assertion instead.
+
+Files below a fixture's `_expected/` directory are checked like this:
 
 - `_expected/<target>/...` checks selected files below a directory output.
 - `_expected/<target>.<suffix>` checks one file output.

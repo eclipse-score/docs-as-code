@@ -14,6 +14,7 @@
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import time
@@ -21,7 +22,7 @@ from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 from src.helper_lib import find_git_root
 
@@ -180,6 +181,31 @@ def built_output(package: str, filename: str) -> Path:
     """Return a declared output from a package built in the current configuration."""
     root = repo_root()
     return root / "bazel-bin" / TEST_ROOT.relative_to(root) / package / filename
+
+
+def scenario_path(scenario: str) -> str:
+    """Return a scenario's path as it appears in manifests and source links."""
+    return str((TEST_ROOT / "scenarios" / scenario).relative_to(repo_root()))
+
+
+def scenario_label(scenario: str, target: str) -> str:
+    """Return the canonical label that manifests record for a scenario target."""
+    assert target.startswith(":"), "target must be relative to the scenario package"
+    return f"@@//{scenario_path(scenario)}{target}"
+
+
+def load_json(path: Path) -> Any:  # noqa: ANN401 - arbitrary JSON document
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+_TOCTREE_L1 = re.compile(
+    r'<li class="toctree-l1"><a class="reference internal" href="([^"]*)">([^<]*)'
+)
+
+
+def toctree_links(html: str) -> dict[str, str]:
+    """Map each first-level toctree link target of a rendered page to its title."""
+    return {href: title.strip() for href, title in _TOCTREE_L1.findall(html)}
 
 
 def load_needs_json(needs_json: Path) -> dict[str, object]:
