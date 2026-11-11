@@ -15,7 +15,7 @@ name: Run Bazel Tests
 on:
   workflow_call:
 jobs:
-  docs_bzl:
+  end_to_end:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -63,20 +63,20 @@ jobs:
       - name: Prepare test report directory
         run: mkdir -p tests-report
 
-      - name: Run docs.bzl tests
+      - name: Run end-to-end tests
         run: >-
           .venv_docs/bin/python -m pytest -vv
           -m "${{ matrix.marker }}"
-          src/tests/docs_bzl
-          --junitxml=tests-report/docs_bzl_${{ matrix.python-version }}_${{ matrix.suite }}.xml
+          src/tests/end_to_end
+          --junitxml=tests-report/end_to_end_${{ matrix.python-version }}_${{ matrix.suite }}.xml
 
-      - name: Upload docs.bzl test report
+      - name: Upload end-to-end test report
         # No need to upload something that doesn't exist.
         # This would be skipped anyway if the step before isn't running
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: tests-report-docs-bzl-${{ matrix.python-version }}-${{ matrix.suite }}
+          name: tests-report-end-to-end-${{ matrix.python-version }}-${{ matrix.suite }}
           path: tests-report
 
   bazel_tests:
@@ -138,7 +138,7 @@ jobs:
 
   merge_test_reports:
     if: ${{ !cancelled() }}
-    needs: [docs_bzl, bazel_tests]
+    needs: [end_to_end, bazel_tests]
     runs-on: ubuntu-24.04
     steps:
       # Both Python versions produce Bazel reports at the same paths. Download
@@ -151,12 +151,12 @@ jobs:
           name: tests-report-bazel-3.12
           path: tests-report
 
-      # The docs.bzl report filenames include their Python version and suite,
+      # The end-to-end report filenames include their Python version and suite,
       # so these artifacts can be merged without overlapping paths.
-      - name: Download docs.bzl test reports
+      - name: Download end-to-end test reports
         uses: actions/download-artifact@v8
         with:
-          pattern: tests-report-docs-bzl-*
+          pattern: tests-report-end-to-end-*
           path: tests-report
           merge-multiple: true
 

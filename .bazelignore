@@ -7,3 +7,9 @@
 # here, including a self-referencing overlay of this repo, which Bazel's
 # package discovery cannot traverse.
 .cache
+
+# Nested consumer workspace with its own MODULE.bazel, and a second local
+# module used by the cross-module tests. Both are driven by the end-to-end
+# pytest suite in src/tests/end_to_end/testcases, not built as part of //...
+src/tests/end_to_end/consumer
+src/tests/end_to_end/cross_module_fixture

@@ -78,14 +78,14 @@ to one documentation project, shared by the cache check and the renderer.
 their existing inputs. Report parsing belongs to HTML rendering and live preview.
 
 The generated file-list targets and JSON formats are internal interfaces. For a
-concrete example, the [reference fixture](../tests/docs_bzl/scenarios/reference_integration/modern_module/BUILD)
-provides:
+concrete example, the [reference fixture](../tests/end_to_end/consumer/scenarios/reference_integration/modern_module/BUILD)
+provides (labels and paths relative to the `src/tests/end_to_end/consumer` workspace):
 
 ```text
-File-list target: //src/tests/docs_bzl/scenarios/reference_integration/modern_module:docs_bundle.__internal__.code_file_lists
-File-list output: bazel-bin/src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs_bundle.__internal__.code_file_lists.json
-CLI target:       //src/tests/docs_bzl/scenarios/reference_integration/modern_module:docs
-Summary output:   src/tests/docs_bzl/scenarios/reference_integration/modern_module/_build/coverage_summary.json
+File-list target: //scenarios/reference_integration/modern_module:docs_bundle.__internal__.code_file_lists
+File-list output: bazel-bin/scenarios/reference_integration/modern_module/docs_bundle.__internal__.code_file_lists.json
+CLI target:       //scenarios/reference_integration/modern_module:docs
+Summary output:   scenarios/reference_integration/modern_module/_build/coverage_summary.json
 ```
 
 ### Coverage report
@@ -229,7 +229,7 @@ Run the library and integration tests from the repository root:
 
 ```bash
 bazel test //src/docs_cli:lcov_summary_test
-.venv_docs/bin/python -m pytest -q src/tests/docs_bzl/test_coverage_summary.py
+.venv_docs/bin/python -m pytest -q src/tests/end_to_end/testcases/test_coverage_summary.py
 ```
 
 ## Renderer example
@@ -240,15 +240,15 @@ The integration test stages that report at the workspace input path, builds the
 example and restores any previous report:
 
 ```bash
-.venv_docs/bin/python -m pytest -q src/tests/docs_bzl/test_coverage_summary.py -k docs_use_summary
+.venv_docs/bin/python -m pytest -q src/tests/end_to_end/testcases/test_coverage_summary.py -k docs_use_summary
 ```
 
 Inspect the generated page at
-`src/tests/docs_bzl/scenarios/reference_integration/modern_module/_build/components/component/index.html`.
+`src/tests/end_to_end/consumer/scenarios/reference_integration/modern_module/_build/components/component/index.html`.
 The test starts with 67% line coverage and 100% branch coverage, then changes the
 report to 33% line coverage to check that the displayed result updates. The
 baseline HTML is checked in at
-`src/tests/docs_bzl/scenarios/reference_integration/modern_module/_expected/docs/components/component/index.html`.
+`src/tests/end_to_end/consumer/scenarios/reference_integration/modern_module/_expected/docs/components/component/index.html`.
 The expected-output harness stages the scenario's `coverage.info` automatically.
 The neighboring component has no summary and receives no coverage attribute.
 

@@ -21,9 +21,9 @@ repos:
       # Golden HTML is compared byte-for-byte, so preserve the exact generated
       # whitespace and EOF instead of normalizing these fixture files.
       - id: end-of-file-fixer
-        exclude: ^src/tests/docs_bzl/scenarios/.*/_expected/.*\.html$
+        exclude: ^src/tests/end_to_end/consumer/scenarios/reference_integration/.*_expected/.*\.html$
       - id: trailing-whitespace
-        exclude: ^src/tests/docs_bzl/scenarios/.*/_expected/.*\.html$
+        exclude: ^src/tests/end_to_end/consumer/scenarios/reference_integration/.*_expected/.*\.html$
       - id: check-merge-conflict
       - id: check-case-conflict
       - id: mixed-line-ending

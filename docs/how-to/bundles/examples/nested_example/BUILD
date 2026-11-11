@@ -13,7 +13,7 @@
 
 # Example for docs/how-to/bundles/examples.rst ("Nest bundles"). The project's
 # own documentation mounts :parent, and the nested_bundles end-to-end scenario
-# in src/tests/docs_bzl tests the same targets.
+# in src/tests/end_to_end tests the same targets.
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
 load("//:docs.bzl", "docs_bundle")

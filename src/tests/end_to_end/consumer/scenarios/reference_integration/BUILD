@@ -1,0 +1,54 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+load("@score_docs_as_code//:docs.bzl", "docs")
+
+# The reference integration combines platform feature requirements and a
+# software module into one documentation site, just like the real S-CORE
+# integration. The module's bundle contains its component documentation.
+# Each component also scans an annotated implementation file through
+# ``code_targets``. The integration test verifies that those source links
+# survive the component -> module -> site bundle composition and are rendered
+# on the mounted component pages.
+# The component packages live below the module's ``docs`` source directory,
+# matching the feature-package layout used by the real S-CORE integration.
+#
+# test_sources scopes the test-code-linker to this (test-less) package, avoiding
+# the workspace-wide bazel-testlogs scan during the html build.
+docs(
+    bundles = [
+        {
+            "bundle": "//scenarios/reference_integration/legacy_module:docs_bundle",
+            "mount_at": "modules/legacy_module",
+            "attach_to": "modules",
+        },
+        {
+            "bundle": "//scenarios/reference_integration/modern_module:docs_bundle",
+            "mount_at": "modules/modern_module",
+            "attach_to": "modules",
+        },
+    ],
+    # Import the public docs target rather than its implementation-level
+    # needs_json output. The integration page references a Need owned by this
+    # target, so this also exercises resolution through the imported inventory.
+    external_needs = [
+        "//scenarios/reference_integration/score_platform:docs",
+        # Mounted verification reports reference the process work products.
+        # Each consuming docs() project declares its own external inventories.
+        "@score_process_description//:needs_json",
+    ],
+    project = "S-CORE Reference Integration",
+    project_url = "https://example.invalid/score-reference-integration",
+    source_dir = "docs",
+    test_sources = ["scenarios/reference_integration"],
+)

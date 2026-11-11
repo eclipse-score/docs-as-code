@@ -1,0 +1,43 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+# A consumer project for the end-to-end tests. It uses score_docs_as_code the
+# same way a downstream S-CORE module does: as a Bazel module dependency.
+# The root workspace ignores this directory (see //.bazelignore); the pytest
+# suite in ../testcases runs Bazel from here.
+
+# docs() derives the default `required_in_id` from the module name without its
+# first prefix (here: "docs_as_code"), like "score_<name>" for S-CORE modules.
+# The scenario Need IDs rely on that value.
+module(name = "e2e_docs_as_code")
+
+bazel_dep(name = "score_docs_as_code", version = "0.0.0")
+local_path_override(
+    module_name = "score_docs_as_code",
+    path = "../../../..",
+)
+
+bazel_dep(name = "rules_python", version = "1.8.5")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    is_default = True,
+    python_version = "3.12",
+)
+python.toolchain(
+    is_default = False,
+    python_version = "3.14",
+)
+
+# Scenarios mount and import documentation of this published module.
+bazel_dep(name = "score_process_description", version = "2.2.3")

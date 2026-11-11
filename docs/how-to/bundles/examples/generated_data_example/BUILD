@@ -13,7 +13,7 @@
 
 # Example for docs/how-to/bundles/examples.rst ("Mount generated bundle
 # content"). The project's own documentation mounts :data_bundle, and the
-# data_files_runfiles end-to-end scenario in src/tests/docs_bzl tests it.
+# data_files_runfiles end-to-end scenario in src/tests/end_to_end tests it.
 
 load("//:docs.bzl", "docs_bundle")
 

@@ -23,16 +23,17 @@
 
 This directory contains end-to-end tests at two scopes:
 
-- `docs_bzl`: controlled integration scenarios for the public `docs.bzl` API:
+- `end_to_end`: controlled scenarios for the public `docs.bzl` API:
   `docs()`, `docs_bundle()`, composition, invalid configurations, and external
-  Bzlmod bundles. They run via plain pytest and issue the same real
-  `bazel build` / `bazel run` commands a consumer uses. See
-  [docs_bzl/README.md](docs_bzl/README.md) for layout and commands.
+  Bzlmod bundles. The scenarios form a separate consumer module that depends on
+  `score_docs_as_code`; plain pytest runs the same `bazel build` / `bazel run`
+  commands a consumer uses. See [end_to_end/README.md](end_to_end/README.md)
+  for what is covered and where to add a test.
 
 - `downstream_compatibility`: *(formerly consumer tests)* Tests local changes and Git-based overrides against real consumer repositories. This provides broad, intentionally less-controlled coverage and helps detect breaking changes in the docs-as-code system before they affect downstream consumers.
 
 `bazel test //...` covers internal unit tests. It intentionally does not run
-the public `docs_bzl` integration suite; CI and local contributors run that
+the `end_to_end` suite; CI and local contributors run that
 suite explicitly through pytest.
 
 ### Bazel test targets
