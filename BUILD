@@ -32,13 +32,13 @@ docs(
         },
         {
             # Mount to show what the rendered docs look like when nested bundles are used.
-            "bundle": "//src/tests/docs_bzl/scenarios/nested_bundles:parent",
+            "bundle": "//docs/how-to/bundles/examples/nested_example:parent",
             "mount_at": "how-to/bundles/examples/nested",
             "attach_to": "how-to/bundles/examples",
         },
         {
             # Mount to show what the rendered docs look like when data files are used.
-            "bundle": "//src/tests/docs_bzl/scenarios/data_files_runfiles:data_bundle",
+            "bundle": "//docs/how-to/bundles/examples/generated_data_example:data_bundle",
             "mount_at": "how-to/bundles/examples/generated-data",
             "attach_to": "how-to/bundles/examples",
         },

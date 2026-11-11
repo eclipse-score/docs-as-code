@@ -22,8 +22,6 @@ from src.tests.docs_bzl.helpers import (
     load_json,
     load_needs,
     run_scenario,
-    scenario_label,
-    scenario_path,
     toctree_links,
 )
 
@@ -31,6 +29,9 @@ SCENARIO = "nested_bundles"
 PACKAGE = f"scenarios/{SCENARIO}"
 PARENT_MOUNT = "concepts/example_bundle"
 CHILD_MOUNT = f"{PARENT_MOUNT}/child"
+# :parent and :child live in the documentation example that the project's own
+# docs mount too; this scenario only provides the host project around them.
+EXAMPLE = "docs/how-to/bundles/examples/nested_example"
 
 
 def _mounts(manifest: Any) -> dict[str, dict[str, Any]]:
@@ -94,9 +95,7 @@ def test_child_entry_page_is_linked_from_the_parent(build_dir: Path):
 @pytest.mark.bazel_cached
 def test_data_stays_with_the_mount_that_declares_it(mounts: dict[str, dict[str, Any]]):
     """Only :parent declares data; the root and the child get none of it."""
-    assert mounts[PARENT_MOUNT]["data"] == [
-        f"{scenario_path(SCENARIO)}/generated/generated_output.txt"
-    ]
+    assert mounts[PARENT_MOUNT]["data"] == [f"{EXAMPLE}/generated/generated_output.txt"]
     assert mounts[""]["data"] == []
     assert mounts[CHILD_MOUNT]["data"] == []
 
@@ -120,14 +119,13 @@ def test_code_target_sources_are_collected_transitively(needs: dict[str, Any]):
     """Source links come through cc_binary -> cc_library, nested filegroups and
     a py_binary that root and child both list (reported once). The untagged
     example_main.cc contributes nothing."""
-    root = scenario_path(SCENARIO)
     # source_code_link is one string of "<url><><file>:<line>" entries.
     links: str = needs["tool_req__docs_bzl_nested_bundle"]["source_code_link"]
     assert sorted(link.split("<>")[1] for link in links.split(", ")) == sorted(
         [
-            f"{root}/child/example.cc:1",
-            f"{root}/child/example.py:14",
-            f"{root}/child/filegroup_source.py:14",
+            f"{EXAMPLE}/child/example.cc:1",
+            f"{EXAMPLE}/child/example.py:14",
+            f"{EXAMPLE}/child/filegroup_source.py:14",
         ]
     )
 
@@ -136,9 +134,9 @@ def test_code_target_sources_are_collected_transitively(needs: dict[str, Any]):
 def test_code_targets_keep_their_rule_kind(mounts: dict[str, dict[str, Any]]):
     code_targets: list[dict[str, str]] = mounts[CHILD_MOUNT]["bundle"]["code_targets"]
     assert {target["label"]: target["type"] for target in code_targets} == {
-        scenario_label(SCENARIO, ":example_binary"): "py_binary",
-        scenario_label(SCENARIO, ":example_executable"): "cc_binary",
-        scenario_label(SCENARIO, ":nested_filegroup_sources"): "filegroup",
+        f"@@//{EXAMPLE}:example_binary": "py_binary",
+        f"@@//{EXAMPLE}:example_executable": "cc_binary",
+        f"@@//{EXAMPLE}:nested_filegroup_sources": "filegroup",
     }
 
 

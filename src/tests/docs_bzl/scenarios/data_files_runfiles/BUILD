@@ -12,53 +12,13 @@
 # *******************************************************************************
 
 # This fixture exercises the public docs() macro with a source bundle whose
-# only content is a genrule output living in ``bazel-out/.../bin/``.  That
+# only content is a genrule output living in ``bazel-out/.../bin/``
+# (//docs/how-to/bundles/examples/generated_data_example:data_bundle).  That
 # output must reach the runfiles of ``:docs`` (via _external_docs_runfiles)
 # and be resolved by ``score_mounts`` at ``bazel run`` time.  See PR #686.
 
 load("//:docs.bzl", "docs", "docs_bundle")
 
-# Emit into a ``generated/`` subdirectory (as the real metamodel bundle does)
-# so the resolved mount directory contains only the genrule output and not the
-# sibling ``docs.runfiles/`` tree.
-# BEGIN docs-bundle-howto: generated-data
-genrule(
-    name = "generated_page",
-    srcs = [],
-    outs = [
-        "generated/index.rst",
-        "generated/generated_data.mmd",
-    ],
-    # The RST and Mermaid file are both declared sources, but only the RST
-    # should be registered as a Sphinx document. The Mermaid file is a
-    # companion asset that must remain readable next to the original RST.
-    # The shell writes the text below, up to each EOF marker, into the
-    # generated RST and Mermaid files. $(execpath ...) expands to each declared
-    # output's path in this build action, so the files land where Bazel expects.
-    cmd = """cat > $(execpath generated/index.rst) <<'EOF'
-Generated Data Page
-===================
-
-.. mermaid:: generated_data.mmd
-   :name: generated-data-diagram
-EOF
-cat > $(execpath generated/generated_data.mmd) <<'EOF'
-classDiagram
-  class GeneratedData
-EOF""",
-)
-
-# Source bundle: the genrule output lives in ``bazel-out/``, not the tree.
-docs_bundle(
-    name = "data_bundle",
-    srcs = [":generated_page"],
-    entry_doc = "index",
-    visibility = ["//visibility:public"],
-)
-
-# This source bundle deliberately declares only one file from ``isolated/``.
-# The sibling below must not become part of the mounted documentation merely
-# because it shares the source file's original parent directory.
 docs_bundle(
     name = "isolated_source_bundle",
     srcs = ["isolated/index.rst"],
@@ -69,7 +29,7 @@ docs_bundle(
 docs(
     bundles = [
         {
-            "bundle": ":data_bundle",
+            "bundle": "//docs/how-to/bundles/examples/generated_data_example:data_bundle",
             "mount_at": "data_test",
             "attach_to": "index",
         },
@@ -91,8 +51,6 @@ docs(
     # accidental side effect of the global test corpus.
     test_sources = ["src/tests/docs_bzl/scenarios/data_files_runfiles"],
 )
-
-# END docs-bundle-howto: generated-data
 
 # Legacy compatibility: generated RST files declared through ``data`` must
 # remain mountable while callers migrate to the explicit ``srcs`` attribute.

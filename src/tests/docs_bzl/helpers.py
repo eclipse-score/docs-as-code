@@ -183,17 +183,6 @@ def built_output(package: str, filename: str) -> Path:
     return root / "bazel-bin" / TEST_ROOT.relative_to(root) / package / filename
 
 
-def scenario_path(scenario: str) -> str:
-    """Return a scenario's path as it appears in manifests and source links."""
-    return str((TEST_ROOT / "scenarios" / scenario).relative_to(repo_root()))
-
-
-def scenario_label(scenario: str, target: str) -> str:
-    """Return the canonical label that manifests record for a scenario target."""
-    assert target.startswith(":"), "target must be relative to the scenario package"
-    return f"@@//{scenario_path(scenario)}{target}"
-
-
 def load_json(path: Path) -> Any:  # noqa: ANN401 - arbitrary JSON document
     return json.loads(path.read_text(encoding="utf-8"))
 

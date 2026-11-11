@@ -43,8 +43,9 @@ The tested parent bundle composes the child like this:
        visibility = ["//visibility:public"],
    )
 
-See the `complete nested-bundles fixture on GitHub
-<https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/nested_bundles>`_.
+See the `complete nested-bundles example on GitHub
+<https://github.com/eclipse-score/docs-as-code/tree/main/docs/how-to/bundles/examples/nested_example>`_.
+This documentation mounts it at ``how-to/bundles/examples/nested``.
 
 If the parent is mounted at ``guides/example``, its page is rendered at
 ``guides/example/index.html`` and the child landing page at
@@ -86,8 +87,9 @@ and mount a page like this:
        }],
    )
 
-See the `complete generated-data fixture on GitHub
-<https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/data_files_runfiles>`_.
+See the `complete generated-data example on GitHub
+<https://github.com/eclipse-score/docs-as-code/tree/main/docs/how-to/bundles/examples/generated_data_example>`_.
+This documentation mounts it at ``how-to/bundles/examples/generated-data``.
 
 The generated page is rendered at ``data_test/index.html`` and is added to the
 consuming project's index page's toctree. A generated source bundle is mounted
