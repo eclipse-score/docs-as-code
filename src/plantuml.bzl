@@ -18,6 +18,12 @@ def plantuml_binary(name, visibility = None):
     native.sh_binary(
         name = name,
         srcs = ["//src:plantuml_launcher.sh"],
+        args = select({
+            "//src:plantuml_linux_x86_64": ["+_repo_rules+plantuml_native_linux_amd64/plantuml"],
+            "//src:plantuml_linux_arm64": ["+_repo_rules+plantuml_native_linux_arm64/plantuml"],
+            "//src:plantuml_macos_arm64": ["+_repo_rules+plantuml_native_macos_arm64/plantuml"],
+            "//src:plantuml_windows_x86_64": ["+_repo_rules+plantuml_native_windows_amd64/plantuml.exe"],
+        }),
         data = select({
             "//src:plantuml_linux_x86_64": ["@plantuml_native_linux_amd64//:runtime", "@plantuml_native_linux_amd64//:plantuml"],
             "//src:plantuml_linux_arm64": ["@plantuml_native_linux_arm64//:runtime", "@plantuml_native_linux_arm64//:plantuml"],

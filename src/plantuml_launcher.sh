@@ -38,13 +38,8 @@ fi
 # shellcheck disable=SC1090
 source "$runfiles_library"
 
-# Find the binary selected by Bazel among the declared native runfiles. Use
-# the runfiles directory/manifest directly so this also works in nested trees.
-for candidate in \
-  +_repo_rules+plantuml_native_linux_amd64/plantuml \
-  +_repo_rules+plantuml_native_linux_arm64/plantuml \
-  +_repo_rules+plantuml_native_macos_arm64/plantuml \
-  +_repo_rules+plantuml_native_windows_amd64/plantuml.exe; do
+# Bazel passes the platform-selected canonical runfiles path as an argument.
+for candidate in "$@"; do
   path="$runfiles/$candidate"
   if [[ -x "$path" ]]; then
     exec "$path" "$@"
@@ -52,7 +47,7 @@ for candidate in \
   if [[ -n "${RUNFILES_MANIFEST_FILE:-}" ]]; then
     resolved="$(awk -v key="$candidate" 'index($0, key " ") == 1 { print substr($0, length(key) + 2); exit }' "$RUNFILES_MANIFEST_FILE")"
     if [[ -n "$resolved" && -x "$resolved" ]]; then
-      exec "$resolved" "$@"
+      exec "$resolved"
     fi
   fi
 done
