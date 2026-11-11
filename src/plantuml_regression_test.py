@@ -20,7 +20,9 @@ from pathlib import Path
 import pytest
 
 
-@pytest.mark.parametrize("runfiles_mode", ["directory", "inferred", "manifest"])
+@pytest.mark.parametrize(
+    "runfiles_mode", ["directory", "inferred", "standalone", "manifest"]
+)
 def test_direct_launcher_renders_svg_without_bazel_args(
     runfiles_mode: str,
     tmp_path: Path,
@@ -37,11 +39,14 @@ def test_direct_launcher_renders_svg_without_bazel_args(
     runfiles = Path(os.environ["TEST_SRCDIR"])
     if runfiles_mode == "directory":
         env["RUNFILES_DIR"] = str(runfiles)
-    elif runfiles_mode == "manifest":
-        # Copy the real generated script outside the tree so discovery must use
-        # the manifest, as on systems without runfiles directory symlinks.
+    elif runfiles_mode in {"standalone", "manifest"}:
         launcher = Path(shutil.copyfile(launcher, tmp_path / "plantuml"))
         launcher.chmod(0o755)
+    if runfiles_mode == "standalone":
+        # A built executable has its own adjacent runfiles tree.
+        launcher.with_suffix(".runfiles").symlink_to(runfiles, target_is_directory=True)
+    elif runfiles_mode == "manifest":
+        # With no adjacent tree, only the manifest can resolve the inputs.
         # Sandboxed tests need not contain Bazel's outer MANIFEST. Map the
         # actual inputs from this test's tree into a standalone manifest.
         manifest = tmp_path / "MANIFEST"

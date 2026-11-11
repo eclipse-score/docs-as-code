@@ -72,8 +72,9 @@ use_repo(pip, "docs_as_code_hub_env")
 bazel_dep(name = "aspect_rules_py", version = "1.4.0")
 bazel_dep(name = "score_tools", version = "0.0.4")
 
-# PlantUML native distributions. Bazel toolchain resolution chooses the archive
-# matching the execution platform.
+# Native PlantUML replaces the per-diagram JVM startup. The //src:plantuml
+# target selects one distribution for Sphinx's platform and carries its shared
+# libraries and resources in runfiles. No Java runtime is needed by PlantUML.
 http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(

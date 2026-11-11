@@ -18,8 +18,6 @@ if [[ -n "${RUNFILES_DIR:-}" ]]; then
   runfiles="$RUNFILES_DIR"
 elif [[ -d "$0.runfiles" ]]; then
   runfiles="$0.runfiles"
-elif [[ -d "${0%/*}.runfiles" ]]; then
-  runfiles="${0%/*}.runfiles"
 elif [[ "$0" == *.runfiles/* ]]; then
   runfiles="${0%.runfiles/*}.runfiles"
 else
@@ -44,9 +42,9 @@ source "$runfiles_library"
 
 # The build embeds the selected artifact's canonical runfiles key. rlocation
 # handles both directory trees and manifest-only runfiles without changing args.
-binary="$(rlocation '@@PLANTUML_RUNFILE@@')"
+binary="$(rlocation '@@PLANTUML_RUNFILE@@')" || binary=""
 if [[ ! -x "$binary" ]]; then
-  echo "Selected PlantUML binary was not found in runfiles: $binary" >&2
+  echo "Selected PlantUML binary was not found in runfiles: @@PLANTUML_RUNFILE@@" >&2
   exit 1
 fi
 exec "$binary" "$@"

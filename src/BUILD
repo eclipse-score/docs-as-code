@@ -27,7 +27,6 @@ exports_files(
         "requirements.in",
         "dummy.py",
         "generate_sourcelinks_cli.py",
-        "plantuml_launcher.sh",
     ],
     visibility = ["//visibility:public"],
 )
@@ -53,6 +52,11 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
+# Sphinx executes PlantUML in its own configuration. For sandboxed Needs builds,
+# the Sphinx executable and these data dependencies are transitioned to the
+# execution platform; for `bazel run` and IDE use they follow the local build.
+# Keep the executable and runtime selections together so they always come from
+# the same native distribution.
 config_setting(
     name = "plantuml_linux_x86_64",
     constraint_values = [
@@ -87,6 +91,18 @@ config_setting(
 
 plantuml_binary(
     name = "plantuml",
+    binary = select({
+        ":plantuml_linux_x86_64": "@plantuml_native_linux_amd64//:plantuml",
+        ":plantuml_linux_arm64": "@plantuml_native_linux_arm64//:plantuml",
+        ":plantuml_macos_arm64": "@plantuml_native_macos_arm64//:plantuml",
+        ":plantuml_windows_x86_64": "@plantuml_native_windows_amd64//:plantuml.exe",
+    }),
+    runtime = select({
+        ":plantuml_linux_x86_64": "@plantuml_native_linux_amd64//:runtime",
+        ":plantuml_linux_arm64": "@plantuml_native_linux_arm64//:runtime",
+        ":plantuml_macos_arm64": "@plantuml_native_macos_arm64//:runtime",
+        ":plantuml_windows_x86_64": "@plantuml_native_windows_amd64//:runtime",
+    }),
     visibility = ["//visibility:public"],
 )
 
@@ -104,15 +120,7 @@ score_pytest(
 py_library(
     name = "plantuml_for_python",
     srcs = ["@score_docs_as_code//src:dummy.py"],
-    data = [":plantuml_py_data"],
-    visibility = ["//visibility:public"],
-)
-
-filegroup(
-    name = "plantuml_py_data",
-    srcs = [
-        ":plantuml",
-    ],
+    data = [":plantuml"],
     visibility = ["//visibility:public"],
 )
 
