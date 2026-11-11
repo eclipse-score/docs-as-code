@@ -24,6 +24,7 @@ Sphinx configuration.
 In addition it sets common PlantUML options, like output to svg_obj.
 """
 
+import os
 import subprocess
 from collections.abc import Iterator
 from pathlib import Path
@@ -89,7 +90,10 @@ def find_correct_path(runfiles: Path) -> Path:
 
     # The public target stays at a stable workspace/module runfiles path; its
     # launcher selects the platform binary and resolves it through runfiles.
-    return runfiles / module / "src" / "plantuml"
+    launcher = runfiles / module / "src" / "plantuml"
+    if not launcher.exists() and module != "_main":
+        launcher = runfiles / "_main" / "src" / "plantuml"
+    return launcher
 
 
 def check_graphviz(app: Sphinx) -> None:
@@ -104,6 +108,7 @@ def check_graphviz(app: Sphinx) -> None:
         capture_output=True,
         check=False,
         text=True,
+        env={**os.environ, "RUNFILES_DIR": str(get_runfiles_dir())},
     )
     output = (result.stdout + result.stderr).strip()
 
