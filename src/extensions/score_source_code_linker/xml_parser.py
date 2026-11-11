@@ -371,11 +371,11 @@ def read_dependable_element_needs(
     for need in cast(dict[str, dict[str, Any]], selected.get("needs", {})).values():
         if need.get("type") != "testcase":
             continue
-        # Empty strings in the exchange format stand for values the test.xml
-        # did not provide; DataOfTestCase expects None for those.
-        repo_name = need.get("repo_name") or None
-        md_hash, md_url = ("", "") if repo_name else (None, None)
-        if repo_name and repo_name != "local_repo" and known_good_json:
+        # Without a repo_name the test case belongs to the local repository,
+        # like a test.xml from the local bazel-testlogs.
+        repo_name = need.get("repo_name") or "local_repo"
+        md_hash, md_url = ("", "")
+        if repo_name != "local_repo" and known_good_json:
             md_hash, md_url = parse_info_from_known_good(known_good_json, repo_name)
         test_cases.append(
             DataOfTestCase(
