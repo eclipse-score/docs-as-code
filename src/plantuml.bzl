@@ -23,6 +23,6 @@ def plantuml_binary(name, visibility = None):
             "//src:plantuml_linux_arm64": ["@plantuml_native_linux_arm64//:runtime", "@plantuml_native_linux_arm64//:plantuml"],
             "//src:plantuml_macos_arm64": ["@plantuml_native_macos_arm64//:runtime", "@plantuml_native_macos_arm64//:plantuml"],
             "//src:plantuml_windows_x86_64": ["@plantuml_native_windows_amd64//:runtime", "@plantuml_native_windows_amd64//:plantuml.exe"],
-        }),
+        }) + ["@bazel_tools//tools/bash/runfiles"],
         visibility = visibility,
     )

@@ -87,6 +87,8 @@ def find_correct_path(runfiles: Path) -> Path:
         # Docs-as-code is the current module
         module = "_main"
 
+    # The public target stays at a stable workspace/module runfiles path; its
+    # launcher selects the platform binary and resolves it through runfiles.
     return runfiles / module / "src" / "plantuml"
 
 

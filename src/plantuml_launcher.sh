@@ -25,24 +25,27 @@ else
   exit 1
 fi
 
+runfiles_library="$runfiles/bazel_tools/tools/bash/runfiles/runfiles.bash"
+if [[ ! -f "$runfiles_library" && -n "${RUNFILES_MANIFEST_FILE:-}" ]]; then
+  runfiles_library="$(awk '$1 == "bazel_tools/tools/bash/runfiles/runfiles.bash" { print substr($0, index($0, " ") + 1); exit }' "$RUNFILES_MANIFEST_FILE")"
+fi
+if [[ ! -f "$runfiles_library" ]]; then
+  echo "Cannot find Bazel runfiles library" >&2
+  exit 1
+fi
+# shellcheck disable=SC1090
+source "$runfiles_library"
+
 # Find the artifact selected by Bazel. The main-repository mapping contains
 # only apparent-to-canonical external repo mappings; runfiles entries use the
 # canonical name such as +_repo_rules+plantuml_native_linux_amd64.
-for candidate in \
-  +_repo_rules+plantuml_native_linux_amd64/plantuml \
-  +_repo_rules+plantuml_native_linux_arm64/plantuml \
-  +_repo_rules+plantuml_native_macos_arm64/plantuml \
-  +_repo_rules+plantuml_native_windows_amd64/plantuml.exe; do
-  path="$runfiles/$candidate"
-  if [[ -x "$path" ]]; then
-    exec "$path" "$@"
-  fi
-  if [[ -n "${RUNFILES_MANIFEST_FILE:-}" ]]; then
-    resolved="$(awk -v key="$candidate" 'index($0, key " ") == 1 { print substr($0, length(key) + 2); exit }' "$RUNFILES_MANIFEST_FILE")"
+for repo in plantuml_native_linux_amd64 plantuml_native_linux_arm64 plantuml_native_macos_arm64 plantuml_native_windows_amd64; do
+  for binary in plantuml plantuml.exe; do
+    resolved="$(rlocation "$repo/$binary")"
     if [[ -n "$resolved" && -x "$resolved" ]]; then
       exec "$resolved" "$@"
     fi
-  fi
+  done
 done
 
 echo "Selected PlantUML binary was not found in runfiles" >&2
