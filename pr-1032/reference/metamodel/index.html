@@ -1009,6 +1009,7 @@ class doc_tool {
   +id
   +security_affected
   +status
+  +tool_version
   +version
   +approver [optional]*
   +author [optional]*
@@ -1019,7 +1020,6 @@ class doc_tool {
   +source_code_link [optional]*
   +tcl [optional]*
   +testlink [optional]*
-  +tool_version [optional]*
 }
 class document {
   +id
@@ -3901,6 +3901,7 @@ class doc_tool {
   +id
   +security_affected
   +status
+  +tool_version
   +version
   +approver [optional]*
   +author [optional]*
@@ -3911,7 +3912,6 @@ class doc_tool {
   +source_code_link [optional]*
   +tcl [optional]*
   +testlink [optional]*
-  +tool_version [optional]*
 }
 class tool_usecase {
   +id
@@ -3963,48 +3963,48 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(draft|evaluated|qualified|released|rejected)$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">tool_version</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">version</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">approver</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">author</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">reviewer</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">safety_affected</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">tcl</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(LOW|HIGH)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">tool_version</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -8955,6 +8955,7 @@ class doc_tool {
   +id
   +security_affected
   +status
+  +tool_version
   +version
   +approver [optional]*
   +author [optional]*
@@ -8965,7 +8966,6 @@ class doc_tool {
   +source_code_link [optional]*
   +tcl [optional]*
   +testlink [optional]*
-  +tool_version [optional]*
 }
 class potential_tool_malfunction {
   +id
@@ -9364,6 +9364,7 @@ class doc_tool {
   +id
   +security_affected
   +status
+  +tool_version
   +version
   +approver [optional]*
   +author [optional]*
@@ -9374,7 +9375,6 @@ class doc_tool {
   +source_code_link [optional]*
   +tcl [optional]*
   +testlink [optional]*
-  +tool_version [optional]*
 }
 class document {
   +id

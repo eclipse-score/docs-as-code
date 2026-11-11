@@ -495,19 +495,13 @@ It contains utilities and extensions that improve documentation in S-CORE.</p>
 </pre></div>
 </div>
 </section>
-<section id="bazelrc-file">
-<h2>2. .bazelrc file<a class="headerlink" href="#bazelrc-file" title="Link to this heading">#</a></h2>
-<p>The system uses <a class="reference external" href="https://www.plantuml.com">PlantUML</a> for diagrams. This action
-requires Java.
-If the system does not contain Java, Bazel downloads a remote JDK
-from the network.
-This action requires configuration in the <code class="docutils literal notranslate"><span class="pre">.bazelrc</span></code> file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">build</span> <span class="o">--</span><span class="n">java_language_version</span><span class="o">=</span><span class="mi">17</span>
-<span class="n">build</span> <span class="o">--</span><span class="n">java_runtime_version</span><span class="o">=</span><span class="n">remotejdk_17</span>
-<span class="n">build</span> <span class="o">--</span><span class="n">tool_java_language_version</span><span class="o">=</span><span class="mi">17</span>
-<span class="n">build</span> <span class="o">--</span><span class="n">tool_java_runtime_version</span><span class="o">=</span><span class="n">remotejdk_17</span>
-</pre></div>
-</div>
+<section id="diagram-tools">
+<h2>2. Diagram tools<a class="headerlink" href="#diagram-tools" title="Link to this heading">#</a></h2>
+<p>Bazel downloads a native <a class="reference external" href="https://www.plantuml.com">PlantUML</a> distribution
+for the platform running Sphinx. PlantUML does not require a separate Java
+installation. Supported platforms are Linux x86-64, Linux ARM64 and macOS ARM64.</p>
+<p>Install <a class="reference external" href="https://graphviz.org/download/">Graphviz</a> and make its <code class="docutils literal notranslate"><span class="pre">dot</span></code>
+executable available on <code class="docutils literal notranslate"><span class="pre">PATH</span></code> for diagrams that require Graphviz layout.</p>
 </section>
 <section id="build-file">
 <h2>3. BUILD file<a class="headerlink" href="#build-file" title="Link to this heading">#</a></h2>
@@ -581,7 +575,7 @@ This action requires configuration in the <code class="docutils literal notransl
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-bazel-file">1. MODULE.bazel file</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bazelrc-file">2. .bazelrc file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagram-tools">2. Diagram tools</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-file">3. BUILD file</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-a-documentation-build">4. Run a documentation build</a></li>
 </ul>
