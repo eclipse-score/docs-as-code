@@ -249,6 +249,8 @@ needs_types:
       status: ^(draft|evaluated|qualified|released|rejected)$
       # req-Id: tool_req__docs_tvr_security
       security_affected: "^(YES|NO)$"
+      # req-Id: tool_req__docs_tvr_version
+      tool_version: ^.+$
     optional_options:
       # These summary fields are rendered from the owned malfunction graph by
       # the structured TVR workflow. They are optional so process templates
@@ -260,9 +262,6 @@ needs_types:
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
-      # FIXME: temp optional for migration. Will be made mandatory in future releases.
-      # req-Id: tool_req__docs_tvr_version
-      tool_version: ^.*$
     optional_links:
       realizes: workproduct
     parts: 2
@@ -1271,7 +1270,6 @@ graph_checks:
     check_one:
       satisfied_by_back: safety != QM
     explanation: A safety relevant feature or component must have at least one safety requirement allocated via satisfied_by.
-    info_only: true
 
   # req-Id: tool_req__docs_arch_link_safety_to_req
   tool_req__docs_arch_link_safety_to_req:
@@ -1281,7 +1279,6 @@ graph_checks:
     check_one:
       fulfils: safety != QM
     explanation: A safety relevant architecture element must be linked to at least one safety requirement via fulfils.
-    info_only: true
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:
