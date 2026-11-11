@@ -176,29 +176,6 @@ def run_scenario(
     return run_package(bazel_cmd, f"scenarios/{scenario}", target, expect_error)
 
 
-def run_negative_scenario(scenario: str, target: str) -> RunResult:
-    """Build a scenario whose package must fail while loading.
-
-    Such a scenario keeps its BUILD file as ``BUILD.negative``, so recursive
-    patterns like ``//...`` never load it. The file is installed as ``BUILD``
-    only for this one Bazel call and removed again afterwards.
-    """
-    scenario_dir = TEST_ROOT / "scenarios" / scenario
-    build_file = scenario_dir / "BUILD"
-    assert not build_file.exists(), (
-        "negative test package must not be discovered by //..."
-    )
-
-    build_file.write_text(
-        (scenario_dir / "BUILD.negative").read_text(encoding="utf-8"),
-        encoding="utf-8",
-    )
-    try:
-        return run_scenario("build", scenario, target, expect_error=True)
-    finally:
-        build_file.unlink()
-
-
 def built_output(package: str, filename: str) -> Path:
     """Return a declared output from a package built in the current configuration."""
     root = repo_root()
