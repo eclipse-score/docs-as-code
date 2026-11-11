@@ -782,8 +782,6 @@ but for ease of traceability this is a separate one.
   component to that interface. Additionally it shall be checked that each feature
   architecture is linked against at least one logical architectural interface.
 
-  Note: This requirement shall not break the build in score main, but emit a information instead, as the architecture is not yet complete and only complete visible in the reference integration repository.
-
 
 💻 Detailed Design & Code
 ##########################

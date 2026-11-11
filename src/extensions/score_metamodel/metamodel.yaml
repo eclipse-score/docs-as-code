@@ -1336,4 +1336,3 @@ graph_checks:
     check_one:
       implements_back: id != ""
     explanation: A logical interface included by a feature must be implemented by at least one component.
-    info_only: true

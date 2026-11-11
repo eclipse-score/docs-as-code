@@ -19,7 +19,7 @@
    :derivation_technique: requirements_based
 
    A logical interface included by a feature must have an incoming implements
-   link from a component. Missing implementations produce information only.
+   link from a component. Missing implementations produce a warning.
    Interfaces without feature assignment are outside this check's scope.
 
 .. feat:: Feature owning the logical interfaces
@@ -34,11 +34,10 @@
    :safety: QM
    :status: valid
    :included_by: feat__interf_consistency
-   :expect_info: No linked need in `implements_back`. Explanation: A logical interface included by a feature must be implemented by at least one component.
-   :expect_not: No linked need in `implements_back`
+   :expect: No linked need in `implements_back`. Explanation: A logical interface included by a feature must be implemented by at least one component.
 
    No component implements this interface. The empty backlink list must produce
-   an informational diagnostic without turning it into a build warning.
+   a diagnostic without turning it into a build error.
 
 .. logic_arc_int:: Feature interface implemented by a component
    :id: logic_arc_int__interf_consistency__implemented
@@ -46,7 +45,6 @@
    :safety: QM
    :status: valid
    :included_by: feat__interf_consistency
-   :expect_info_not: A logical interface included by a feature must be implemented by at least one component.
    :expect_not: A logical interface included by a feature must be implemented by at least one component.
 
 .. comp:: Component implementing the feature interface
