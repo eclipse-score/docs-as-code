@@ -282,7 +282,7 @@ Versioning
    :id: tool_req__docs_common_attr_version
    :tags: Common Attributes
    :implemented: YES
-   :version: 2
+   :version: 1
    :parent_covered: YES
    :satisfies: gd_req__req_attr_version[version==2], gd_req__tool_attr_need_version[version==1]
 
@@ -1029,7 +1029,7 @@ is described in the platform.
   :id: tool_req__docs_tvr_version
   :tags: Tool Verification Reports
   :implemented: YES
-  :version: 3
+  :version: 2
   :satisfies: gd_req__tool_attr_version[version==2]
   :parent_covered: YES
 
