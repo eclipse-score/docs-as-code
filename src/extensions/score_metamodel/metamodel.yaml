@@ -1336,3 +1336,11 @@ graph_checks:
     check_one:
       implements_back: id != ""
     explanation: A logical interface included by a feature must be implemented by at least one component.
+
+  # req-Id: tool_req__arch_consistency_interf
+  tool_req__arch_consistency_interf_feat:
+    needs:
+      include: feat
+    check_one:
+      included_by_back: id != ""
+    explanation: A feature must have at least one logical architectural interface.
