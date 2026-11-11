@@ -885,6 +885,8 @@ Testing
 See `more verification methods <https://eclipse-score.github.io/score/main/platform_management_plan/software_verification.html#verification-methods>`__
 for an overview.
 
+   .. note:: implemented as info-only for smooth migration
+
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_2
    :tags: Testing
@@ -931,6 +933,7 @@ for an overview.
          - Unit
          - `comp_req`, `feat_req`
 
+   .. note:: implemented as info-only for smooth migration
 
 `The folder structure <https://eclipse-score.github.io/score/main/contribute/general/folder.html>`__
 is described in the platform.
