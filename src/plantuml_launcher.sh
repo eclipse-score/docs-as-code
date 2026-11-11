@@ -18,6 +18,8 @@ if [[ -n "${RUNFILES_DIR:-}" ]]; then
   runfiles="$RUNFILES_DIR"
 elif [[ -d "$0.runfiles" ]]; then
   runfiles="$0.runfiles"
+elif [[ -d "${0%/*}.runfiles" ]]; then
+  runfiles="${0%/*}.runfiles"
 elif [[ "$0" == *.runfiles/* ]]; then
   runfiles="${0%.runfiles/*}.runfiles"
 else
