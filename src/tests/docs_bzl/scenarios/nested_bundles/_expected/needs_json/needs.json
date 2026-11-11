@@ -14,7 +14,10 @@
           "docname": "concepts/example_bundle/index",
           "external_css": "external_link",
           "id": "gd_req__docs_bzl_nested_bundle",
-          "lineno": 26,
+          "lineno": 47,
+          "satisfies": [
+            "wf__docs_bzl"
+          ],
           "satisfies_back": [
             "tool_req__docs_bzl_nested_bundle"
           ],
@@ -27,12 +30,32 @@
           "type_name": "Process Requirements",
           "version": 1
         },
+        "rl__docs_bzl": {
+          "approved_by_back": [
+            "wf__docs_bzl"
+          ],
+          "docname": "concepts/example_bundle/index",
+          "external_css": "external_link",
+          "id": "rl__docs_bzl",
+          "lineno": 25,
+          "responsible_back": [
+            "wf__docs_bzl"
+          ],
+          "section_name": "Parent bundle",
+          "sections": [
+            "Parent bundle"
+          ],
+          "title": "Docs engineer",
+          "type": "role",
+          "type_name": "Role",
+          "version": 1
+        },
         "tool_req__docs_bzl_nested_bundle": {
           "content": "The ``parent`` bundle composes the ``child`` bundle and can be mounted into\na host documentation tree together with its generated data.",
           "docname": "concepts/example_bundle/index",
           "external_css": "external_link",
           "id": "tool_req__docs_bzl_nested_bundle",
-          "lineno": 18,
+          "lineno": 39,
           "satisfies": [
             "gd_req__docs_bzl_nested_bundle"
           ],
@@ -45,9 +68,60 @@
           "type": "tool_req",
           "type_name": "Tool Requirement",
           "version": 1
+        },
+        "wf__docs_bzl": {
+          "approved_by": [
+            "rl__docs_bzl"
+          ],
+          "docname": "concepts/example_bundle/index",
+          "external_css": "external_link",
+          "id": "wf__docs_bzl",
+          "input": [
+            "wp__docs_bzl"
+          ],
+          "lineno": 29,
+          "output": [
+            "wp__docs_bzl"
+          ],
+          "responsible": [
+            "rl__docs_bzl"
+          ],
+          "satisfies_back": [
+            "gd_req__docs_bzl_nested_bundle"
+          ],
+          "section_name": "Parent bundle",
+          "sections": [
+            "Parent bundle"
+          ],
+          "status": "valid",
+          "title": "Bundle documentation",
+          "type": "workflow",
+          "type_name": "Workflow",
+          "version": 1
+        },
+        "wp__docs_bzl": {
+          "docname": "concepts/example_bundle/index",
+          "external_css": "external_link",
+          "id": "wp__docs_bzl",
+          "input_back": [
+            "wf__docs_bzl"
+          ],
+          "lineno": 20,
+          "output_back": [
+            "wf__docs_bzl"
+          ],
+          "section_name": "Parent bundle",
+          "sections": [
+            "Parent bundle"
+          ],
+          "status": "valid",
+          "title": "Documentation bundle",
+          "type": "workproduct",
+          "type_name": "Workproduct",
+          "version": 1
         }
       },
-      "needs_amount": 2,
+      "needs_amount": 5,
       "needs_defaults_removed": true,
       "needs_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",

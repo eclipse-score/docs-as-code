@@ -27,9 +27,30 @@ module.
    This requirement is intentionally not linked to the platform feature
    requirement. It verifies the independent-component control case.
 
+.. Setup: link targets for gd_req satisfies link.
+
+.. workproduct:: Modern test workproduct
+   :id: wp__modern_workproduct
+   :status: valid
+   :version: 1
+
+.. role:: Modern test role
+   :id: rl__modern_workflow
+   :version: 1
+
+.. workflow:: Modern test workflow
+   :id: wf__modern_workflow
+   :status: valid
+   :version: 1
+   :input: wp__modern_workproduct
+   :output: wp__modern_workproduct
+   :approved_by: rl__modern_workflow
+   :responsible: rl__modern_workflow
+
 .. gd_req:: Self-contained components build without external needs
    :id: gd_req__modern_unlinked_self_contained
    :version: 1
+   :satisfies: wf__modern_workflow
 
    A component that has no dependency on a requirement owned by another
    bundle must build both independently and through its parent module.
