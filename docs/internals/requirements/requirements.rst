@@ -1181,7 +1181,7 @@ is described in the platform.
 
 .. tool_req:: Safety Analysis Mitigation Attribute
   :id: tool_req__docs_saf_attrs_mitigated_by
-  :implemented: PARTIAL
+  :implemented: YES
   :tags: Safety Analysis
   :version: 1
   :satisfies:
@@ -1202,8 +1202,6 @@ is described in the platform.
   the same ASIL level or a higher one.
 
   It can be ``comp_req`` or ``aou_req``.
-
-  .. note:: implemented as info to enable non-breaking transition
 
 
 .. tool_req:: Safety Analysis Mitigation Issue Attribute

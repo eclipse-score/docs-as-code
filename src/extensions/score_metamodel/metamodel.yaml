@@ -1327,7 +1327,6 @@ graph_checks:
       mitigated_by:
         safety == ASIL_B
     explanation: Valid safety analyses should link to at least one same-level or higher-safety requirement.
-    info_only: true
 
   # req-Id: tool_req__arch_consistency_interf
   tool_req__arch_consistency_interf:
