@@ -49,8 +49,7 @@ def _build_external_needs_source_config() -> str:
     ``EXTERNAL_NEEDS_LABELS`` for its explicitly declared label list. All
     variables contain JSON arrays of Bazel labels.
 
-    The metamodel extension filters ordinary data dependencies and resolves
-    supported labels against the runfiles directory supplied as a separate
+    The metamodel extension resolves supported labels against the runfiles directory supplied as a separate
     Sphinx configuration value.
     """
     external = env.string_list("EXTERNAL_NEEDS_FILES", "[]")

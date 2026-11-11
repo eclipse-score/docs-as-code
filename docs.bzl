@@ -285,9 +285,9 @@ def _is_needs_json_target(label):
 def _is_needs_inventory_target(label):
     """Return whether ``label`` directly names a Needs inventory target.
 
-    These inventory targets are still accepted through ``external_needs``.
-    Identifying them separately lets ``docs()`` report the old ``data`` route
-    without reporting ordinary files and runtime dependencies.
+    These inventory targets are accepted only through ``external_needs``.
+    Identifying them separately lets ``docs()`` reject them in ``data``
+    without rejecting ordinary files and runtime dependencies.
     """
     return str(label).rsplit(":", 1)[-1] in ("needs_json", "needs_json_file")
 
@@ -695,8 +695,8 @@ def docs(
         child content belongs in the child ``docs_bundle(data = [...])``.
         For generated documentation in a mounted child, use that bundle's
         explicit ``srcs`` instead; ``data`` remains for supporting/runtime
-        files. Passing a Needs inventory target through ``data`` is deprecated
-        and prints an informational message; put it in ``external_needs``.
+        files. A Needs inventory target (``needs_json``, ``needs_json_file``)
+        in ``data`` is rejected; put it in ``external_needs``.
       deps: Additional dependencies for the documentation build.
       external_needs: Labels of public ``docs()`` or ``docs_bundle`` targets
                       whose Needs can be referenced by this project. The
@@ -732,15 +732,13 @@ def docs(
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
-    # Report external Needs inventories in ``data`` while the original labels
-    # are still visible at the public macro boundary. After this point, ``data``
-    # and explicit ``external_needs`` labels are combined for the Needs builder,
-    # so their origin is no longer available.
-    if any([_is_needs_inventory_target(label) for label in data]):
+    # Needs inventories are imported only through ``external_needs``. Reject them
+    # in ``data`` so a project cannot import the same Needs through two routes.
+    inventories_in_data = [str(label) for label in data if _is_needs_inventory_target(label)]
+    if inventories_in_data:
         fail(
-            "WARNING: ⚠️ DEPRECATED: Passing a Needs inventory through " +
-            "docs(data = [...]) is deprecated!!! Move it to " +
-            "external_needs = [...] instead.",
+            "docs(): Needs inventories are not accepted in data: %s. " % inventories_in_data +
+            "Move them to external_needs = [...] instead.",
         )
 
     # Resolve public bundle names once, then pass the generated inventory labels

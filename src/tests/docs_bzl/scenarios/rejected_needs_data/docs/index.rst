@@ -11,7 +11,7 @@
    SPDX-License-Identifier: Apache-2.0
    *******************************************************************************
 
-Deprecated Needs data input
-===========================
+Rejected Needs data input
+=========================
 
-This fixture passes a Needs inventory through the deprecated ``data`` argument.
+This fixture passes a Needs inventory through ``data``, which ``docs()`` rejects.
