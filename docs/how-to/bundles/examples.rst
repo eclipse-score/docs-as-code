@@ -39,7 +39,6 @@ The tested parent bundle composes the child like this:
            "bundle": ":child",
            "mount_at": "child",
        }],
-       data = [":generated_doc_output"],
        visibility = ["//visibility:public"],
    )
 

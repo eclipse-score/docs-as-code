@@ -691,12 +691,12 @@ def docs(
                    configuration override. The calling Bazel package path is
                    appended relative to the workspace.
       data: Additional files owned by this project's root ``:docs_bundle``.
-        This is shorthand for declaring the files in that root bundle; mounted
-        child content belongs in the child ``docs_bundle(data = [...])``.
-        For generated documentation in a mounted child, use that bundle's
-        explicit ``srcs`` instead; ``data`` remains for supporting/runtime
-        files. A Needs inventory target (``needs_json``, ``needs_json_file``)
-        in ``data`` is rejected; put it in ``external_needs``.
+        This is shorthand for declaring supporting/runtime files in that root
+        bundle; mounted child content belongs in the child
+        ``docs_bundle(data = [...])``. For generated documentation, use that
+        bundle's explicit ``srcs`` instead. A Needs inventory target
+        (``needs_json``, ``needs_json_file``) in ``data`` is rejected; put
+        it in ``external_needs``.
       deps: Additional dependencies for the documentation build.
       external_needs: Labels of public ``docs()`` or ``docs_bundle`` targets
                       whose Needs can be referenced by this project. The

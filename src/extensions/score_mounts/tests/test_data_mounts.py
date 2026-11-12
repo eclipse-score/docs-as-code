@@ -10,13 +10,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Tests for ``_resolve_data_mounts`` in the ``score_mounts`` extension."""
+"""Tests for the ``score_mounts`` extension's source-resolution functions."""
 
 from pathlib import Path
 from types import SimpleNamespace
 from typing import cast
 
-import pytest
 from score_pytest.attribute_plugin import add_test_properties
 from sphinx.application import Sphinx
 from sphinx.config import Config
@@ -24,7 +23,6 @@ from sphinx.config import Config
 from src.extensions.score_mounts import (
     _configure_root_bundle_srcs_allowlist,  # pyright: ignore[reportPrivateUsage]
     _make_mount_entry,  # pyright: ignore[reportPrivateUsage] - white-box unit test
-    _resolve_data_mounts,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _resolve_source_mounts,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _set_document_bundles,  # pyright: ignore[reportPrivateUsage]
 )
@@ -33,55 +31,6 @@ from src.extensions.score_mounts._resolver import (
     MountsManifest,
     MountSpec,
 )
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_missing_data_file_raises(tmp_path: Path) -> None:
-    """A manifest with an unavailable data file must fail fast."""
-    manifest = MountsManifest(
-        mounts=[
-            MountSpec(
-                src_root="",
-                runtime_path="",
-                mount_at="missing",
-                data=["bazel-out/k8-fastbuild/bin/nonexistent.rst"],
-            )
-        ]
-    )
-
-    with pytest.raises(ValueError, match="resolved data file does not exist"):
-        _resolve_data_mounts(manifest, tmp_path, tmp_path)
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_existing_data_file_resolved(tmp_path: Path) -> None:
-    """An existing data file resolves to its parent directory."""
-    data_file = tmp_path / "bazel-bin" / "file.rst"
-    data_file.parent.mkdir(parents=True)
-    data_file.write_text("..", encoding="utf-8")
-
-    manifest = MountsManifest(
-        mounts=[
-            MountSpec(
-                src_root="",
-                runtime_path="",
-                mount_at="exists",
-                data=["bazel-out/k8-fastbuild/bin/file.rst"],
-            )
-        ]
-    )
-
-    mounts = _resolve_data_mounts(manifest, tmp_path, tmp_path / "runfiles")
-
-    assert str(tmp_path / "bazel-bin") in mounts
 
 
 @add_test_properties(
@@ -131,64 +80,14 @@ def test_root_bundle_srcs_are_a_positive_allowlist(tmp_path: Path) -> None:
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
-def test_root_bundle_data_is_not_mounted_but_child_data_is(
-    tmp_path: Path,
-) -> None:
-    """Only rebased child data creates a runtime data mount."""
-    root_data = tmp_path / "bazel-bin" / "root.txt"
-    child_data = tmp_path / "bazel-bin" / "child" / "child.txt"
-    root_data.parent.mkdir(parents=True)
-    child_data.parent.mkdir()
-    root_data.write_text("root", encoding="utf-8")
-    child_data.write_text("child", encoding="utf-8")
-    manifest = MountsManifest(
-        mounts=[
-            MountSpec(
-                src_root="",
-                runtime_path="",
-                mount_at="",
-                data=["bazel-out/k8-fastbuild/bin/root.txt"],
-                root_bundle=True,
-            ),
-            MountSpec(
-                src_root="",
-                runtime_path="",
-                mount_at="child",
-                data=["bazel-out/k8-fastbuild/bin/child/child.txt"],
-                root_bundle=False,
-            ),
-        ]
-    )
-
-    mounts = _resolve_data_mounts(manifest, tmp_path, tmp_path / "runfiles")
-
-    assert str(root_data.parent) not in mounts
-    assert mounts[str(child_data.parent)] is manifest.mounts[1]
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
 def test_data_mount_documents_do_not_get_a_bundle() -> None:
-    """Mounted data documents stay unassociated instead of inheriting the root bundle."""
+    """Mounted child data (supporting files) stay unassociated instead of inheriting the root bundle."""
     primary = BundleMetadata(
         label="//:root",
         name="root",
     )
     manifest = MountsManifest(
         mounts=[
-            MountSpec(
-                src_root="",
-                runtime_path="",
-                mount_at="generated",
-                root_bundle=False,
-                bundle=BundleMetadata(
-                    label="//:data",
-                    name="data",
-                ),
-            ),
             MountSpec(
                 src_root="docs",
                 runtime_path="docs",
@@ -199,19 +98,18 @@ def test_data_mount_documents_do_not_get_a_bundle() -> None:
         ]
     )
     env = SimpleNamespace(
-        project=SimpleNamespace(_mount_entry_docnames={0: ["generated/page"]}),
-        found_docs={"generated/page", "index"},
+        project=SimpleNamespace(_mount_entry_docnames={}),
+        found_docs={"index"},
     )
     app = SimpleNamespace(
         env=env,
         _score_mounts_manifest=manifest,
-        _score_mount_runtime_specs=(None,),
+        _score_mount_runtime_specs=(),
     )
 
     _set_document_bundles(cast(Sphinx, app), env)
 
     document_bundles = env._score_document_bundles
-    assert "generated/page" not in document_bundles
     assert document_bundles["index"] == primary
 
 
@@ -375,61 +273,3 @@ def test_canonical_mount_dir_empty_bundle_fallback(tmp_path: Path) -> None:
     entry = _make_mount_entry(bundle_dir, spec)
 
     assert entry["dir"] == str(bundle_dir.resolve())
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_mount_entry_uses_canonical_directory_for_generated_data_bundle(
-    tmp_path: Path,
-) -> None:
-    """Generated data bundles may resolve from the sandbox to bazel-out."""
-    canonical_dir = (
-        tmp_path
-        / "execroot"
-        / "_main"
-        / "bazel-out"
-        / "k8-fastbuild"
-        / "bin"
-        / "src"
-        / "extensions"
-        / "score_metamodel"
-        / "docs"
-        / "generated"
-    )
-    canonical_dir.mkdir(parents=True)
-    canonical_source = canonical_dir / "index.rst"
-    canonical_source.write_text("Metamodel", encoding="utf-8")
-    staged_dir = (
-        tmp_path
-        / "sandbox"
-        / "linux-sandbox"
-        / "42"
-        / "execroot"
-        / "_main"
-        / "bazel-out"
-        / "k8-fastbuild"
-        / "bin"
-        / "src"
-        / "extensions"
-        / "score_metamodel"
-        / "docs"
-        / "generated"
-    )
-    staged_dir.mkdir(parents=True)
-    staged_dir.joinpath("index.rst").symlink_to(canonical_source)
-    spec = MountSpec(
-        src_root="",
-        runtime_path="",
-        mount_at="reference/metamodel",
-        data=[
-            "bazel-out/k8-fastbuild/bin/src/extensions/"
-            "score_metamodel/docs/generated/index.rst"
-        ],
-    )
-
-    entry = _make_mount_entry(staged_dir, spec)
-
-    assert entry["dir"] == str(canonical_dir)
