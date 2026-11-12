@@ -305,6 +305,21 @@ def test_safety_pie_row_reference_pie_only_on_request() -> None:
     assert ".. score-report-bars:: Stakeholder Requirements (QM)\n" in with_ref
 
 
+def test_chart_legend_is_one_raw_line_with_reference_on_request() -> None:
+    """The legend repeats per section, so it is one line with tooltips."""
+    chart_legend = vars(templates)["_ChartLegend"]()
+
+    plain = chart_legend()
+    with_ref = chart_legend(True)
+
+    assert plain.startswith("\n.. raw:: html\n\n   <div")
+    assert plain.count("\n") == 4
+    assert "Reference coverage" not in plain
+    assert "Reference coverage" in with_ref
+    assert 'title="agreed and formally inspected"' in plain
+    assert plain.count('class="chart-legend-dot"') == 8
+
+
 def test_safety_pie_row_indent_nests_every_line() -> None:
     """``indent`` nests the chart into a grid item without touching blank lines."""
     safety_pie_row = vars(templates)["_SafetyPieRow"]()

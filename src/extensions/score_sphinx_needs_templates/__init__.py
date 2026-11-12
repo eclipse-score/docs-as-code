@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import html
 from collections.abc import Mapping
 from pathlib import Path
 
@@ -329,6 +330,81 @@ class _IdFilterList:
 _id_filter_list_callable = _IdFilterList()
 
 
+# (heading, ((colour, label, explanation), ...)); colours match _SafetyPieRow.
+_LEGEND_GROUPS = (
+    (
+        "Status ASIL B",
+        (
+            ("#37a12d", "valid_inspected", "agreed and formally inspected"),
+            ("#f5c518", "valid", "agreed, formal inspection still outstanding"),
+            ("#ca2828", "invalid", "not agreed; metamodel checks are skipped"),
+        ),
+    ),
+    (
+        "Status QM",
+        (
+            (
+                "#37a12d",
+                "valid",
+                "agreed; QM needs are not formally inspected, so this is their "
+                "final state (valid_inspected counts here too)",
+            ),
+            ("#ca2828", "invalid", "not agreed; metamodel checks are skipped"),
+        ),
+    ),
+    (
+        "Test coverage",
+        (
+            ("#37a12d", "fully", "at least one test fully verifies the need"),
+            ("#f0a500", "partially", "only partially verifying tests"),
+            ("#ca2828", "not covered", "no verifying test at all"),
+        ),
+    ),
+)
+_REFERENCE_LEGEND_GROUP = (
+    "Reference coverage",
+    (
+        (
+            "#37a12d",
+            "referenced",
+            "a requirement one level down derives from it",
+        ),
+        ("#ca2828", "not referenced", "nothing on the level below derives from it"),
+    ),
+)
+
+
+class _ChartLegend:
+    """Render the one-line colour legend shown above each pair of charts.
+
+    The explanation of every colour is its tooltip, so the legend stays a
+    single line even though it is repeated for every Component or Feature.
+    """
+
+    def __call__(self, with_reference: bool = False) -> str:
+        groups = (
+            (*_LEGEND_GROUPS, _REFERENCE_LEGEND_GROUP)
+            if with_reference
+            else _LEGEND_GROUPS
+        )
+        spans = "".join(
+            '<span class="chart-legend-group">'
+            f'<span class="chart-legend-head">{html.escape(heading)}</span>'
+            + "".join(
+                f'<span title="{html.escape(explanation)}">'
+                f'<span class="chart-legend-dot" style="background: {color};">'
+                f"</span>{html.escape(label)}</span>"
+                for color, label, explanation in items
+            )
+            + "</span>"
+            for heading, items in groups
+        )
+        return f'\n.. raw:: html\n\n   <div class="chart-legend">{spans}</div>\n'
+
+
+_chart_legend_callable = _ChartLegend()
+
+
 class _WorkproductRows:
     """Render work-product rows for a six-space indented ``list-table``.
 
@@ -627,6 +703,7 @@ def setup(app: Sphinx) -> dict[str, object]:
     app.config.needs_render_context.setdefault(
         "safety_pie_row", _safety_pie_row_callable
     )
+    app.config.needs_render_context.setdefault("chart_legend", _chart_legend_callable)
     report_pie.setup(app)
     app.connect("builder-inited", _capture_build_environment)
     # Run after the source-code linker has injected generated testcase Needs and

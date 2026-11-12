@@ -103,44 +103,23 @@
        color: #6c757d; font-style: italic;
    }
 
-   .chart-legend { display: flex; flex-wrap: wrap; gap: 1.2em 2.5em; }
-   .chart-legend-group {
-       display: flex; flex-direction: column; gap: 0.3em;
-       flex: 1 1 20em; font-size: 0.9em;
+   /* One-line colour legend above every chart pair; hover explains a colour. */
+   .chart-legend {
+       display: flex; flex-wrap: wrap; gap: 0.3em 1.6em;
+       margin: 0.2em 0 0.4em 0; font-size: 0.85em;
    }
+   .chart-legend-group {
+       display: inline-flex; flex-wrap: wrap; align-items: center;
+       gap: 0.2em 0.8em;
+   }
+   .chart-legend-group > span[title] { cursor: help; }
    .chart-legend-head { font-weight: 600; }
    .chart-legend-dot {
        display: inline-block; width: 0.8em; height: 0.8em;
-       margin-right: 0.5em; border-radius: 50%;
+       margin-right: 0.35em; border-radius: 50%; vertical-align: -0.05em;
        border: 1px solid rgba(0, 0, 0, 0.25);
    }
    </style>
-
-.. dropdown:: Legend — status values and chart colours
-   :animate: fade-in
-   :open:
-
-   .. raw:: html
-
-      <div class="chart-legend">
-        <div class="chart-legend-group">
-          <span class="chart-legend-head">Status — ASIL B</span>
-          <span><span class="chart-legend-dot" style="background: #37a12d;"></span><code>valid_inspected</code> — agreed and formally inspected</span>
-          <span><span class="chart-legend-dot" style="background: #f5c518;"></span><code>valid</code> — agreed, formal inspection still outstanding</span>
-          <span><span class="chart-legend-dot" style="background: #ca2828;"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>
-        </div>
-        <div class="chart-legend-group">
-          <span class="chart-legend-head">Status — QM</span>
-          <span><span class="chart-legend-dot" style="background: #37a12d;"></span><code>valid</code> — agreed; QM needs are not formally inspected, so this is their final state (<code>valid_inspected</code> counts here too)</span>
-          <span><span class="chart-legend-dot" style="background: #ca2828;"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>
-        </div>
-        <div class="chart-legend-group">
-          <span class="chart-legend-head">Test coverage — both classes</span>
-          <span><span class="chart-legend-dot" style="background: #37a12d;"></span>fully covered — at least one test fully verifies the need</span>
-          <span><span class="chart-legend-dot" style="background: #f0a500;"></span>partially covered — only partially verifying tests</span>
-          <span><span class="chart-legend-dot" style="background: #ca2828;"></span>not covered — no verifying test at all</span>
-        </div>
-      </div>
 
 {# ===================================================================== #}
 {# Components                                                             #}
@@ -194,7 +173,7 @@ Component Overview
 
 Component Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+{{ chart_legend() }}
 .. grid:: 1 1 2 2
    :gutter: 4
    :class-row: safety-pair
