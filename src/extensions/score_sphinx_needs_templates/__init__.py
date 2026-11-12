@@ -373,25 +373,24 @@ _workproduct_rows_callable = _WorkproductRows()
 
 
 class _SafetyPieRow:
-    """Render one row of pies restricted to a single safety class.
+    """Render one bar chart restricted to a single safety class.
 
     Shared by the module and platform verification reports, so that QM and
     ASIL figures are never mixed in one chart. QM Needs are not formally
-    inspected, so there ``valid`` already is the green "done" slice rather
+    inspected, so there ``valid`` already is the green "done" segment rather
     than the yellow "not inspected yet" one; a QM Need that is nevertheless
     ``valid_inspected`` counts as ``valid``, as in the metamodel graph checks.
 
-    ``with_reference`` adds a third, reference-coverage pie; ``referenced`` and
-    ``missing`` must already be partitioned over this safety class alone. The
-    raster stays at three columns either way, so that a two-pie row renders
-    its charts at exactly the same size as a three-pie one.
+    The status and test-coverage bars share one figure; ``with_reference``
+    adds a third, reference-coverage bar. ``referenced`` and ``missing`` must
+    already be partitioned over this safety class alone.
 
-    ``count`` decides between pies and placeholders only; it is deliberately
-    not shown, because it is resolved through the Need graph while the pies
+    ``count`` decides between bars and placeholder only; it is deliberately
+    not shown, because it is resolved through the Need graph while the bars
     count through Sphinx-Needs filters, and the two can disagree on links
     carrying a ``[version==N]`` selector.
 
-    With ``component`` and ``category`` the status and coverage pies are
+    With ``component`` and ``category`` the status and coverage bars are
     counted by the shared ``score_metrics`` filter functions instead of the
     inline ``base`` filters; ``version`` then scopes the requirements.
 
@@ -416,7 +415,7 @@ class _SafetyPieRow:
         version: str | None = None,
     ) -> str:
         scope = f'{base} and safety == "{safety}"'
-        # (slice label, status condition) per pie slice; green "done" comes first.
+        # (segment label, status condition) per bar segment; green "done" first.
         statuses = (
             [
                 ("valid", '(status == "valid" or status == "valid_inspected")'),
@@ -451,26 +450,11 @@ class _SafetyPieRow:
             )
             return "\n".join(lines) + "\n"
 
-        lines.extend(
-            [
-                ".. grid:: 1 2 3 3",
-                "   :gutter: 2",
-                "   :class-row: score-pie-row",
-            ]
-        )
+        lines.append(f".. score-report-bars:: {chart_prefix} ({safety_label})")
 
-        def grid_item(name: str, pie: list[str]) -> None:
-            # The continuation line keeps the chart title on two narrow lines.
-            lines.extend(
-                [
-                    "",
-                    "   .. grid-item::",
-                    "",
-                    f"      .. score-report-pie:: {chart_prefix}",
-                    f"         {name} ({safety_label})",
-                ]
-            )
-            lines.extend(f"         {line}".rstrip() for line in pie)
+        def add_bar(name: str, bar: list[str]) -> None:
+            lines.extend(["", f"   .. score-report-bar:: {name}"])
+            lines.extend(f"      {line}".rstrip() for line in bar)
 
         def counted_by(func: str) -> list[str]:
             # sphinx-needs splits the call on its last ".", so encode the version.
@@ -480,7 +464,7 @@ class _SafetyPieRow:
                 f"({component}, {category}, {encoded_version}, {safety})"
             ]
 
-        grid_item(
+        add_bar(
             "Status",
             [
                 f":labels: {', '.join(label for label, _ in statuses)}",
@@ -495,7 +479,7 @@ class _SafetyPieRow:
                 ),
             ],
         )
-        grid_item(
+        add_bar(
             "Test Coverage",
             [
                 ":labels: fully covered, partially covered, not covered",
@@ -513,7 +497,7 @@ class _SafetyPieRow:
             ],
         )
         if with_reference:
-            grid_item(
+            add_bar(
                 "Reference Coverage",
                 [
                     ":labels: referenced by lower, not referenced",

@@ -385,23 +385,19 @@ _DEFAULTS: dict[str, list[str]] = {"satisfied_by": [], "belongs_to": []}
 
 
 def _pie_counts(rst: str, needs: list[NeedItem]) -> list[list[int]]:
-    """Evaluate every needpie in a ``safety_pie_row`` block like sphinx-needs."""
+    """Evaluate every bar in a ``safety_pie_row`` block like sphinx-needs."""
     pies: list[list[int]] = []
-    for block in rst.split(".. needpie::")[1:]:
+    for block in rst.split(".. score-report-bar::")[1:]:
         body = [line.strip() for line in block.splitlines()[1:]]
         func = next((line for line in body if line.startswith(":filter-func:")), None)
         if func:
             pies.append(_call_like_needpie(func.split(" ", 1)[1], needs))
             continue
         filters = [line for line in body if line and not line.startswith(":")]
-        filters = (
-            filters[: filters.index(".. grid-item::")]
-            if ".. grid-item::" in filters
-            else filters
-        )
         pies.append(
             [sum(bool(eval(f, {}, {**_DEFAULTS, **n})) for n in needs) for f in filters]  # noqa: S307
         )
+    assert pies
     return pies
 
 

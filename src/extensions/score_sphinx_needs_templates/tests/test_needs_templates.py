@@ -282,8 +282,7 @@ def test_safety_pie_row_empty_class_renders_one_slim_placeholder() -> None:
 
     row = safety_pie_row("Comp", "Requirements", "BASE", "QM", "QM", 0, True)
 
-    assert "score-report-pie" not in row
-    assert ".. grid::" not in row
+    assert "score-report-bar" not in row
     assert row.count('<div class="empty-pie">no QM requirements</div>') == 1
 
 
@@ -296,15 +295,14 @@ def test_safety_pie_row_reference_pie_only_on_request() -> None:
     )
 
     assert "Reference Coverage" not in without
-    assert without.count(".. score-report-pie::") == 2
-    assert with_ref.count(".. score-report-pie::") == 3
+    assert without.count(".. score-report-bar::") == 2
+    assert with_ref.count(".. score-report-bar::") == 3
+    # All bars of one safety class form a single figure.
+    assert with_ref.count(".. score-report-bars::") == 1
     assert 'id in ["a", "b"]' in with_ref
     assert 'id in ["c"]' in with_ref
     # An empty title must not leave a leading blank in the chart title.
-    assert (
-        ".. score-report-pie:: Stakeholder Requirements\n         Status (QM)\n"
-        in with_ref
-    )
+    assert ".. score-report-bars:: Stakeholder Requirements (QM)\n" in with_ref
 
 
 def test_id_filter_list_renders_quoted_literal() -> None:

@@ -74,25 +74,22 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_filter,
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
-   /* Scales every chart to its column; together with the fixed three-column
-      raster this gives every chart in the report the same size. */
-   .score-pie-row img.score-report-pie {
-       width: 100%;
-       height: auto;
+   /* All bars of a safety class are one figure; every figure has the same
+      width, so the bars of all classes line up on one shared axis. */
+   img.score-report-bars {
+       display: block; width: 100%; max-width: 46em; height: auto;
+       margin: 0 0 0.6em 0;
    }
-   /* ``.sd-row`` is a flex container without a justification of its own, so
-      this centres the rows that leave the third column empty. */
-   .score-pie-row { justify-content: center; }
 
    p.rubric.safety-class-heading {
-       display: inline-block; margin: 1.4em 0 0.5em 0;
+       display: inline-block; margin: 0.9em 0 0.3em 0;
        padding: 0.15em 0.9em; border-radius: 1em;
        font-size: 0.95em; font-weight: 600; color: #ffffff;
    }
    p.rubric.safety-class-heading.safety-asil-b { background: #1f4e79; }
    p.rubric.safety-class-heading.safety-qm { background: #6c757d; }
 
-   /* Stands in for a whole pie row of a safety class without any Need. */
+   /* Stands in for the chart of a safety class without any Need. */
    .empty-pie {
        padding: 0.2em 0.8em; margin-bottom: 0.5em;
        border: 2px dashed #b0b0b0; border-radius: 6px;

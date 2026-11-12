@@ -10,25 +10,28 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""``score-report-pie``: the pie chart of the verification reports.
+"""``score-report-bars``: the status and coverage charts of the verification reports.
 
-It counts its slices exactly like ``needpie`` (one Sphinx-Needs filter per
-content line, evaluated once all Needs are resolved), but draws a compact chart
-built for three charts per row: no legend and no slice labels, since the
-reports explain the colours once per page, and large numbers in the slices.
-``needpie`` itself stays untouched for every other chart.
+Every ``score-report-bar`` counts its segments exactly like ``needpie`` counts
+slices (one Sphinx-Needs filter per content line, or a ``:filter-func:``,
+evaluated once all Needs are resolved). All bars of one ``score-report-bars``
+block are drawn into a single compact figure of 100 % stacked horizontal bars on
+a shared axis, so that e.g. status and test coverage of one safety class read
+as one diagram. The reports explain the colours once per page, so the figure
+has no legend. ``needpie`` itself stays untouched for every other chart.
 """
 
 import hashlib
 from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
+from dataclasses import dataclass
 from typing import Any
 
 from docutils import nodes
 from docutils.parsers.rst import directives
 from matplotlib import style
+from matplotlib.colors import to_rgb
 from matplotlib.figure import Figure
-from matplotlib.text import Text
 from sphinx.application import Sphinx
 from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
@@ -47,33 +50,67 @@ from src.extensions.score_coverage import (
     read_coverage_summaries,
 )
 
-_FIGURE_INCHES = (5.0, 4.0)
-# Inches kept free above the circle for the two-line title and below it.
-_TITLE_INCHES, _BOTTOM_INCHES = 0.75, 0.15
-_VALUE_FONT_SIZE = 14
-_TITLE_FONT_SIZE = 13
-# Slices below this share get no number, as their text would overlap.
-_MIN_LABELLED_SHARE = 0.02
-# Slices below this share get their number at half size to fit.
-_SMALL_SLICE_SHARE = 0.05
+_FIGURE_WIDTH = 8.0
+# Inches for the bar names on the left and the totals on the right.
+_LABEL_INCHES, _TOTAL_INCHES = 1.6, 0.55
+_ROW_INCHES, _TOP_INCHES, _AXIS_INCHES = 0.4, 0.05, 0.3
+# Bar thickness as a share of its row; the rest is the gap between bars.
+_BAR_HEIGHT = 0.72
+_FONT_SIZE = 10
+_MUTED = "#6c757d"
+# Narrowest segment (inches) that gets "count (percent)", resp. a bare number.
+_FULL_TEXT_INCHES, _MIN_TEXT_INCHES = 0.8, 0.25
+_MIN_PERCENT_INCHES = 0.4
 
 
 logger = logging.getLogger(__name__)
 
 
-class ReportPie(nodes.General, nodes.Element):
+@dataclass(frozen=True)
+class BarRow:
+    """One stacked bar; ``note`` replaces the bar, e.g. for an invalid filter."""
+
+    label: str
+    sizes: Sequence[float]
+    colors: Sequence[str]
+    names: Sequence[str]
+    note: str = ""
+
+
+class ReportBars(nodes.General, nodes.Element):
+    """All ``ReportBar`` children are drawn as one figure."""
+
+
+class ReportBar(nodes.General, nodes.Element):
     pass
 
 
-class ReportPieDirective(SphinxDirective):
-    """Pie chart with one slice per content line, each a Sphinx-Needs filter.
+class ReportBarsDirective(SphinxDirective):
+    """Group the nested ``score-report-bar`` directives into one figure.
 
-    Alternatively ``:filter-func:`` names a function that fills the slice sizes,
-    called exactly like ``needpie`` calls it.
+    The optional argument only names the figure in its alt text.
     """
 
     has_content = True
     optional_arguments = 1
+    final_argument_whitespace = True
+
+    def run(self) -> Sequence[nodes.Node]:
+        node = ReportBars(title=self.arguments[0] if self.arguments else "")
+        self.set_source_info(node)
+        self.state.nested_parse(self.content, self.content_offset, node)
+        return [node]
+
+
+class ReportBarDirective(SphinxDirective):
+    """Stacked bar with one segment per content line, each a Sphinx-Needs filter.
+
+    Alternatively ``:filter-func:`` names a function that fills the segment
+    sizes, called exactly like ``needpie`` calls it.
+    """
+
+    has_content = True
+    required_arguments = 1
     final_argument_whitespace = True
     option_spec = {
         "labels": directives.unchanged_required,
@@ -88,21 +125,19 @@ class ReportPieDirective(SphinxDirective):
         colors = _split(self.options.get("colors", ""))
         filter_func = str(self.options.get("filter-func", ""))
         if filter_func and filters:
-            raise self.error("score-report-pie takes filter lines or :filter-func:")
+            raise self.error("score-report-bar takes filter lines or :filter-func:")
         if len(labels) != len(colors) or (
             not filter_func and len(filters) != len(labels)
         ):
             raise self.error(
-                "score-report-pie needs one label and one colour per slice"
+                "score-report-bar needs one label and one colour per segment"
             )
-        node = ReportPie(
-            title=self.arguments[0] if self.arguments else "",
+        node = ReportBar(
+            label=self.arguments[0],
             filters=filters,
             filter_func=filter_func,
             labels=labels,
             colors=colors,
-            target_id=f"score-report-pie-{self.env.docname}-"
-            f"{self.env.new_serialno('score-report-pie')}",
         )
         self.set_source_info(node)
         return [node]
@@ -113,45 +148,95 @@ def _split(value: str) -> list[str]:
 
 
 @contextmanager
-def _report_pie_style() -> Iterator[None]:
+def _report_chart_style() -> Iterator[None]:
     """Keep report chart styling and dimensions independent of preceding needpie charts."""
     with style.context(["default", {"savefig.bbox": "standard"}]):
         yield
 
 
-def draw_report_pie(
-    title: str, sizes: Sequence[float], colors: list[str], *, show_counts: bool = True
-) -> Figure:
-    """Draw nonzero slices, omitting counts when sizes are rounded percentages."""
-    total = sum(sizes)
-    height = _FIGURE_INCHES[1]
-    figure = Figure(figsize=_FIGURE_INCHES)
+def _segment_text(size: float, share: float, *, show_counts: bool) -> str:
+    """Return the text that fits into a segment of ``share`` percent."""
+    width = share / 100 * (_FIGURE_WIDTH - _LABEL_INCHES - _TOTAL_INCHES)
+    if not show_counts:
+        return f"{share:.0f}%" if width >= _MIN_PERCENT_INCHES else ""
+    if width >= _FULL_TEXT_INCHES:
+        return f"{size:g} ({share:.0f}%)"
+    return f"{size:g}" if width >= _MIN_TEXT_INCHES else ""
+
+
+def _text_color(color: str) -> str:
+    red, green, blue = to_rgb(color)
+    return "black" if 0.299 * red + 0.587 * green + 0.114 * blue > 0.6 else "white"
+
+
+def draw_report_bars(rows: Sequence[BarRow], *, show_counts: bool = True) -> Figure:
+    """Draw one 100 % stacked bar per row, omitting counts for percentage rows."""
+    height = _TOP_INCHES + len(rows) * _ROW_INCHES + _AXIS_INCHES
+    figure = Figure(figsize=(_FIGURE_WIDTH, height))
     figure.subplots_adjust(
-        left=0.02,
-        right=0.98,
-        top=1 - _TITLE_INCHES / height,
-        bottom=_BOTTOM_INCHES / height,
+        left=_LABEL_INCHES / _FIGURE_WIDTH,
+        right=1 - _TOTAL_INCHES / _FIGURE_WIDTH,
+        top=1 - _TOP_INCHES / height,
+        bottom=_AXIS_INCHES / height,
     )
-    axes = figure.add_subplot(aspect="equal")
-    pie: Any = axes.pie(
-        sizes,
-        colors=colors,
-        startangle=90,
-        autopct=lambda pct: (
-            f"{pct:.1f}%\n({round(pct * total / 100)})"
-            if show_counts
-            else f"{pct:.0f}%"
-        ),
-        textprops={"fontsize": _VALUE_FONT_SIZE, "fontweight": "bold"},
-    )
-    values: list[Text] = pie[2]
-    for size, value in zip(sizes, values, strict=True):
-        value.set_visible(size >= total * _MIN_LABELLED_SHARE)
-        if size < total * _SMALL_SLICE_SHARE:
-            value.set_fontsize(_VALUE_FONT_SIZE / 2)
-    axes.set(xlim=(-1.05, 1.05), ylim=(-1.05, 1.05))
-    axes.set_title(title, fontsize=_TITLE_FONT_SIZE, wrap=True)
+    axes = figure.add_subplot()
+    for y, row in enumerate(rows):
+        total = sum(row.sizes)
+        if row.note or not total:
+            axes.text(
+                1,
+                y,
+                row.note or "no Needs found",
+                va="center",
+                color=_MUTED,
+                style="italic",
+                fontsize=_FONT_SIZE,
+            )
+            continue
+        left = 0.0
+        for size, color in zip(row.sizes, row.colors, strict=True):
+            share = size / total * 100
+            axes.barh(
+                y, share, left=left, height=_BAR_HEIGHT, color=color, edgecolor="white"
+            )
+            text = _segment_text(size, share, show_counts=show_counts)
+            if text:
+                axes.text(
+                    left + share / 2,
+                    y,
+                    text,
+                    ha="center",
+                    va="center",
+                    fontsize=_FONT_SIZE,
+                    fontweight="bold",
+                    color=_text_color(color),
+                )
+            left += share
+        if show_counts:
+            axes.text(
+                101, y, f"{total:g}", va="center", color=_MUTED, fontsize=_FONT_SIZE
+            )
+    axes.set_xlim(0, 100)
+    axes.set_ylim(len(rows) - 0.5, -0.5)
+    axes.set_yticks(range(len(rows)), [row.label for row in rows])
+    axes.set_xticks(range(0, 101, 25), [f"{tick}%" for tick in range(0, 101, 25)])
+    axes.tick_params(length=0, labelsize=_FONT_SIZE)
+    axes.tick_params(axis="x", labelsize=_FONT_SIZE - 2, labelcolor=_MUTED)
+    axes.grid(axis="x", color="#e0e0e0")
+    axes.set_axisbelow(True)
+    for spine in axes.spines.values():
+        spine.set_visible(False)
     return figure
+
+
+def _describe(row: BarRow, unit: str = "") -> str:
+    if row.note:
+        return f"{row.label}: {row.note}"
+    counts = ", ".join(
+        f"{name} {size:g}{unit}"
+        for name, size in zip(row.names, row.sizes, strict=True)
+    )
+    return f"{row.label}: {counts}"
 
 
 def _call_filter_func(signature: str, need_list: NeedsAndPartsListView) -> list[float]:
@@ -168,64 +253,93 @@ def _call_filter_func(signature: str, need_list: NeedsAndPartsListView) -> list[
     return sizes
 
 
-def _process_report_pies(app: Sphinx, doctree: nodes.document, docname: str) -> None:
-    pies: list[nodes.Element] = list(doctree.findall(ReportPie))
-    if not pies:
+def _bar_row(
+    bar: nodes.Element,
+    need_list: NeedsAndPartsListView,
+    needs_config: NeedsSphinxConfig,
+) -> BarRow:
+    label: str = bar["label"]
+    labels: list[str] = bar["labels"]
+    colors: list[str] = bar["colors"]
+    filter_func: str = bar["filter_func"]
+    if not filter_func:
+        sizes = [
+            float(len(filter_needs_parts(need_list, needs_config, line, location=bar)))
+            for line in bar["filters"]
+        ]
+        return BarRow(label, sizes, colors, labels)
+    invalid = BarRow(label, [], colors, labels, note="invalid filter")
+    try:
+        sizes = _call_filter_func(filter_func, need_list)
+    except NeedsInvalidFilter as error:
+        logger.warning(
+            "score-report-bar: %s", error, location=bar, type="score_report_bars"
+        )
+        return invalid
+    if len(sizes) != len(labels):
+        logger.warning(
+            "score-report-bar: %s returned %d values for %d labels",
+            filter_func,
+            len(sizes),
+            len(labels),
+            location=bar,
+            type="score_report_bars",
+        )
+        return invalid
+    return BarRow(label, sizes, colors, labels)
+
+
+def _chart_image(
+    app: Sphinx,
+    docname: str,
+    title: str,
+    rows: Sequence[BarRow],
+    *,
+    show_counts: bool = True,
+    prefix: str = "score_report_bars",
+) -> nodes.image:
+    unit = "" if show_counts else "%"
+    alt = "; ".join(_describe(row, unit) for row in rows)
+    if title:
+        alt = f"{title} — {alt}"
+    # Sphinx caches images by filename even across forced writes of a cached
+    # doctree, so the name follows the displayed content.
+    digest = hashlib.sha256(
+        f"{docname}|{alt}|{[row.colors for row in rows]}".encode()
+    ).hexdigest()[:10]
+    with _report_chart_style():
+        image = save_matplotlib_figure(
+            app,
+            draw_report_bars(rows, show_counts=show_counts),
+            f"{prefix}_{digest}",
+            docname,
+        )
+    image["alt"] = alt
+    image["classes"].append("score-report-bars")
+    return image
+
+
+def _process_report_bars(app: Sphinx, doctree: nodes.document, docname: str) -> None:
+    bars: list[nodes.Element] = list(doctree.findall(ReportBar))
+    charts: list[nodes.Element] = [
+        *doctree.findall(ReportBars),
+        *(bar for bar in bars if not isinstance(bar.parent, ReportBars)),
+    ]
+    if not charts:
         return
     needs_config = NeedsSphinxConfig(app.config)
     need_list = SphinxNeedsData(app.env).get_needs_view().to_list_with_parts()
-    for pie in pies:
-        title: str = pie["title"]
-        filters: list[str] = pie["filters"]
-        labels: list[str] = pie["labels"]
-        target_id: str = pie["target_id"]
-        filter_func: str = pie["filter_func"]
-        sizes: list[float]
-        if filter_func:
-            try:
-                sizes = _call_filter_func(filter_func, need_list)
-            except NeedsInvalidFilter as error:
-                logger.warning(
-                    "score-report-pie: %s", error, location=pie, type="score_report_pie"
-                )
-                pie.replace_self(nodes.paragraph(text=f"{title}: invalid filter"))
-                continue
-            if len(sizes) != len(labels):
-                logger.warning(
-                    "score-report-pie: %s returned %d values for %d labels",
-                    filter_func,
-                    len(sizes),
-                    len(labels),
-                    location=pie,
-                    type="score_report_pie",
-                )
-                pie.replace_self(nodes.paragraph(text=f"{title}: invalid filter"))
-                continue
-        else:
-            sizes = [
-                float(
-                    len(filter_needs_parts(need_list, needs_config, line, location=pie))
-                )
-                for line in filters
-            ]
-        counts = ", ".join(
-            f"{label} {size:g}" for label, size in zip(labels, sizes, strict=True)
-        )
-        alt = f"{' '.join(title.split())}: {counts}"
-        if not any(sizes):
-            pie.replace_self(nodes.paragraph(text=f"{alt} (no Needs found)"))
+    for chart in charts:
+        chart_bars: list[nodes.Element] = list(chart.findall(ReportBar))
+        rows = [_bar_row(bar, need_list, needs_config) for bar in chart_bars]
+        title = " ".join(str(chart.get("title", "")).split())
+        if not any(sum(row.sizes) for row in rows):
+            details = "; ".join(_describe(row) for row in rows)
+            if title:
+                details = f"{title} — {details}"
+            chart.replace_self(nodes.paragraph(text=f"{details} (no Needs found)"))
             continue
-        digest = hashlib.sha256(target_id.encode()).hexdigest()[:10]
-        with _report_pie_style():
-            image = save_matplotlib_figure(
-                app,
-                draw_report_pie(title, sizes, pie["colors"]),
-                f"score_report_pie_{digest}",
-                docname,
-            )
-        image["alt"] = alt
-        image["classes"].append("score-report-pie")
-        pie.replace_self(image)
+        chart.replace_self(_chart_image(app, docname, title, rows))
 
 
 class CoverageReport(nodes.General, nodes.Element):
@@ -264,49 +378,33 @@ def _coverage_report(
         "selected source files. Green: covered; red: not covered. "
         "Percentages describe the available measurements."
     )
-    row = nodes.container(
-        classes=[
-            "sd-row",
-            "sd-row-cols-1",
-            "sd-row-cols-md-2",
-            "sd-g-3",
-            "score-pie-row",
-        ]
-    )
+    rows: list[BarRow] = []
     for dimension, label in (("lines", "Line"), ("branches", "Branch")):
         metric = summary[dimension]
-        column = nodes.container(classes=["sd-col"])
         percent = metric["percent"]
-        title = f"{report['title']} {label} Coverage"
         if percent is None:
-            column += nodes.paragraph(
+            block += nodes.paragraph(
                 text=f"{label} coverage: "
                 + ("no data." if metric["total"] is None else "not instrumented.")
             )
         else:
-            # Sphinx caches images by filename even across forced writes of a
-            # cached doctree. Include the displayed content so changed coverage
-            # produces a fresh image and a fresh browser URL.
-            digest = hashlib.sha256(
-                f"{docname}-{title}-{percent}".encode()
-            ).hexdigest()[:10]
-            with _report_pie_style():
-                image = save_matplotlib_figure(
-                    app,
-                    draw_report_pie(
-                        title,
-                        [percent, 100 - percent],
-                        ["#37a12d", "#ca2828"],
-                        show_counts=False,
-                    ),
-                    f"score_coverage_pie_{digest}",
-                    docname,
+            rows.append(
+                BarRow(
+                    f"{label} Coverage",
+                    [percent, 100 - percent],
+                    ["#37a12d", "#ca2828"],
+                    ["covered", "not covered"],
                 )
-            image["alt"] = f"{title}: covered {percent}%, not covered {100 - percent}%"
-            image["classes"].append("score-report-pie")
-            column += image
-        row += column
-    block += row
+            )
+    if rows:
+        block += _chart_image(
+            app,
+            docname,
+            f"{report['title']} Coverage",
+            rows,
+            show_counts=False,
+            prefix="score_coverage_bars",
+        )
     return block
 
 
@@ -329,10 +427,12 @@ def _process_coverage_reports(
 
 
 def setup(app: Sphinx) -> None:
-    app.add_node(ReportPie)
+    app.add_node(ReportBars)
+    app.add_node(ReportBar)
     app.add_node(CoverageReport)
     app.add_directive("score-coverage-report", CoverageReportDirective)
     app.connect("doctree-resolved", _process_coverage_reports, priority=600)
-    app.add_directive("score-report-pie", ReportPieDirective)
+    app.add_directive("score-report-bars", ReportBarsDirective)
+    app.add_directive("score-report-bar", ReportBarDirective)
     # After Sphinx-Needs (default priority) has resolved all Need nodes.
-    app.connect("doctree-resolved", _process_report_pies, priority=600)
+    app.connect("doctree-resolved", _process_report_bars, priority=600)
