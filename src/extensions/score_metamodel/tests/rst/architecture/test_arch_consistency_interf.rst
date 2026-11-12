@@ -31,11 +31,10 @@
    :expect_not: A feature must have at least one logical architectural interface.
 
 .. feat:: Feature without any logical interface
-   :id: feat__missing_interfaces
+   :id: feat__arch_one
    :security: NO
    :safety: QM
    :status: valid
-   :version: 1
    :expect: No linked need in `included_by_back`. Explanation: A feature must have at least one logical architectural interface.
 
 .. logic_arc_int:: Feature interface without an implementation

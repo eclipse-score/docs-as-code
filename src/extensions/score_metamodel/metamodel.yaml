@@ -1341,6 +1341,7 @@ graph_checks:
   tool_req__arch_consistency_interf_feat:
     needs:
       include: feat
+      condition: id != ""
     check_one:
       included_by_back: id != ""
     explanation: A feature must have at least one logical architectural interface.
