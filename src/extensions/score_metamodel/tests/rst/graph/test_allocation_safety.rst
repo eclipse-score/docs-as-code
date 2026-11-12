@@ -79,7 +79,7 @@ Feature allocations via satisfied_by
    :reqtype: Functional
    :valid_from: v1.0
    :satisfied_by: feat__safety_alloc__feat_qm_asil
-   :expect_info: A safety requirement cannot be allocated to a QM architecture element.
+   :expect: A safety requirement cannot be allocated to a QM architecture element.
 
    Requirement description.
 
@@ -113,7 +113,7 @@ Feature allocations via satisfied_by
    :reqtype: Functional
    :valid_from: v1.0
    :satisfied_by: feat__safety_alloc__feat_qm_mixed
-   :expect_info: A safety requirement cannot be allocated to a QM architecture element.
+   :expect: A safety requirement cannot be allocated to a QM architecture element.
 
    Requirement description.
 
@@ -250,7 +250,7 @@ Component allocations via satisfied_by
    :version: 1
    :reqtype: Functional
    :satisfied_by: comp__safety_alloc__comp_qm_asil
-   :expect_info: A safety requirement cannot be allocated to a QM architecture element.
+   :expect: A safety requirement cannot be allocated to a QM architecture element.
 
    Requirement description.
 
@@ -282,7 +282,7 @@ Component allocations via satisfied_by
    :version: 1
    :reqtype: Functional
    :satisfied_by: comp__safety_alloc__comp_qm_mixed
-   :expect_info: A safety requirement cannot be allocated to a QM architecture element.
+   :expect: A safety requirement cannot be allocated to a QM architecture element.
 
    Requirement description.
 
@@ -456,7 +456,7 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info: A QM architecture element cannot fulfil safety requirements.
+   :expect: A QM architecture element cannot fulfil safety requirements.
    :expect_not: must be linked to at least one safety requirement via fulfils.
    :fulfils: feat_req__safety_alloc__fulfils_asil_b
 
@@ -466,7 +466,7 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info: A QM architecture element cannot fulfil safety requirements.
+   :expect: A QM architecture element cannot fulfil safety requirements.
    :expect_not: must be linked to at least one safety requirement via fulfils.
    :fulfils: feat_req__safety_alloc__fulfils_qm, feat_req__safety_alloc__fulfils_asil_b
 
@@ -530,7 +530,7 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info: A QM architecture element cannot fulfil safety requirements.
+   :expect: A QM architecture element cannot fulfil safety requirements.
    :expect_info_not: No linked need in `fulfils`
    :fulfils: aou_req__safety_alloc__fulfils_asil_b
 
@@ -540,7 +540,7 @@ Optional fulfils links
    :security: NO
    :status: valid
    :version: 1
-   :expect_info: A QM architecture element cannot fulfil safety requirements.
+   :expect: A QM architecture element cannot fulfil safety requirements.
    :expect_info_not: No linked need in `fulfils`
    :fulfils: aou_req__safety_alloc__fulfils_qm, aou_req__safety_alloc__fulfils_asil_b
 
@@ -590,7 +590,7 @@ Optional fulfils links
    :status: valid
    :version: 1
    :fulfils: feat_req__safety_alloc__fulfils_asil_b
-   :expect_info: A QM architecture element cannot fulfil safety requirements.
+   :expect: A QM architecture element cannot fulfil safety requirements.
 
 .. logic_arc_int:: QM logic_arc_int cannot fulfil a safety requirement
    :id: logic_arc_int__safety_alloc__fulfils_logic_arc_int_unsafe
@@ -599,7 +599,7 @@ Optional fulfils links
    :status: valid
    :version: 1
    :fulfils: feat_req__safety_alloc__fulfils_asil_b
-   :expect_info: A QM architecture element cannot fulfil safety requirements.
+   :expect: A QM architecture element cannot fulfil safety requirements.
 
 .. comp_arc_sta:: QM comp_arc_sta cannot fulfil a safety requirement
    :id: comp_arc_sta__safety_alloc__fulfils_comp_arc_sta_unsafe
@@ -608,7 +608,7 @@ Optional fulfils links
    :status: valid
    :version: 1
    :fulfils: comp_req__safety_alloc__fulfils_asil_b
-   :expect_info: A QM architecture element cannot fulfil safety requirements.
+   :expect: A QM architecture element cannot fulfil safety requirements.
 
 .. comp_arc_dyn:: QM comp_arc_dyn cannot fulfil a safety requirement
    :id: comp_arc_dyn__safety_alloc__fulfils_comp_arc_dyn_unsafe
@@ -617,7 +617,7 @@ Optional fulfils links
    :status: valid
    :version: 1
    :fulfils: comp_req__safety_alloc__fulfils_asil_b
-   :expect_info: A QM architecture element cannot fulfil safety requirements.
+   :expect: A QM architecture element cannot fulfil safety requirements.
 
 .. real_arc_int:: QM real_arc_int cannot fulfil a safety requirement
    :id: real_arc_int__safety_alloc__fulfils_real_arc_int_unsafe
@@ -626,7 +626,7 @@ Optional fulfils links
    :status: valid
    :version: 1
    :fulfils: comp_req__safety_alloc__fulfils_asil_b
-   :expect_info: A QM architecture element cannot fulfil safety requirements.
+   :expect: A QM architecture element cannot fulfil safety requirements.
 
 Completeness of other views and interfaces
 ------------------------------------------
@@ -835,8 +835,7 @@ allocation target is ASIL_B.
    :reqtype: Functional
    :valid_from: v1.0
    :satisfied_by: feat__safety_alloc__feat_asil_b_asil, feat__safety_alloc__feat_qm_asil
-   :expect_not: A safety requirement cannot be allocated to a QM architecture element.
-   :expect_info: Parent need `feat__safety_alloc__feat_qm_asil` does not fulfill condition `safety != QM`.
+   :expect: Parent need `feat__safety_alloc__feat_qm_asil` does not fulfill condition `safety != QM`.
 
    Every allocated element must support the requirement's safety classification.
 
@@ -848,7 +847,6 @@ allocation target is ASIL_B.
    :version: 1
    :reqtype: Functional
    :satisfied_by: comp__safety_alloc__comp_asil_b_asil, comp__safety_alloc__comp_qm_asil
-   :expect_not: A safety requirement cannot be allocated to a QM architecture element.
-   :expect_info: Parent need `comp__safety_alloc__comp_qm_asil` does not fulfill condition `safety != QM`.
+   :expect: Parent need `comp__safety_alloc__comp_qm_asil` does not fulfill condition `safety != QM`.
 
    Every allocated element must support the requirement's safety classification.

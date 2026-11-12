@@ -1243,7 +1243,7 @@ graph_checks:
     check_all:
       fulfils: safety == QM
     explanation: A QM architecture element cannot fulfil safety requirements.
-    info_only: true
+
 
   # Allocation compatibility is checked from the requirement, where the
   # mandatory satisfied_by link identifies every allocated feature/component.
@@ -1256,7 +1256,7 @@ graph_checks:
     check_all:
       satisfied_by: safety != QM
     explanation: A safety requirement cannot be allocated to a QM architecture element.
-    info_only: true
+
 
   # Features/components receive requirements through incoming satisfied_by
   # links. Their optional fulfils links do not replace this allocation.
