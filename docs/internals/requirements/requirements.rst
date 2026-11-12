@@ -663,7 +663,7 @@ Architecture Attributes
 .. tool_req:: Ensure qm architecture elements do not fulfill safety requirements
   :id: tool_req__docs_arch_link_qm_to_safety_req
   :tags: Architecture
-  :implemented: PARTIAL
+  :implemented: YES
   :version: 3
   :satisfies: gd_req__arch_linkage_requirement[version==1]
   :parent_covered: YES
