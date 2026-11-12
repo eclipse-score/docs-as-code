@@ -2352,9 +2352,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_sphinx_filters__test_safety_pie_row_filter_funcs_match_inline_filters",
+    "name": "test_sphinx_filters__test_safety_chart_row_filter_funcs_match_inline_filters",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "408",
+    "line": "404",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2870,7 +2870,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_safety_pie_row_qm_counts_inspected_as_valid",
+    "name": "test_needs_templates__test_safety_chart_row_qm_counts_inspected_as_valid",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "262",
     "result": "passed",
@@ -2884,7 +2884,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_safety_pie_row_empty_class_renders_one_slim_placeholder",
+    "name": "test_needs_templates__test_safety_chart_row_empty_class_renders_one_slim_placeholder",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "280",
     "result": "passed",
@@ -2898,9 +2898,51 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_safety_pie_row_reference_pie_only_on_request",
+    "name": "test_needs_templates__test_safety_chart_row_reference_bar_only_on_request",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "290",
+    "line": "289",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_needs_templates__test_chart_legend_is_one_raw_line_with_reference_on_request",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
+    "line": "308",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_needs_templates__test_chart_legend_explains_every_colour_without_a_tooltip",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
+    "line": "323",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_needs_templates__test_safety_chart_row_indent_nests_every_line",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
+    "line": "338",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2914,7 +2956,7 @@
   {
     "name": "test_needs_templates__test_id_filter_list_renders_quoted_literal",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "310",
+    "line": "350",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2928,7 +2970,7 @@
   {
     "name": "test_needs_templates__test_workproduct_rows_filter_by_owner_then_slug",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "317",
+    "line": "357",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2942,7 +2984,7 @@
   {
     "name": "test_needs_templates__test_workproduct_rows_filter_prefers_belongs_to_over_id",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "336",
+    "line": "376",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2956,7 +2998,7 @@
   {
     "name": "test_needs_templates__test_tool_qualification_matrix_groups_shared_requirements",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "356",
+    "line": "396",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2970,7 +3012,7 @@
   {
     "name": "test_needs_templates__test_platform_report_gap_table_is_report_version_scoped",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "505",
+    "line": "545",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2982,9 +3024,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_draw_report_pie_sizes_slice_numbers_by_share[sizes0-expected0]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "30",
+    "name": "test_report_charts__test_draw_report_bars_sizes_segment_numbers_by_width[sizes0-expected0]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "38",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2996,9 +3038,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_draw_report_pie_sizes_slice_numbers_by_share[sizes1-expected1]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "30",
+    "name": "test_report_charts__test_draw_report_bars_sizes_segment_numbers_by_width[sizes1-expected1]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "38",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3010,9 +3052,93 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_report_pie_counts_filters_and_leaves_needpie_untouched",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "53",
+    "name": "test_report_charts__test_draw_report_bars_sizes_segment_numbers_by_width[sizes2-expected2]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "38",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_report_charts__test_segment_text_meets_wcag_contrast_on_every_report_colour[#37a12d]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "63",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_report_charts__test_segment_text_meets_wcag_contrast_on_every_report_colour[#f5c518]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "63",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_report_charts__test_segment_text_meets_wcag_contrast_on_every_report_colour[#f0a500]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "63",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_report_charts__test_segment_text_meets_wcag_contrast_on_every_report_colour[#ca2828]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "63",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_report_charts__test_draw_report_bars_puts_all_rows_on_one_shared_axis",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "73",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_report_charts__test_report_bars_count_filters_and_leave_needpie_untouched",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "95",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -3024,9 +3150,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_report_pie_counts_through_filter_func",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "131",
+    "name": "test_report_charts__test_report_bar_counts_through_filter_func",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "180",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -3038,9 +3164,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_coverage_pie_labels_never_invent_hit_counts[0]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "195",
+    "name": "test_report_charts__test_coverage_bar_labels_never_invent_hit_counts[0]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "244",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3052,9 +3178,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_coverage_pie_labels_never_invent_hit_counts[1]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "195",
+    "name": "test_report_charts__test_coverage_bar_labels_never_invent_hit_counts[1]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "244",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3066,9 +3192,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_coverage_pie_labels_never_invent_hit_counts[67]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "195",
+    "name": "test_report_charts__test_coverage_bar_labels_never_invent_hit_counts[67]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "244",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3080,9 +3206,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_coverage_pie_labels_never_invent_hit_counts[99]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "195",
+    "name": "test_report_charts__test_coverage_bar_labels_never_invent_hit_counts[99]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "244",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3094,9 +3220,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_coverage_pie_labels_never_invent_hit_counts[100]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "195",
+    "name": "test_report_charts__test_coverage_bar_labels_never_invent_hit_counts[100]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "244",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3108,9 +3234,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_coverage_report_preserves_availability_and_independent_dimensions[None-No coverage data available for this component.-0]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "247",
+    "name": "test_report_charts__test_coverage_report_preserves_availability_and_independent_dimensions[None-No coverage data available for this component.-None]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "297",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3122,9 +3248,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_coverage_report_preserves_availability_and_independent_dimensions[summary1-No source files selected for this component.-0]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "247",
+    "name": "test_report_charts__test_coverage_report_preserves_availability_and_independent_dimensions[summary1-No source files selected for this component.-None]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "297",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3136,9 +3262,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_coverage_report_preserves_availability_and_independent_dimensions[summary2-Line coverage: no data.-0]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "247",
+    "name": "test_report_charts__test_coverage_report_preserves_availability_and_independent_dimensions[summary2-Line coverage: no data.-None]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "297",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3150,9 +3276,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_coverage_report_preserves_availability_and_independent_dimensions[summary3-Line coverage: not instrumented.-1]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "247",
+    "name": "test_report_charts__test_coverage_report_preserves_availability_and_independent_dimensions[summary3-Line coverage: not instrumented.-Branch Coverage: covered 100%, not covered 0%]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "297",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3164,9 +3290,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_coverage_report_preserves_availability_and_independent_dimensions[summary4-Coverage measurements available for 2/6 selected source files.-2]",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "247",
+    "name": "test_report_charts__test_coverage_report_preserves_availability_and_independent_dimensions[summary4-Coverage measurements available for 2/6 selected source files.-Line Coverage: covered 0%, not covered 100%; Branch Coverage: covered 100%, not covered 0%]",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "297",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3178,9 +3304,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_report_pie__test_coverage_chart_urls_follow_displayed_values",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_pie.py",
-    "line": "288",
+    "name": "test_report_charts__test_coverage_chart_urls_follow_displayed_values",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_report_charts.py",
+    "line": "339",
     "result": "passed",
     "repo_name": null,
     "hash": null,
