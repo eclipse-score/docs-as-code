@@ -23,6 +23,7 @@ bazel_dep(name = "bazel_skylib", version = "1.8.2", dev_dependency = True)
 #
 ###############################################################################
 bazel_dep(name = "rules_python", version = "1.8.5")
+bazel_dep(name = "platforms", version = "1.0.0")
 
 DEFAULT_PYTHON_VERSION = "3.12"
 
@@ -69,17 +70,44 @@ use_repo(pip, "docs_as_code_hub_env")
 
 # Additional Python rules provided by aspect, e.g. an improved version of
 bazel_dep(name = "aspect_rules_py", version = "1.4.0")
-
-# PlantUML for docs
-bazel_dep(name = "rules_java", version = "8.15.1")
 bazel_dep(name = "score_tools", version = "0.0.4")
 
-http_jar = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_jar")
+# Native PlantUML replaces the per-diagram JVM startup. The //src:plantuml
+# target selects one distribution for Sphinx's platform and carries its shared
+# libraries and resources in runfiles. No Java runtime is needed by PlantUML.
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-http_jar(
-    name = "plantuml",
-    sha256 = "6f38f70455d08438979451c2257cd5d58647c6460094bb829bc2a12878d47331",
-    url = "https://github.com/plantuml/plantuml/releases/download/v1.2025.0/plantuml-1.2025.0.jar",
+http_archive(
+    name = "plantuml_native_linux_amd64",
+    build_file_content = """
+package(default_visibility = [\"//visibility:public\"])
+filegroup(name = \"runtime\", srcs = glob([\"**\"]))
+exports_files([\"plantuml\"])
+""",
+    sha256 = "4bf6d1a3efee62e5e42a4f950ac4b6c11c6455a37fc1a0f784fb5867ca8c2ff0",
+    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2026.9/native-plantuml-linux-amd64-1.2026.9.zip"],
+)
+
+http_archive(
+    name = "plantuml_native_linux_arm64",
+    build_file_content = """
+package(default_visibility = [\"//visibility:public\"])
+filegroup(name = \"runtime\", srcs = glob([\"**\"]))
+exports_files([\"plantuml\"])
+""",
+    sha256 = "04d51abe63f33a18c6b180f8e6c4c65449c1422f47f4dd0dd30261a1e4aed5e2",
+    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2026.9/native-plantuml-linux-arm64-1.2026.9.zip"],
+)
+
+http_archive(
+    name = "plantuml_native_macos_arm64",
+    build_file_content = """
+package(default_visibility = [\"//visibility:public\"])
+filegroup(name = \"runtime\", srcs = glob([\"**\"]))
+exports_files([\"plantuml\"])
+""",
+    sha256 = "3315869dbfee61971f63af79afff0857308f29ea0f6bfca4c322d3d6a211d770",
+    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2026.9/native-plantuml-macos-arm64-1.2026.9.zip"],
 )
 
 # Bazel LSP
