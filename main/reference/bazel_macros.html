@@ -549,8 +549,9 @@ Supporting files for this project’s root <code class="docutils literal notrans
 available to the documentation targets and travel when another project
 mounts this project’s public bundle. Put files belonging to a mounted child
 in that child’s <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> instead.</p>
-<p>Passing a Needs inventory target through <code class="docutils literal notranslate"><span class="pre">data</span></code> is deprecated and prints
-an INFO message. Put Needs inventory targets in <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> instead.</p>
+<p>A Needs inventory target (<code class="docutils literal notranslate"><span class="pre">:needs_json</span></code>, <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code>) in
+<code class="docutils literal notranslate"><span class="pre">data</span></code> is rejected and fails the build. Put Needs inventory targets in
+<code class="docutils literal notranslate"><span class="pre">external_needs</span></code> instead.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>To reference Needs owned by another documentation project, use
