@@ -22,6 +22,7 @@ has no legend. ``needpie`` itself stays untouched for every other chart.
 """
 
 import hashlib
+import textwrap
 from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -50,13 +51,15 @@ from src.extensions.score_coverage import (
     read_coverage_summaries,
 )
 
-_FIGURE_WIDTH = 8.0
+_FIGURE_WIDTH = 4.8
 # Inches for the bar names on the left and the totals on the right.
-_LABEL_INCHES, _TOTAL_INCHES = 1.6, 0.55
-_ROW_INCHES, _TOP_INCHES, _AXIS_INCHES = 0.4, 0.05, 0.3
+_LABEL_INCHES, _TOTAL_INCHES = 0.95, 0.45
+_ROW_INCHES, _TOP_INCHES, _AXIS_INCHES = 0.42, 0.05, 0.3
 # Bar thickness as a share of its row; the rest is the gap between bars.
 _BAR_HEIGHT = 0.72
 _FONT_SIZE = 10
+# Longer bar names are wrapped onto two lines to fit the label column.
+_LABEL_WRAP = 12
 _MUTED = "#6c757d"
 # Narrowest segment (inches) that gets "count (percent)", resp. a bare number.
 _FULL_TEXT_INCHES, _MIN_TEXT_INCHES = 0.8, 0.25
@@ -218,7 +221,9 @@ def draw_report_bars(rows: Sequence[BarRow], *, show_counts: bool = True) -> Fig
             )
     axes.set_xlim(0, 100)
     axes.set_ylim(len(rows) - 0.5, -0.5)
-    axes.set_yticks(range(len(rows)), [row.label for row in rows])
+    axes.set_yticks(
+        range(len(rows)), [textwrap.fill(row.label, _LABEL_WRAP) for row in rows]
+    )
     axes.set_xticks(range(0, 101, 25), [f"{tick}%" for tick in range(0, 101, 25)])
     axes.tick_params(length=0, labelsize=_FONT_SIZE)
     axes.tick_params(axis="x", labelsize=_FONT_SIZE - 2, labelcolor=_MUTED)

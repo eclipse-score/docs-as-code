@@ -394,6 +394,9 @@ class _SafetyPieRow:
     counted by the shared ``score_metrics`` filter functions instead of the
     inline ``base`` filters; ``version`` then scopes the requirements.
 
+    ``indent`` nests the output, e.g. into a ``grid-item`` that puts the ASIL
+    and QM charts side by side.
+
     This is a render helper instead of a Jinja macro because the MiniJinja
     environment has no template loader, so macros cannot be shared between
     templates.
@@ -413,6 +416,7 @@ class _SafetyPieRow:
         component: str | None = None,
         category: str | None = None,
         version: str | None = None,
+        indent: int = 0,
     ) -> str:
         scope = f'{base} and safety == "{safety}"'
         # (segment label, status condition) per bar segment; green "done" first.
@@ -434,6 +438,11 @@ class _SafetyPieRow:
         safety_css = safety.lower().replace("_", "-")
         chart_prefix = f"{title} {subject}".strip()
 
+        def rendered() -> str:
+            return "".join(
+                f"{' ' * indent}{line}\n" if line else "\n" for line in lines
+            )
+
         lines = [
             "",
             f".. rubric:: {safety_label} — {subject}",
@@ -448,7 +457,7 @@ class _SafetyPieRow:
                     f'   <div class="empty-pie">no {safety_label} {subject.lower()}</div>',
                 ]
             )
-            return "\n".join(lines) + "\n"
+            return rendered()
 
         lines.append(f".. score-report-bars:: {chart_prefix} ({safety_label})")
 
@@ -507,7 +516,7 @@ class _SafetyPieRow:
                     f"id in {_id_filter_list_callable(missing or [])}",
                 ],
             )
-        return "\n".join(lines) + "\n"
+        return rendered()
 
 
 _safety_pie_row_callable = _SafetyPieRow()

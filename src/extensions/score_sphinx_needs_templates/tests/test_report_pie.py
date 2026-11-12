@@ -53,7 +53,7 @@ def test_draw_report_bars_sizes_segment_numbers_by_width(
     )
     axes = figure.axes[0]
 
-    assert figure.get_size_inches()[0] == 8
+    assert figure.get_size_inches()[0] == 4.8
     assert axes.get_legend() is None
     assert _texts(figure) == expected
     assert [label.get_text() for label in axes.get_yticklabels()] == ["Status"]
@@ -73,8 +73,8 @@ def test_draw_report_bars_puts_all_rows_on_one_shared_axis() -> None:
     assert two.get_size_inches()[1] < three.get_size_inches()[1]
     assert [label.get_text() for label in three.axes[0].get_yticklabels()] == [
         "Status",
-        "Test Coverage",
-        "Reference Coverage",
+        "Test\nCoverage",
+        "Reference\nCoverage",
     ]
     texts = [text for text, _ in _texts(three)]
     assert "no Needs found" in texts
@@ -161,7 +161,7 @@ Report
         r'Closed only: closed 1" class="score-report-bars"',
         html,
     )
-    assert 'width="576pt"' in report_svg
+    assert 'width="345.6pt"' in report_svg
     # The generic needpie keeps Sphinx-Needs' own 8x4 inch layout.
     assert 'width="576pt" height="288pt"' in needpie_svg
 
@@ -239,7 +239,7 @@ def test_coverage_bar_labels_never_invent_hit_counts(percent: int) -> None:
     )
     labels = [text for text, _ in _texts(figure)]
     # Segments too narrow for a number stay blank; there is no total either.
-    assert labels == [f"{share}%" for share in (percent, 100 - percent) if share >= 7]
+    assert labels == [f"{share}%" for share in (percent, 100 - percent) if share >= 12]
 
 
 @pytest.fixture
