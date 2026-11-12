@@ -65,9 +65,10 @@ to one documentation project, shared by the cache check and the renderer.
    that path with `score_coverage_summary`. Without the extension, generated
    summaries have no effect on rendering.
    The report template extension uses the same summary through
-   `score-coverage-report`, showing line and branch pies with percentage labels
-   and measured/selected file counts. Missing and uninstrumented dimensions
-   receive text instead of a pie. Percentages cover only the measured files;
+   `score-coverage-report`, showing line and branch coverage as two stacked
+   bars in one chart, with percentage labels and measured/selected file counts.
+   Missing and uninstrumented dimensions receive text instead of a bar.
+   Percentages cover only the measured files;
    partial measurements are not presented as complete component coverage.
    Need IDs supply the association automatically. Missing measurements display
    as "no data"; uninstrumented dimensions display as "not instrumented".

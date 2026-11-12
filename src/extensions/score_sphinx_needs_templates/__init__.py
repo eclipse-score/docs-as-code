@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import html
 from collections.abc import Mapping
 from pathlib import Path
 
@@ -20,7 +21,7 @@ from sphinx_needs.need_item import NeedItem
 
 from src.helper_lib import config_setdefault
 
-from . import report_pie
+from . import report_charts
 
 _build_environment: BuildEnvironment | None = None
 
@@ -329,6 +330,96 @@ class _IdFilterList:
 _id_filter_list_callable = _IdFilterList()
 
 
+# (heading, ((colour, label, explanation), ...)); colours match _SafetyChartRow.
+_LEGEND_GROUPS = (
+    (
+        "Status ASIL B",
+        (
+            ("#37a12d", "valid_inspected", "agreed and formally inspected"),
+            ("#f5c518", "valid", "agreed, formal inspection still outstanding"),
+            ("#ca2828", "invalid", "not agreed; metamodel checks are skipped"),
+        ),
+    ),
+    (
+        "Status QM",
+        (
+            (
+                "#37a12d",
+                "valid",
+                "agreed; QM needs are not formally inspected, so this is their "
+                "final state (valid_inspected counts here too)",
+            ),
+            ("#ca2828", "invalid", "not agreed; metamodel checks are skipped"),
+        ),
+    ),
+    (
+        "Test coverage",
+        (
+            ("#37a12d", "fully", "at least one test fully verifies the need"),
+            ("#f0a500", "partially", "only partially verifying tests"),
+            ("#ca2828", "not covered", "no verifying test at all"),
+        ),
+    ),
+)
+_REFERENCE_LEGEND_GROUP = (
+    "Reference coverage",
+    (
+        (
+            "#37a12d",
+            "referenced",
+            "a requirement one level down derives from it",
+        ),
+        ("#ca2828", "not referenced", "nothing on the level below derives from it"),
+    ),
+)
+
+
+class _ChartLegend:
+    """Render the one-line colour legend shown above each pair of charts.
+
+    The legend stays a single line even though it is repeated for every
+    Component or Feature; the explanation of every colour is its tooltip and,
+    for keyboard and screen reader users, a collapsed ``<details>`` below it.
+    """
+
+    def __call__(self, with_reference: bool = False) -> str:
+        groups = (
+            (*_LEGEND_GROUPS, _REFERENCE_LEGEND_GROUP)
+            if with_reference
+            else _LEGEND_GROUPS
+        )
+        spans = "".join(
+            '<span class="chart-legend-group">'
+            f'<span class="chart-legend-head">{html.escape(heading)}</span>'
+            + "".join(
+                f'<span title="{html.escape(explanation)}">'
+                f'<span class="chart-legend-dot" style="background: {color};">'
+                f"</span>{html.escape(label)}</span>"
+                for color, label, explanation in items
+            )
+            + "</span>"
+            for heading, items in groups
+        )
+        explanations = "".join(
+            f'<p><span class="chart-legend-head">{html.escape(heading)}</span><br>'
+            + "<br>".join(
+                f'<span class="chart-legend-dot" style="background: {color};"></span>'
+                f"<code>{html.escape(label)}</code> — {html.escape(explanation)}"
+                for color, label, explanation in items
+            )
+            + "</p>"
+            for heading, items in groups
+        )
+        return (
+            f'\n.. raw:: html\n\n   <div class="chart-legend">{spans}</div>'
+            '<details class="chart-legend-details"><summary>What the colours mean'
+            f"</summary>{explanations}</details>\n"
+        )
+
+
+_chart_legend_callable = _ChartLegend()
+
+
 class _WorkproductRows:
     """Render work-product rows for a six-space indented ``list-table``.
 
@@ -372,28 +463,30 @@ class _WorkproductRows:
 _workproduct_rows_callable = _WorkproductRows()
 
 
-class _SafetyPieRow:
-    """Render one row of pies restricted to a single safety class.
+class _SafetyChartRow:
+    """Render one bar chart restricted to a single safety class.
 
     Shared by the module and platform verification reports, so that QM and
     ASIL figures are never mixed in one chart. QM Needs are not formally
-    inspected, so there ``valid`` already is the green "done" slice rather
+    inspected, so there ``valid`` already is the green "done" segment rather
     than the yellow "not inspected yet" one; a QM Need that is nevertheless
     ``valid_inspected`` counts as ``valid``, as in the metamodel graph checks.
 
-    ``with_reference`` adds a third, reference-coverage pie; ``referenced`` and
-    ``missing`` must already be partitioned over this safety class alone. The
-    raster stays at three columns either way, so that a two-pie row renders
-    its charts at exactly the same size as a three-pie one.
+    The status and test-coverage bars share one figure; ``with_reference``
+    adds a third, reference-coverage bar. ``referenced`` and ``missing`` must
+    already be partitioned over this safety class alone.
 
-    ``count`` decides between pies and placeholders only; it is deliberately
-    not shown, because it is resolved through the Need graph while the pies
+    ``count`` decides between bars and placeholder only; it is deliberately
+    not shown, because it is resolved through the Need graph while the bars
     count through Sphinx-Needs filters, and the two can disagree on links
     carrying a ``[version==N]`` selector.
 
-    With ``component`` and ``category`` the status and coverage pies are
+    With ``component`` and ``category`` the status and coverage bars are
     counted by the shared ``score_metrics`` filter functions instead of the
     inline ``base`` filters; ``version`` then scopes the requirements.
+
+    ``indent`` nests the output, e.g. into a ``grid-item`` that puts the ASIL
+    and QM charts side by side.
 
     This is a render helper instead of a Jinja macro because the MiniJinja
     environment has no template loader, so macros cannot be shared between
@@ -414,9 +507,10 @@ class _SafetyPieRow:
         component: str | None = None,
         category: str | None = None,
         version: str | None = None,
+        indent: int = 0,
     ) -> str:
         scope = f'{base} and safety == "{safety}"'
-        # (slice label, status condition) per pie slice; green "done" comes first.
+        # (segment label, status condition) per bar segment; green "done" first.
         statuses = (
             [
                 ("valid", '(status == "valid" or status == "valid_inspected")'),
@@ -435,6 +529,11 @@ class _SafetyPieRow:
         safety_css = safety.lower().replace("_", "-")
         chart_prefix = f"{title} {subject}".strip()
 
+        def rendered() -> str:
+            return "".join(
+                f"{' ' * indent}{line}\n" if line else "\n" for line in lines
+            )
+
         lines = [
             "",
             f".. rubric:: {safety_label} — {subject}",
@@ -446,31 +545,16 @@ class _SafetyPieRow:
                 [
                     ".. raw:: html",
                     "",
-                    f'   <div class="empty-pie">no {safety_label} {subject.lower()}</div>',
+                    f'   <div class="empty-chart">no {safety_label} {subject.lower()}</div>',
                 ]
             )
-            return "\n".join(lines) + "\n"
+            return rendered()
 
-        lines.extend(
-            [
-                ".. grid:: 1 2 3 3",
-                "   :gutter: 2",
-                "   :class-row: score-pie-row",
-            ]
-        )
+        lines.append(f".. score-report-bars:: {chart_prefix} ({safety_label})")
 
-        def grid_item(name: str, pie: list[str]) -> None:
-            # The continuation line keeps the chart title on two narrow lines.
-            lines.extend(
-                [
-                    "",
-                    "   .. grid-item::",
-                    "",
-                    f"      .. score-report-pie:: {chart_prefix}",
-                    f"         {name} ({safety_label})",
-                ]
-            )
-            lines.extend(f"         {line}".rstrip() for line in pie)
+        def add_bar(name: str, bar: list[str]) -> None:
+            lines.extend(["", f"   .. score-report-bar:: {name}"])
+            lines.extend(f"      {line}".rstrip() for line in bar)
 
         def counted_by(func: str) -> list[str]:
             # sphinx-needs splits the call on its last ".", so encode the version.
@@ -480,7 +564,7 @@ class _SafetyPieRow:
                 f"({component}, {category}, {encoded_version}, {safety})"
             ]
 
-        grid_item(
+        add_bar(
             "Status",
             [
                 f":labels: {', '.join(label for label, _ in statuses)}",
@@ -495,7 +579,7 @@ class _SafetyPieRow:
                 ),
             ],
         )
-        grid_item(
+        add_bar(
             "Test Coverage",
             [
                 ":labels: fully covered, partially covered, not covered",
@@ -513,7 +597,7 @@ class _SafetyPieRow:
             ],
         )
         if with_reference:
-            grid_item(
+            add_bar(
                 "Reference Coverage",
                 [
                     ":labels: referenced by lower, not referenced",
@@ -523,10 +607,10 @@ class _SafetyPieRow:
                     f"id in {_id_filter_list_callable(missing or [])}",
                 ],
             )
-        return "\n".join(lines) + "\n"
+        return rendered()
 
 
-_safety_pie_row_callable = _SafetyPieRow()
+_safety_chart_row_callable = _SafetyChartRow()
 
 
 def _post_templates_requiring_reread(app: Sphinx) -> set[str]:
@@ -632,9 +716,10 @@ def setup(app: Sphinx) -> dict[str, object]:
         "workproduct_rows", _workproduct_rows_callable
     )
     app.config.needs_render_context.setdefault(
-        "safety_pie_row", _safety_pie_row_callable
+        "safety_chart_row", _safety_chart_row_callable
     )
-    report_pie.setup(app)
+    app.config.needs_render_context.setdefault("chart_legend", _chart_legend_callable)
+    report_charts.setup(app)
     app.connect("builder-inited", _capture_build_environment)
     # Run after the source-code linker has injected generated testcase Needs and
     # their verification backlinks (priority 525), so report templates can

@@ -18,7 +18,7 @@ filegroup(
     name = "all_sources",
     srcs = [
         "__init__.py",
-        "report_pie.py",
+        "report_charts.py",
     ],
     visibility = ["//visibility:public"],
 )
@@ -41,7 +41,7 @@ score_pytest(
     size = "medium",
     srcs = [
         "tests/test_needs_templates.py",
-        "tests/test_report_pie.py",
+        "tests/test_report_charts.py",
     ],
     pytest_config = "//:pyproject.toml",
     deps = [
