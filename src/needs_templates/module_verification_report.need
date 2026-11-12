@@ -171,8 +171,11 @@ Component Overview
 {% set component_arcs = (component_arcs_all|selectattr("type", "eq", "comp_arc_sta")|list)
      + (component_arcs_all|selectattr("type", "eq", "comp_arc_dyn")|list) %}
 
-Component Requirements Statistics
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Component Requirements
+^^^^^^^^^^^^^^^^^^^^^^
+
+Statistics
+""""""""""
 {{ chart_legend() }}
 .. grid:: 1 1 2 2
    :gutter: 4
@@ -187,24 +190,8 @@ Component Requirements Statistics
      component_reqs|selectattr("safety", "eq", "QM")|list|length,
      component=component_id, category="requirements", version=module_version, indent=6) }}
 
-Component Architecture Statistics
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. grid:: 1 1 2 2
-   :gutter: 4
-   :class-row: safety-pair
-
-   .. grid-item::
-{{ safety_pie_row(component_title, "Architecture Elements", "", "ASIL_B", "ASIL B",
-     component_arcs|selectattr("safety", "eq", "ASIL_B")|list|length,
-     component=component_id, category="architecture", indent=6) }}
-   .. grid-item::
-{{ safety_pie_row(component_title, "Architecture Elements", "", "QM", "QM",
-     component_arcs|selectattr("safety", "eq", "QM")|list|length,
-     component=component_id, category="architecture", indent=6) }}
-
-Requirements Traceability
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Traceability
+""""""""""""
 
 The following table lists all requirements of this component together with their
 verification status and the tests that (fully or partially) verify them:
@@ -219,14 +206,27 @@ verification status and the tests that (fully or partially) verify them:
       :colwidths: 13,22,8,10,47
       :sort: safety
 
-Test Coverage
-^^^^^^^^^^^^^
-
-.. score-coverage-report:: {{ component_id }}
-   :title: {{ component_title }}
-
-Architectural Elements
+Component Architecture
 ^^^^^^^^^^^^^^^^^^^^^^
+
+Statistics
+""""""""""
+
+.. grid:: 1 1 2 2
+   :gutter: 4
+   :class-row: safety-pair
+
+   .. grid-item::
+{{ safety_pie_row(component_title, "Architecture Elements", "", "ASIL_B", "ASIL B",
+     component_arcs|selectattr("safety", "eq", "ASIL_B")|list|length,
+     component=component_id, category="architecture", indent=6) }}
+   .. grid-item::
+{{ safety_pie_row(component_title, "Architecture Elements", "", "QM", "QM",
+     component_arcs|selectattr("safety", "eq", "QM")|list|length,
+     component=component_id, category="architecture", indent=6) }}
+
+Traceability
+""""""""""""
 
 The following table lists the architectural elements of this component
 together with their inspection status. Elements that have been formally
@@ -242,6 +242,12 @@ status have not yet been inspected.
       :columns: id;title;safety;status;tags
       :colwidths: 25,30,10,15,20
       :sort: safety
+
+Test Coverage
+^^^^^^^^^^^^^
+
+.. score-coverage-report:: {{ component_id }}
+   :title: {{ component_title }}
 
 Verification & Safety Analysis Documents
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
