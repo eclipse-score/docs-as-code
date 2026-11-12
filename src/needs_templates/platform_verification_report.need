@@ -37,7 +37,7 @@
      ["wp__feature_fmea", "FMEA"],
    ] %}
 
-{#- ``workproduct_rows``, ``id_filter_list`` and ``safety_pie_row`` are render
+{#- ``workproduct_rows``, ``id_filter_list`` and ``safety_chart_row`` are render
     helpers shared with the module report. -#}
 {#- Stakeholder requirements are not scoped to a Feature, so they are
     collected once for the whole report rather than per-Feature like
@@ -90,7 +90,7 @@
    p.rubric.safety-class-heading.safety-qm { background: #6c757d; }
 
    /* Stands in for the chart of a safety class without any Need. */
-   .empty-pie {
+   .empty-chart {
        padding: 0.2em 0.8em; margin-bottom: 0.5em;
        border: 2px dashed #b0b0b0; border-radius: 6px;
        color: #6c757d; font-style: italic;
@@ -138,10 +138,10 @@ Stakeholder Requirements
    :class-row: safety-pair
 
    .. grid-item::
-{{ safety_pie_row("", "Stakeholder Requirements", stkh_base, "ASIL_B", "ASIL B",
+{{ safety_chart_row("", "Stakeholder Requirements", stkh_base, "ASIL_B", "ASIL B",
      stkh_asil|length, true, stkh_asil_ref.referenced, stkh_asil_ref.missing, indent=6) }}
    .. grid-item::
-{{ safety_pie_row("", "Stakeholder Requirements", stkh_base, "QM", "QM",
+{{ safety_chart_row("", "Stakeholder Requirements", stkh_base, "QM", "QM",
      stkh_qm|length, true, stkh_qm_ref.referenced, stkh_qm_ref.missing, indent=6) }}
 
 .. dropdown:: Show requirements table
@@ -154,7 +154,7 @@ Stakeholder Requirements
       :colwidths: 13,22,8,10,47
       :sort: safety
 {% if ns_stkh_ref.missing %}
-{#- Detail view of the "not referenced" slices of the reference coverage pies
+{#- Detail view of the "not referenced" segments of the reference coverage bars
     above; both are rendered from the same in-scope ID list. -#}
 
 .. dropdown:: Not referenced by feature requirements ({{ ns_stkh_ref.missing|length }})
@@ -239,10 +239,10 @@ Requirements Statistics
    :class-row: safety-pair
 
    .. grid-item::
-{{ safety_pie_row(feature_title, "Requirements", req_base, "ASIL_B", "ASIL B",
+{{ safety_chart_row(feature_title, "Requirements", req_base, "ASIL_B", "ASIL B",
      feat_asil|length, true, feat_asil_ref.referenced, feat_asil_ref.missing, indent=6) }}
    .. grid-item::
-{{ safety_pie_row(feature_title, "Requirements", req_base, "QM", "QM",
+{{ safety_chart_row(feature_title, "Requirements", req_base, "QM", "QM",
      feat_qm|length, true, feat_qm_ref.referenced, feat_qm_ref.missing, indent=6) }}
 
 .. dropdown:: Show requirements table
@@ -277,10 +277,10 @@ Architecture Statistics
    :class-row: safety-pair
 
    .. grid-item::
-{{ safety_pie_row(feature_title, "Architecture Elements", arc_base, "ASIL_B", "ASIL B",
+{{ safety_chart_row(feature_title, "Architecture Elements", arc_base, "ASIL_B", "ASIL B",
      feature_arcs|selectattr("safety", "eq", "ASIL_B")|list|length, false, [], [], indent=6) }}
    .. grid-item::
-{{ safety_pie_row(feature_title, "Architecture Elements", arc_base, "QM", "QM",
+{{ safety_chart_row(feature_title, "Architecture Elements", arc_base, "QM", "QM",
      feature_arcs|selectattr("safety", "eq", "QM")|list|length, false, [], [], indent=6) }}
 
 .. dropdown:: Show architectural elements table

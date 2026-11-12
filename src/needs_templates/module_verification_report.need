@@ -53,7 +53,7 @@
      ["wp__sw_component_fmea", "FMEA"],
    ] %}
 
-{#- ``workproduct_rows``, ``id_filter_list`` and ``safety_pie_row`` are render
+{#- ``workproduct_rows``, ``id_filter_list`` and ``safety_chart_row`` are render
     helpers shared with the platform report. -#}
 
 .. raw:: html
@@ -97,7 +97,7 @@
    p.rubric.safety-class-heading.safety-qm { background: #6c757d; }
 
    /* Stands in for the chart of a safety class without any Need. */
-   .empty-pie {
+   .empty-chart {
        padding: 0.2em 0.8em; margin-bottom: 0.5em;
        border: 2px dashed #b0b0b0; border-radius: 6px;
        color: #6c757d; font-style: italic;
@@ -182,11 +182,11 @@ Statistics
    :class-row: safety-pair
 
    .. grid-item::
-{{ safety_pie_row(component_title, "Requirements", "", "ASIL_B", "ASIL B",
+{{ safety_chart_row(component_title, "Requirements", "", "ASIL_B", "ASIL B",
      component_reqs|selectattr("safety", "eq", "ASIL_B")|list|length,
      component=component_id, category="requirements", version=module_version, indent=6) }}
    .. grid-item::
-{{ safety_pie_row(component_title, "Requirements", "", "QM", "QM",
+{{ safety_chart_row(component_title, "Requirements", "", "QM", "QM",
      component_reqs|selectattr("safety", "eq", "QM")|list|length,
      component=component_id, category="requirements", version=module_version, indent=6) }}
 
@@ -217,11 +217,11 @@ Statistics
    :class-row: safety-pair
 
    .. grid-item::
-{{ safety_pie_row(component_title, "Architecture Elements", "", "ASIL_B", "ASIL B",
+{{ safety_chart_row(component_title, "Architecture Elements", "", "ASIL_B", "ASIL B",
      component_arcs|selectattr("safety", "eq", "ASIL_B")|list|length,
      component=component_id, category="architecture", indent=6) }}
    .. grid-item::
-{{ safety_pie_row(component_title, "Architecture Elements", "", "QM", "QM",
+{{ safety_chart_row(component_title, "Architecture Elements", "", "QM", "QM",
      component_arcs|selectattr("safety", "eq", "QM")|list|length,
      component=component_id, category="architecture", indent=6) }}
 

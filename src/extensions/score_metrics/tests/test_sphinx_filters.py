@@ -384,27 +384,27 @@ def test_filter_func_arguments_must_not_contain_a_dot() -> None:
 _DEFAULTS: dict[str, list[str]] = {"satisfied_by": [], "belongs_to": []}
 
 
-def _pie_counts(rst: str, needs: list[NeedItem]) -> list[list[int]]:
-    """Evaluate every bar in a ``safety_pie_row`` block like sphinx-needs."""
-    pies: list[list[int]] = []
+def _bar_counts(rst: str, needs: list[NeedItem]) -> list[list[int]]:
+    """Evaluate every bar in a ``safety_chart_row`` block like sphinx-needs."""
+    bars: list[list[int]] = []
     for block in rst.split(".. score-report-bar::")[1:]:
         body = [line.strip() for line in block.splitlines()[1:]]
         func = next((line for line in body if line.startswith(":filter-func:")), None)
         if func:
-            pies.append(_call_like_needpie(func.split(" ", 1)[1], needs))
+            bars.append(_call_like_needpie(func.split(" ", 1)[1], needs))
             continue
         filters = [line for line in body if line and not line.startswith(":")]
-        pies.append(
+        bars.append(
             [sum(bool(eval(f, {}, {**_DEFAULTS, **n})) for n in needs) for f in filters]  # noqa: S307
         )
-    assert pies
-    return pies
+    assert bars
+    return bars
 
 
 @add_test_properties(**_PROPS)
-def test_safety_pie_row_filter_funcs_match_inline_filters() -> None:
+def test_safety_chart_row_filter_funcs_match_inline_filters() -> None:
     """The central filter functions count exactly what the inline filters count."""
-    row = vars(sphinx_needs_templates)["_safety_pie_row_callable"]
+    row = vars(sphinx_needs_templates)["_safety_chart_row_callable"]
     in_scope = ["r1", "r2", "r3"]
     req_base = f'type == "comp_req" and "comp__x" in satisfied_by and id in {in_scope}'
     arc_base = 'type in ["comp_arc_sta", "comp_arc_dyn"] and "comp__x" in belongs_to'
@@ -427,6 +427,6 @@ def test_safety_pie_row_filter_funcs_match_inline_filters() -> None:
                 version=version,
             )
             assert ":filter-func:" in central
-            assert _pie_counts(central, _COMPONENT_NEEDS) == _pie_counts(
+            assert _bar_counts(central, _COMPONENT_NEEDS) == _bar_counts(
                 inline, _COMPONENT_NEEDS
             )

@@ -21,8 +21,8 @@ import pytest
 from docutils import nodes
 from matplotlib.figure import Figure
 from score_pytest.attribute_plugin import add_test_properties
-from score_sphinx_needs_templates import report_pie
-from score_sphinx_needs_templates.report_pie import BarRow, draw_report_bars
+from score_sphinx_needs_templates import report_charts
+from score_sphinx_needs_templates.report_charts import BarRow, draw_report_bars
 from sphinx.application import Sphinx
 from sphinx.testing.util import SphinxTestApp
 
@@ -178,7 +178,7 @@ def test_report_bar_counts_through_filter_func(
     """``:filter-func:`` receives the Needs and its arguments like in ``needpie``."""
     monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
     monkeypatch.syspath_prepend(str(tmp_path))
-    (tmp_path / "pie_counts.py").write_text(
+    (tmp_path / "bar_counts.py").write_text(
         "def by_status(needs, results, arg1, arg2):\n"
         "    for status in (arg1, arg2):\n"
         '        results.append(sum(n["status"] == status for n in needs))\n',
@@ -209,7 +209,7 @@ Report
 .. score-report-bar:: Status
    :labels: open, closed
    :colors: #37a12d, #ca2828
-   :filter-func: pie_counts.by_status(open,closed)
+   :filter-func: bar_counts.by_status(open,closed)
 """,
         encoding="utf-8",
     )
@@ -253,12 +253,12 @@ def render_coverage_report(
     ) -> nodes.image:
         return nodes.image(uri=f"{basename}.svg")
 
-    monkeypatch.setattr(report_pie, "save_matplotlib_figure", save_figure)
+    monkeypatch.setattr(report_charts, "save_matplotlib_figure", save_figure)
 
     def render(summary: dict[str, Any] | None) -> nodes.container:
-        return vars(report_pie)["_coverage_report"](
+        return vars(report_charts)["_coverage_report"](
             cast(Sphinx, None),
-            report_pie.CoverageReport(title="Example component"),
+            report_charts.CoverageReport(title="Example component"),
             summary,
             "report",
         )

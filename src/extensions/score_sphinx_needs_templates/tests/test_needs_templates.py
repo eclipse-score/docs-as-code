@@ -259,12 +259,12 @@ def test_any_req_in_report_version_false_if_no_requirement_matches() -> None:
     assert templates.any_req_in_report_version([a, b], "v1.0") is False  # type: ignore[reportArgumentType]
 
 
-def test_safety_pie_row_qm_counts_inspected_as_valid() -> None:
-    """QM has no inspected slice; ``valid_inspected`` QM Needs count as valid."""
-    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+def test_safety_chart_row_qm_counts_inspected_as_valid() -> None:
+    """QM has no inspected segment; ``valid_inspected`` QM Needs count as valid."""
+    safety_chart_row = vars(templates)["_SafetyChartRow"]()
 
-    qm = safety_pie_row("Comp", "Requirements", "BASE", "QM", "QM", 1)
-    asil = safety_pie_row("Comp", "Requirements", "BASE", "ASIL_B", "ASIL B", 1)
+    qm = safety_chart_row("Comp", "Requirements", "BASE", "QM", "QM", 1)
+    asil = safety_chart_row("Comp", "Requirements", "BASE", "ASIL_B", "ASIL B", 1)
 
     assert ":labels: valid, invalid" in qm
     assert (
@@ -277,20 +277,20 @@ def test_safety_pie_row_qm_counts_inspected_as_valid() -> None:
     assert ":class: safety-class-heading safety-asil-b" in asil
 
 
-def test_safety_pie_row_empty_class_renders_one_slim_placeholder() -> None:
-    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+def test_safety_chart_row_empty_class_renders_one_slim_placeholder() -> None:
+    safety_chart_row = vars(templates)["_SafetyChartRow"]()
 
-    row = safety_pie_row("Comp", "Requirements", "BASE", "QM", "QM", 0, True)
+    row = safety_chart_row("Comp", "Requirements", "BASE", "QM", "QM", 0, True)
 
     assert "score-report-bar" not in row
-    assert row.count('<div class="empty-pie">no QM requirements</div>') == 1
+    assert row.count('<div class="empty-chart">no QM requirements</div>') == 1
 
 
-def test_safety_pie_row_reference_pie_only_on_request() -> None:
-    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+def test_safety_chart_row_reference_bar_only_on_request() -> None:
+    safety_chart_row = vars(templates)["_SafetyChartRow"]()
 
-    without = safety_pie_row("", "Stakeholder Requirements", "B", "QM", "QM", 2)
-    with_ref = safety_pie_row(
+    without = safety_chart_row("", "Stakeholder Requirements", "B", "QM", "QM", 2)
+    with_ref = safety_chart_row(
         "", "Stakeholder Requirements", "B", "QM", "QM", 2, True, ["a", "b"], ["c"]
     )
 
@@ -320,12 +320,12 @@ def test_chart_legend_is_one_raw_line_with_reference_on_request() -> None:
     assert plain.count('class="chart-legend-dot"') == 8
 
 
-def test_safety_pie_row_indent_nests_every_line() -> None:
+def test_safety_chart_row_indent_nests_every_line() -> None:
     """``indent`` nests the chart into a grid item without touching blank lines."""
-    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+    safety_chart_row = vars(templates)["_SafetyChartRow"]()
 
-    flat = safety_pie_row("", "Requirements", "B", "QM", "QM", 2)
-    nested = safety_pie_row("", "Requirements", "B", "QM", "QM", 2, indent=6)
+    flat = safety_chart_row("", "Requirements", "B", "QM", "QM", 2)
+    nested = safety_chart_row("", "Requirements", "B", "QM", "QM", 2, indent=6)
 
     assert nested == "".join(
         f"      {line}\n" if line else "\n" for line in flat.splitlines()
@@ -540,7 +540,7 @@ def test_platform_report_gap_table_is_report_version_scoped(
 
     A stakeholder requirement that is only referenced by a feature requirement
     outside the report's ``report_version`` counts as a gap, because the
-    reference coverage pie classifies it as "not referenced" too. Both are
+    reference coverage bar classifies it as "not referenced" too. Both are
     rendered from the same pre-scoped ID list, so they cannot disagree.
     """
     monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))

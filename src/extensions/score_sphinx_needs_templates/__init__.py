@@ -21,7 +21,7 @@ from sphinx_needs.need_item import NeedItem
 
 from src.helper_lib import config_setdefault
 
-from . import report_pie
+from . import report_charts
 
 _build_environment: BuildEnvironment | None = None
 
@@ -330,7 +330,7 @@ class _IdFilterList:
 _id_filter_list_callable = _IdFilterList()
 
 
-# (heading, ((colour, label, explanation), ...)); colours match _SafetyPieRow.
+# (heading, ((colour, label, explanation), ...)); colours match _SafetyChartRow.
 _LEGEND_GROUPS = (
     (
         "Status ASIL B",
@@ -448,7 +448,7 @@ class _WorkproductRows:
 _workproduct_rows_callable = _WorkproductRows()
 
 
-class _SafetyPieRow:
+class _SafetyChartRow:
     """Render one bar chart restricted to a single safety class.
 
     Shared by the module and platform verification reports, so that QM and
@@ -530,7 +530,7 @@ class _SafetyPieRow:
                 [
                     ".. raw:: html",
                     "",
-                    f'   <div class="empty-pie">no {safety_label} {subject.lower()}</div>',
+                    f'   <div class="empty-chart">no {safety_label} {subject.lower()}</div>',
                 ]
             )
             return rendered()
@@ -595,7 +595,7 @@ class _SafetyPieRow:
         return rendered()
 
 
-_safety_pie_row_callable = _SafetyPieRow()
+_safety_chart_row_callable = _SafetyChartRow()
 
 
 def _post_templates_requiring_reread(app: Sphinx) -> set[str]:
@@ -701,10 +701,10 @@ def setup(app: Sphinx) -> dict[str, object]:
         "workproduct_rows", _workproduct_rows_callable
     )
     app.config.needs_render_context.setdefault(
-        "safety_pie_row", _safety_pie_row_callable
+        "safety_chart_row", _safety_chart_row_callable
     )
     app.config.needs_render_context.setdefault("chart_legend", _chart_legend_callable)
-    report_pie.setup(app)
+    report_charts.setup(app)
     app.connect("builder-inited", _capture_build_environment)
     # Run after the source-code linker has injected generated testcase Needs and
     # their verification backlinks (priority 525), so report templates can

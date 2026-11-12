@@ -25,10 +25,11 @@ The extension provides:
   directory;
 * the `linked_needs(need_id, link_name)` helper for traversing Need links;
 * the `needs_of_type(need_type)` helper for selecting Needs by type;
-* the `id_filter_list`, `workproduct_rows` and `safety_pie_row` helpers, which
-  render RST fragments shared by several report templates;
+* the `id_filter_list`, `workproduct_rows`, `safety_chart_row` and
+  `chart_legend` helpers, which render RST fragments shared by several report
+  templates;
 * the `score-report-bars` and `score-report-bar` directives used by
-  `safety_pie_row`: every `score-report-bar` counts one Sphinx-Needs filter per
+  `safety_chart_row`: every `score-report-bar` counts one Sphinx-Needs filter per
   content line (or a `:filter-func:`) like `needpie`, and all bars of one
   `score-report-bars` block are drawn as a single compact figure of 100 %
   stacked horizontal bars on a shared axis, with counts in the segments and
