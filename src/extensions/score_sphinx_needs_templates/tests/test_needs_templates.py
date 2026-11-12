@@ -305,6 +305,18 @@ def test_safety_pie_row_reference_pie_only_on_request() -> None:
     assert ".. score-report-bars:: Stakeholder Requirements (QM)\n" in with_ref
 
 
+def test_safety_pie_row_indent_nests_every_line() -> None:
+    """``indent`` nests the chart into a grid item without touching blank lines."""
+    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+
+    flat = safety_pie_row("", "Requirements", "B", "QM", "QM", 2)
+    nested = safety_pie_row("", "Requirements", "B", "QM", "QM", 2, indent=6)
+
+    assert nested == "".join(
+        f"      {line}\n" if line else "\n" for line in flat.splitlines()
+    )
+
+
 def test_id_filter_list_renders_quoted_literal() -> None:
     id_filter_list = vars(templates)["_IdFilterList"]()
 

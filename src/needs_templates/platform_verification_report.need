@@ -74,10 +74,10 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_filter,
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
-   /* All bars of a safety class are one figure; every figure has the same
-      width, so the bars of all classes line up on one shared axis. */
+   /* All bars of a safety class are one figure, sized for one half of the
+      ASIL B | QM pair; the cap keeps single charts at the same scale. */
    img.score-report-bars {
-       display: block; width: 100%; max-width: 46em; height: auto;
+       display: block; width: 100%; max-width: 32em; height: auto;
        margin: 0 0 0.6em 0;
    }
 
@@ -158,10 +158,17 @@ Stakeholder Requirements
 {% set stkh_qm = ns_stkh_reqs.list|selectattr("safety", "eq", "QM")|list %}
 {% set stkh_asil_ref = split_by_reference(stkh_asil|map(attribute="id")|list, stkh_referenced_ids) %}
 {% set stkh_qm_ref = split_by_reference(stkh_qm|map(attribute="id")|list, stkh_referenced_ids) %}
+
+.. grid:: 1 1 2 2
+   :gutter: 4
+   :class-row: safety-pair
+
+   .. grid-item::
 {{ safety_pie_row("", "Stakeholder Requirements", stkh_base, "ASIL_B", "ASIL B",
-     stkh_asil|length, true, stkh_asil_ref.referenced, stkh_asil_ref.missing) }}
+     stkh_asil|length, true, stkh_asil_ref.referenced, stkh_asil_ref.missing, indent=6) }}
+   .. grid-item::
 {{ safety_pie_row("", "Stakeholder Requirements", stkh_base, "QM", "QM",
-     stkh_qm|length, true, stkh_qm_ref.referenced, stkh_qm_ref.missing) }}
+     stkh_qm|length, true, stkh_qm_ref.referenced, stkh_qm_ref.missing, indent=6) }}
 
 .. dropdown:: Show requirements table
    :animate: fade-in
@@ -252,10 +259,17 @@ Requirements Statistics
 {% set feat_qm = feature_reqs|selectattr("safety", "eq", "QM")|list %}
 {% set feat_asil_ref = split_by_reference(feat_asil|map(attribute="id")|list, comp_referenced_ids) %}
 {% set feat_qm_ref = split_by_reference(feat_qm|map(attribute="id")|list, comp_referenced_ids) %}
+
+.. grid:: 1 1 2 2
+   :gutter: 4
+   :class-row: safety-pair
+
+   .. grid-item::
 {{ safety_pie_row(feature_title, "Requirements", req_base, "ASIL_B", "ASIL B",
-     feat_asil|length, true, feat_asil_ref.referenced, feat_asil_ref.missing) }}
+     feat_asil|length, true, feat_asil_ref.referenced, feat_asil_ref.missing, indent=6) }}
+   .. grid-item::
 {{ safety_pie_row(feature_title, "Requirements", req_base, "QM", "QM",
-     feat_qm|length, true, feat_qm_ref.referenced, feat_qm_ref.missing) }}
+     feat_qm|length, true, feat_qm_ref.referenced, feat_qm_ref.missing, indent=6) }}
 
 .. dropdown:: Show requirements table
    :animate: fade-in
@@ -283,10 +297,17 @@ Requirements Statistics
 Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^
 {% set arc_base = 'type in ["feat_arc_sta", "feat_arc_dyn"] and "' ~ feature_id ~ '" in belongs_to' %}
+
+.. grid:: 1 1 2 2
+   :gutter: 4
+   :class-row: safety-pair
+
+   .. grid-item::
 {{ safety_pie_row(feature_title, "Architecture Elements", arc_base, "ASIL_B", "ASIL B",
-     feature_arcs|selectattr("safety", "eq", "ASIL_B")|list|length, false, [], []) }}
+     feature_arcs|selectattr("safety", "eq", "ASIL_B")|list|length, false, [], [], indent=6) }}
+   .. grid-item::
 {{ safety_pie_row(feature_title, "Architecture Elements", arc_base, "QM", "QM",
-     feature_arcs|selectattr("safety", "eq", "QM")|list|length, false, [], []) }}
+     feature_arcs|selectattr("safety", "eq", "QM")|list|length, false, [], [], indent=6) }}
 
 .. dropdown:: Show architectural elements table
    :animate: fade-in

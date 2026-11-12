@@ -81,10 +81,10 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
 
-   /* All bars of a safety class are one figure; every figure has the same
-      width, so the bars of all classes line up on one shared axis. */
+   /* All bars of a safety class are one figure, sized for one half of the
+      ASIL B | QM pair; the cap keeps single charts at the same scale. */
    img.score-report-bars {
-       display: block; width: 100%; max-width: 46em; height: auto;
+       display: block; width: 100%; max-width: 32em; height: auto;
        margin: 0 0 0.6em 0;
    }
 
@@ -194,21 +194,35 @@ Component Overview
 
 Component Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. grid:: 1 1 2 2
+   :gutter: 4
+   :class-row: safety-pair
+
+   .. grid-item::
 {{ safety_pie_row(component_title, "Requirements", "", "ASIL_B", "ASIL B",
      component_reqs|selectattr("safety", "eq", "ASIL_B")|list|length,
-     component=component_id, category="requirements", version=module_version) }}
+     component=component_id, category="requirements", version=module_version, indent=6) }}
+   .. grid-item::
 {{ safety_pie_row(component_title, "Requirements", "", "QM", "QM",
      component_reqs|selectattr("safety", "eq", "QM")|list|length,
-     component=component_id, category="requirements", version=module_version) }}
+     component=component_id, category="requirements", version=module_version, indent=6) }}
 
 Component Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. grid:: 1 1 2 2
+   :gutter: 4
+   :class-row: safety-pair
+
+   .. grid-item::
 {{ safety_pie_row(component_title, "Architecture Elements", "", "ASIL_B", "ASIL B",
      component_arcs|selectattr("safety", "eq", "ASIL_B")|list|length,
-     component=component_id, category="architecture") }}
+     component=component_id, category="architecture", indent=6) }}
+   .. grid-item::
 {{ safety_pie_row(component_title, "Architecture Elements", "", "QM", "QM",
      component_arcs|selectattr("safety", "eq", "QM")|list|length,
-     component=component_id, category="architecture") }}
+     component=component_id, category="architecture", indent=6) }}
 
 Requirements Traceability
 ^^^^^^^^^^^^^^^^^^^^^^^^^
