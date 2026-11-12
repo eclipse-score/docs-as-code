@@ -888,7 +888,7 @@ needs_types:
       mitigation_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
-      violates: comp_arc_dyn, comp_arc_sta
+      violates: comp_arc_dyn, comp_arc_sta, real_arc_int_op
     optional_links:
       mitigated_by: comp_req, aou_req
     tags:
