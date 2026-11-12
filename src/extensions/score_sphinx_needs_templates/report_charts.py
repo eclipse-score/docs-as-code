@@ -167,9 +167,21 @@ def _segment_text(size: float, share: float, *, show_counts: bool) -> str:
     return f"{size:g}" if width >= _MIN_TEXT_INCHES else ""
 
 
+def _relative_luminance(color: str) -> float:
+    """WCAG 2 relative luminance of a matplotlib colour."""
+    channels = [
+        c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+        for c in to_rgb(color)
+    ]
+    return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
+
+
 def _text_color(color: str) -> str:
-    red, green, blue = to_rgb(color)
-    return "black" if 0.299 * red + 0.587 * green + 0.114 * blue > 0.6 else "white"
+    """Return black or white, whichever has the higher contrast ratio on ``color``."""
+    luminance = _relative_luminance(color)
+    on_black = (luminance + 0.05) / 0.05
+    on_white = 1.05 / (luminance + 0.05)
+    return "black" if on_black >= on_white else "white"
 
 
 def draw_report_bars(rows: Sequence[BarRow], *, show_counts: bool = True) -> Figure:

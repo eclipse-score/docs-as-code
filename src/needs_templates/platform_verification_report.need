@@ -96,10 +96,11 @@
        color: #6c757d; font-style: italic;
    }
 
-   /* One-line colour legend above every chart pair; hover explains a colour. */
+   /* One-line colour legend above every chart pair; hover explains a colour,
+      the details below explain all colours for keyboard users too. */
    .chart-legend {
        display: flex; flex-wrap: wrap; gap: 0.3em 1.6em;
-       margin: 0.2em 0 0.4em 0; font-size: 0.85em;
+       margin: 0.2em 0 0.2em 0; font-size: 0.85em;
    }
    .chart-legend-group {
        display: inline-flex; flex-wrap: wrap; align-items: center;
@@ -112,6 +113,9 @@
        margin-right: 0.35em; border-radius: 50%; vertical-align: -0.05em;
        border: 1px solid rgba(0, 0, 0, 0.25);
    }
+   .chart-legend-details { margin: 0 0 0.4em 0; font-size: 0.85em; }
+   .chart-legend-details > summary { cursor: pointer; }
+   .chart-legend-details > p { margin: 0.4em 0 0 1em; }
    </style>
 
 {# ===================================================================== #}

@@ -377,8 +377,9 @@ _REFERENCE_LEGEND_GROUP = (
 class _ChartLegend:
     """Render the one-line colour legend shown above each pair of charts.
 
-    The explanation of every colour is its tooltip, so the legend stays a
-    single line even though it is repeated for every Component or Feature.
+    The legend stays a single line even though it is repeated for every
+    Component or Feature; the explanation of every colour is its tooltip and,
+    for keyboard and screen reader users, a collapsed ``<details>`` below it.
     """
 
     def __call__(self, with_reference: bool = False) -> str:
@@ -399,7 +400,21 @@ class _ChartLegend:
             + "</span>"
             for heading, items in groups
         )
-        return f'\n.. raw:: html\n\n   <div class="chart-legend">{spans}</div>\n'
+        explanations = "".join(
+            f'<p><span class="chart-legend-head">{html.escape(heading)}</span><br>'
+            + "<br>".join(
+                f'<span class="chart-legend-dot" style="background: {color};"></span>'
+                f"<code>{html.escape(label)}</code> — {html.escape(explanation)}"
+                for color, label, explanation in items
+            )
+            + "</p>"
+            for heading, items in groups
+        )
+        return (
+            f'\n.. raw:: html\n\n   <div class="chart-legend">{spans}</div>'
+            '<details class="chart-legend-details"><summary>What the colours mean'
+            f"</summary>{explanations}</details>\n"
+        )
 
 
 _chart_legend_callable = _ChartLegend()

@@ -39,15 +39,16 @@ def _texts(figure: Figure) -> list[tuple[str, str]]:
     ("sizes", "expected"),
     [
         # 3 of 28 is 11%: room for the count, but not for the percentage.
-        ([3, 25, 0], [("3", "white"), ("25 (89%)", "black"), ("28", "#6c757d")]),
+        ([3, 25, 0], [("3", "black"), ("25 (89%)", "black"), ("28", "#6c757d")]),
         # 1 of 61 is 1.6%: too narrow for any number; 0 is never numbered.
         ([1, 60, 0], [("60 (98%)", "black"), ("61", "#6c757d")]),
+        ([0, 0, 5], [("5 (100%)", "white"), ("5", "#6c757d")]),
     ],
 )
 def test_draw_report_bars_sizes_segment_numbers_by_width(
     sizes: list[int], expected: list[tuple[str, str]]
 ) -> None:
-    """Numbers only where they fit; dark text on the light yellow segment."""
+    """Numbers only where they fit, in the better-contrasting text colour."""
     figure = draw_report_bars(
         [BarRow("Status", sizes, ["#37a12d", "#f5c518", "#ca2828"], ["a", "b", "c"])]
     )
@@ -57,6 +58,16 @@ def test_draw_report_bars_sizes_segment_numbers_by_width(
     assert axes.get_legend() is None
     assert _texts(figure) == expected
     assert [label.get_text() for label in axes.get_yticklabels()] == ["Status"]
+
+
+@pytest.mark.parametrize("color", ["#37a12d", "#f5c518", "#f0a500", "#ca2828"])
+def test_segment_text_meets_wcag_contrast_on_every_report_colour(color: str) -> None:
+    """Segment labels are normal-size text, so they need at least 4.5:1 (WCAG AA)."""
+    luminance = vars(report_charts)["_relative_luminance"]
+    text = vars(report_charts)["_text_color"](color)
+    lighter, darker = sorted((luminance(color), luminance(text)), reverse=True)
+
+    assert (lighter + 0.05) / (darker + 0.05) >= 4.5
 
 
 def test_draw_report_bars_puts_all_rows_on_one_shared_axis() -> None:

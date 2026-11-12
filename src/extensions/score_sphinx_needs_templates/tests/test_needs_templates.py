@@ -317,7 +317,22 @@ def test_chart_legend_is_one_raw_line_with_reference_on_request() -> None:
     assert "Reference coverage" not in plain
     assert "Reference coverage" in with_ref
     assert 'title="agreed and formally inspected"' in plain
-    assert plain.count('class="chart-legend-dot"') == 8
+    assert plain.count('class="chart-legend-dot"') == 16
+
+
+def test_chart_legend_explains_every_colour_without_a_tooltip() -> None:
+    """Keyboard users cannot open ``title`` tooltips, so a ``<details>`` repeats them."""
+    legend = vars(templates)["_ChartLegend"]()(True)
+    details = legend.split('<details class="chart-legend-details">', 1)[1]
+
+    for explanation in (
+        "agreed and formally inspected",
+        "(valid_inspected counts here too)",
+        "no verifying test at all",
+        "nothing on the level below derives from it",
+    ):
+        assert f"{explanation}<" in details
+    assert details.startswith("<summary>")
 
 
 def test_safety_chart_row_indent_nests_every_line() -> None:
