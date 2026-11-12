@@ -10,7 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Tests for the ``score-report-pie`` directive of the verification reports."""
+"""Tests for the ``score-report-bars`` charts of the verification reports."""
 
 import re
 from collections.abc import Callable
@@ -22,32 +22,63 @@ from docutils import nodes
 from matplotlib.figure import Figure
 from score_pytest.attribute_plugin import add_test_properties
 from score_sphinx_needs_templates import report_pie
-from score_sphinx_needs_templates.report_pie import draw_report_pie
+from score_sphinx_needs_templates.report_pie import BarRow, draw_report_bars
 from sphinx.application import Sphinx
 from sphinx.testing.util import SphinxTestApp
+
+
+def _texts(figure: Figure) -> list[tuple[str, str]]:
+    return [
+        (text.get_text(), str(text.get_color()))
+        for text in figure.axes[0].texts
+        if text.get_text()
+    ]
 
 
 @pytest.mark.parametrize(
     ("sizes", "expected"),
     [
-        # 1 of 31 is 3.2%: still numbered, at half size.
-        ([1, 30, 0], [("3.2%\n(1)", 7), ("96.8%\n(30)", 14)]),
-        # 1 of 61 is 1.6%: too small for any number; 0 is never numbered.
-        ([1, 60, 0], [("98.4%\n(60)", 14)]),
+        # 3 of 28 is 11%: room for the count, but not for the percentage.
+        ([3, 25, 0], [("3", "white"), ("25 (89%)", "black"), ("28", "#6c757d")]),
+        # 1 of 61 is 1.6%: too narrow for any number; 0 is never numbered.
+        ([1, 60, 0], [("60 (98%)", "black"), ("61", "#6c757d")]),
     ],
 )
-def test_draw_report_pie_sizes_slice_numbers_by_share(
-    sizes: list[int], expected: list[tuple[str, float]]
+def test_draw_report_bars_sizes_segment_numbers_by_width(
+    sizes: list[int], expected: list[tuple[str, str]]
 ) -> None:
-    figure = draw_report_pie("Comp Requirements\nStatus (QM)", sizes, ["g", "y", "r"])
+    """Numbers only where they fit; dark text on the light yellow segment."""
+    figure = draw_report_bars(
+        [BarRow("Status", sizes, ["#37a12d", "#f5c518", "#ca2828"], ["a", "b", "c"])]
+    )
     axes = figure.axes[0]
 
-    visible = [t for t in axes.texts if t.get_visible() and t.get_text()]
-
-    assert tuple(figure.get_size_inches()) == (5, 4)
+    assert figure.get_size_inches()[0] == 8
     assert axes.get_legend() is None
-    assert [(t.get_text(), t.get_fontsize()) for t in visible] == expected
-    assert axes.get_title() == "Comp Requirements\nStatus (QM)"
+    assert _texts(figure) == expected
+    assert [label.get_text() for label in axes.get_yticklabels()] == ["Status"]
+
+
+def test_draw_report_bars_puts_all_rows_on_one_shared_axis() -> None:
+    """More bars make the figure taller, never narrower, so charts line up."""
+    row = BarRow("Status", [1, 1], ["g", "r"], ["a", "b"])
+    empty = BarRow("Test Coverage", [0, 0], ["g", "r"], ["a", "b"])
+    invalid = BarRow("Reference Coverage", [], ["g", "r"], ["a", "b"], "invalid filter")
+
+    two = draw_report_bars([row, empty])
+    three = draw_report_bars([row, empty, invalid])
+
+    assert len(three.axes) == 1
+    assert two.get_size_inches()[0] == three.get_size_inches()[0]
+    assert two.get_size_inches()[1] < three.get_size_inches()[1]
+    assert [label.get_text() for label in three.axes[0].get_yticklabels()] == [
+        "Status",
+        "Test Coverage",
+        "Reference Coverage",
+    ]
+    texts = [text for text, _ in _texts(three)]
+    assert "no Needs found" in texts
+    assert "invalid filter" in texts
 
 
 @add_test_properties(
@@ -55,11 +86,11 @@ def test_draw_report_pie_sizes_slice_numbers_by_share(
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
-def test_report_pie_counts_filters_and_leaves_needpie_untouched(
+def test_report_bars_count_filters_and_leave_needpie_untouched(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Slices are counted per filter line; a plain needpie keeps its own layout."""
+    """Segments are counted per filter line; all bars of a block are one image."""
     monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
     (tmp_path / "conf.py").write_text(
         'extensions = ["sphinx_needs", "score_sphinx_needs_templates"]\n'
@@ -83,13 +114,20 @@ Report
    :id: REQ_003
    :status: closed
 
-.. score-report-pie:: Comp Requirements
-   Status (QM)
-   :labels: open, closed
-   :colors: #37a12d, #ca2828
+.. score-report-bars:: Comp Requirements (QM)
 
-   type == "req" and status == "open"
-   type == "req" and status == "closed"
+   .. score-report-bar:: Status
+      :labels: open, closed
+      :colors: #37a12d, #ca2828
+
+      type == "req" and status == "open"
+      type == "req" and status == "closed"
+
+   .. score-report-bar:: Closed only
+      :labels: closed
+      :colors: #ca2828
+
+      type == "req" and status == "closed"
 
 .. needpie:: Plain chart
    :labels: open, closed
@@ -110,7 +148,7 @@ Report
         app.build(force_all=True)
         html = (app.outdir / "index.html").read_text(encoding="utf-8")
         images = app.outdir / "_images"
-        report_svgs = list(images.glob("score_report_pie_*.svg"))
+        report_svgs = list(images.glob("score_report_bars_*.svg"))
         needpie_svgs = list(images.glob("need_pie_*.svg"))
         report_svg = report_svgs[0].read_text(encoding="utf-8")
         needpie_svg = needpie_svgs[0].read_text(encoding="utf-8")
@@ -119,13 +157,13 @@ Report
 
     assert len(report_svgs) == len(needpie_svgs) == 1
     assert re.search(
-        r'<img alt="Comp Requirements Status \(QM\): open 2, closed 1" '
-        r'class="score-report-pie"',
+        r'<img alt="Comp Requirements \(QM\) — Status: open 2, closed 1; '
+        r'Closed only: closed 1" class="score-report-bars"',
         html,
     )
-    assert 'width="360pt"' in report_svg
+    assert 'width="576pt"' in report_svg
     # The generic needpie keeps Sphinx-Needs' own 8x4 inch layout.
-    assert 'width="576pt"' in needpie_svg
+    assert 'width="576pt" height="288pt"' in needpie_svg
 
 
 @add_test_properties(
@@ -133,7 +171,7 @@ Report
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
-def test_report_pie_counts_through_filter_func(
+def test_report_bar_counts_through_filter_func(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -168,8 +206,7 @@ Report
    :id: REQ_003
    :status: closed
 
-.. score-report-pie:: Comp Requirements
-   Status (QM)
+.. score-report-bar:: Status
    :labels: open, closed
    :colors: #37a12d, #ca2828
    :filter-func: pie_counts.by_status(open,closed)
@@ -189,18 +226,20 @@ Report
     finally:
         app.cleanup()
 
-    assert 'alt="Comp Requirements Status (QM): open 1, closed 2"' in html
+    # A bar outside of a ``score-report-bars`` block is a figure of its own.
+    assert 'alt="Status: open 1, closed 2"' in html
 
 
 @pytest.mark.parametrize("percent", [0, 1, 67, 99, 100])
-def test_coverage_pie_labels_never_invent_hit_counts(percent: int) -> None:
-    """Rounded percentages describe slice sizes, not exact source-item counts."""
-    figure = draw_report_pie(
-        "Line coverage", [percent, 100 - percent], ["g", "r"], show_counts=False
+def test_coverage_bar_labels_never_invent_hit_counts(percent: int) -> None:
+    """Rounded percentages describe segment sizes, not exact source-item counts."""
+    figure = draw_report_bars(
+        [BarRow("Line", [percent, 100 - percent], ["g", "r"], ["a", "b"])],
+        show_counts=False,
     )
-    labels = [text.get_text() for text in figure.axes[0].texts if text.get_text()]
-    assert labels == [f"{percent}%", f"{100 - percent}%"]
-    assert figure.axes[0].get_title() == "Line coverage"
+    labels = [text for text, _ in _texts(figure)]
+    # Segments too narrow for a number stay blank; there is no total either.
+    assert labels == [f"{share}%" for share in (percent, 100 - percent) if share >= 7]
 
 
 @pytest.fixture
@@ -245,20 +284,29 @@ def _summary(
 
 
 @pytest.mark.parametrize(
-    ("summary", "expected", "image_count"),
+    ("summary", "expected", "alt"),
     [
-        (None, "No coverage data available for this component.", 0),
+        (None, "No coverage data available for this component.", None),
         (
             _summary(selected=0, measured=0),
             "No source files selected for this component.",
-            0,
+            None,
         ),
-        (_summary(total=None, percent=None, measured=0), "Line coverage: no data.", 0),
-        (_summary(total=0, percent=None), "Line coverage: not instrumented.", 1),
+        (
+            _summary(total=None, percent=None, measured=0),
+            "Line coverage: no data.",
+            None,
+        ),
+        (
+            _summary(total=0, percent=None),
+            "Line coverage: not instrumented.",
+            "Branch Coverage: covered 100%, not covered 0%",
+        ),
         (
             _summary(percent=0),
             "Coverage measurements available for 2/6 selected source files.",
-            2,
+            "Line Coverage: covered 0%, not covered 100%; "
+            "Branch Coverage: covered 100%, not covered 0%",
         ),
     ],
 )
@@ -266,40 +314,29 @@ def test_coverage_report_preserves_availability_and_independent_dimensions(
     render_coverage_report: Callable[[dict[str, Any] | None], nodes.container],
     summary: dict[str, Any] | None,
     expected: str,
-    image_count: int,
+    alt: str | None,
 ) -> None:
-    """Unavailable lines must not hide valid branch coverage, or turn into a 0% pie."""
+    """Unavailable lines must not hide valid branch coverage, or turn into a 0% bar."""
     report = render_coverage_report(summary)
     assert expected in report.astext()
-    images = list(report.findall(nodes.image))
-    assert len(images) == image_count
-    if images:
-        assert (
-            images[-1]["alt"]
-            == "Example component Branch Coverage: covered 100%, not covered 0%"
-        )
-    if image_count == 2:
-        assert (
-            images[0]["alt"]
-            == "Example component Line Coverage: covered 0%, not covered 100%"
-        )
+    images: list[nodes.image] = list(report.findall(nodes.image))
+    assert [image["alt"] for image in images] == (
+        [] if alt is None else [f"Example component Coverage — {alt}"]
+    )
 
 
 def test_coverage_chart_urls_follow_displayed_values(
     render_coverage_report: Callable[[dict[str, Any] | None], nodes.container],
 ) -> None:
-    """Sphinx and browsers cache images by URL, so changed slices need a new one."""
+    """Sphinx and browsers cache images by URL, so changed segments need a new one."""
     before = list(render_coverage_report(_summary()).findall(nodes.image))
     equivalent = list(render_coverage_report(_summary()).findall(nodes.image))
     after = list(render_coverage_report(_summary(percent=33)).findall(nodes.image))
-    assert (
-        before[0]["alt"]
-        == "Example component Line Coverage: covered 67%, not covered 33%"
+    assert before[0]["alt"].startswith(
+        "Example component Coverage — Line Coverage: covered 67%, not covered 33%;"
     )
-    assert (
-        after[0]["alt"]
-        == "Example component Line Coverage: covered 33%, not covered 67%"
+    assert after[0]["alt"].startswith(
+        "Example component Coverage — Line Coverage: covered 33%, not covered 67%;"
     )
     assert before[0]["uri"] == equivalent[0]["uri"]
     assert before[0]["uri"] != after[0]["uri"]
-    assert before[1]["uri"] == after[1]["uri"]
