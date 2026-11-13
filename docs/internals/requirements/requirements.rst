@@ -284,7 +284,7 @@ Versioning
    :implemented: YES
    :version: 1
    :parent_covered: YES
-   :satisfies: gd_req__req_attr_version[version==2]
+   :satisfies: gd_req__req_attr_version[version==2], gd_req__tool_attr_need_version[version==1]
 
    Docs-As-Code shall enable and enforce a versioning attribute for all needs.
 
