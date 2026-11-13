@@ -1027,7 +1027,7 @@ is described in the platform.
   :tags: Tool Verification Reports
   :implemented: YES
   :version: 2
-  :satisfies: gd_req__tool_attr_version[version==1]
+  :satisfies: gd_req__tool_attr_version[version==2]
   :parent_covered: YES
 
   Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
