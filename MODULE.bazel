@@ -119,7 +119,7 @@ http_file(
     urls = ["https://github.com/withered-magic/starpls/releases/download/v0.1.21/starpls-linux-amd64"],
 )
 
-bazel_dep(name = "score_process_description", version = "2.2.3")
+bazel_dep(name = "score_process_description", version = "2.2.4")
 
 # Provide the tools from the devcontainer to Bazel
 bazel_dep(name = "score_devcontainer", version = "1.12.0", dev_dependency = True)
