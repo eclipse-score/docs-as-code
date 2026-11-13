@@ -14,6 +14,7 @@
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import time
@@ -187,6 +188,49 @@ def load_needs_json(needs_json: Path) -> dict[str, object]:
     if not isinstance(raw_data, dict):
         raise ValueError("needs.json must be an object")
     return cast("dict[str, object]", raw_data)
+
+
+_TOCTREE_LINK = re.compile(r'<li class="toctree-l1"><a class="[^"]*" href="([^"]*)"')
+
+
+def _article(page: Path) -> str:
+    """Return a rendered page's main content, without the theme's sidebar
+    navigation, which repeats the same toctree links."""
+    html = page.read_text(encoding="utf-8")
+    return html[html.index("<article") : html.index("</article>")]
+
+
+def toctree_links(page: Path) -> list[str]:
+    """Return all first-level toctree link targets in a page's main content.
+
+    This includes links that a mount adds to a page without a toctree of its
+    own; those are rendered as a bare list without a toctree wrapper.
+    """
+    return _TOCTREE_LINK.findall(_article(page))
+
+
+def toctrees(page: Path) -> list[list[str]]:
+    """Return the first-level link targets of each toctree directive, in order.
+
+    An empty toctree yields an empty list, so list positions match a mount's
+    ``toctree_index``.
+    """
+    wrappers = _article(page).split('<div class="toctree-wrapper')[1:]
+    return [_TOCTREE_LINK.findall(wrapper) for wrapper in wrappers]
+
+
+def assert_no_compatibility_findings(output_dir: Path) -> None:
+    """Assert that a docs or Needs build reported no compatibility findings.
+
+    Every build writes ``compatibility-findings.json`` (and an HTML version of
+    it) next to its outputs. A scenario without cross-module version
+    mismatches must produce an empty report.
+    """
+    report_path = output_dir / "compatibility-findings.json"
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    assert report["findings"] == [], f"unexpected findings in {report_path}"
+    assert report["summary"]["count"] == 0
+    assert (output_dir / "compatibility-findings.html").is_file()
 
 
 def load_needs(needs_json: Path) -> dict[str, object]:
