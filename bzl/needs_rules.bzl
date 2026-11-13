@@ -85,6 +85,9 @@ def _sphinx_docs_impl(ctx):
             ctx.file.mounts_manifest.path if ctx.file.mounts_manifest else ""
         ),
         "SCORE_METAMODEL_YAML": metamodel_file.path if metamodel_file else "",
+        "SCORE_DEPENDABLE_ELEMENT_NEEDS": json.encode(
+            [f.path for f in ctx.files.score_dependable_element_needs],
+        ),
         "SPHINX_EXTRA_OPTS": json.encode(ctx.attr.extra_opts),
     }
 
@@ -101,7 +104,7 @@ def _sphinx_docs_impl(ctx):
                 ctx.file.score_sourcelinks_json,
                 ctx.file.mounts_manifest,
             ] if file] +
-            ctx.files.data + ctx.files.tools,
+            ctx.files.data + ctx.files.tools + ctx.files.score_dependable_element_needs,
             transitive = [bundle.own_source_files],
         ),
         outputs = [output],
@@ -123,6 +126,7 @@ sphinx_docs = rule(
         "score_sourcelinks_json": attr.label(allow_single_file = True),
         "mounts_manifest": attr.label(allow_single_file = True),
         "score_metamodel_yaml": attr.label(allow_single_file = True),
+        "score_dependable_element_needs": attr.label_list(allow_files = [".json"]),
         "external_needs_labels": attr.string(default = "[]"),
         "extra_opts": attr.string_list(),
         # The launcher runs on the build host and carries extension runfiles.
