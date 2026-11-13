@@ -10,7 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""data_files_runfiles: bundles made of generated, legacy-data and declared sources."""
+"""data_files_runfiles: bundles made of generated, and declared sources."""
 
 import re
 from pathlib import Path
@@ -44,11 +44,10 @@ def build_dir() -> Path:
 
 @pytest.mark.bazel_slow
 def test_host_page_links_every_mounted_bundle(build_dir: Path):
-    """All three bundles use attach_to = "index" and show up in its toctree."""
+    """Both bundles use attach_to = "index" and show up in its toctree."""
     assert sorted(toctree_links(build_dir / "index.html")) == [
         "data_test/index.html",
         "isolated_test/index.html",
-        "legacy_data_test/index.html",
     ]
 
 
@@ -70,12 +69,6 @@ def test_generated_companion_file_is_readable_but_not_a_page(build_dir: Path):
     assert diagram, "mermaid diagram from generated_data.mmd is missing"
     assert "class GeneratedData" in diagram[1]
     assert not (build_dir / "data_test" / "generated_data.html").exists()
-
-
-@pytest.mark.bazel_slow
-def test_legacy_data_route_still_renders_its_page(build_dir: Path):
-    """docs_bundle(data = [genrule]) without srcs still contributes its .rst page."""
-    assert _title(build_dir / "legacy_data_test" / "index.html") == "Legacy Data Page"
 
 
 @pytest.mark.bazel_slow
