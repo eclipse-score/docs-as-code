@@ -10,14 +10,65 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import re
 from pathlib import Path
 from unittest.mock import mock_open, patch
 
 import pytest
 from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
-from score_metamodel import ProhibitedWordCheck, load_metamodel_data
+from score_metamodel import (
+    GITHUB_TRACKING_LINK_REGEX,
+    ProhibitedWordCheck,
+    load_metamodel_data,
+)
 
 MODEL_DIR = Path(__file__).absolute().parent / "model"
+
+
+@pytest.mark.parametrize(
+    ("url", "expected_url", "expected_repo", "expected_number"),
+    [
+        (
+            "https://github.com/eclipse-score/docs-as-code/issues/1",
+            "https://github.com/eclipse-score/docs-as-code/issues/1",
+            "docs-as-code",
+            "1",
+        ),
+        (
+            "https://github.com/eclipse-score/score/pull/2",
+            "https://github.com/eclipse-score/score/pull/2",
+            "score",
+            "2",
+        ),
+        (
+            "https://github.com/eclipse-score/score/pull/2#discussion_r3",
+            "https://github.com/eclipse-score/score/pull/2",
+            "score",
+            "2",
+        ),
+    ],
+)
+def test_github_tracking_link_regex_matches_issue_pr_and_review_urls(
+    url: str, expected_url: str, expected_repo: str, expected_number: str
+) -> None:
+    match = re.search(GITHUB_TRACKING_LINK_REGEX, url)
+
+    assert match is not None
+    assert match.groupdict() == {
+        "url": expected_url,
+        "repo": expected_repo,
+        "number": expected_number,
+    }
+
+
+def test_github_tracking_link_regex_rejects_other_organizations() -> None:
+    assert (
+        re.search(
+            GITHUB_TRACKING_LINK_REGEX,
+            "https://github.com/other-org/score/pull/2",
+        )
+        is None
+    )
 
 
 def load_model_data(model_file: str) -> str:
