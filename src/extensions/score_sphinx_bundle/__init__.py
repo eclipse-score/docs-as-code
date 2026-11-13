@@ -79,6 +79,11 @@ def setup(app: Sphinx) -> dict[str, object]:
     config_setdefault(app.config, "numfig", True)
     config_setdefault(app.config, "author", "S-CORE")
 
+    # sphinx-design 0.8.0 deprecates the legacy ^^^/+++ card with a warning
+    # https://sphinx-design.readthedocs.io/en/latest/cards.html#legacy-separator-syntax
+    # TODO remove the suppression once all S-CORE repos are updated
+    app.config.suppress_warnings += ["design.card_legacy"]
+
     # Load the actual extensions list
     for e in score_extensions:
         app.setup_extension(e)
