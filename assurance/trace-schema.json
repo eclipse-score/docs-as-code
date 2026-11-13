@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "gate_verdict",
+    "expected_gate_verdict",
+    "expected_impacted_ids",
+    "observed_impacted_ids",
+    "matches_expectation",
+    "provenance",
+    "input_hashes",
+    "context_sha256",
+    "coverage_delta",
+    "metrics_source"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "gate_verdict": {
+      "enum": [
+        "pass",
+        "fail"
+      ]
+    },
+    "expected_gate_verdict": {
+      "enum": [
+        "pass",
+        "fail"
+      ]
+    },
+    "expected_impacted_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "observed_impacted_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "matches_expectation": {
+      "type": "boolean"
+    },
+    "input_hashes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "context_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "execution_timestamp",
+        "python_version",
+        "environment_hash",
+        "gate_script_version",
+        "candidate_sha256",
+        "rule_catalog_sha256",
+        "responsible_role",
+        "escalation_role",
+        "waiver_authority",
+        "corpus_index_sha256",
+        "coverage_script_sha256"
+      ],
+      "properties": {
+        "execution_timestamp": {
+          "type": "string",
+          "minLength": 1,
+          "format": "date-time"
+        },
+        "python_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "environment_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "gate_script_version": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "candidate_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "rule_catalog_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "responsible_role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "escalation_role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "waiver_authority": {
+          "type": "string",
+          "minLength": 1
+        },
+        "corpus_index_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "coverage_script_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "coverage_delta": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "with_code_link_pct",
+          "with_test_link_pct",
+          "fully_linked_pct"
+        ],
+        "additionalProperties": {
+          "type": "number"
+        }
+      }
+    },
+    "metrics_source": {
+      "enum": [
+        "native_gate_fixture",
+        "snapshot"
+      ]
+    }
+  },
+  "$defs": {
+    "gate_output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "exit_code",
+        "command",
+        "stdout_sha256",
+        "stderr_sha256"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "exit_code": {
+          "enum": [
+            0,
+            2
+          ]
+        },
+        "command": {
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "type": "string"
+          }
+        },
+        "stdout_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "stderr_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "impacted_elements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "need_id",
+          "impact_class",
+          "rule_id",
+          "changed_artifact"
+        ],
+        "properties": {
+          "need_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "impact_class": {
+            "enum": [
+              "direct_recheck",
+              "indirect_propagation",
+              "revision_required"
+            ]
+          },
+          "rule_id": {
+            "enum": [
+              "CHANGE",
+              "CR-001",
+              "CR-002",
+              "CR-003",
+              "CR-004",
+              "CR-005"
+            ]
+          },
+          "changed_artifact": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "2",
+  "generated_by": "public_gate_fixture",
+  "overall_metrics": {
+    "total": 4,
+    "with_code_link": 4,
+    "with_test_link": 4,
+    "fully_linked": 4,
+    "with_code_link_pct": 100.0,
+    "with_test_link_pct": 100.0,
+    "fully_linked_pct": 100.0
+  },
+  "metrics_by_type": {
+    "tool_req": {
+      "total": 4,
+      "with_code_link": 4,
+      "with_test_link": 4,
+      "fully_linked": 4,
+      "with_code_link_pct": 100.0,
+      "with_test_link_pct": 100.0,
+      "fully_linked_pct": 100.0
+    }
+  },
+  "tests": {
+    "total": 1,
+    "linked_to_requirements": 1,
+    "linked_to_requirements_pct": 100.0,
+    "broken_references": [
+      {
+        "testcase": "T1_heldout_0",
+        "missing_need": "R1_heldout_0"
+      }
+    ]
+  }
+}
