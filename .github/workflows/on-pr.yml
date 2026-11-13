@@ -39,7 +39,11 @@ jobs:
 
   docs-build:
     needs: [tests]
-    uses: eclipse-score/cicd-workflows/.github/workflows/docs.yml@cache
+    uses: eclipse-score/cicd-workflows/.github/workflows/docs.yml@a94fd56474c89168317addc877c91624829049f3 # main (2026-11-11)
     with:
       bazel-target: "//:docs"
-      tests-report-artifact: tests-report
+      # Bazel reports overlap across Python versions, so select one version.
+      # The docs.bzl filenames include the Python version and suite.
+      tests-report-artifacts: |
+        tests-report-bazel-3.12
+        tests-report-docs-bzl-*
