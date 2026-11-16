@@ -82,6 +82,30 @@ def test_eval_need_check_missing_attribute_logs_and_returns_false() -> None:
     # assert "Attribute not defined: priority" in msg
 
 
+@pytest.mark.parametrize(
+    ("links", "condition", "expected"),
+    [
+        ([], "included_by == []", True),
+        ([], "included_by != []", False),
+        (["feat__test"], "included_by == []", False),
+        (["feat__test"], "included_by != []", True),
+    ],
+    ids=["empty-equals", "empty-differs", "linked-equals", "linked-differs"],
+)
+def test_link_conditions_compare_against_an_empty_list(
+    links: list[str], condition: str, expected: bool
+) -> None:
+    """Empty-list literals must select needs by link presence, not string equality."""
+    log = fake_check_logger()
+
+    result = graph_checks.eval_need_condition(
+        test_need(included_by=links), condition, log
+    )
+
+    assert result is expected
+    assert log.warnings == 0
+
+
 def test_eval_need_condition_invalid_type_raises_value_error() -> None:
     """Raise error for condition values that are neither string nor dict."""
     log = fake_check_logger()
@@ -190,10 +214,13 @@ def test_filter_needs_by_criteria_unknown_type_logs_warning() -> None:
 
 
 NEEDS_TYPES = [NeedType({"title": "testtype", "prefix": "t", "directive": "req"})]
+# Parents get their own line numbers, so the location assertions in
+# fake_check_logger() fail if a finding is reported on a parent instead of the
+# child (which keeps the default location).
 PARENTS = [
-    test_need(id="safe_1", type="parent", safety="ASIL_B"),
-    test_need(id="qm_1", type="parent", safety="QM"),
-    test_need(id="qm_2", type="parent", safety="QM"),
+    test_need(id="safe_1", type="parent", safety="ASIL_B", lineno=10),
+    test_need(id="qm_1", type="parent", safety="QM", lineno=11),
+    test_need(id="qm_2", type="parent", safety="QM", lineno=12),
 ]
 
 

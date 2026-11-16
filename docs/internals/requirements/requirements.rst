@@ -346,6 +346,24 @@ Versioning
   * realizes
 
 
+.. tool_req:: Optional links of Generic Documents
+  :id: tool_req__docs_doc_generic_optional
+  :tags: Documents
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__doc_attributes_manual[version==1]
+  :parent_covered: NO: The process requirement does not specify optional document ownership.
+
+  Docs-as-Code shall support an optional ``belongs_to`` link for Generic
+  Documents (``document``). When present, the link shall only target Modules
+  (``mod``), Components (``comp``), or Features (``feat``). Omitting the link
+  shall not produce a missing-link finding.
+
+  .. note::
+    Optional document ownership was agreed in the process meeting documented
+    in `#940 <https://github.com/eclipse-score/docs-as-code/issues/940>`_.
+
+
 --------
  Mapping
 --------
@@ -630,7 +648,7 @@ Architecture Attributes
 .. tool_req:: Ensure safety architecture elements link a safety requirement
   :id: tool_req__docs_arch_link_safety_to_req
   :tags: Architecture
-  :implemented: PARTIAL
+  :implemented: YES
   :version: 3
   :satisfies: gd_req__arch_linkage_requirement[version==1]
   :parent_covered: YES
@@ -642,12 +660,10 @@ Architecture Attributes
   ``satisfied_by`` allocations; for architectural views and interfaces, through
   ``fulfils``. Additional QM requirements are permitted.
 
-  .. note:: implemented as info to enable non-breaking transition
-
 .. tool_req:: Ensure qm architecture elements do not fulfill safety requirements
   :id: tool_req__docs_arch_link_qm_to_safety_req
   :tags: Architecture
-  :implemented: PARTIAL
+  :implemented: YES
   :version: 3
   :satisfies: gd_req__arch_linkage_requirement[version==1]
   :parent_covered: YES
@@ -735,15 +751,14 @@ but for ease of traceability this is a separate one.
 .. tool_req:: Correlations of the architectural building blocks
   :id: tool_req__arch_linkage_safety
   :implemented: YES
-  :version: 2
+  :version: 3
   :satisfies: gd_req__arch_linkage_safety[version==1], gd_req__arch_build_blocks_corr[version==3]
   :parent_covered: YES
 
   .. csv-table::
      :header: "Link source", "Relation", "Link Target", "Mandatory"
 
-     logic_arc_int, included_by, feat, no
-     feat, includes, logic_arc_int, no
+     logic_arc_int, included_by, feat, yes
      mod, includes, comp, yes
      comp, implements, logic_arc_int, no
      comp, belongs_to, feat, yes
@@ -752,11 +767,6 @@ but for ease of traceability this is a separate one.
      real_arc_int_op, included_by, real_arc_int, yes
      real_arc_int_op, implements, logic_arc_int_op, no
      logic_arc_int_op, included_by, logic_arc_int, yes
-
-  .. note::
-     The link direction between ``feat`` and ``logic_arc_int`` is being switched from
-     ``feat includes logic_arc_int`` to ``logic_arc_int included_by feat``. Both directions
-     are currently accepted as optional links to avoid migration problems.
 
 
 .. tool_req:: Check consistency of interfaces in modules
@@ -835,7 +845,7 @@ Testing
    :version: 2
    :implemented: PARTIAL
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_2, tool_req__docs_test_metadata_link_levels
-   :satisfies: gd_req__verification_checks[version==1]
+   :satisfies: gd_req__verification_checks[version==2]
 
    Docs-as-Code shall ensure that each test case has TestType and DerivationTechnique set.
    Each may contain multiple comma-separated tags of the following:
@@ -852,13 +862,13 @@ Testing
          - unit, component, feature
        * - `test_type`
          - `requirements-based`
-         - component, feature, platform
+         - all
        * - `derivation_technique`
          - `requirements-analysis`
          - all
        * - `derivation_technique`
          - `boundary-values`
-         - component, feature, platform
+         - all
        * - `derivation_technique`
          - `equivalence-classes`
          - all
@@ -870,10 +880,12 @@ Testing
          - all
        * - `derivation_technique`
          - `explorative-testing`
-         - all
+         - feature, platform
 
 See `more verification methods <https://eclipse-score.github.io/score/main/platform_management_plan/software_verification.html#verification-methods>`__
 for an overview.
+
+   .. note:: implemented as info-only for smooth migration
 
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_2
@@ -881,7 +893,7 @@ for an overview.
    :version: 1
    :implemented: PARTIAL
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_link_levels
-   :satisfies: gd_req__verification_checks[version==1]
+   :satisfies: gd_req__verification_checks[version==2]
    :status: invalid
 
    Docs-as-Code shall ensure that each test case has a non empty description.
@@ -891,12 +903,14 @@ for an overview.
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_link_levels
    :tags: Testing
-   :version: 2
+   :version: 3
    :implemented: NO
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_mandatory_2
-   :satisfies: gd_req__verification_checks[version==1]
+   :satisfies: gd_req__verification_checks[version==2]
 
-   Docs-as-Code shall ensure that test cases link to requirements on the correct level.
+   Docs-as-Code shall ensure that test cases use only allowed requirement types for their test level.
+   Platform Integration Tests shall link to at least one stakeholder requirement.
+   For other levels, any set verification links shall use the allowed types for that level.
    The test level is determined from folder structure.
 
    .. list-table::
@@ -909,7 +923,7 @@ for an overview.
        * - `platform_integration_tests/`
          - Platform
          - `stkh_req`
-       * - `score/tests/`
+       * - `score/tests/` or `feature_integration_tests/`
          - Feature
          - `feat`, `feat_req`, `feat_arc_dyn`, `feat_arc_sta`, `mod`, `mod_view_dyn`, `mod_view_sta`, `tool_req`
        * - `score/.*/tests/`
@@ -919,6 +933,7 @@ for an overview.
          - Unit
          - `comp_req`, `feat_req`
 
+   .. note:: implemented as info-only for smooth migration
 
 `The folder structure <https://eclipse-score.github.io/score/main/contribute/general/folder.html>`__
 is described in the platform.
@@ -1012,7 +1027,7 @@ is described in the platform.
   :tags: Tool Verification Reports
   :implemented: YES
   :version: 2
-  :satisfies: gd_req__tool_attr_version[version==1]
+  :satisfies: gd_req__tool_attr_version[version==2]
   :parent_covered: YES
 
   Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
@@ -1168,7 +1183,7 @@ is described in the platform.
 
 .. tool_req:: Safety Analysis Mitigation Attribute
   :id: tool_req__docs_saf_attrs_mitigated_by
-  :implemented: PARTIAL
+  :implemented: YES
   :tags: Safety Analysis
   :version: 1
   :satisfies:
@@ -1189,8 +1204,6 @@ is described in the platform.
   the same ASIL level or a higher one.
 
   It can be ``comp_req`` or ``aou_req``.
-
-  .. note:: implemented as info to enable non-breaking transition
 
 
 .. tool_req:: Safety Analysis Mitigation Issue Attribute

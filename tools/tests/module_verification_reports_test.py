@@ -512,7 +512,7 @@ needs_extra_links:
         'bazel_dep(name = "aspect_rules_py", version = "1.4.0")\n'
         'bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2")\n'
         'bazel_dep(name = "rules_java", version = "8.15.1")\n'
-        'bazel_dep(name = "score_process_description", version = "2.1.2")\n'
+        'bazel_dep(name = "score_process_description", version = "2.2.3")\n'
         'bazel_dep(name = "score_devcontainer", version = "1.11.0")\n'
         'bazel_dep(name = "score_docs_as_code", version = "4.6.0")\n',
         encoding="utf-8",

@@ -20,21 +20,24 @@ load("//:docs.bzl", "docs")
 # exercises the distinction between a component that needs its parent bundle's
 # external Needs and one that can be built independently.
 docs(
-    project = "S-CORE Modern Module",
-    project_url = "https://example.invalid/score-modern-module",
-    source_dir = "docs",
-    test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
+    bundles = [
+        {
+            "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component:docs_bundle",
+            "mount_at": "components/component",
+            "attach_to": "components",
+        },
+        {
+            "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/unlinked_component:docs_bundle",
+            "mount_at": "components/unlinked_component",
+            "attach_to": "components",
+        },
+    ],
     external_needs = [
         "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json",
         "@score_process_description//:needs_json",
     ],
-    bundles = [{
-        "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component:docs_bundle",
-        "mount_at": "components/component",
-        "attach_to": "components",
-    }, {
-        "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/unlinked_component:docs_bundle",
-        "mount_at": "components/unlinked_component",
-        "attach_to": "components",
-    }],
+    project = "S-CORE Modern Module",
+    project_url = "https://example.invalid/score-modern-module",
+    source_dir = "docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
 )

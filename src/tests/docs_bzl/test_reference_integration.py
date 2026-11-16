@@ -24,9 +24,6 @@ from src.tests.docs_bzl.helpers import built_output, load_needs, run_bazel, run_
 def test_nested_component_package_is_mounted_by_its_module():
     """Mounted component pages retain navigation and filter source controls."""
     result = run_scenario("run", "reference_integration/modern_module", ":docs")
-    # ``needs_json`` remains accepted in ``external_needs`` without the INFO
-    # message reserved for Needs inventories passed through ``data``.
-    assert "Passing a Needs inventory through" not in (result.stdout + result.stderr)
 
     # The parent module owns the surrounding ``components`` tree, while each
     # child bundle supplies its own page below the corresponding mount point.
@@ -80,17 +77,6 @@ def test_reference_integration_builds_with_platform_requirements():
     )
     # Source links are rendered on the mounted component pages, not on this
     # top-level page, because the needs themselves are owned by each component.
-    legacy_component_html = (
-        result.build_dir
-        / "modules"
-        / "legacy_module"
-        / "components"
-        / "component"
-        / "index.html"
-    ).read_text(encoding="utf-8")
-    assert "legacy_module/docs/components/component/implementation.py#L14" in (
-        legacy_component_html
-    )
     modern_component_html = (
         result.build_dir
         / "modules"
@@ -102,17 +88,8 @@ def test_reference_integration_builds_with_platform_requirements():
     assert "modern_module/docs/components/component/implementation.py#L17" in (
         modern_component_html
     )
-    # Both module pages and their nested component pages must be present after
-    # composition; source links are checked above on the component pages.
-    assert (result.build_dir / "modules" / "legacy_module" / "index.html").is_file()
-    assert (
-        result.build_dir
-        / "modules"
-        / "legacy_module"
-        / "components"
-        / "component"
-        / "index.html"
-    ).is_file()
+    # The module page and its nested component page must be present after
+    # composition; the source link is checked above on the component page.
     assert (result.build_dir / "modules" / "modern_module" / "index.html").is_file()
     assert (
         result.build_dir
@@ -126,25 +103,28 @@ def test_reference_integration_builds_with_platform_requirements():
 
 @pytest.mark.bazel_cached
 def test_bundle_metadata_is_added_to_the_explicit_primary_need():
-    """A component bundle contributes its direct Bazel target to its Need.
+    """A component bundle contributes its direct Bazel targets to its Need.
 
     The fixture's bundle uses the generic Bazel target name ``docs_bundle`` but
-    explicitly selects ``tool_req__legacy_component``. This proves that the
-    association is independent of both the bundle name and imported Needs.
+    explicitly selects ``comp__modern_component``. This proves that the
+    association is independent of the bundle name.
     """
     result = run_scenario("build", "reference_integration", ":needs_json")
     assert result.artifacts is not None
 
     needs = load_needs(result.artifacts["needs.json"])
     # The Need is selected by the bundle's explicit ``primary_need_id``.
-    legacy_need = needs["tool_req__legacy_component"]
-    assert isinstance(legacy_need, dict)
-    assert (
-        legacy_need["bazel_target"]
-        == "@@//src/tests/docs_bzl/scenarios/reference_integration/legacy_module/"
-        "docs/components/component:component_sources"
+    component_need = needs["comp__modern_component"]
+    assert isinstance(component_need, dict)
+    component_package = (
+        "@@//src/tests/docs_bzl/scenarios/reference_integration/modern_module/"
+        "docs/components/component"
     )
-    assert legacy_need["bazel_type"] == "filegroup"
+    assert json.loads(str(component_need["bazel_target"])) == [
+        f"{component_package}:component_sources",
+        f"{component_package}:implementation",
+    ]
+    assert json.loads(str(component_need["bazel_type"])) == ["filegroup", "cc_library"]
 
 
 @pytest.mark.bazel_cached

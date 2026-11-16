@@ -17,36 +17,36 @@ load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 score_pytest(
     name = "generate_sourcelinks_cli_test",
     srcs = ["generate_sourcelinks_cli_test.py"],
+    pytest_config = "//:pyproject.toml",
     deps = [
         "//scripts_bazel:generate_sourcelinks",
         "//src/extensions/score_source_code_linker",
     ] + all_requirements,
-    pytest_config = "//:pyproject.toml",
 )
 
 score_pytest(
     name = "merge_sourcelinks_test",
     srcs = ["merge_sourcelinks_test.py"],
+    pytest_config = "//:pyproject.toml",
     deps = [
         "//scripts_bazel:merge_sourcelinks",
     ] + all_requirements,
-    pytest_config = "//:pyproject.toml",
 )
 
 score_pytest(
     name = "merge_needs_json_tests",
     srcs = ["merge_needs_json_tests.py"],
+    pytest_config = "//:pyproject.toml",
     deps = [
         "//scripts_bazel:merge_needs_json",
     ] + all_requirements,
-    pytest_config = "//:pyproject.toml",
 )
 
 score_pytest(
     name = "traceability_gate_test",
     srcs = ["traceability_gate_test.py"],
+    pytest_config = "//:pyproject.toml",
     deps = [
         "//scripts_bazel:traceability_gate",
     ] + all_requirements,
-    pytest_config = "//:pyproject.toml",
 )

@@ -15,7 +15,8 @@
 Host page with generated bundle data
 ====================================
 
-The host project can mount a pure-data bundle and include its generated page
-in the documentation navigation.
+The host project can mount a generated-source bundle and include its generated
+page in the documentation navigation. Generated documentation is declared
+through explicit ``srcs``, not through ``data``.
 
 The explicitly declared source bundle also mounts only its declared page.

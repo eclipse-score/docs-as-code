@@ -14,53 +14,73 @@ load("//:docs.bzl", "docs_bundle")
 
 docs_bundle(
     name = "child",
-    source_dir = "child",
     entry_doc = "a",
+    source_dir = "child",
 )
 
 docs_bundle(
     name = "wrapper_x",
-    source_dir = "_empty",
     bundles = [
-        {"bundle": ":child", "mount_at": "x"},
+        {
+            "bundle": ":child",
+            "mount_at": "x",
+        },
     ],
+    source_dir = "_empty",
 )
 
 docs_bundle(
     name = "wrapper_y",
-    source_dir = "_empty",
     bundles = [
-        {"bundle": ":child", "mount_at": "y"},
+        {
+            "bundle": ":child",
+            "mount_at": "y",
+        },
     ],
+    source_dir = "_empty",
 )
 
 # These wrappers have the same final document location, but disagree about
 # metadata that the manifest can represent only once.
 docs_bundle(
     name = "attach_to_a",
-    source_dir = "_empty",
     bundles = [
-        {"bundle": ":child", "mount_at": "same", "attach_to": "a/index"},
+        {
+            "bundle": ":child",
+            "mount_at": "same",
+            "attach_to": "a/index",
+        },
     ],
+    source_dir = "_empty",
 )
 
 docs_bundle(
     name = "attach_to_b",
-    source_dir = "_empty",
     bundles = [
-        {"bundle": ":child", "mount_at": "same", "attach_to": "b/index"},
+        {
+            "bundle": ":child",
+            "mount_at": "same",
+            "attach_to": "b/index",
+        },
     ],
+    source_dir = "_empty",
 )
 
 # The child reaches the final bundle at two different locations, so analysis
 # must stop before Sphinx would receive two copies of the same pages.
 docs_bundle(
     name = "bad",
-    source_dir = "_empty",
     bundles = [
-        {"bundle": ":wrapper_x", "mount_at": "root"},
-        {"bundle": ":wrapper_y", "mount_at": "root"},
+        {
+            "bundle": ":wrapper_x",
+            "mount_at": "root",
+        },
+        {
+            "bundle": ":wrapper_y",
+            "mount_at": "root",
+        },
     ],
+    source_dir = "_empty",
     # Tagged manual so `bazel build //...` never expands to it;
     # the test builds it explicitly and asserts the analysis error.
     tags = ["manual"],
@@ -68,10 +88,16 @@ docs_bundle(
 
 docs_bundle(
     name = "bad_attach_to",
-    source_dir = "_empty",
     bundles = [
-        {"bundle": ":attach_to_a", "mount_at": "root"},
-        {"bundle": ":attach_to_b", "mount_at": "root"},
+        {
+            "bundle": ":attach_to_a",
+            "mount_at": "root",
+        },
+        {
+            "bundle": ":attach_to_b",
+            "mount_at": "root",
+        },
     ],
+    source_dir = "_empty",
     tags = ["manual"],
 )

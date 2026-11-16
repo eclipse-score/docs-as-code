@@ -42,19 +42,22 @@ score_pytest(
     name = "lcov_summary_test",
     srcs = ["lcov_summary_test.py"],
     data = glob(["fixtures/*.info"]),
-    deps = [":lcov_summary_lib"],
     pytest_config = "//:pyproject.toml",
+    deps = [":lcov_summary_lib"],
 )
 
 score_pytest(
     name = "dirty_build_test",
-    srcs = ["dirty_build_test.py", "cli.py"],
-    deps = all_requirements + [
-        "//src/extensions/score_mounts",
-        "//src/helper_lib",
-        ":lcov_summary_lib",
+    srcs = [
+        "cli.py",
+        "dirty_build_test.py",
     ],
     pytest_config = "//:pyproject.toml",
+    deps = all_requirements + [
+        ":lcov_summary_lib",
+        "//src/extensions/score_mounts",
+        "//src/helper_lib",
+    ],
 )
 
 # Exercise dispatch and the docs.bzl environment contract with the same
@@ -62,11 +65,14 @@ score_pytest(
 # it distinct from score_pytest's own main.py entry in the test sources.
 score_pytest(
     name = "main_test",
-    srcs = ["main_test.py", "cli.py"],
-    deps = all_requirements + [
-        "//src/extensions/score_mounts",
-        "//src/helper_lib",
-        ":lcov_summary_lib",
+    srcs = [
+        "cli.py",
+        "main_test.py",
     ],
     pytest_config = "//:pyproject.toml",
+    deps = all_requirements + [
+        ":lcov_summary_lib",
+        "//src/extensions/score_mounts",
+        "//src/helper_lib",
+    ],
 )

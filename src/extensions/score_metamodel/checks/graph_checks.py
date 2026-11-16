@@ -43,8 +43,11 @@ def _resolve_check_value(
 
     `self.<attribute>` refers to the need that triggered the check (`context`),
     so a linked need can be compared against the need it is linked from.
-    Any other token is returned unchanged as a literal value.
+    `[]` denotes an empty link list, so selection conditions can distinguish
+    needs with links from needs without them. Other tokens remain strings.
     """
+    if token == "[]":
+        return []
     if not token.startswith("self."):
         return token
     ref = context if context is not None else need

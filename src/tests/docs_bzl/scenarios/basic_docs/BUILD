@@ -14,9 +14,9 @@
 load("//:docs.bzl", "docs")
 
 docs(
-    source_dir = "docs",
+    data = ["supporting-example.txt"],
     project = "Basic Test",
     project_url = "https://github.com/eclipse-score/docs-as-code",
-    data = ["supporting-example.txt"],
+    source_dir = "docs",
     test_sources = ["src/tests/docs_bzl/scenarios/basic_docs"],
 )

@@ -26,6 +26,7 @@ def _file_identity(file):
         repository, _, path = path[3:].partition("/")
     else:
         repository = "_main"
+
     # short_path already omits the configuration root for generated outputs.
     return struct(repository = repository, path = path)
 
