@@ -25,6 +25,19 @@ See :doc:`commands <commands>` for the targets/commands it creates.
 
 The macro must be called from the repository root package.
 
+Dependency warnings
+-------------------
+
+Warnings are treated as errors by default in both the root project and its
+dependencies. Set ``dependency_warnings_as_error`` to ``false`` to keep
+dependency inventory warnings visible without failing the build:
+
+   bazel run --@score_docs_as_code//:dependency_warnings_as_error=false //:docs
+
+This flag only relaxes sandboxed Needs inventory builds owned by external Bazel
+repositories. Root-project inventories and interactive documentation builds
+remain strict. Warnings are still reported, and actual Sphinx errors still fail.
+
 Bundle content and supporting files
 -----------------------------------
 

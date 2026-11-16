@@ -19,6 +19,7 @@ explicit action inputs; a manifest by itself does not make the files named by
 that manifest available inside a sandbox.
 """
 
+load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
     "DocsBundleInfo",
@@ -86,6 +87,11 @@ def _sphinx_docs_impl(ctx):
         ),
         "SCORE_METAMODEL_YAML": metamodel_file.path if metamodel_file else "",
         "SPHINX_EXTRA_OPTS": json.encode(ctx.attr.extra_opts),
+        # workspace_root is empty for the root repo, whose warnings stay fatal.
+        "SPHINX_DEPENDENCY_WARNINGS_AS_ERRORS": "false" if (
+            ctx.label.workspace_root and
+            not ctx.attr._dependency_warnings_as_error[BuildSettingInfo].value
+        ) else "true",
     }
 
     # Data and mounted sources must be present at their execution-root paths.
@@ -125,6 +131,10 @@ sphinx_docs = rule(
         "score_metamodel_yaml": attr.label(allow_single_file = True),
         "external_needs_labels": attr.string(default = "[]"),
         "extra_opts": attr.string_list(),
+        "_dependency_warnings_as_error": attr.label(
+            default = Label("//:dependency_warnings_as_error"),
+            providers = [BuildSettingInfo],
+        ),
         # The launcher runs on the build host and carries extension runfiles.
         "sphinx": attr.label(cfg = "exec", executable = True, mandatory = True),
     },
