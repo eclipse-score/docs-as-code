@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, cast
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.application import Sphinx
 
 from src.extensions import score_sync_toml
@@ -14,7 +15,13 @@ from src.extensions.score_sync_toml import _mounts
 from src.extensions.score_sync_toml._mounts import materialize_mounts
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_materialize_mounts_serializes_structured_entries():
+    """Test materialize mounts serializes structured entries."""
     fragment = materialize_mounts(
         [
             {
@@ -36,7 +43,13 @@ def test_materialize_mounts_serializes_structured_entries():
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_materialize_mounts_omits_default_fields():
+    """Test materialize mounts omits default fields."""
     fragment = materialize_mounts(
         [{"dir": "docs", "mount_at": "guide", "attach_to": None, "entry_doc": "index"}]
     )
@@ -48,9 +61,15 @@ def test_materialize_mounts_omits_default_fields():
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_materialize_mounts_maps_external_runfiles_path_to_bazel_bin(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Test materialize mounts maps external runfiles path to bazel bin."""
     runfiles_dir = tmp_path / "runfiles"
     walk_dir = runfiles_dir / "score_process_description+" / "process"
     walk_dir.mkdir(parents=True)
@@ -72,6 +91,11 @@ def test_materialize_mounts_maps_external_runfiles_path_to_bazel_bin(
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_materialize_mounts_preserves_explicit_source_files(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -100,9 +124,16 @@ def test_materialize_mounts_preserves_explicit_source_files(
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_setup_skips_toml_sync_without_git_worktree(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """Test setup skips toml sync without git worktree."""
+
     class ConfigWithoutTomlSync:
         suppress_warnings: list[str] = []
 

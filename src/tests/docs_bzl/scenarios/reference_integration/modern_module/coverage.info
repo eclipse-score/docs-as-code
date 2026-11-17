@@ -1,0 +1,31 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+# Complementary records cover both lines of the component implementation.
+SF:src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/implementation.cc
+DA:1,2
+DA:2,0
+BRDA:1,0,0,2
+BRDA:1,0,1,-
+end_of_record
+SF:src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/implementation.cc
+DA:1,0
+DA:2,1
+BRDA:1,0,0,0
+BRDA:1,0,1,1
+end_of_record
+SF:src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/detail/support.cc
+DA:1,0
+end_of_record
+SF:src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/unlinked_component/implementation.cc
+DA:1,0
+end_of_record

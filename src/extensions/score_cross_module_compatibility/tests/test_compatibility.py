@@ -17,6 +17,7 @@ from score_cross_module_compatibility import (
     get_reporter,
     setup,
 )
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.application import Sphinx
 from sphinx_needs.need_item import NeedItem, NeedLink
 
@@ -50,7 +51,13 @@ def _links(need: FakeNeed) -> list[NeedLink]:
     return cast(list[NeedLink], need["links"])
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_reporter_records_external_owner_and_writes_report(tmp_path: Path) -> None:
+    """Test reporter records external owner and writes report."""
     manifest = tmp_path / "mounts.json"
     manifest.write_text(
         json.dumps(
@@ -77,7 +84,13 @@ def test_reporter_records_external_owner_and_writes_report(tmp_path: Path) -> No
     assert document["findings"][0]["target_id"] == "req__producer"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_setup_skips_version_precheck_when_version_compatibility_is_disabled() -> None:
+    """Test setup skips version precheck when version compatibility is disabled."""
     app = FakeSphinx(allow_version_mismatches=False)
 
     setup(app)  # type: ignore[arg-type]
@@ -85,9 +98,15 @@ def test_setup_skips_version_precheck_when_version_compatibility_is_disabled() -
     assert {event for event, _ in app.connections} == {"build-finished"}
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_setup_registers_version_precheck_when_version_compatibility_is_enabled() -> (
     None
 ):
+    """Test setup registers version precheck when version compatibility is enabled."""
     app = FakeSphinx(allow_version_mismatches=True)
 
     setup(app)  # type: ignore[arg-type]
@@ -103,7 +122,13 @@ def test_setup_registers_version_precheck_when_version_compatibility_is_enabled(
     }
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_setup_registers_reporting_hooks_for_non_version_compatibility() -> None:
+    """Test setup registers reporting hooks for non version compatibility."""
     app = FakeSphinx(allow_version_mismatches=False)
     app.config.score_cross_module_compatibility_allow_missing_mandatory_attributes = (
         True
@@ -121,7 +146,13 @@ def test_setup_registers_reporting_hooks_for_non_version_compatibility() -> None
     }
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_reporter_requires_each_category_to_be_enabled(tmp_path: Path) -> None:
+    """Test reporter requires each category to be enabled."""
     manifest = tmp_path / "mounts.json"
     manifest.write_text(
         json.dumps(
@@ -148,9 +179,15 @@ def test_reporter_requires_each_category_to_be_enabled(tmp_path: Path) -> None:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_reporter_recognizes_an_external_bundle_mounted_at_the_root(
     tmp_path: Path,
 ) -> None:
+    """Test reporter recognizes an external bundle mounted at the root."""
     manifest = tmp_path / "mounts.json"
     manifest.write_text(
         json.dumps(
@@ -175,9 +212,15 @@ def test_reporter_recognizes_an_external_bundle_mounted_at_the_root(
     assert reporter.module_for_need({"docname": "process/index"}) == "process+"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_cross_module_version_condition_is_reported_and_neutralized(
     tmp_path: Path,
 ) -> None:
+    """Test cross module version condition is reported and neutralized."""
     manifest = tmp_path / "mounts.json"
     manifest.write_text(
         json.dumps(
@@ -211,7 +254,13 @@ def test_cross_module_version_condition_is_reported_and_neutralized(
     assert len(get_reporter(cast(Sphinx, app)).findings) == 1
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_local_version_condition_remains_strict(tmp_path: Path) -> None:
+    """Test local version condition remains strict."""
     app = SimpleNamespace(config=SimpleNamespace(mounts_manifest=""))
     origin = FakeNeed(
         id="req__one",
@@ -225,7 +274,13 @@ def test_local_version_condition_remains_strict(tmp_path: Path) -> None:
     assert _links(origin)[0].condition == "version == 1"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_external_version_condition_remains_strict_by_default(tmp_path: Path) -> None:
+    """Test external version condition remains strict by default."""
     manifest = tmp_path / "mounts.json"
     manifest.write_text(
         json.dumps(

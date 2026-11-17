@@ -17,6 +17,7 @@ from pathlib import Path
 
 import pytest
 import score_sphinx_needs_templates as templates
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.testing.util import SphinxTestApp
 
 
@@ -31,7 +32,11 @@ class FakeLink:
 
 
 class FakeNeed(dict[str, str]):
-    """Need-shaped test double with independently controlled link indexes."""
+    """Need-shaped test double with independently controlled link indexes.
+
+    Note: This is a simplified test double that doesn't fully implement NeedItem.
+    Tests using this class with typed APIs may need type: ignore comments.
+    """
 
     def __init__(
         self,
@@ -53,6 +58,11 @@ class FakeNeed(dict[str, str]):
         return self._links
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_backlinks_merge_indexed_and_new_outgoing_links(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -72,107 +82,322 @@ def test_backlinks_merge_indexed_and_new_outgoing_links(
     assert [need["id"] for need in linked] == ["TC-old", "TC-new"]
 
 
+class FakeNeedsData:
+    """``SphinxNeedsData`` double that rejects mutable access once frozen."""
+
+    def __init__(self, _env: object, *, frozen: bool, needs: dict[str, FakeNeed]):
+        self.needs_is_post_processed = frozen
+        self._needs = needs
+
+    def get_needs_mutable(self) -> dict[str, FakeNeed]:
+        if self.needs_is_post_processed:
+            raise RuntimeError("Needs have already been post-processed and frozen.")
+        return self._needs
+
+    def get_needs_view(self) -> dict[str, FakeNeed]:
+        return self._needs
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+@pytest.mark.parametrize("frozen", [False, True])
+def test_get_available_needs_works_before_and_after_freeze(
+    monkeypatch: pytest.MonkeyPatch, frozen: bool
+) -> None:
+    """Write-phase handlers (``doctree-resolved``) resolve links after the freeze."""
+    needs = {"REQ": FakeNeed("REQ")}
+    monkeypatch.setattr(templates, "_build_environment", object())
+    monkeypatch.setattr(
+        templates,
+        "SphinxNeedsData",
+        lambda env: FakeNeedsData(env, frozen=frozen, needs=needs),
+    )
+
+    assert list(templates._get_available_needs()) == ["REQ"]  # type: ignore[reportPrivateUsage]
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_parse_version_pads_missing_patch() -> None:
     """A two-component milestone implies patch ``0`` for comparison purposes."""
-    parse_version = vars(templates)["_parse_version"]
-
-    assert parse_version("v0.8") == (0, 8, 0)
-    assert parse_version("v1.0.1") == (1, 0, 1)
-    assert parse_version("V2.3") == (2, 3, 0)
+    assert templates.parse_version("v0.8") == (0, 8, 0)
+    assert templates.parse_version("v1.0.1") == (1, 0, 1)
+    assert templates.parse_version("V2.3") == (2, 3, 0)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_req_in_report_version_unscoped_report_version_always_true() -> None:
     """No ``report_version`` means the report is unscoped ("latest")."""
-    req_in_report_version = vars(templates)["_RequirementInReportVersion"]()
     need = FakeNeed("feat_req__x")
 
-    assert req_in_report_version(need, None) is True
-    assert req_in_report_version(need, "") is True
+    assert templates.req_in_report_version(need, None) is True  # type: ignore[reportArgumentType]
+    assert templates.req_in_report_version(need, "") is True  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_req_in_report_version_direct_valid_from_boundary() -> None:
     """``valid_from`` is inclusive: equal or later report_version is in scope."""
-    req_in_report_version = vars(templates)["_RequirementInReportVersion"]()
     need = FakeNeed("feat_req__x")
     need["valid_from"] = "v0.8"
 
-    assert req_in_report_version(need, "v0.7") is False
-    assert req_in_report_version(need, "v0.8") is True
-    assert req_in_report_version(need, "v0.9") is True
+    assert templates.req_in_report_version(need, "v0.7") is False  # type: ignore[reportArgumentType]
+    assert templates.req_in_report_version(need, "v0.8") is True  # type: ignore[reportArgumentType]
+    assert templates.req_in_report_version(need, "v0.9") is True  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_req_in_report_version_malformed_valid_from_is_excluded() -> None:
     """An unparsable ``valid_from`` must not raise; it just excludes the need."""
-    req_in_report_version = vars(templates)["_RequirementInReportVersion"]()
     need = FakeNeed("feat_req__x")
     need["valid_from"] = "not-a-version"
 
-    assert req_in_report_version(need, "v1.0") is False
+    assert templates.req_in_report_version(need, "v1.0") is False  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_req_in_report_version_missing_valid_from_without_derived_from_is_excluded(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """A requirement with no ``valid_from`` and nothing to inherit from is out."""
-    req_in_report_version = vars(templates)["_RequirementInReportVersion"]()
     comp_req = FakeNeed("comp_req__x")
     monkeypatch.setattr(
         templates, "_get_available_needs", lambda: {"comp_req__x": comp_req}
     )
 
-    assert req_in_report_version(comp_req, "v1.0") is False
+    assert templates.req_in_report_version(comp_req, "v1.0") is False  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_req_in_report_version_comp_req_inherits_via_derived_from(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """``comp_req`` has no ``valid_from`` of its own; it inherits its scope from
     the ``feat_req`` it is ``derived_from``."""
-    req_in_report_version = vars(templates)["_RequirementInReportVersion"]()
     feat_req = FakeNeed("feat_req__x")
     feat_req["valid_from"] = "v0.8"
     comp_req = FakeNeed("comp_req__x", links=[FakeLink("feat_req__x")])
     needs = {"feat_req__x": feat_req, "comp_req__x": comp_req}
     monkeypatch.setattr(templates, "_get_available_needs", lambda: needs)
 
-    assert req_in_report_version(comp_req, "v0.7") is False
-    assert req_in_report_version(comp_req, "v0.8") is True
+    assert templates.req_in_report_version(comp_req, "v0.7") is False  # type: ignore[reportArgumentType]
+    assert templates.req_in_report_version(comp_req, "v0.8") is True  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_any_req_in_report_version_unscoped_true_even_for_empty_list() -> None:
     """Unscoped ("latest") reports keep Features/Components with no requirement."""
-    any_req_in_report_version = vars(templates)["_AnyRequirementInReportVersion"]()
-
-    assert any_req_in_report_version([], None) is True
+    assert templates.any_req_in_report_version([], None) is True
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_any_req_in_report_version_scoped_empty_list_is_excluded() -> None:
     """A scoped report has nothing to show for a Feature/Component with no reqs."""
-    any_req_in_report_version = vars(templates)["_AnyRequirementInReportVersion"]()
-
-    assert any_req_in_report_version([], "v1.0") is False
+    assert templates.any_req_in_report_version([], "v1.0") is False
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_any_req_in_report_version_true_if_at_least_one_requirement_matches() -> None:
-    any_req_in_report_version = vars(templates)["_AnyRequirementInReportVersion"]()
+    """Test any req in report version true if at least one requirement matches."""
     out_of_scope = FakeNeed("feat_req__a")
     out_of_scope["valid_from"] = "v2.0"
     in_scope = FakeNeed("feat_req__b")
     in_scope["valid_from"] = "v0.8"
 
-    assert any_req_in_report_version([out_of_scope, in_scope], "v1.0") is True
+    assert templates.any_req_in_report_version([out_of_scope, in_scope], "v1.0") is True  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_any_req_in_report_version_false_if_no_requirement_matches() -> None:
-    any_req_in_report_version = vars(templates)["_AnyRequirementInReportVersion"]()
+    """Test any req in report version false if no requirement matches."""
     a = FakeNeed("feat_req__a")
     a["valid_from"] = "v2.0"
     b = FakeNeed("feat_req__b")
     b["valid_from"] = "v3.0"
 
-    assert any_req_in_report_version([a, b], "v1.0") is False
+    assert templates.any_req_in_report_version([a, b], "v1.0") is False  # type: ignore[reportArgumentType]
 
 
+def test_safety_chart_row_qm_counts_inspected_as_valid() -> None:
+    """QM has no inspected segment; ``valid_inspected`` QM Needs count as valid."""
+    safety_chart_row = vars(templates)["_SafetyChartRow"]()
+
+    qm = safety_chart_row("Comp", "Requirements", "BASE", "QM", "QM", 1)
+    asil = safety_chart_row("Comp", "Requirements", "BASE", "ASIL_B", "ASIL B", 1)
+
+    assert ":labels: valid, invalid" in qm
+    assert (
+        'BASE and safety == "QM" and (status == "valid" or status == "valid_inspected")'
+    ) in qm
+    assert 'BASE and safety == "QM" and status == "invalid"' in qm
+    assert ":labels: valid_inspected, valid, invalid" in asil
+    assert ":colors: #37a12d, #f5c518, #ca2828" in asil
+    assert 'BASE and safety == "ASIL_B" and status == "valid_inspected"' in asil
+    assert ":class: safety-class-heading safety-asil-b" in asil
+
+
+def test_safety_chart_row_empty_class_renders_one_slim_placeholder() -> None:
+    safety_chart_row = vars(templates)["_SafetyChartRow"]()
+
+    row = safety_chart_row("Comp", "Requirements", "BASE", "QM", "QM", 0, True)
+
+    assert "score-report-bar" not in row
+    assert row.count('<div class="empty-chart">no QM requirements</div>') == 1
+
+
+def test_safety_chart_row_reference_bar_only_on_request() -> None:
+    safety_chart_row = vars(templates)["_SafetyChartRow"]()
+
+    without = safety_chart_row("", "Stakeholder Requirements", "B", "QM", "QM", 2)
+    with_ref = safety_chart_row(
+        "", "Stakeholder Requirements", "B", "QM", "QM", 2, True, ["a", "b"], ["c"]
+    )
+
+    assert "Reference Coverage" not in without
+    assert without.count(".. score-report-bar::") == 2
+    assert with_ref.count(".. score-report-bar::") == 3
+    # All bars of one safety class form a single figure.
+    assert with_ref.count(".. score-report-bars::") == 1
+    assert 'id in ["a", "b"]' in with_ref
+    assert 'id in ["c"]' in with_ref
+    # An empty title must not leave a leading blank in the chart title.
+    assert ".. score-report-bars:: Stakeholder Requirements (QM)\n" in with_ref
+
+
+def test_chart_legend_is_one_raw_line_with_reference_on_request() -> None:
+    """The legend repeats per section, so it is one line with tooltips."""
+    chart_legend = vars(templates)["_ChartLegend"]()
+
+    plain = chart_legend()
+    with_ref = chart_legend(True)
+
+    assert plain.startswith("\n.. raw:: html\n\n   <div")
+    assert plain.count("\n") == 4
+    assert "Reference coverage" not in plain
+    assert "Reference coverage" in with_ref
+    assert 'title="agreed and formally inspected"' in plain
+    assert plain.count('class="chart-legend-dot"') == 16
+
+
+def test_chart_legend_explains_every_colour_without_a_tooltip() -> None:
+    """Keyboard users cannot open ``title`` tooltips, so a ``<details>`` repeats them."""
+    legend = vars(templates)["_ChartLegend"]()(True)
+    details = legend.split('<details class="chart-legend-details">', 1)[1]
+
+    for explanation in (
+        "agreed and formally inspected",
+        "(valid_inspected counts here too)",
+        "no verifying test at all",
+        "nothing on the level below derives from it",
+    ):
+        assert f"{explanation}<" in details
+    assert details.startswith("<summary>")
+
+
+def test_safety_chart_row_indent_nests_every_line() -> None:
+    """``indent`` nests the chart into a grid item without touching blank lines."""
+    safety_chart_row = vars(templates)["_SafetyChartRow"]()
+
+    flat = safety_chart_row("", "Requirements", "B", "QM", "QM", 2)
+    nested = safety_chart_row("", "Requirements", "B", "QM", "QM", 2, indent=6)
+
+    assert nested == "".join(
+        f"      {line}\n" if line else "\n" for line in flat.splitlines()
+    )
+
+
+def test_id_filter_list_renders_quoted_literal() -> None:
+    id_filter_list = vars(templates)["_IdFilterList"]()
+
+    assert id_filter_list(["a", "b"]) == '["a", "b"]'
+    assert id_filter_list([]) == "[]"
+
+
+def test_workproduct_rows_filter_by_owner_then_slug() -> None:
+    workproduct_rows = vars(templates)["_WorkproductRows"]()
+
+    rows = workproduct_rows(
+        "comp__my_comp", "mycomp", [["wp__dfa", "DFA"], ["wp__fmea", "FMEA"]]
+    )
+
+    assert rows.count("      * - :need:`") == 2
+    assert "        - DFA\n" in rows
+    assert (
+        rows.count(
+            '("comp__my_comp" in belongs_to or (not belongs_to'
+            ' and "mycomp" in id.replace("_", "").lower()))'
+        )
+        == 4
+    )
+    assert rows.count('and "wp__fmea" in realizes') == 2
+
+
+def test_workproduct_rows_filter_prefers_belongs_to_over_id() -> None:
+    rows = vars(templates)["_WorkproductRows"]()(
+        "comp__engine_core", "enginecore", [["wp__dfa", "DFA"]]
+    )
+    doc_filter = rows.split(":filter: ", 1)[1].split("\n", 1)[0]
+
+    def matches(doc_id: str, belongs_to: list[str]) -> bool:
+        # sphinx-needs evaluates non-trivial filters with eval() on the Need fields.
+        need: dict[str, object] = {
+            "type": "document",
+            "id": doc_id,
+            "realizes": ["wp__dfa"],
+            "belongs_to": belongs_to,
+        }
+        return eval(doc_filter, need)
+
+    assert matches("doc__owned_dfa", ["comp__engine_core"])
+    assert not matches("doc__enginecore_dfa", ["comp__other"])
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_tool_qualification_matrix_groups_shared_requirements(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -317,6 +542,11 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
     assert '<section id="traceability-evidence">' not in html
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_platform_report_gap_table_is_report_version_scoped(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -325,7 +555,7 @@ def test_platform_report_gap_table_is_report_version_scoped(
 
     A stakeholder requirement that is only referenced by a feature requirement
     outside the report's ``report_version`` counts as a gap, because the
-    reference coverage pie classifies it as "not referenced" too. Both are
+    reference coverage bar classifies it as "not referenced" too. Both are
     rendered from the same pre-scoped ID list, so they cannot disagree.
     """
     monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))

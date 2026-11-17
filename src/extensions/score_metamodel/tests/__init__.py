@@ -24,6 +24,9 @@ from sphinx_needs.need_item import (
 
 from src.extensions.score_metamodel import CheckLogger
 
+# Location CheckLogger reports for a need created by need().
+EXPECTED_LOCATION = "docs/docname.rst:42"
+
 
 def fake_check_logger():
     """Creates a CheckLogger with a mocked backend."""
@@ -33,8 +36,7 @@ def fake_check_logger():
             self._mock_logger = MagicMock(spec=SphinxLoggerAdapter)
             self._mock_logger.warning = MagicMock()
             self._mock_logger.info = MagicMock()
-            app_path = MagicMock()
-            super().__init__(self._mock_logger, app_path)
+            super().__init__(self._mock_logger, "docs")
 
         def assert_no_warnings(self):
             if self.warnings:
@@ -50,14 +52,20 @@ def fake_check_logger():
                 )
                 pytest.fail(f"Expected no infos, but got:\n{infos}")
 
-        def assert_warning(self, expected_substring: str, expect_location: bool = True):
+        def assert_warning(
+            self,
+            expected_substring: str,
+            expect_location: bool = True,
+            location: str = EXPECTED_LOCATION,
+        ):
             """
             Assert that the logger warning was called exactly once with a message
             containing a specific substring.
 
             This also verifies that the defaults from need() are used correctly.
             So you must use need() to create the need object that is passed
-            to the checks.
+            to the checks. Pass `location` when the finding belongs to a need
+            with a non-default docname or lineno.
             """
             self._mock_logger.warning.assert_called_once()
 
@@ -75,16 +83,22 @@ def fake_check_logger():
             assert kwargs["type"] == "score_metamodel"
 
             if expect_location:
-                assert kwargs["location"] == "docname.rst:42", kwargs
+                assert kwargs["location"] == location, kwargs
 
-        def assert_info(self, expected_substring: str, expect_location: bool = True):
+        def assert_info(
+            self,
+            expected_substring: str,
+            expect_location: bool = True,
+            location: str = EXPECTED_LOCATION,
+        ):
             """
             Assert that the logger info was called exactly once with a message
             containing a specific substring.
 
             This also verifies that the defaults from need() are used correctly.
             So you must use need() to create the need object that is passed
-            to the checks.
+            to the checks. Pass `location` when the finding belongs to a need
+            with a non-default docname or lineno.
             """
             self._mock_logger.info.assert_called_once()
 
@@ -102,7 +116,7 @@ def fake_check_logger():
             assert kwargs["type"] == "score_metamodel"
 
             if expect_location:
-                assert kwargs["location"] == "docname.rst:42", kwargs
+                assert kwargs["location"] == location, kwargs
 
     return FakeCheckLogger()
 

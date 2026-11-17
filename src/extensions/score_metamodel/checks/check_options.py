@@ -265,7 +265,7 @@ def check_validity_consistency(
     """
     Check if the attributes valid_from < valid_until.
     """
-    if need["type"] not in ("stkh_req", "feat_req"):
+    if need["type"] not in ("stkh_req", "feat_req", "comp_req"):
         return
 
     valid_from = need.get("valid_from", None)

@@ -456,20 +456,21 @@ def local_module_override(
 def report_need(repository: str) -> str:
     """Return the exact temporary Need page injected into a checkout.
 
-    The report is a ``document`` that realizes the module-verification-report
-    workproduct rather than linking ``belongs_to`` the module directly — the
-    ``document`` type does not support that link. ``module_verification_report``
-    recovers the module id from this need's own id instead.
+    The report is a ``mod_ver_report`` whose mandatory ``belongs_to`` link
+    names the verified module; ``module_verification_report`` resolves the
+    component graph from there.
     """
 
     display_name = repository.replace("_", " ").title()
     return (
-        f".. document:: {display_name} Module Verification Report\n"
-        f"   :id: doc__{repository}_verification_report\n"
+        f".. mod_ver_report:: {display_name} Module Verification Report\n"
+        f"   :id: mod_vrep__{repository}__report\n"
         f"   :post_template: {TEMPLATE_NAME}\n"
         f"   :status: valid\n"
         f"   :safety: QM\n"
         f"   :security: NO\n"
+        f"   :verification_method: test_and_inspection\n"
+        f"   :belongs_to: mod__{repository}\n"
         f"   :realizes: {REPORT_WORKPRODUCT}\n"
         f"   :version: 1\n"
     )

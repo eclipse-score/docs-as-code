@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
@@ -29,14 +30,34 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
+# Documentation binaries are declared in consumer packages. The library is a
+# runtime dependency of their CLI and contains the LCOV aggregation and writer.
+py_library(
+    name = "lcov_summary_lib",
+    srcs = ["lcov_summary.py"],
+    visibility = ["//visibility:public"],
+)
+
+score_pytest(
+    name = "lcov_summary_test",
+    srcs = ["lcov_summary_test.py"],
+    data = glob(["fixtures/*.info"]),
+    pytest_config = "//:pyproject.toml",
+    deps = [":lcov_summary_lib"],
+)
+
 score_pytest(
     name = "dirty_build_test",
-    srcs = ["dirty_build_test.py", "cli.py"],
+    srcs = [
+        "cli.py",
+        "dirty_build_test.py",
+    ],
+    pytest_config = "//:pyproject.toml",
     deps = all_requirements + [
+        ":lcov_summary_lib",
         "//src/extensions/score_mounts",
         "//src/helper_lib",
     ],
-    pytest_config = "//:pyproject.toml",
 )
 
 # Exercise dispatch and the docs.bzl environment contract with the same
@@ -44,10 +65,14 @@ score_pytest(
 # it distinct from score_pytest's own main.py entry in the test sources.
 score_pytest(
     name = "main_test",
-    srcs = ["main_test.py", "cli.py"],
+    srcs = [
+        "cli.py",
+        "main_test.py",
+    ],
+    pytest_config = "//:pyproject.toml",
     deps = all_requirements + [
+        ":lcov_summary_lib",
         "//src/extensions/score_mounts",
         "//src/helper_lib",
     ],
-    pytest_config = "//:pyproject.toml",
 )

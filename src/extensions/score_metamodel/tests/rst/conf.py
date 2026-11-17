@@ -41,22 +41,6 @@ suppress_warnings = ["app.add_directive", "app.add_node", "app.add_role"]
 
 def setup(app: Sphinx):
     add_needs_fields: dict[str, Any] = {
-        "expect_not": {
-            "description": "Partial string that is not exepcted to be in rst test warnings",
-            "schema": {
-                "type": "array",
-                "items": {"type": "string"},
-            },
-            "nullable": True,
-        },
-        "expect": {
-            "description": "String that is exepcted to be in rst test warnings",
-            "schema": {
-                "type": "array",
-                "items": {"type": "string"},
-            },
-            "nullable": True,
-        },
         "test_type": {
             "description": "The test type that this test has",
             "schema": {
@@ -71,26 +55,25 @@ def setup(app: Sphinx):
             },
             "nullable": True,
         },
-        "fully_verifies_list": {
-            "description": "List of requirements that this RST test fully verifies",
-            "schema": {
-                "type": "array",
-                "items": {"type": "string"},
-            },
-            "nullable": True,
-        },
-        "partially_verifies_list": {
-            "description": "List of requirements that this RST test partially verifies",
-            "schema": {
-                "type": "array",
-                "items": {"type": "string"},
-            },
-            "nullable": True,
-        },
     }
+    for option, description in {
+        "expect": "Expected substrings in warning diagnostics",
+        "expect_not": "Forbidden substrings in warning diagnostics",
+        "expect_info": "Expected substrings in informational diagnostics",
+        "expect_info_not": "Forbidden substrings in informational diagnostics",
+        "fully_verifies_list": "Requirements that this RST test fully verifies",
+        "partially_verifies_list": "Requirements that this RST test partially verifies",
+    }.items():
+        add_needs_fields[option] = {
+            "description": description,
+            "schema": {"type": "array", "items": {"type": "string"}},
+            "nullable": True,
+        }
     add_options_regex_base = {
-        "expect_not": "^.*$",
         "expect": "^.*$",
+        "expect_not": "^.*$",
+        "expect_info": "^.*$",
+        "expect_info_not": "^.*$",
     }
     add_options_test_metadata = {
         "derivation_technique": "^.*$",

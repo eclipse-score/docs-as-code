@@ -13,9 +13,9 @@
 
 load("//:docs.bzl", "docs")
 
-# The reference integration combines platform feature requirements and two
-# software modules into one documentation site, just like the real S-CORE
-# integration. Each module's bundle contains its component documentation.
+# The reference integration combines platform feature requirements and a
+# software module into one documentation site, just like the real S-CORE
+# integration. The module's bundle contains its component documentation.
 # Each component also scans an annotated implementation file through
 # ``code_targets``. The integration test verifies that those source links
 # survive the component -> module -> site bundle composition and are rendered
@@ -23,31 +23,27 @@ load("//:docs.bzl", "docs")
 # The component packages live below the module's ``docs`` source directory,
 # matching the feature-package layout used by the real S-CORE integration.
 #
-# One module and its component use the older ``docs(data = [...])`` API; the
-# other module and component use ``external_needs``. The integration mounts
-# both module bundles, exercising both paths through the complete hierarchy.
-#
 # test_sources scopes the test-code-linker to this (test-less) package, avoiding
 # the workspace-wide bazel-testlogs scan during the html build.
 docs(
-    project = "S-CORE Reference Integration",
-    project_url = "https://example.invalid/score-reference-integration",
-    source_dir = "docs",
-    # Import the public docs target rather than its implementation-level
-    # needs_json output. The integration page references a Need owned by this
-    # target, so this also exercises resolution through the imported inventory.
-    external_needs = ["//src/tests/docs_bzl/scenarios/reference_integration/score_platform:docs"],
-    test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
     bundles = [
-        {
-            "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/legacy_module:docs_bundle",
-            "mount_at": "modules/legacy_module",
-            "attach_to": "modules",
-        },
         {
             "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/modern_module:docs_bundle",
             "mount_at": "modules/modern_module",
             "attach_to": "modules",
         },
     ],
+    # Import the public docs target rather than its implementation-level
+    # needs_json output. The integration page references a Need owned by this
+    # target, so this also exercises resolution through the imported inventory.
+    external_needs = [
+        "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:docs",
+        # Mounted verification reports reference the process work products.
+        # Each consuming docs() project declares its own external inventories.
+        "@score_process_description//:needs_json",
+    ],
+    project = "S-CORE Reference Integration",
+    project_url = "https://example.invalid/score-reference-integration",
+    source_dir = "docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
 )

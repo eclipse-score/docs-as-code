@@ -60,9 +60,39 @@ explicit override in ``docs/conf.py``:
 When this setting is provided, the explicit list is used instead of
 autodiscovery.
 
-Use ``score_metrics_include_external_needs = True`` only in repositories that
+Use ``score_metrics_include_external_needs = True`` in repositories that
 intentionally aggregate requirements across module dependencies, such as
-integration repositories.
+integration repositories, or combine it with the optional feature scope below.
+
+Optional External Feature Scope
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A module repository can report on feature requirements maintained in another
+repository, such as ``score``, without counting unrelated external requirements.
+First import that repository's needs data through the existing external-needs
+configuration, then configure the metrics in ``docs/conf.py``:
+
+.. code-block:: python
+
+   score_metrics_include_external_needs = True
+   score_metrics_requirement_types = "feat_req,comp_req,aou_req"
+   score_metrics_external_feature_ids = ["feat__lifecycle"]
+
+Replace the example feature ID with the exact ID referenced by the imported
+feature requirements' ``satisfied_by`` links. Multiple feature IDs are supported.
+All local requirements of the selected requirement types remain included.
+External requirements are included only if they are ``feat_req`` needs with a
+``satisfied_by`` link to at least one selected feature. Requirements without
+tests are still counted; unrelated external requirements are excluded.
+Local tests can link to the imported requirements through ``fully_verifies``
+or ``partially_verifies`` as usual. The metrics selection does not remove
+imported needs from the documentation or from test-reference resolution.
+
+This feature is opt-in: ``score_metrics_external_feature_ids`` defaults to
+``[]``, preserving the existing local-only or full-aggregation behavior.
+The scope has no effect while ``score_metrics_include_external_needs`` is
+``False``. It does not import external needs automatically or change the
+configured requirement types.
 
 Building the Dashboard
 ----------------------
@@ -75,6 +105,21 @@ The documentation build writes ``metrics.json`` via ``score_metrics``, and the `
 - ``_build/metrics.json``
 
 The dashboard charts and the CI gate both use the same computed metrics.
+
+``metrics.json`` Content
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The exported file contains a versioned set of fields:
+
+- ``schema_version`` – schema version identifier.
+- ``generated_by`` – identifier of the producer that generated this file.
+- ``overall_metrics`` – requirement coverage aggregated over all requirement types.
+- ``metrics_by_type`` – the same coverage numbers per requirement type.
+- ``tests`` – testcase linkage statistics, including broken test references.
+- ``verification_metrics`` – per-component verification status and coverage metrics
+  for use by verification reports. Contains status distribution (valid, valid_inspected,
+  invalid) and test coverage (fully_covered, partially_covered, not_covered) for
+  both requirements and architecture elements, organized by component ID.
 
 Inputs for Linkage Metrics
 --------------------------
@@ -168,10 +213,12 @@ Recommended color palette
 
 This palette is generally easier to read:
 
-- ``#4E79A7`` (blue)
+- ``#D32F2F`` (red)
 - ``#F28E2B`` (orange)
 - ``#59A14F`` (green)
 - ``#B07AA1`` (purple)
+- ``#FFC107`` (yellow)
+- ``#4E79A7`` (blue)
 
 Example 1: Overall view (including remaining/unlinked)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -180,7 +227,7 @@ Example 1: Overall view (including remaining/unlinked)
 
    .. needpie:: Overall Requirement Coverage (non-overlapping)
       :labels: Remaining (no links), Test Link Only, Code Link Only, Fully Linked (Both)
-      :colors: #4E79A7, #F28E2B, #59A14F, #B07AA1
+      :colors: #D32F2F, #F28E2B, #FFC107, #59A14F
       :filter-func: score_metrics.sphinx_filters.get_non_overlapping_link_metrics
 
 This chart shows:
@@ -192,7 +239,7 @@ This chart shows:
 
 .. needpie:: Overall Requirement Coverage (non-overlapping)
    :labels: Remaining (no links), Test Link Only, Code Link Only, Fully Linked (Both)
-   :colors: #4E79A7, #F28E2B, #59A14F, #B07AA1
+   :colors: #D32F2F, #F28E2B, #FFC107 , #59A14F
    :filter-func: score_metrics.sphinx_filters.get_non_overlapping_link_metrics
 
 Example 2: Focused view (no total-based remainder)
@@ -206,7 +253,7 @@ This chart shows direct values only (no remaining slice):
 
 .. needpie:: Tool Requirements Snapshot
    :labels: Tool Req With Test Link, Tool Req With Code Link, Fully Linked (Overall)
-   :colors: #F28E2B, #4E79A7, #59A14F
+   :colors: #F28E2B, #FFC107, #59A14F
    :filter-func: score_metrics.sphinx_filters.get_just_metrics(metrics_by_type:tool_req:with_test_link,metrics_by_type:tool_req:with_code_link,overall_metrics:fully_linked)
 
 Presentation checklist

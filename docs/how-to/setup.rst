@@ -31,19 +31,15 @@ Add the S-CORE Bazel registry to the ``.bazelrc`` file::
     common --registry=https://raw.githubusercontent.com/eclipse-score/bazel_registry/main/
     common --registry=https://bcr.bazel.build
 
-2. .bazelrc file
+2. Diagram tools
 ----------------
 
-The system uses `PlantUML <https://www.plantuml.com>`_ for diagrams. This action
-requires Java.
-If the system does not contain Java, Bazel downloads a remote JDK
-from the network.
-This action requires configuration in the ``.bazelrc`` file::
+Bazel downloads a native `PlantUML <https://www.plantuml.com>`_ distribution
+for the platform running Sphinx. PlantUML does not require a separate Java
+installation. Supported platforms are Linux x86-64, Linux ARM64 and macOS ARM64.
 
-    build --java_language_version=17
-    build --java_runtime_version=remotejdk_17
-    build --tool_java_language_version=17
-    build --tool_java_runtime_version=remotejdk_17
+Install `Graphviz <https://graphviz.org/download/>`_ and make its ``dot``
+executable available on ``PATH`` for diagrams that require Graphviz layout.
 
 3. BUILD file
 -------------

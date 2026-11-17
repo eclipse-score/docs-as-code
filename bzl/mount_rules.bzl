@@ -63,6 +63,7 @@ def _composition_manifest_impl(ctx):
                 ],
             },
         }
+
         # Explicit source targets are mounted as a file allowlist. Directory
         # bundles omit this key and retain the existing recursive behavior.
         if entry.files:

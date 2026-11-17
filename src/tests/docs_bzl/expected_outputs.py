@@ -15,15 +15,18 @@
 Expected output names are discovered below the scenario's ``_expected``
 directory. The target catalog below is the only place that maps a short
 expected-output name to the Bazel target and to the output location used by the
-harness.
+harness. HTML scenarios can provide a checked-in ``coverage.info`` to supply
+deterministic coverage measurements for their golden pages.
 """
 
 from __future__ import annotations
 
 import contextlib
 import difflib
+import itertools
 import json
 import os
+import re
 import stat
 import tempfile
 from dataclasses import dataclass
@@ -35,6 +38,7 @@ from src.tests.docs_bzl.helpers import (
     built_output,
     run_bazel,
     run_package,
+    staged_coverage_report,
 )
 
 # GitHub Actions exposes this variable to the documentation build. Supplying
@@ -238,9 +242,34 @@ def _comparison_bytes(path: Path) -> bytes:
     JSON output is formatted for humans before comparison. This keeps checked-in
     expected files readable while still checking the complete parsed document;
     object-key order is intentionally normalized, but array order and all JSON
-    values remain significant. Other file types retain strict byte comparison.
+    values remain significant. HTML normalizes Sphinx-Needs' random wrapper IDs
+    and checkout metadata in local fixture source links. Need IDs, source paths,
+    line anchors, values, markup and whitespace retain strict byte comparison.
     """
     raw = path.read_bytes()
+    if path.suffix == ".html":
+        # Sphinx-Needs assigns each wrapper a fresh UUID during every render.
+        # Stable ordinals preserve wrapper identity/order without changing the
+        # actual Need IDs or any of the rendered content.
+        indices = itertools.count(1)
+        raw = re.sub(
+            rb'(<div class="need_container docutils container" id=")SNCB-[0-9a-f]{8}(")',
+            lambda match: match[1] + f"SNCB-{next(indices):08x}".encode() + match[2],
+            raw,
+        )
+        # Local source links use the checkout's remote and HEAD. Normalize only
+        # those URL components in fixture source metadata; external dependency
+        # links and the actual source paths and line anchors remain significant.
+        return re.sub(
+            rb'<span class="needs_source_code_link">.*?</div>',
+            lambda metadata: re.sub(
+                rb'https://github\.com/[^/"<>]+/[^/"<>]+/blob/[0-9a-f]{40}/(?=src/tests/docs_bzl/scenarios/)',
+                b"https://github.com/OWNER/REPO/blob/REVISION/",
+                metadata[0],
+            ),
+            raw,
+            flags=re.DOTALL,
+        )
     if path.suffix != ".json":
         return raw
 
@@ -316,12 +345,20 @@ def _run_expected_target(scenario: str, expected: ExpectedOutput) -> None:
             env=EXPECTED_GITHUB_ENV,
         )
     elif expected.target.command == "run":
-        run_package(
-            "run",
-            f"scenarios/{scenario}",
-            expected.target.label,
-            env=EXPECTED_GITHUB_ENV,
-        )
+        # A checked-in coverage.info supplies deterministic measurements for
+        # the scenario's HTML golden. Other scenarios retain their usual inputs.
+        coverage = _scenario_dir(scenario) / "coverage.info"
+        with (
+            staged_coverage_report(coverage)
+            if coverage.is_file()
+            else contextlib.nullcontext()
+        ):
+            run_package(
+                "run",
+                f"scenarios/{scenario}",
+                expected.target.label,
+                env=EXPECTED_GITHUB_ENV,
+            )
     else:
         raise ValueError(f"unknown expected target command: {expected.target.command}")
 

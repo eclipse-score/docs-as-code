@@ -32,6 +32,23 @@ If your IDE does not automatically ask you to activate the newly created environ
 - In the terminal via `. .venv_docs/bin/activate`
 
 
+### Configuring the docs build directory
+
+`bazel run //:docs` (and the other interactive docs targets) write their output to
+`_build` by default. Set `DOCS_BUILD_DIR` to use a different directory. Relative
+paths are resolved against the package containing the `docs()` call; absolute
+paths are used as-is.
+
+> [!WARNING]
+> The directory is deleted when the build cache is stale, so point it at a
+> dedicated directory. Paths that equal or contain the workspace, package or
+> source directory are rejected.
+
+```bash
+export DOCS_BUILD_DIR=docs_build_tmp
+bazel run //:docs
+```
+
 ### Enabeling pre-commit
 
 Pre-commit is supported inside docs-as-code to help with code quality and make developers workflow easier.

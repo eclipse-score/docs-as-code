@@ -14,6 +14,8 @@
 
 from pathlib import Path
 
+from score_pytest.attribute_plugin import add_test_properties
+
 from src.extensions.score_mounts import (
     _make_mount_entry,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _mount_exclusions,  # pyright: ignore[reportPrivateUsage] - white-box unit test
@@ -27,6 +29,11 @@ def _spec(mount_at: str) -> MountSpec:
     return MountSpec(src_root="docs", runtime_path="docs", mount_at=mount_at)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_nested_mount_pattern_only_matches_descendants(tmp_path: Path) -> None:
     """A mount excludes a child directory, not itself or a sibling."""
     parent = tmp_path / "parent"
@@ -36,6 +43,11 @@ def test_nested_mount_pattern_only_matches_descendants(tmp_path: Path) -> None:
     assert _nested_mount_pattern(parent, tmp_path / "sibling") is None
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_mount_exclusions_calculate_primary_and_nested_boundaries(
     tmp_path: Path,
 ) -> None:
@@ -56,6 +68,11 @@ def test_mount_exclusions_calculate_primary_and_nested_boundaries(
     assert nested_exclusions == (("child/**",), (), ())
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_mount_entry_serializes_child_exclusions(tmp_path: Path) -> None:
     """Structural exclusions are passed to sphinx-mounts."""
     tmp_path.mkdir(exist_ok=True)

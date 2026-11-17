@@ -28,8 +28,6 @@
 # its entries are consumed by the mounts manifest action. Keeping both consumers
 # on this provider ensures that source ownership and runtime placement agree.
 
-
-
 load("@score_docs_as_code//:bzl/basics.bzl", "join_path")
 
 # Internal data passed between bundle targets and eventually consumed by an
@@ -41,7 +39,7 @@ DocsBundleInfo = provider(
         # Each entry carries the source and placement information needed by
         # the runtime manifest, plus the identity, primary Need, and
         # direct-target metadata of the bundle that declared it.
-        "entries": "Ordered entries with source, placement, primary Need, and direct-target metadata.",
+        "entries": "Ordered entries with sources, placement, primary Need, direct targets, and bounded implementation files.",
         "own_source_files": "This bundle's direct source files, excluding nested bundles.",
         "source_dir_execroot_path": "Execution-root-relative path of this bundle's direct source root.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
@@ -75,13 +73,18 @@ DocsConfigInfo = provider(
 CodeTargetSourcesInfo = provider(
     doc = "Source files collected from an implementation target and its dependencies.",
     fields = {
-        "sources": "Depset of direct and transitive source files.",
         "kind": "Bazel rule kind of the selected code target.",
+        "direct_sources": "Resolved source/header files declared by this target.",
+        "targets": "Depset of target labels and their direct source/header files.",
     },
 )
 
 def _source_files_from_attributes(ctx):
     """Return files explicitly declared through source or header attributes."""
+
+    # DefaultInfo resolves filegroups and generator outputs at the attribute
+    # boundary. We inspect the consuming library's declarations, so generator
+    # inputs and the library's compiled outputs do not enter the file list.
     source_files = []
     for attribute_name in ["srcs", "hdrs", "textual_hdrs"]:
         if not hasattr(ctx.rule.attr, attribute_name):
@@ -95,21 +98,21 @@ def _source_files_from_attributes(ctx):
 
 def _collect_code_target_sources_impl(target, ctx):
     """Collect source files from an implementation target and its ``deps`` tree."""
-    dependency_sources = []
-    if hasattr(ctx.rule.attr, "deps"):
-        dependency_sources = [
-            dependency[CodeTargetSourcesInfo].sources
-            for dependency in ctx.rule.attr.deps
-        ]
+    direct_sources = _source_files_from_attributes(ctx)
+    dependencies = getattr(ctx.rule.attr, "deps", [])
     return [CodeTargetSourcesInfo(
-        sources = depset(
-            direct = _source_files_from_attributes(ctx),
-            transitive = dependency_sources,
-        ),
         # The aspect follows dependencies to collect source files, but the
         # manifest needs the kind of the target explicitly selected by the
         # bundle rather than the kinds of those transitive dependencies.
         kind = ctx.rule.kind,
+        direct_sources = direct_sources,
+        # Keep the declaring target's label beside its files: file ownership
+        # alone cannot express libraries that explicitly use sibling-package
+        # filegroups. A flat depset lets each bundle apply its own boundary.
+        targets = depset(
+            direct = [struct(label = ctx.label, files = tuple(direct_sources))],
+            transitive = [dependency[CodeTargetSourcesInfo].targets for dependency in dependencies],
+        ),
     )]
 
 _collect_code_target_sources = aspect(
@@ -118,6 +121,57 @@ _collect_code_target_sources = aspect(
     provides = [CodeTargetSourcesInfo],
     doc = "Collects sources recursively through standard implementation dependencies.",
 )
+
+def _bundle_code_files_impl(ctx):
+    """Resolve the implementation artifacts owned by this bundle.
+
+    Explicitly selected targets always contribute their declarations. Transitive
+    dependencies are filtered by the bundle's repository and BUILD package,
+    including subpackages. Local targets reached through foreign dependencies
+    remain eligible; the flat collection does not prune dependency branches.
+    Nested documentation bundles keep their own component file lists.
+    """
+    selected = [target[CodeTargetSourcesInfo] for target in ctx.attr.code_targets]
+    files = []
+
+    # Merge dependency records before filtering so shared targets are visited
+    # once even when multiple implementation entry points depend on them.
+    targets = depset(transitive = [info.targets for info in selected])
+    package = ctx.label.package
+    for target in targets.to_list():
+        label = target.label
+        if label.workspace_name == ctx.label.workspace_name and (
+            not package or label.package == package or label.package.startswith(package + "/")
+        ):
+            files.extend(target.files)
+
+    # Explicit selection includes a target's own declarations even when its
+    # label is outside the component boundary.
+    for info in selected:
+        files.extend(info.direct_sources)
+    return [DefaultInfo(files = depset(files))]
+
+_bundle_code_files = rule(
+    implementation = _bundle_code_files_impl,
+    attrs = {
+        "code_targets": attr.label_list(aspects = [_collect_code_target_sources]),
+    },
+    doc = "Collects component implementation artifacts within the bundle package boundary.",
+)
+
+def collect_bundle_code_files(name, code_targets):
+    """Declare the private file set shared by sourcelinks and internal consumers.
+
+    The target lives in the bundle's BUILD package, so its own label provides
+    the component boundary. It is independent of the composed bundle provider
+    to avoid a cycle through the source-link cache used by that provider.
+    """
+    _bundle_code_files(
+        name = name,
+        code_targets = code_targets,
+        visibility = ["//visibility:private"],
+    )
+    return ":" + name
 
 def _parent_index_docname(mount_at):
     """Choose the page that links to a bundled subtree by default."""
@@ -222,6 +276,7 @@ def _source_dir_runtime_path(ctx):
 
 def _source_target_path(source_file):
     """Return the path spelling used by the source-target staging action."""
+
     # Bazel marks workspace files with ``is_source``; generated outputs use
     # the execroot path while workspace files use their runfiles short path.
     return source_file.path if not source_file.is_source else source_file.short_path
@@ -239,6 +294,7 @@ def _source_targets_runtime_path(files):
     first_path = _source_target_path(first_file)
     first_is_source = first_file.is_source
     separator = first_path.rfind("/")
+
     # A root-package source has no parent component; ``.`` represents the
     # workspace/execroot root so it can still be used as the shared directory.
     runtime_path = first_path[:separator] if separator >= 0 else "."
@@ -250,6 +306,7 @@ def _source_targets_runtime_path(files):
             fail(("explicit bundle sources cannot mix workspace and generated files; " +
                   "found %r and %r") % (first_path, source_path))
         source_separator = source_path.rfind("/")
+
         # Use the same ``.`` spelling for another root-package source.
         source_root = source_path[:source_separator] if source_separator >= 0 else "."
         if source_root != runtime_path:
@@ -262,6 +319,7 @@ def _source_targets_relative_paths(files, runtime_path):
     relative_paths = []
     for source_file in files:
         source_path = _source_target_path(source_file)
+
         # A root-package source has ``.`` as its shared parent, so its complete
         # path is already relative to the staging tree.
         if runtime_path == ".":
@@ -287,15 +345,16 @@ def _pure_data_runtime_path(ctx):
     Give them a synthetic, label-derived identity so multiple distinct
     pure-data bundles can be composed into one documentation site.
     """
+
     # Encode the complete label identity so every target gets a stable,
     # distinct synthetic path. In particular, local and external labels remain
     # distinct when both are composed by one consuming project.
     label = str(ctx.label)
     encoded_label = (
         label.replace("%", "%25")
-        .replace("@", "%40")
-        .replace("/", "%2F")
-        .replace(":", "%3A")
+            .replace("@", "%40")
+            .replace("/", "%2F")
+            .replace(":", "%3A")
     )
     return "__data__/%s" % encoded_label
 
@@ -349,6 +408,7 @@ def _rebase_bundle_entry(entry, mount_at, attach_to, toctree_index):
         bundle_name = entry.bundle_name,
         primary_need_id = entry.primary_need_id,
         code_targets = entry.code_targets,
+        code_files = entry.code_files,
         # This entry is now part of a parent composition. It may have been the
         # root of its own standalone bundle, but it is a child entry here and
         # must be handled as a mounted source rather than as the parent's root.
@@ -408,6 +468,11 @@ def _docs_bundle_impl(ctx):
     own_bundle_label = str(ctx.label)
     own_bundle_name = ctx.label.name
     own_primary_need_id = ctx.attr.primary_need_id
+
+    # Keep implementation ownership with the declaring documentation entry.
+    # The metamodel resolves its primary Need from that entry's own documents;
+    # rebasing into a parent preserves the same bounded implementation file set.
+    own_code_files = ctx.attr.code_files[DefaultInfo].files if ctx.attr.code_files else depset()
     own_code_targets = [
         struct(
             label = str(target.label),
@@ -451,8 +516,10 @@ def _docs_bundle_impl(ctx):
             # embeds the bundle as a child.
             root_bundle = True,
             code_targets = own_code_targets,
+            code_files = own_code_files,
         ))
         own_source_files.extend(ctx.files.source_dir_globbed)
+
         # Local sources are read directly from the workspace by ``bazel run``.
         # Only sources from external repositories must be staged in runfiles.
         if external:
@@ -494,8 +561,10 @@ def _docs_bundle_impl(ctx):
             # embeds the bundle as a child.
             root_bundle = True,
             code_targets = own_code_targets,
+            code_files = own_code_files,
         ))
         own_source_files.extend(ctx.files.source_targets)
+
         # Explicit artifacts outside the workspace source tree need to be
         # staged for ``bazel run`` just like external source bundles.
         if not ctx.files.source_targets[0].is_source or external:
@@ -526,6 +595,7 @@ def _docs_bundle_impl(ctx):
             # embeds the bundle as a child.
             root_bundle = True,
             code_targets = own_code_targets,
+            code_files = own_code_files,
         ))
 
     child_source_files = []
@@ -643,6 +713,9 @@ _docs_bundle = rule(
         # The aspect preserves the selected target's rule kind while
         # recursively collecting its source files for source-link generation.
         "code_targets": attr.label_list(aspects = [_collect_code_target_sources]),
+        # Reuse the exact file set used by source links. This sibling target
+        # has no dependency on bundle composition, so it cannot form a cycle.
+        "code_files": attr.label(allow_files = True),
         "metamodel": attr.label(
             allow_single_file = True,
             default = Label("@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml"),
@@ -657,21 +730,22 @@ _docs_bundle = rule(
 )
 
 def create_bundle(
-    name,
-    bundles,
-    source_dir_globbed = [],
-    source_targets = [],
-    sourcelinks_json = None,
-    source_dir = None,
-    entry_doc = "index",
-    primary_need_id = None,
-    data = [],
-    code_targets = [],
-    root_docs_config = None,
-    is_root_bundle = False,
-    project_name = None,
-    visibility = None,
-    **kwargs):
+        name,
+        bundles,
+        source_dir_globbed = [],
+        source_targets = [],
+        sourcelinks_json = None,
+        source_dir = None,
+        entry_doc = "index",
+        primary_need_id = None,
+        data = [],
+        code_targets = [],
+        code_files = None,
+        root_docs_config = None,
+        is_root_bundle = False,
+        project_name = None,
+        visibility = None,
+        **kwargs):
     """Create a bundle from directory-discovered files and source targets.
 
     ``source_dir_globbed`` and ``source_targets`` are separate internal inputs
@@ -682,6 +756,7 @@ def create_bundle(
     A root docs configuration, when present, remains authoritative.
     """
     parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
+
     # The public macros use ``None`` to represent an omitted optional ID, but
     # the underlying Bazel rule has a string attribute and the manifest schema
     # keeps this field string-valued. Normalize at that boundary so callers do
@@ -707,6 +782,7 @@ def create_bundle(
         project_name = project_name if project_name != None else name,
         data = data,
         code_targets = code_targets,
+        code_files = code_files,
         root_docs_config = root_docs_config,
         is_root_bundle = is_root_bundle,
         visibility = visibility,
@@ -805,10 +881,7 @@ def merge_bundle_sourcelinks(name, bundle, known_good = None, visibility = None)
 
 def _code_targets_sourcelinks_impl(ctx):
     """Generate one source-link cache for the implementation targets of a bundle."""
-    source_files = depset(transitive = [
-        target[CodeTargetSourcesInfo].sources
-        for target in ctx.attr.code_targets
-    ])
+    source_files = ctx.attr.code_files[DefaultInfo].files
     if not source_files.to_list():
         fail("code_targets must declare source files through filegroups, srcs, hdrs, or textual_hdrs")
 
@@ -828,7 +901,7 @@ def _code_targets_sourcelinks_impl(ctx):
 _code_targets_sourcelinks = rule(
     implementation = _code_targets_sourcelinks_impl,
     attrs = {
-        "code_targets": attr.label_list(aspects = [_collect_code_target_sources]),
+        "code_files": attr.label(mandatory = True),
         "_generate_sourcelinks": attr.label(
             default = Label("//scripts_bazel:generate_sourcelinks"),
             cfg = "exec",
@@ -838,11 +911,11 @@ _code_targets_sourcelinks = rule(
     doc = "Generates source-code links from implementation target source files.",
 )
 
-def generate_code_target_sourcelinks(name, code_targets, visibility = None):
+def generate_code_target_sourcelinks(name, code_files, visibility = None):
     """Create a cached source-link JSON file for one documentation bundle."""
     _code_targets_sourcelinks(
         name = name,
-        code_targets = code_targets,
+        code_files = code_files,
         visibility = visibility,
     )
     return ":" + name

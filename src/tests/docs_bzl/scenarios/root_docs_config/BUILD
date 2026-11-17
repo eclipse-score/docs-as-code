@@ -17,14 +17,14 @@ load("//:docs.bzl", "docs", "docs_bundle")
 # conf.py deliberately contains a value that must not cross the root-docs
 # configuration boundary.
 docs(
-    source_dir = "platform",
-    project = "Root docs configuration fixture",
-    project_url = "https://example.invalid/root-docs-config",
-    metamodel = ":metamodel.yaml",
     bundles = [{
         "bundle": ":component",
         "mount_at": "component",
     }],
+    metamodel = ":metamodel.yaml",
+    project = "Root docs configuration fixture",
+    project_url = "https://example.invalid/root-docs-config",
+    source_dir = "platform",
 )
 
 # The child has no conf.py of its own. Its Needs export must receive the root
@@ -32,8 +32,8 @@ docs(
 # through the independent internal config target.
 docs_bundle(
     name = "component",
-    source_dir = "component",
     root_docs = "//src/tests/docs_bzl/scenarios/root_docs_config:docs",
+    source_dir = "component",
 )
 
 # This bundle's Need ID is valid only when the root's legacy conf.py is
@@ -41,6 +41,6 @@ docs_bundle(
 # root-docs configuration interface.
 docs_bundle(
     name = "conf_sensitive_child",
-    source_dir = "conf_sensitive_child",
     root_docs = "//src/tests/docs_bzl/scenarios/root_docs_config:docs",
+    source_dir = "conf_sensitive_child",
 )

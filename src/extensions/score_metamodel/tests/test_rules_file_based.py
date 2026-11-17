@@ -21,7 +21,7 @@ from typing import Any, cast
 
 import pytest
 from score_metamodel.tests import need as test_need
-from score_pytest.attribute_plugin import apply_test_metadata
+from score_pytest.attribute_plugin import add_test_properties, apply_test_metadata
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import NeedsExtendType, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
@@ -109,6 +109,11 @@ def count_need_objects(rst_file: Path, need_directives: Collection[str]) -> RstD
     return rst_data
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_count_need_objects_ignores_nested_non_need_directives(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -136,32 +141,33 @@ def test_count_need_objects_ignores_nested_non_need_directives(
     assert rst_data.found_objects == [1, 11]
 
 
-def filter_warnings_by_position(
+def filter_messages_by_position(
     rst_data: RstData,
     line_nr: int,
-    warnings: list[str],
+    messages: list[str],
+    level: str = "WARNING",
 ) -> list[str]:
+    """Select diagnostics for this need and strip the location and severity.
+
+    Sphinx emits info messages without a severity prefix. Matching the need's
+    location keeps expectations from matching diagnostics for another need.
     """
-    Filtering only warnings that belong to this file & line. But also deleting the prefix.
-    Filter out the filepath:linenr prefix from warning. So that the 'expect-not' can be generic
-    Without having to pay attention to the filename for example 'EXPECT-NOT: test' then matching
-    a random warning because 'test' is in the filename of 'graph/test_graph_checks.rst'
-    """
-    prefix = f"{rst_data.filename}:{line_nr}: WARNING:"
-    return [warning.removeprefix(prefix) for warning in warnings if prefix in warning]
+    severity = f" {level}:" if level else ""
+    prefix = f"{rst_data.filename}:{line_nr}:{severity}"
+    return [message.removeprefix(prefix) for message in messages if prefix in message]
 
 
-def warning_matches(
+def message_matches(
     rst_data: RstData,
     line_nr: int,
     expected_message: str,
-    warnings: list[str],
+    messages: list[str],
+    level: str = "WARNING",
 ) -> str | None:
-    ### Checks if any element of the warning list includes the given warning info.
-    # It returns the matched warning or None if no match is found.
-    for warning in filter_warnings_by_position(rst_data, line_nr, warnings):
-        if expected_message in warning:
-            return warning
+    """Return a matching diagnostic at the need's location, if present."""
+    for message in filter_messages_by_position(rst_data, line_nr, messages, level):
+        if expected_message in message:
+            return message
     return None
 
 
@@ -266,10 +272,18 @@ def _get_expectations(need: NeedItem | NeedsExtendType, option_name: str) -> lis
     return []
 
 
-def _check_need_warnings(
-    rst_data: RstData, need: NeedItem | NeedsExtendType, warnings: list[str]
+def _check_need_messages(
+    rst_data: RstData,
+    need: NeedItem | NeedsExtendType,
+    messages: list[str],
+    *,
+    info: bool = False,
 ) -> None:
-    ### Verify a need's 'expect' / 'expect_not' annotations against the warnings.
+    """Check location-scoped expectations in the warning or info stream."""
+    level = "" if info else "WARNING"
+    label = "info" if info else "warning"
+    expected_option = "expect_info" if info else "expect"
+    unexpected_option = "expect_info_not" if info else "expect_not"
     # needextend-affected needs (those with 'modifications') are skipped here;
     # their expectations are checked on the extending need itself.
     if need.get("modifications"):
@@ -277,34 +291,39 @@ def _check_need_warnings(
 
     line_nr = need.get("lineno")
 
-    for raw in _get_expectations(need, "expect"):
+    for raw in _get_expectations(need, expected_option):
         expected = raw.strip()
-        if warning_matches(rst_data, line_nr, expected, warnings):
+        if message_matches(rst_data, line_nr, expected, messages, level):
             continue
-        actual = filter_warnings_by_position(rst_data, line_nr, warnings)
+        actual = filter_messages_by_position(rst_data, line_nr, messages, level)
         actual_block = "".join(f"    - {a}\n" for a in actual)
         pytest.fail(
-            f"{rst_data.filename}:{line_nr} Expected warning not found:\n"
-            f" Expected warning in line: '{line_nr}'\n"
-            f" Expected warning string: '{expected}'\n"
-            f"  Actual warning:\n{actual_block}",
+            f"{rst_data.filename}:{line_nr} Expected {label} not found:\n"
+            f" Expected {label} in line: '{line_nr}'\n"
+            f" Expected {label} string: '{expected}'\n"
+            f"  Actual {label}:\n{actual_block}",
             pytrace=False,
         )
 
-    for raw in _get_expectations(need, "expect_not"):
+    for raw in _get_expectations(need, unexpected_option):
         not_expected = raw.strip()
-        unexpected = warning_matches(rst_data, line_nr, not_expected, warnings)
+        unexpected = message_matches(rst_data, line_nr, not_expected, messages, level)
         if not unexpected:
             continue
         pytest.fail(
-            f"{rst_data.filename}:{line_nr} Unexpected warning found:\n"
-            f"  Not expected warning found on line'{line_nr}'\n"
-            f"  Warning Text NOT expected:  '{not_expected}'\n"
+            f"{rst_data.filename}:{line_nr} Unexpected {label} found:\n"
+            f"  Not expected {label} found on line'{line_nr}'\n"
+            f"  {label.capitalize()} text NOT expected:  '{not_expected}'\n"
             f"  Actual: '{unexpected}'\n",
             pytrace=False,
         )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 @pytest.mark.parametrize("rst_file", RST_FILES)
 def test_rst_files(
     record_property: Callable[[str, object], None],
@@ -314,6 +333,7 @@ def test_rst_files(
     monkeypatch: pytest.MonkeyPatch,
     request: pytest.FixtureRequest,
 ) -> None:
+    """Build each RST test fixture and validate its warnings and Needs."""
     ### Build the given rst file with Sphinx and check expected/unexpected warnings.
     # Build the documentation
     app = sphinx_app_setup(RST_DIR / rst_file)
@@ -350,5 +370,7 @@ def test_rst_files(
 
     # Collect warnings and verify each need's expectations
     warnings = _collect_warnings(app)
+    infos = [strip_ansi_codes(line) for line in app.status.getvalue().splitlines()]
     for need in all_needs:
-        _check_need_warnings(rst_data, need, warnings)
+        _check_need_messages(rst_data, need, warnings)
+        _check_need_messages(rst_data, need, infos, info=True)
