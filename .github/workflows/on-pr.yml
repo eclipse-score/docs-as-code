@@ -36,6 +36,8 @@ jobs:
     permissions:
       contents: read
       actions: write # cleanup old caches
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   docs-build:
     needs: [tests]

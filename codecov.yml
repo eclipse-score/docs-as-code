@@ -1,0 +1,62 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+# Codecov merges the LCOV uploads of .github/workflows/_test.yml per commit,
+# compares them with the base commit and comments on pull requests.
+
+codecov:
+  notify:
+    # One upload from unit_tests_coverage and one per docs_bzl suite (cached,
+    # runtime). Waiting for all of them keeps Codecov from first reporting the
+    # numbers of a single suite.
+    after_n_builds: 3
+
+coverage:
+  status:
+    # Coverage informs, it does not gate.
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
+
+comment:
+  layout: "header, diff, flags, components, files"
+  after_n_builds: 3
+
+flag_management:
+  default_rules:
+    # A suite that uploaded nothing shows as missing instead of with the
+    # numbers of an older commit.
+    carryforward: false
+
+component_management:
+  individual_components:
+    # A file can be in several components: the two largest extensions also
+    # count towards "all extensions".
+    - component_id: extensions
+      name: all extensions
+      paths: ["src/extensions/**"]
+    - component_id: score_metamodel
+      paths: ["src/extensions/score_metamodel/**"]
+    - component_id: score_source_code_linker
+      paths: ["src/extensions/score_source_code_linker/**"]
+    - component_id: docs_cli
+      paths: ["src/docs_cli/**"]
+    - component_id: helper_lib
+      paths: ["src/helper_lib/**"]
+    - component_id: scripts_bazel
+      paths: ["scripts_bazel/**"]
+    - component_id: tools
+      paths: ["tools/**"]

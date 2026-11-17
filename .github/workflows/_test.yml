@@ -14,6 +14,11 @@
 name: Run Bazel Tests
 on:
   workflow_call:
+    secrets:
+      # Empty for pull requests from forks: Codecov then takes the upload
+      # without a token, which it allows for public repositories.
+      CODECOV_TOKEN:
+        required: false
 jobs:
   docs_bzl:
     runs-on: ubuntu-24.04
@@ -27,6 +32,10 @@ jobs:
             marker: bazel_cached
           - suite: runtime
             marker: bazel_slow
+          # Which lines run does not depend on the Python version, and measuring
+          # slows the job down: one version is enough.
+          - python-version: "3.12"
+            coverage: true
 
     steps:
       - name: 🛡️ Harden Runner
@@ -44,7 +53,9 @@ jobs:
       - name: Checkout repository (Handle all events)
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.head_ref || github.event.pull_request.head.ref || github.ref }}
+          # The commit this run was started for, not the branch tip: Codecov
+          # files the coverage under this commit, so it must be the one measured.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
 
       - name: Setup Bazel with shared caching
@@ -64,11 +75,38 @@ jobs:
         run: mkdir -p tests-report
 
       - name: Run docs.bzl tests
+        env:
+          # In the workspace, not /tmp: each Bazel sandbox gets a private /tmp.
+          # See src/tests/docs_bzl/README.md.
+          DOCS_BZL_COVERAGE_DIR: ${{ matrix.coverage && format('{0}/.coverage_docs_bzl', github.workspace) || '' }}
         run: >-
           .venv_docs/bin/python -m pytest -vv
           -m "${{ matrix.marker }}"
           src/tests/docs_bzl
           --junitxml=tests-report/docs_bzl_${{ matrix.python-version }}_${{ matrix.suite }}.xml
+
+      # Each Sphinx process writes its own coverage data file; Codecov needs one
+      # LCOV file. Coverage informs, it does not gate: these steps never fail
+      # the job.
+      - name: Convert docs.bzl coverage to LCOV
+        if: ${{ matrix.coverage && !cancelled() }}
+        continue-on-error: true
+        run: >-
+          .venv_docs/bin/python -m coverage combine
+          --data-file=.coverage_docs_bzl/.coverage .coverage_docs_bzl &&
+          .venv_docs/bin/python -m coverage lcov
+          --data-file=.coverage_docs_bzl/.coverage
+          -o coverage-docs-bzl-${{ matrix.suite }}.lcov
+
+      - name: Upload docs.bzl coverage to Codecov
+        if: ${{ matrix.coverage && !cancelled() }}
+        continue-on-error: true
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          files: coverage-docs-bzl-${{ matrix.suite }}.lcov
+          disable_search: true
+          flags: docs_bzl
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload docs.bzl test report
         # No need to upload something that doesn't exist.
@@ -78,6 +116,78 @@ jobs:
         with:
           name: tests-report-docs-bzl-${{ matrix.python-version }}-${{ matrix.suite }}
           path: tests-report
+
+  unit_tests_coverage:
+    # Measures the unit tests with pytest rather than `bazel coverage`: with
+    # `source` in pyproject.toml, coverage.py also lists the files no test
+    # imports, at 0%. A failing test fails this job, like it fails bazel_tests.
+    runs-on: ubuntu-24.04
+    env:
+      COVERAGE_FILE: ${{ github.workspace }}/coverage-data/.coverage
+    steps:
+      - name: 🛡️ Harden Runner
+        if: github.repository_owner == 'eclipse-score'
+        uses: step-security/harden-runner@v2.22.4
+        with:
+          egress-policy: audit
+
+      - name: Install Graphviz
+        uses: eclipse-score/apt-install@main
+        with:
+          packages: graphviz
+          cache: false
+
+      - name: Checkout repository (Handle all events)
+        uses: actions/checkout@v7
+        with:
+          # The commit this run was started for, not the branch tip: Codecov
+          # files the coverage under this commit, so it must be the one measured.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+
+      - name: Setup Bazel with shared caching
+        uses: eclipse-score/cicd-actions/setup-bazel-cache@cache
+        with:
+          disk-cache-key: ${{ github.job }}
+
+      # Which lines run does not depend on the Python version: one is enough.
+      - name: Setup venv
+        run: >-
+          bazel run --lockfile_mode=error
+          --@rules_python//python/config_settings:python_version=3.12
+          //:ide_support
+
+      - name: Run unit tests with coverage
+        # The docs.bzl scenarios run in docs_bzl; the downstream compatibility
+        # tests build consumer repositories and are not unit tests; the PlantUML
+        # regression test needs Bazel's runfiles and runs in bazel_tests.
+        # One module that fails to import must not leave all others unmeasured;
+        # pytest still exits non-zero for it.
+        run: >-
+          mkdir -p coverage-data &&
+          .venv_docs/bin/python -m coverage run
+          -m pytest src tools scripts_bazel
+          --ignore=src/tests/docs_bzl
+          --ignore=src/tests/downstream_compatibility
+          --ignore=src/plantuml_regression_test.py
+          --continue-on-collection-errors
+
+      - name: Convert unit test coverage to LCOV
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: >-
+          .venv_docs/bin/python -m coverage combine coverage-data &&
+          .venv_docs/bin/python -m coverage lcov -o coverage-unit.lcov
+
+      - name: Upload unit test coverage to Codecov
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          files: coverage-unit.lcov
+          disable_search: true
+          flags: unit
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   bazel_tests:
     runs-on: ubuntu-24.04
