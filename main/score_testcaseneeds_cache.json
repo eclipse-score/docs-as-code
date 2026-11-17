@@ -6342,9 +6342,23 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_mounted_source_controls__test_default_logo_assets_are_available",
+    "file": "src/extensions/score_layout/tests/test_mounted_source_controls.py",
+    "line": "26",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_mounted_source_controls__test_local_page_keeps_all_source_controls",
     "file": "src/extensions/score_layout/tests/test_mounted_source_controls.py",
-    "line": "44",
+    "line": "60",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6358,7 +6372,7 @@
   {
     "name": "test_mounted_source_controls__test_mounted_page_keeps_page_toc",
     "file": "src/extensions/score_layout/tests/test_mounted_source_controls.py",
-    "line": "55",
+    "line": "71",
     "result": "passed",
     "repo_name": null,
     "hash": null,
