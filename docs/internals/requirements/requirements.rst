@@ -1259,9 +1259,9 @@ is described in the platform.
   :id: tool_req__docs_saf_attrs_violates
   :implemented: YES
   :tags: Safety Analysis
-  :version: 3
+  :version: 2
   :satisfies:
-    gd_req__saf_linkage_check[version==2],
+    gd_req__saf_linkage_check[version==1],
     gd_req__saf_linkage[version==1],
     gd_req__sec_linkage_check[version==1],
     gd_req__sec_linkage[version==1],
