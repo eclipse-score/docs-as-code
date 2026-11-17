@@ -41,3 +41,7 @@ bazel-runfiles
 pytest
 pyfakefs
 basedpyright
+
+# Measure the Python coverage of the unit tests and of what the docs.bzl
+# scenario tests exercise inside Sphinx.
+coverage

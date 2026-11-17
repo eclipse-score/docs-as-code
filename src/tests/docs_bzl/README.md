@@ -30,6 +30,19 @@ Build-only expected outputs are marked `bazel_cached`; outputs that execute
 Sphinx through `bazel run`, as well as expected-failure tests, are marked
 `bazel_slow`.
 
+## Coverage
+
+Set `DOCS_BZL_COVERAGE_DIR` to measure the Python code the scenarios run.
+Use a directory outside `/tmp`, because each Bazel sandbox gets a private `/tmp`:
+
+```sh
+DOCS_BZL_COVERAGE_DIR=$PWD/.coverage_docs_bzl .venv_docs/bin/python -m pytest src/tests/docs_bzl
+.venv_docs/bin/python -m coverage combine .coverage_docs_bzl
+.venv_docs/bin/python -m coverage html
+```
+
+Sandboxed Needs builds then always re-run Sphinx instead of using cached results.
+
 ## Expected outputs
 
 Positive scenarios may check in files below a fixture's `_expected/` directory:
