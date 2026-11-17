@@ -1259,9 +1259,9 @@ is described in the platform.
   :id: tool_req__docs_saf_attrs_violates
   :implemented: YES
   :tags: Safety Analysis
-  :version: 2
+  :version: 3
   :satisfies:
-    gd_req__saf_linkage_check[version==1],
+    gd_req__saf_linkage_check[version==2],
     gd_req__saf_linkage[version==1],
     gd_req__sec_linkage_check[version==1],
     gd_req__sec_linkage[version==1],
@@ -1276,6 +1276,7 @@ is described in the platform.
      =============  ==========================
      Link Source    Allowed Link Target
      =============  ==========================
+     plat_saf_dfa   feat_arc_sta
      feat_saf_dfa   feat_arc_sta
      comp_saf_dfa   comp_arc_sta
      feat_saf_fmea  feat_arc_dyn, feat_arc_sta
