@@ -175,6 +175,10 @@ ul.navbar-nav li a {
     color: var(--pst-color-text-muted);
     font-weight: 900;
 }
+.navbar-brand img {
+    max-height: 44px;
+    max-width: 180px;
+}
 .navbar-brand:hover, .navbar-brand:visited:hover {
     text-decoration: none;
 }
