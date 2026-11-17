@@ -756,7 +756,7 @@ needs_types:
       # req-Id: tool_req__docs_saf_attr_fmea_failure_effect
       failure_effect: ^.+$
       sufficient: ^(yes|no)$
-      status: ^(valid|invalid)$
+      status: ^(draft|valid|invalid)$
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     mandatory_links:
@@ -779,7 +779,7 @@ needs_types:
       failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
-      status: ^(valid|invalid)$
+      status: ^(draft|valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
@@ -811,7 +811,7 @@ needs_types:
       failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
-      status: ^(valid|invalid)$
+      status: ^(draft|valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
@@ -842,7 +842,7 @@ needs_types:
       failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
-      status: ^(valid|invalid)$
+      status: ^(draft|valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
@@ -875,7 +875,7 @@ needs_types:
       failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
-      status: ^(valid|invalid)$
+      status: ^(draft|valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
