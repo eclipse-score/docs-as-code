@@ -10,12 +10,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+from pathlib import Path
 from typing import Any
 
 from sphinx.application import Sphinx
 
 
 def return_html_theme_options(app: Sphinx) -> dict[str, Any]:
+    asset_directory = Path(__file__).parent / "assets" / "images"
+    logo_path = str(asset_directory / "Eclipse-S-CORE-colour-horizontal.png")
+    dark_logo_path = str(asset_directory / "Eclipse-S-CORE-dark.png")
     theme_options: dict[str, Any] = {
         "navbar_align": "content",
         "header_links_before_dropdown": 5,
@@ -31,7 +35,9 @@ def return_html_theme_options(app: Sphinx) -> dict[str, Any]:
         "use_edit_page_button": True,
         "collapse_navigation": True,
         "logo": {
-            "text": "Eclipse S-CORE",
+            "image_light": logo_path,
+            "image_dark": dark_logo_path,
+            "alt_text": "Eclipse S-CORE documentation - Home",
         },
     }
 
