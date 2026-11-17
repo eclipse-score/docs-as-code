@@ -10,16 +10,32 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Tests for the secondary sidebar handling of mounted documents."""
+"""Tests for the shared layout and mounted-document source controls."""
 
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, cast
 
 import pytest
+from html_options import return_html_theme_options
 from sphinx.application import Sphinx
 
 from src.extensions.score_layout import configure_mounted_source_controls
+
+
+def test_default_logo_assets_are_available() -> None:
+    app = cast(
+        Sphinx,
+        SimpleNamespace(config=SimpleNamespace(html_context={"github_user": "dummy"})),
+    )
+
+    logo = return_html_theme_options(app)["logo"]
+
+    assert Path(logo["image_light"]).name == "Eclipse-S-CORE-colour-horizontal.png"
+    assert Path(logo["image_dark"]).name == "Eclipse-S-CORE-dark.png"
+    assert Path(logo["image_light"]).is_file()
+    assert Path(logo["image_dark"]).is_file()
+    assert logo["alt_text"] == "Eclipse S-CORE documentation - Home"
 
 
 def _app(source_path: str) -> Sphinx:
