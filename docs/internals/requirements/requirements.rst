@@ -235,7 +235,7 @@ This section provides an overview of current process requirements and their clar
   :tags: Common Attributes
   :implemented: YES
   :parent_covered: NO: gd_req__saf_attr_status has additional constraints
-  :version: 2
+  :version: 3
   :satisfies:
     gd_req__req_attr_status[version==1],
     gd_req__arch_attr_status[version==1],
@@ -247,6 +247,7 @@ This section provides an overview of current process requirements and their clar
   * valid
   * invalid
   * valid_inspected (requirement types and architecture elements only)
+  * draft (safety analysis elements only)
 
   This rule applies to:
 
@@ -1200,6 +1201,7 @@ is described in the platform.
   Docs-As-Code shall enforce valid needs (`status` == `valid`) of type
   :need:`tool_req__docs_saf_types` to have at least one `mitigated_by` link to a
   requirement on the corresponding level.
+  Needs with ``status == draft`` are not checked, as their analysis is not finished yet.
 
   At least one of the linked requirements must have
   the same ASIL level or a higher one.
@@ -1213,7 +1215,7 @@ is described in the platform.
   :tags: Safety Analysis
   :version: 1
   :satisfies: gd_req__saf_attr_mitigation_issue[version==2]
-  :parent_covered: NO: Can not enforce 'sufficent' status being no until mitigation is ok
+  :parent_covered: NO: Can not enforce 'sufficent' being no and status being draft until mitigation is ok
 
   Docs-As-Code shall allow needs of type :need:`tool_req__docs_saf_types` to have a
   `mitigation_issue` attribute which links to a GitHub issue.
