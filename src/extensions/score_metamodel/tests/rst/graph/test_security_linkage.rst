@@ -85,7 +85,7 @@
    :safety: QM
    :status: valid
    :satisfied_by: comp__test_sec_yes
-   :expect_not: does not fulfill condition `security == YES`
+   :expect_info_not: does not fulfill condition `security == YES`
 
 .. Negative Test: security requirement satisfied by a non-security component.
 
@@ -95,7 +95,7 @@
    :safety: QM
    :status: valid
    :satisfied_by: comp__test_sec_no
-   :expect: Parent need `comp__test_sec_no` does not fulfill condition `security == YES`
+   :expect_info: Parent need `comp__test_sec_no` does not fulfill condition `security == YES`
 
 
 .. tool_req__docs_arch_link_nonsec_to_sec_req: info_only check, reported as info.
@@ -115,7 +115,7 @@
    :safety: ASIL_B
    :status: valid
    :fulfils: comp_req__test_sec_no
-   :expect_not: does not fulfill condition `security == NO`
+   :expect_info_not: does not fulfill condition `security == NO`
 
 .. Negative Test: non-security interface fulfils a security requirement.
 
@@ -125,7 +125,7 @@
    :safety: ASIL_B
    :status: valid
    :fulfils: comp_req__test_sec_yes
-   :expect: Parent need `comp_req__test_sec_yes` does not fulfill condition `security == NO`
+   :expect_info: Parent need `comp_req__test_sec_yes` does not fulfill condition `security == NO`
 
 
 .. tool_req__docs_req_link_security_child: info_only check, reported as info.
@@ -137,7 +137,7 @@
    :security: YES
    :safety: QM
    :status: valid
-   :expect_not: No linked need in `derived_from_back`
+   :expect_info_not: No linked need in `derived_from_back`
 
 .. comp_req:: Security child
    :id: comp_req__test_sec_child_ok_yes
@@ -162,7 +162,7 @@
    :security: YES
    :safety: QM
    :status: valid
-   :expect: No linked need in `derived_from_back` fulfills condition `security == YES`
+   :expect_info: No linked need in `derived_from_back` fulfills condition `security == YES`
 
 .. comp_req:: Non-security child
    :id: comp_req__test_sec_child_no
