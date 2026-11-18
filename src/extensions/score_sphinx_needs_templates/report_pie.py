@@ -20,8 +20,10 @@ reports explain the colours once per page, and large numbers in the slices.
 """
 
 import hashlib
+import json
 from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Any
 
 from docutils import nodes
@@ -328,11 +330,131 @@ def _process_coverage_reports(
         )
 
 
+_FINDING_CLASSES = (
+    ("critical", "#7a0000"),
+    ("high", "#ca2828"),
+    ("medium", "#f0a500"),
+    ("low", "#9bc3e6"),
+)
+
+
+class StaticAnalysisReport(nodes.General, nodes.Element):
+    """Placeholder resolved from ``static_analysis_summary.json`` during HTML writing."""
+
+
+class StaticAnalysisReportDirective(SphinxDirective):
+    """Show classified static-analysis findings for the primary Need named by the argument."""
+
+    required_arguments = 1
+    option_spec = {"title": directives.unchanged_required}
+
+    def run(self) -> Sequence[nodes.Node]:
+        node = StaticAnalysisReport(
+            need_id=self.arguments[0],
+            title=self.options.get("title", self.arguments[0]),
+        )
+        self.set_source_info(node)
+        return [node]
+
+
+def _read_static_analysis(app: Sphinx) -> dict[str, Any] | None:
+    # Written by the Docs CLI into the output directory before Sphinx starts.
+    path = Path(app.outdir) / "static_analysis_summary.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else None
+
+
+def _static_analysis_report(
+    app: Sphinx,
+    report: StaticAnalysisReport,
+    data: dict[str, Any] | None,
+    docname: str,
+) -> nodes.container:
+    block = nodes.container(classes=["score-static-analysis-report"])
+    need_id = str(report["need_id"]).split("[", 1)[0]
+    summaries = {
+        entry["primary_need_id"]: entry
+        for entry in (data or {}).get("static_analysis_summaries", [])
+    }
+    summary = summaries.get(need_id)
+    if data is None or summary is None:
+        block += nodes.paragraph(
+            text="No static analysis data available for this component."
+        )
+        return block
+    files = summary["files"]
+    if not files["total"]:
+        block += nodes.paragraph(text="No source files selected for this component.")
+        return block
+    total = sum(summary["findings"].values())
+    tools = sorted(
+        {
+            f"{tool['name']} {tool['version']}" if tool.get("version") else tool["name"]
+            for tool in data["tools"]
+        }
+    )
+    block += nodes.paragraph(
+        text=f"{total} open findings in {files['with_findings']}/{files['total']} "
+        f"selected source files; {summary['suppressed']} suppressed. "
+        f"Tools: {', '.join(tools) or 'none'}."
+    )
+    if total:
+        title = f"{report['title']} Static Analysis Findings"
+        sizes = [summary["findings"][name] for name, _ in _FINDING_CLASSES]
+        counts = ", ".join(
+            f"{name} {size}"
+            for (name, _), size in zip(_FINDING_CLASSES, sizes, strict=True)
+        )
+        digest = hashlib.sha256(f"{docname}-{title}-{counts}".encode()).hexdigest()[:10]
+        with _report_pie_style():
+            image = save_matplotlib_figure(
+                app,
+                draw_report_pie(title, sizes, [color for _, color in _FINDING_CLASSES]),
+                f"score_static_analysis_pie_{digest}",
+                docname,
+            )
+        image["alt"] = f"{title}: {counts}"
+        image["classes"].append("score-report-pie")
+        block += image
+        block += nodes.paragraph(
+            text="Dark red: critical; red: high; orange: medium; blue: low."
+        )
+    if summary["top_rules"]:
+        block += nodes.paragraph(text="Most frequent rules:")
+        rules = nodes.bullet_list()
+        for rule in summary["top_rules"]:
+            item = nodes.list_item()
+            item += nodes.paragraph(
+                text=f"{rule['rule']} ({rule['tool']}, {rule['classification']}): "
+                f"{rule['count']}"
+            )
+            rules += item
+        block += rules
+    return block
+
+
+def _process_static_analysis_reports(
+    app: Sphinx, doctree: nodes.document, docname: str
+) -> None:
+    reports = list(doctree.findall(StaticAnalysisReport))
+    if not reports:
+        return
+    if app.builder.format != "html":
+        for report in reports:
+            report.replace_self([])
+        return
+    data = _read_static_analysis(app)
+    for report in reports:
+        report.replace_self(_static_analysis_report(app, report, data, docname))
+
+
 def setup(app: Sphinx) -> None:
     app.add_node(ReportPie)
     app.add_node(CoverageReport)
     app.add_directive("score-coverage-report", CoverageReportDirective)
     app.connect("doctree-resolved", _process_coverage_reports, priority=600)
+    app.add_node(StaticAnalysisReport)
+    app.add_directive("score-static-analysis-report", StaticAnalysisReportDirective)
+    app.connect("doctree-resolved", _process_static_analysis_reports, priority=600)
     app.add_directive("score-report-pie", ReportPieDirective)
     # After Sphinx-Needs (default priority) has resolved all Need nodes.
     app.connect("doctree-resolved", _process_report_pies, priority=600)
