@@ -575,7 +575,7 @@ Architecture Attributes
    :version: 2
    :satisfies:
       gd_req__arch_attr_mandatory[version==1],
-      gd_req__arch_attr_fulfils[version==1],
+      gd_req__arch_attr_fulfils[version==2],
    :implemented: YES
    :parent_covered: YES
    :parent_has_problem: NO
@@ -600,7 +600,7 @@ Architecture Attributes
   :version: 3
   :satisfies:
    gd_req__arch_linkage_requirement_type[version==1],
-   gd_req__arch_attr_fulfils[version==1],
+   gd_req__arch_attr_fulfils[version==2],
    gd_req__arch_traceability[version==1],
    gd_req__req_linkage_fulfill[version==1],
   :parent_covered: YES
@@ -1266,7 +1266,7 @@ is described in the platform.
   :tags: Safety Analysis
   :version: 2
   :satisfies:
-    gd_req__saf_linkage_check[version==1],
+    gd_req__saf_linkage_check[version==2],
     gd_req__saf_linkage[version==1],
     gd_req__sec_linkage_check[version==1],
     gd_req__sec_linkage[version==1],
