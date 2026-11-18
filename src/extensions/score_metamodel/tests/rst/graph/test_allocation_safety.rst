@@ -17,7 +17,7 @@ Safety requirement allocation
 
 .. test_metadata::
    :id: test_metadata__allocation_safety
-   :fully_verifies_list: tool_req__docs_arch_link_safety_to_req[version==3], tool_req__docs_arch_link_qm_to_safety_req[version==3]
+   :fully_verifies_list: tool_req__docs_arch_link_safety_to_req[version==4], tool_req__docs_arch_link_qm_to_safety_req[version==3]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -27,7 +27,8 @@ Safety requirement allocation
    need at least one safety requirement, while mixed allocations are accepted.
    Features and components use incoming satisfied_by allocations for completeness;
    links from views and interfaces via fulfils are optional and only checked for
-   QM compatibility. Optional component AoU links do not replace
+   QM compatibility.
+   Optional component AoU links do not replace
    requirement allocations. Compatibility violations are warnings; missing
    safety requirements are informational diagnostics.
 
