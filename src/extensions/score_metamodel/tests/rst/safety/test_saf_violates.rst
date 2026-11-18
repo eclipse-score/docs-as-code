@@ -20,6 +20,7 @@
 
    Tests that SAF needs link `violates` to correct diagram types per the table:
 
+   * plat_saf_dfa -> feat_arc_sta
    * feat_saf_dfa -> feat_arc_sta
    * comp_saf_dfa -> comp_arc_sta
    * feat_saf_fmea -> feat_arc_dyn, feat_arc_sta
@@ -55,6 +56,35 @@
    :sufficient: no
    :status: valid
    :violates: feat_arc_sta__001
+
+
+.. plat_saf_dfa:: plat DFA violates feat arc sta
+   :id: plat_saf_dfa__viol__001
+   :failure_id: df_003
+   :failure_effect: shared resource exhausted
+   :sufficient: no
+   :status: valid
+   :violates: feat_arc_sta__001
+   :expect_not: as 'violates'
+
+
+.. plat_saf_dfa:: plat DFA violates comp arc sta
+   :id: plat_saf_dfa__viol__bad_001
+   :failure_id: df_bad_003
+   :failure_effect: wrong link target
+   :sufficient: no
+   :status: valid
+   :violates: comp_arc_sta__bad_001
+   :expect: must reference Feature & Feature Package Diagram
+
+
+.. plat_saf_dfa:: Missing violates link
+   :id: plat_saf_dfa__viol__missing_001
+   :failure_id: df_missing_violates_plat
+   :failure_effect: missing link
+   :sufficient: no
+   :status: valid
+   :expect: is missing required link: `violates`
 
 
 .. comp_saf_dfa:: comp DFA violates comp arc sta
