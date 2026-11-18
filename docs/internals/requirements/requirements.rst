@@ -237,10 +237,10 @@ This section provides an overview of current process requirements and their clar
   :parent_covered: NO: gd_req__saf_attr_status has additional constraints
   :version: 2
   :satisfies:
-    gd_req__req_attr_status,
-    gd_req__arch_attr_status,
-    gd_req__saf_attr_status,
-    gd_req__req_check_mandatory,
+    gd_req__req_attr_status[version==1],
+    gd_req__arch_attr_status[version==1],
+    gd_req__saf_attr_status[version==2],
+    gd_req__req_check_mandatory[version==1],
 
   Docs-as-Code shall enforce that the ``status`` attribute has one of the following values:
 
@@ -263,7 +263,7 @@ This section provides an overview of current process requirements and their clar
   :satisfies:
     gd_req__req_attr_status[version==1],
     gd_req__arch_attr_status[version==1],
-    gd_req__saf_attr_status[version==1],
+    gd_req__saf_attr_status[version==2],
     gd_req__sec_attr_status[version==1],
   :parent_covered: NO: process requirements only define the status values
 
@@ -1212,7 +1212,7 @@ is described in the platform.
   :implemented: YES
   :tags: Safety Analysis
   :version: 1
-  :satisfies: gd_req__saf_attr_mitigation_issue[version==1]
+  :satisfies: gd_req__saf_attr_mitigation_issue[version==2]
   :parent_covered: NO: Can not enforce 'sufficent' status being no until mitigation is ok
 
   Docs-As-Code shall allow needs of type :need:`tool_req__docs_saf_types` to have a
