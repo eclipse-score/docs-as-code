@@ -253,6 +253,15 @@ Test Coverage
 .. score-coverage-report:: {{ component_id }}
    :title: {{ component_title }}
 
+Static Code Analysis
+^^^^^^^^^^^^^^^^^^^^
+
+Open findings of the static analysis tools (SARIF), assigned to this component
+by its source files and classified as critical, high, medium or low.
+
+.. score-static-analysis-report:: {{ component_id }}
+   :title: {{ component_title }}
+
 Verification & Safety Analysis Documents
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

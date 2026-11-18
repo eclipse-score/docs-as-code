@@ -38,6 +38,20 @@ py_library(
     visibility = ["//visibility:public"],
 )
 
+py_library(
+    name = "sarif_summary_lib",
+    srcs = ["sarif_summary.py"],
+    visibility = ["//visibility:public"],
+    deps = [":lcov_summary_lib"],
+)
+
+score_pytest(
+    name = "sarif_summary_test",
+    srcs = ["sarif_summary_test.py"],
+    pytest_config = "//:pyproject.toml",
+    deps = [":sarif_summary_lib"],
+)
+
 score_pytest(
     name = "lcov_summary_test",
     srcs = ["lcov_summary_test.py"],
@@ -55,6 +69,7 @@ score_pytest(
     pytest_config = "//:pyproject.toml",
     deps = all_requirements + [
         ":lcov_summary_lib",
+        ":sarif_summary_lib",
         "//src/extensions/score_mounts",
         "//src/helper_lib",
     ],
@@ -72,6 +87,7 @@ score_pytest(
     pytest_config = "//:pyproject.toml",
     deps = all_requirements + [
         ":lcov_summary_lib",
+        ":sarif_summary_lib",
         "//src/extensions/score_mounts",
         "//src/helper_lib",
     ],
