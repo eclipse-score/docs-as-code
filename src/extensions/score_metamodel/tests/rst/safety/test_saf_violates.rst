@@ -14,7 +14,7 @@
 
 .. test_metadata::
    :id: test_metadata__saf_violates
-   :fully_verifies_list: tool_req__docs_saf_attrs_violates[version==2]
+   :fully_verifies_list: tool_req__docs_saf_attrs_violates[version==3]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -23,7 +23,7 @@
    * feat_saf_dfa -> feat_arc_sta
    * comp_saf_dfa -> comp_arc_sta
    * feat_saf_fmea -> feat_arc_dyn, feat_arc_sta
-   * comp_saf_fmea -> comp_arc_dyn, comp_arc_sta
+   * comp_saf_fmea -> comp_arc_dyn, comp_arc_sta, real_arc_int_op
 
 
 .. feat_arc_sta:: Stub Feature Static Architecture
@@ -37,6 +37,13 @@
 
 .. comp_arc_dyn:: Stub Component Dynamic Architecture
    :id: comp_arc_dyn__001
+
+.. real_arc_int:: Stub Component Interface
+   :id: real_arc_int__001
+
+.. real_arc_int_op:: Stub Component Interface Operation
+   :id: real_arc_int_op__001
+   :included_by: real_arc_int__001
 
 .. feat_arc_sta:: Stub Feature Static Architecture (bad target)
    :id: feat_arc_sta__bad_001
@@ -100,6 +107,16 @@
    :sufficient: no
    :status: valid
    :violates: comp_arc_sta__001
+
+
+.. comp_saf_fmea:: comp FMEA violates interface operation
+   :id: comp_saf_fmea__viol__003
+   :fault_id: fault_006
+   :failure_effect: no return
+   :sufficient: no
+   :status: valid
+   :violates: comp_arc_sta__001, real_arc_int_op__001
+   :expect_not: references 'real_arc_int_op__001' as 'violates'
 
 
 .. feat_saf_dfa:: feat DFA violates comp arc sta

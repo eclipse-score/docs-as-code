@@ -348,14 +348,78 @@ def find_test_folder(base_path: Path | None = None) -> Path | None:
     return None
 
 
-def run_xml_parser(app: Sphinx, env: BuildEnvironment):
+def parse_dependable_element_needs(v: str) -> list[Path]:
+    """Parse the JSON list in `score_dependable_element_needs` into paths."""
+    if v in ("[]", ""):
+        return []
+    raw_parsed: object = json.loads(v)
+    if not isinstance(raw_parsed, list) or not all(
+        isinstance(p, str) for p in cast("list[object]", raw_parsed)
+    ):
+        raise ValueError(f"score_dependable_element_needs must be a list: {v!r}")
+    return [Path(p) for p in cast("list[str]", raw_parsed)]
+
+
+def read_dependable_element_needs(
+    file: Path, known_good_json: Path | None
+) -> list[DataOfTestCase]:
+    """Read the testcase Needs written by a `dependable_element` target."""
+    data = cast(dict[str, Any], json.loads(file.read_text(encoding="utf-8")))
+    versions = cast(dict[str, Any], data.get("versions", {}))
+    selected = cast(dict[str, Any], versions.get(data.get("current_version", ""), {}))
+    test_cases: list[DataOfTestCase] = []
+    for need in cast(dict[str, dict[str, Any]], selected.get("needs", {})).values():
+        if need.get("type") != "testcase":
+            continue
+        # Without a repo_name the test case belongs to the local repository,
+        # like a test.xml from the local bazel-testlogs.
+        repo_name = need.get("repo_name") or "local_repo"
+        md_hash, md_url = ("", "")
+        if repo_name != "local_repo" and known_good_json:
+            md_hash, md_url = parse_info_from_known_good(known_good_json, repo_name)
+        test_cases.append(
+            DataOfTestCase(
+                name=need.get("name"),
+                file=need.get("file") or None,
+                line=need.get("line") or None,
+                result=need.get("result"),
+                result_text=need.get("result_text", ""),
+                repo_name=repo_name,
+                hash=md_hash,
+                url=md_url,
+                TestType=need.get("test_type") or None,
+                DerivationTechnique=need.get("derivation_technique") or None,
+                PartiallyVerifies=",".join(need.get("partially_verifies", [])) or None,
+                FullyVerifies=",".join(need.get("fully_verifies", [])) or None,
+            )
+        )
+    return test_cases
+
+
+def run_xml_parser(
+    app: Sphinx,
+    env: BuildEnvironment,
+    dependable_element_needs: list[Path] | None = None,
+):
     """
     This is the 'main' function for parsing test.xml's and
     building testcase needs.
     It gets called from the source_code_linker __init__
+
+    Test cases from `dependable_element_needs` take precedence over the same
+    test cases found in `tests-report` or `bazel-testlogs`.
     """
-    testlogs_dir = find_test_folder()
-    if testlogs_dir is None:
+    known_good_json_str = app.config.KNOWN_GOOD_JSON.strip()
+    known_good_json = Path(known_good_json_str) if known_good_json_str else None
+    test_case_needs: list[DataOfTestCase] = []
+    for file in dependable_element_needs or []:
+        test_case_needs.extend(read_dependable_element_needs(file, known_good_json))
+    for tc in test_case_needs:
+        construct_and_add_need(app, tc)
+
+    ws_root = find_ws_root()
+    testlogs_dir = find_test_folder(ws_root) if ws_root else None
+    if testlogs_dir is None and not test_case_needs:
         return
     allowed_dirs = parse_testcase_source_dirs(
         getattr(app.config, "testcase_source_dirs", "")
@@ -365,10 +429,17 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
             f"Scoping testcase needs to source dirs: {allowed_dirs}",
             type="score_source_code_linker",
         )
-    xml_file_paths = find_xml_files(testlogs_dir)
-    test_case_needs = build_test_needs_from_files(
-        app, env, xml_file_paths, allowed_dirs
-    )
+    if testlogs_dir is not None:
+        xml_file_paths = find_xml_files(testlogs_dir)
+        test_case_needs.extend(
+            build_test_needs_from_files(
+                app,
+                env,
+                xml_file_paths,
+                allowed_dirs,
+                exclude={(tc.name, tc.file) for tc in test_case_needs},
+            )
+        )
     # Saving the test case needs for cache
     logger.info(
         f"Saving {len(test_case_needs)} test case needs to the cache `score_testcaseneeds_cache.json` in _build/."
@@ -392,6 +463,7 @@ def build_test_needs_from_files(
     enw_: BuildEnvironment,
     xml_paths: list[Path],
     allowed_dirs: list[str] | None = None,
+    exclude: set[tuple[str | None, str | None]] | None = None,
 ) -> list[DataOfTestCase]:
     """
     Reading in all test.xml files, and building 'testcase' external need objects out of
@@ -399,10 +471,12 @@ def build_test_needs_from_files(
 
     When `allowed_dirs` is non-empty, only testcases whose source file lives under one
     of those repo-relative directories are turned into needs (see read_test_xml_file).
+    Test cases whose `(name, file)` is in `exclude` are skipped.
 
     Returns:
         - list[TestCaseNeed]
     """
+    exclude = exclude or set()
     known_good_json_str = app.config.KNOWN_GOOD_JSON.strip()
     known_good_json = Path(known_good_json_str) if known_good_json_str else None
     tcns: list[DataOfTestCase] = []
@@ -417,6 +491,7 @@ def build_test_needs_from_files(
         missing_prop_tests = ", ".join(n for n in tests_missing_some_props)
         if missing_prop_tests:
             logger.info(f"Tests missing some properties: {missing_prop_tests}")
+        test_cases = [tc for tc in test_cases if (tc.name, tc.file) not in exclude]
         tcns.extend(test_cases)
         for tc in test_cases:
             construct_and_add_need(app, tc)

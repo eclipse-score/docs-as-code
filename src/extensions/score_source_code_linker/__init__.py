@@ -57,6 +57,7 @@ from src.extensions.score_source_code_linker.testlink import (
 )
 from src.extensions.score_source_code_linker.xml_parser import (
     construct_and_add_need,
+    parse_dependable_element_needs,
     run_xml_parser,
 )
 from src.helper_lib import find_ws_root
@@ -183,6 +184,12 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
         not tl_cache_json.exists()
         or not app.config.skip_rescanning_via_source_code_linker
     ):
+        dependable_element_needs = parse_dependable_element_needs(
+            app.config.score_dependable_element_needs
+        )
+        if dependable_element_needs:
+            run_xml_parser(app, env, dependable_element_needs)
+            return
         ws_root = find_ws_root()
         if not ws_root:
             return
@@ -329,6 +336,16 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
             "str(list) of repo-relative directory paths. When set, the test-code-linker "
             "only builds testcase needs for testcases whose source file lives under one of "
             "these directories. Empty means no filtering (scan the whole workspace)."
+        ),
+    )
+    app.add_config_value(
+        "score_dependable_element_needs",
+        default="",
+        rebuild="env",
+        types=str,
+        description=(
+            "JSON list of needs.json files written by dependable_element targets. "
+            "Their testcase Needs take precedence over scanned test.xml files."
         ),
     )
     setup_once(app)

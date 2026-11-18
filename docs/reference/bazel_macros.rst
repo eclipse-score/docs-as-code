@@ -170,6 +170,16 @@ Minimal example (root ``BUILD``)
   for extension processing.
   When ``metamodel`` is omitted the default metamodel is used unchanged.
 
+- ``dependable_elements`` (list of bazel labels, optional)
+  ``<name>_needs.json`` targets of a
+  :ref:`dependable_element <dependable_element_rules>`. Their test cases
+  become ``testcase`` Needs linked to the verified requirements,
+  exactly like test cases found in ``tests-report`` or ``bazel-testlogs``,
+  which they take precedence over. The tests run as build actions, so the
+  documentation build does not depend on a previous ``bazel test``. Because test
+  targets are ``testonly``, all generated documentation targets become
+  ``testonly`` when this list is not empty.
+
 Coverage input
 ~~~~~~~~~~~~~~
 
@@ -212,7 +222,7 @@ site).
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], primary_need_id = None, root_docs = None, visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], primary_need_id = None, root_docs = None, external_needs = [], visibility = None)``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
@@ -269,11 +279,15 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
 
 - ``needs_local`` (internal target)
   A source-bearing bundle creates ``<name>.__internal__.needs_local`` with the
-  ``needs.json`` file for Needs declared by its own sources. The standalone
-  build is intentionally self-contained in this version: references to Needs
-  defined outside the bundle remain unresolved and fail strict builds.
-  Cross-bundle imports and merged exports are planned for a later change.
+  ``needs.json`` file for Needs declared by its own sources. References to
+  Needs defined outside the bundle fail strict builds unless the owning
+  inventories are listed in ``external_needs``; imported Needs are not part of
+  the export. Merged exports are planned for a later change.
   Data-only bundles do not create a Needs target.
+
+- ``external_needs`` (list of bazel labels, optional)
+  Same as ``docs(external_needs = [...])``, but only for this bundle's local
+  Needs export.
 
 .. note::
 
@@ -311,3 +325,31 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
 
   The root project's ``project_url`` is resolved for the declaring bundle by
   appending its workspace-relative Bazel package path.
+
+.. _dependable_element_rules:
+
+Dependable elements (score_tooling ``rules_score``)
+---------------------------------------------------
+
+The ``dependable_element`` of score_tooling's ``rules_score`` checks
+traceability with LOBSTER. Its requirement macros read Sphinx-Needs
+requirements from ``docs_bundle`` exports (``needs = [...]``,
+``feat_id``/``comp_id``). The executed test cases of its LOBSTER report are
+exported as ``<name>_needs.json`` and imported back into this documentation:
+
+.. code-block:: python
+
+   dependable_element(
+       name = "my_element",
+       docs = False,  # no separate rules_score Sphinx build
+       ...
+   )
+
+   docs(
+       dependable_elements = ["//my/pkg:my_element_needs.json"],
+       ...
+   )
+
+The ``testcase`` Needs use the ID scheme and fields of the ``test.xml`` parser
+(``partially_verifies``/``fully_verifies``, ``result``, ``test_type``,
+``derivation_technique``).

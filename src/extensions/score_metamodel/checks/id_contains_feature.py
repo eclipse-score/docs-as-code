@@ -40,6 +40,10 @@ def id_contains_feature(app: Sphinx, need: NeedItem, log: CheckLogger):
         # Decision records are intentionally not located within their components
         return
 
+    # A bundle's own export does not know its mount path; the composed build checks it.
+    if app.config.score_bundle_needs_export:
+        return
+
     # Get the part of the string after the first two underscores: the path
     feature = parts[1]
     if feature == "example_feature":
