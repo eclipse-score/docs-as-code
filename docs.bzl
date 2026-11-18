@@ -646,6 +646,7 @@ def _sphinx_runtime_deps(deps):
         Label("//src:plantuml_for_python"),
         Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
         Label("//src/docs_cli:lcov_summary_lib"),
+        Label("//src/docs_cli:sarif_summary_lib"),
     ]:
         if fixed_dep not in result:
             result.append(fixed_dep)
