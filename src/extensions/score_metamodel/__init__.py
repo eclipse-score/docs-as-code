@@ -97,6 +97,21 @@ def graph_check(func: graph_check_function):
     return func
 
 
+def _location_prefix(srcdir: str | Path) -> str:
+    """Path prefix for the file locations reported by checks.
+
+    Inside a Bazel runfiles tree the srcdir is somewhere below bazel-out, so
+    locations are reported relative to the srcdir itself (no prefix).
+    Otherwise they are relative to the workspace root (or cwd), so editors and
+    terminals can resolve them.
+    """
+    if env.optional_path("RUNFILES_DIR") or env.optional_path("RUNFILES_MANIFEST_FILE"):
+        return ""
+    ws_root = env.optional_path("BUILD_WORKSPACE_DIRECTORY")
+    cwd_or_ws_root = ws_root if ws_root else Path.cwd()
+    return str(Path(srcdir).relative_to(cwd_or_ws_root))
+
+
 def _run_checks(app: Sphinx) -> None:
     # First of all postprocess the need links to convert
     # type names into actual need types.
@@ -113,11 +128,7 @@ def _run_checks(app: Sphinx) -> None:
 
     logger.debug(f"Running checks for {len(needs_all_needs)} needs")
 
-    ws_root = env.optional_path("BUILD_WORKSPACE_DIRECTORY")
-    cwd_or_ws_root = ws_root if ws_root else Path.cwd()
-    prefix = str(Path(app.srcdir).relative_to(cwd_or_ws_root))
-
-    log = CheckLogger(logger, prefix, get_reporter(app))
+    log = CheckLogger(logger, _location_prefix(app.srcdir), get_reporter(app))
 
     checks_filter = parse_checks_filter(app.config.score_metamodel_checks)
 

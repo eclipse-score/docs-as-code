@@ -170,6 +170,7 @@
    :safety_affected: YES
    :security_affected: NO
    :tcl: HIGH
+   :tool_version: v1.0
    :realizes: wp__doc_attrs
    :expect_not: is missing required attribute, is missing required link, does not follow pattern
 
@@ -219,12 +220,12 @@
    :tcl: MEDIUM
    :expect: doc_tool__attr_bad_tcl.tcl (MEDIUM): does not follow pattern
 
-.. doc_tool:: TVR Without Tool Version During Migration
+.. doc_tool:: TVR Without Tool Version
    :id: doc_tool__attr_missing_tool_version
    :version: 1
    :status: evaluated
    :security_affected: NO
-   :expect_not: is missing required attribute: `tool_version`
+   :expect: doc_tool__attr_missing_tool_version: is missing required attribute: `tool_version`.
 
 .. doc_tool:: TVR With Missing Mandatory Attributes
    :id: doc_tool__attr_missing

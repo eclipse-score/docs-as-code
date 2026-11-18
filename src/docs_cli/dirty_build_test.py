@@ -37,7 +37,6 @@ def docs_workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(_WORKSPACE))
     monkeypatch.setenv("PACKAGE_DIR", "component")
     monkeypatch.setenv("SOURCE_DIRECTORY", "docs")
-    monkeypatch.setenv("DATA", "[]")
     monkeypatch.delenv("SCORE_CODE_FILE_LISTS", raising=False)
     fs.create_dir(_WORKSPACE / "component")
     for name in ("MODULE.bazel", "MODULE.bazel.lock", "component/BUILD"):

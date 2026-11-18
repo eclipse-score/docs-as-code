@@ -74,11 +74,6 @@ docs(
             "attach_to": "index",
         },
         {
-            "bundle": ":legacy_data_bundle",
-            "mount_at": "legacy_data_test",
-            "attach_to": "index",
-        },
-        {
             "bundle": ":isolated_source_bundle",
             "mount_at": "isolated_test",
             "attach_to": "index",
@@ -93,21 +88,3 @@ docs(
 )
 
 # END docs-bundle-howto: generated-data
-
-# Legacy compatibility: generated RST files declared through ``data`` must
-# remain mountable while callers migrate to the explicit ``srcs`` attribute.
-genrule(
-    name = "legacy_generated_page",
-    srcs = [],
-    outs = ["legacy_generated/index.rst"],
-    cmd = """echo 'Legacy Data Page
-==================' > $@""",
-)
-
-# Legacy compatibility bundle: ``data`` still reaches the Sphinx mount walker.
-docs_bundle(
-    name = "legacy_data_bundle",
-    data = [":legacy_generated_page"],
-    entry_doc = "index",
-    visibility = ["//visibility:public"],
-)

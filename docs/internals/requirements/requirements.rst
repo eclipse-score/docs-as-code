@@ -235,7 +235,7 @@ This section provides an overview of current process requirements and their clar
   :tags: Common Attributes
   :implemented: YES
   :parent_covered: NO: gd_req__saf_attr_status has additional constraints
-  :version: 2
+  :version: 3
   :satisfies:
     gd_req__req_attr_status,
     gd_req__arch_attr_status,
@@ -247,6 +247,7 @@ This section provides an overview of current process requirements and their clar
   * valid
   * invalid
   * valid_inspected (requirement types and architecture elements only)
+  * draft (safety analysis elements only)
 
   This rule applies to:
 
@@ -263,7 +264,7 @@ This section provides an overview of current process requirements and their clar
   :satisfies:
     gd_req__req_attr_status[version==1],
     gd_req__arch_attr_status[version==1],
-    gd_req__saf_attr_status[version==1],
+    gd_req__saf_attr_status[version==2],
     gd_req__sec_attr_status[version==1],
   :parent_covered: NO: process requirements only define the status values
 
@@ -574,7 +575,7 @@ Architecture Attributes
    :version: 2
    :satisfies:
       gd_req__arch_attr_mandatory[version==1],
-      gd_req__arch_attr_fulfils[version==1],
+      gd_req__arch_attr_fulfils[version==2],
    :implemented: YES
    :parent_covered: YES
    :parent_has_problem: NO
@@ -599,7 +600,7 @@ Architecture Attributes
   :version: 3
   :satisfies:
    gd_req__arch_linkage_requirement_type[version==1],
-   gd_req__arch_attr_fulfils[version==1],
+   gd_req__arch_attr_fulfils[version==2],
    gd_req__arch_traceability[version==1],
    gd_req__req_linkage_fulfill[version==1],
   :parent_covered: YES
@@ -648,24 +649,25 @@ Architecture Attributes
 .. tool_req:: Ensure safety architecture elements link a safety requirement
   :id: tool_req__docs_arch_link_safety_to_req
   :tags: Architecture
-  :implemented: PARTIAL
-  :version: 3
+  :implemented: YES
+  :version: 4
   :satisfies: gd_req__arch_linkage_requirement[version==1]
   :parent_covered: YES
 
   Docs-as-Code shall enforce that architecture elements of type
-  :need:`tool_req__docs_arch_types` with ``safety != QM`` are linked to at least one
-  requirement of type :need:`tool_req__docs_req_types` with ``safety != QM``.
-  For features and components, this shall be checked through incoming
-  ``satisfied_by`` allocations; for architectural views and interfaces, through
-  ``fulfils``. Additional QM requirements are permitted.
-
-  .. note:: implemented as info to enable non-breaking transition
+  features and components (:need:`tool_req__docs_arch_types`) with ``safety != QM``
+  are linked to at least one requirement of type :need:`tool_req__docs_req_types`
+  with ``safety != QM``.
+  This shall be checked through incoming ``satisfied_by`` allocations.
+  Additional QM requirements are permitted.
+  Architectural views and interfaces link requirements only optionally via
+  ``fulfils`` (see :need:`tool_req__docs_arch_link_fulfils`); no completeness is
+  enforced for them.
 
 .. tool_req:: Ensure qm architecture elements do not fulfill safety requirements
   :id: tool_req__docs_arch_link_qm_to_safety_req
   :tags: Architecture
-  :implemented: PARTIAL
+  :implemented: YES
   :version: 3
   :satisfies: gd_req__arch_linkage_requirement[version==1]
   :parent_covered: YES
@@ -753,15 +755,14 @@ but for ease of traceability this is a separate one.
 .. tool_req:: Correlations of the architectural building blocks
   :id: tool_req__arch_linkage_safety
   :implemented: YES
-  :version: 2
+  :version: 3
   :satisfies: gd_req__arch_linkage_safety[version==1], gd_req__arch_build_blocks_corr[version==3]
   :parent_covered: YES
 
   .. csv-table::
      :header: "Link source", "Relation", "Link Target", "Mandatory"
 
-     logic_arc_int, included_by, feat, no
-     feat, includes, logic_arc_int, no
+     logic_arc_int, included_by, feat, yes
      mod, includes, comp, yes
      comp, implements, logic_arc_int, no
      comp, belongs_to, feat, yes
@@ -770,11 +771,6 @@ but for ease of traceability this is a separate one.
      real_arc_int_op, included_by, real_arc_int, yes
      real_arc_int_op, implements, logic_arc_int_op, no
      logic_arc_int_op, included_by, logic_arc_int, yes
-
-  .. note::
-     The link direction between ``feat`` and ``logic_arc_int`` is being switched from
-     ``feat includes logic_arc_int`` to ``logic_arc_int included_by feat``. Both directions
-     are currently accepted as optional links to avoid migration problems.
 
 
 .. tool_req:: Check consistency of interfaces in modules
@@ -893,6 +889,8 @@ Testing
 See `more verification methods <https://eclipse-score.github.io/score/main/platform_management_plan/software_verification.html#verification-methods>`__
 for an overview.
 
+   .. note:: implemented as info-only for smooth migration
+
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_2
    :tags: Testing
@@ -939,6 +937,7 @@ for an overview.
          - Unit
          - `comp_req`, `feat_req`
 
+   .. note:: implemented as info-only for smooth migration
 
 `The folder structure <https://eclipse-score.github.io/score/main/contribute/general/folder.html>`__
 is described in the platform.
@@ -1032,7 +1031,7 @@ is described in the platform.
   :tags: Tool Verification Reports
   :implemented: YES
   :version: 2
-  :satisfies: gd_req__tool_attr_version[version==1]
+  :satisfies: gd_req__tool_attr_version[version==2]
   :parent_covered: YES
 
   Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
@@ -1186,7 +1185,7 @@ is described in the platform.
 
 .. tool_req:: Safety Analysis Mitigation Attribute
   :id: tool_req__docs_saf_attrs_mitigated_by
-  :implemented: PARTIAL
+  :implemented: YES
   :tags: Safety Analysis
   :version: 1
   :satisfies:
@@ -1202,13 +1201,12 @@ is described in the platform.
   Docs-As-Code shall enforce valid needs (`status` == `valid`) of type
   :need:`tool_req__docs_saf_types` to have at least one `mitigated_by` link to a
   requirement on the corresponding level.
+  Needs with ``status == draft`` are not checked, as their analysis is not finished yet.
 
   At least one of the linked requirements must have
   the same ASIL level or a higher one.
 
   It can be ``comp_req`` or ``aou_req``.
-
-  .. note:: implemented as info to enable non-breaking transition
 
 
 .. tool_req:: Safety Analysis Mitigation Issue Attribute
@@ -1216,8 +1214,8 @@ is described in the platform.
   :implemented: YES
   :tags: Safety Analysis
   :version: 1
-  :satisfies: gd_req__saf_attr_mitigation_issue[version==1]
-  :parent_covered: NO: Can not enforce 'sufficent' status being no until mitigation is ok
+  :satisfies: gd_req__saf_attr_mitigation_issue[version==2]
+  :parent_covered: NO: Can not enforce 'sufficent' being no and status being draft until mitigation is ok
 
   Docs-As-Code shall allow needs of type :need:`tool_req__docs_saf_types` to have a
   `mitigation_issue` attribute which links to a GitHub issue.
@@ -1268,7 +1266,7 @@ is described in the platform.
   :tags: Safety Analysis
   :version: 2
   :satisfies:
-    gd_req__saf_linkage_check[version==1],
+    gd_req__saf_linkage_check[version==2],
     gd_req__saf_linkage[version==1],
     gd_req__sec_linkage_check[version==1],
     gd_req__sec_linkage[version==1],

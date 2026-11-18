@@ -34,10 +34,10 @@ another build action.
 Use ``docs_bundle(data = [...])`` for runtime or supporting files that belong at
 the bundle's mount but are not themselves documentation sources. The
 ``docs(data = [...])`` argument is shorthand for supporting files in the root
-``:docs_bundle``; it is not a substitute for ``docs_bundle(srcs = [...])``.
+``:docs_bundle``.
 
 For this how-to, the rule is simple: generated documentation belongs in
-``docs_bundle(srcs = [...])``.
+explicit ``docs_bundle(srcs = [...])``.
 
 Step 1: Generate the RST Files
 ------------------------------

@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2024 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -12,8 +12,9 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("@rules_java//java:java_binary.bzl", "java_binary")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
+load(":plantuml.bzl", "plantuml_binary")
 
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
@@ -51,14 +52,55 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
-java_binary(
-    name = "plantuml",
-    jvm_flags = ["-Djava.awt.headless=true"],
-    main_class = "net.sourceforge.plantuml.Run",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        "@plantuml//jar",
+# Sphinx executes PlantUML in its own configuration. For sandboxed Needs builds,
+# the Sphinx executable and these data dependencies are transitioned to the
+# execution platform; for `bazel run` and IDE use they follow the local build.
+# Keep the executable and runtime selections together so they always come from
+# the same native distribution.
+config_setting(
+    name = "plantuml_linux_x86_64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
     ],
+)
+
+config_setting(
+    name = "plantuml_linux_arm64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+config_setting(
+    name = "plantuml_macos_arm64",
+    constraint_values = [
+        "@platforms//os:macos",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+plantuml_binary(
+    name = "plantuml",
+    binary = select({
+        ":plantuml_linux_x86_64": "@plantuml_native_linux_amd64//:plantuml",
+        ":plantuml_linux_arm64": "@plantuml_native_linux_arm64//:plantuml",
+        ":plantuml_macos_arm64": "@plantuml_native_macos_arm64//:plantuml",
+    }),
+    runtime = select({
+        ":plantuml_linux_x86_64": "@plantuml_native_linux_amd64//:runtime",
+        ":plantuml_linux_arm64": "@plantuml_native_linux_arm64//:runtime",
+        ":plantuml_macos_arm64": "@plantuml_native_macos_arm64//:runtime",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+score_pytest(
+    name = "plantuml_regression_test",
+    srcs = ["plantuml_regression_test.py"],
+    data = [":plantuml"],
+    pytest_config = "//:pyproject.toml",
 )
 
 # This makes it possible for py_venv to depend on plantuml.
@@ -68,7 +110,7 @@ java_binary(
 py_library(
     name = "plantuml_for_python",
     srcs = ["@score_docs_as_code//src:dummy.py"],
-    data = ["@score_docs_as_code//src:plantuml"],
+    data = [":plantuml"],
     visibility = ["//visibility:public"],
 )
 
