@@ -53,7 +53,6 @@ def workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(workspace))
     monkeypatch.setenv("PACKAGE_DIR", "component")
     monkeypatch.setenv("SOURCE_DIRECTORY", "docs")
-    monkeypatch.setenv("DATA", "[]")
     monkeypatch.setenv("RUNFILES_DIR", str(workspace / "runfiles"))
 
     fs.create_dir(workspace / "component")
@@ -282,7 +281,6 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     monkeypatch.setenv("SPHINX_CONFIG_FILE", "config/conf.py")
     monkeypatch.setenv("SCORE_METAMODEL_YAML", "config/metamodel.yaml")
     monkeypatch.setenv("MOUNTS_MANIFEST", "mounts.json")
-    monkeypatch.setenv("DATA", '["//:needs_json"]')
     monkeypatch.setenv("EXTERNAL_NEEDS_FILES", '["@vendor//:needs_json"]')
     monkeypatch.setenv("GITHUB_REPOSITORY", "owner/repo")
     monkeypatch.setenv("KNOWN_GOOD_JSON", "baseline.json")
@@ -292,7 +290,7 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     arguments = sphinx_arguments(DocsCliConfig.from_environment())
 
     # Assert
-    external_needs = json.dumps(["//:needs_json", "@vendor//:needs_json"])
+    external_needs = json.dumps(["@vendor//:needs_json"])
     expected_arguments = {
         # Configuration and metamodel paths use the runfiles tree.
         "-c",
@@ -300,7 +298,7 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
         f"--define=score_metamodel_yaml={workspace}/runfiles/config/metamodel.yaml",
         f"--define=mounts_manifest={workspace}/runfiles/mounts.json",
         f"--define=runfiles_dir={workspace}/runfiles",
-        # DATA and EXTERNAL_NEEDS_FILES are passed as one Sphinx define.
+        # EXTERNAL_NEEDS_FILES are passed as one Sphinx define.
         f"--define=external_needs_source={external_needs}",
         # GitHub metadata must keep edit links repository-relative.
         "-A=github_user=owner",

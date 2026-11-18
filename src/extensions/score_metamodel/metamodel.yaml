@@ -139,10 +139,10 @@ needs_types:
     mandatory_options:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
-    optional_links:
+    mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
-      # TODO: fix once process_description is fixed
       satisfies: workflow
+    optional_links:
       complies: std_req
     tags:
       - requirement
@@ -472,8 +472,6 @@ needs_types:
       status: ^(valid|invalid|valid_inspected)$
     optional_links:
       # req-Id: tool_req__arch_linkage_safety
-      # Old direction kept optional during migration; superseded by logic_arc_int included_by feat
-      includes: logic_arc_int, logic_arc_int_op
       uses: logic_arc_int, logic_arc_int_op
       provides: logic_arc_int, logic_arc_int_op # preparation for linking change according to DR-005
     tags:
@@ -545,10 +543,10 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid|valid_inspected)$
-    optional_links:
+    mandatory_links:
       # req-Id: tool_req__arch_linkage_safety
-      # New direction kept optional during migration; will supersede feat includes logic_arc_int
       included_by: feat
+    optional_links:
       fulfils: feat_req
     tags:
       - architecture_element
@@ -758,7 +756,7 @@ needs_types:
       # req-Id: tool_req__docs_saf_attr_fmea_failure_effect
       failure_effect: ^.+$
       sufficient: ^(yes|no)$
-      status: ^(valid|invalid)$
+      status: ^(draft|valid|invalid)$
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     mandatory_links:
@@ -781,7 +779,7 @@ needs_types:
       failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
-      status: ^(valid|invalid)$
+      status: ^(draft|valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
@@ -813,7 +811,7 @@ needs_types:
       failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
-      status: ^(valid|invalid)$
+      status: ^(draft|valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
@@ -844,7 +842,7 @@ needs_types:
       failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
-      status: ^(valid|invalid)$
+      status: ^(draft|valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
@@ -877,7 +875,7 @@ needs_types:
       failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
-      status: ^(valid|invalid)$
+      status: ^(draft|valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
@@ -1245,7 +1243,7 @@ graph_checks:
     check_all:
       fulfils: safety == QM
     explanation: A QM architecture element cannot fulfil safety requirements.
-    info_only: true
+
 
   # Allocation compatibility is checked from the requirement, where the
   # mandatory satisfied_by link identifies every allocated feature/component.
@@ -1258,10 +1256,12 @@ graph_checks:
     check_all:
       satisfied_by: safety != QM
     explanation: A safety requirement cannot be allocated to a QM architecture element.
-    info_only: true
+
 
   # Features/components receive requirements through incoming satisfied_by
   # links. Their optional fulfils links do not replace this allocation.
+  # Views and interfaces link requirements only optionally via fulfils
+  # (tool_req__docs_arch_link_fulfils), so no completeness check applies to them.
   # req-Id: tool_req__docs_arch_link_safety_to_req
   tool_req__docs_allocation_safety_to_req:
     needs:
@@ -1271,14 +1271,12 @@ graph_checks:
       satisfied_by_back: safety != QM
     explanation: A safety relevant feature or component must have at least one safety requirement allocated via satisfied_by.
 
-  # req-Id: tool_req__docs_arch_link_safety_to_req
-  tool_req__docs_arch_link_safety_to_req:
-    needs:
-      include: feat_arc_sta, feat_arc_dyn, logic_arc_int, comp_arc_sta, comp_arc_dyn, real_arc_int
-      condition: safety != QM
-    check_one:
-      fulfils: safety != QM
-    explanation: A safety relevant architecture element must be linked to at least one safety requirement via fulfils.
+
+
+
+
+
+
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:
@@ -1329,7 +1327,6 @@ graph_checks:
       mitigated_by:
         safety == ASIL_B
     explanation: Valid safety analyses should link to at least one same-level or higher-safety requirement.
-    info_only: true
 
   # req-Id: tool_req__arch_consistency_interf
   tool_req__arch_consistency_interf:

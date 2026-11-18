@@ -20,7 +20,7 @@
 
    A logical interface included by a feature must have an incoming implements
    link from a component. Missing implementations produce information only.
-   Interfaces without a feature assignment are outside this check's scope.
+   Interfaces without feature assignment are outside this check's scope.
 
 .. feat:: Feature owning the logical interfaces
    :id: feat__interf_consistency
@@ -56,14 +56,3 @@
    :status: valid
    :belongs_to: feat__interf_consistency
    :implements: logic_arc_int__interf_consistency__implemented
-
-.. logic_arc_int:: Interface without a feature assignment or implementation
-   :id: logic_arc_int__interf_consistency__unassigned
-   :security: NO
-   :safety: QM
-   :status: valid
-   :expect_info_not: A logical interface included by a feature must be implemented by at least one component.
-   :expect_not: A logical interface included by a feature must be implemented by at least one component.
-
-   An empty included_by list must exclude this interface from the check, even
-   though its implements_back list is also empty.

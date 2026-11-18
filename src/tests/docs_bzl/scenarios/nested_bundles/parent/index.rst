@@ -15,6 +15,27 @@
 Parent bundle
 =============
 
+.. Setup: link targets for gd_req satisfies link.
+
+.. workproduct:: Documentation bundle
+   :id: wp__docs_bzl
+   :status: valid
+   :version: 1
+
+.. role:: Docs engineer
+   :id: rl__docs_bzl
+   :version: 1
+
+.. workflow:: Bundle documentation
+   :id: wf__docs_bzl
+   :status: valid
+   :version: 1
+   :input: wp__docs_bzl
+   :output: wp__docs_bzl
+   :approved_by: rl__docs_bzl
+   :responsible: rl__docs_bzl
+
+
 .. tool_req:: A nested bundle can be mounted into a documentation tree
    :id: tool_req__docs_bzl_nested_bundle
    :version: 1
@@ -26,6 +47,7 @@ Parent bundle
 .. gd_req:: Nested bundles compose generated data through mount points
    :id: gd_req__docs_bzl_nested_bundle
    :version: 1
+   :satisfies: wf__docs_bzl
 
    When a nested bundle is mounted into a host documentation tree, the
    generated data of its child bundle must be composed with the parent bundle.
