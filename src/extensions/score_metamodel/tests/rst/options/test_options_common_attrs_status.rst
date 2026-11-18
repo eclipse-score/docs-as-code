@@ -14,7 +14,7 @@
 
 .. test_metadata::
    :id: test_metadata__common_attrs_status
-   :fully_verifies_list: tool_req__docs_common_attr_status[version==2]
+   :fully_verifies_list: tool_req__docs_common_attr_status[version==3]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -28,7 +28,7 @@
      (stkh_req, feat_req, comp_req, aou_req) and architecture types
      (feat, comp, feat_arc_sta, feat_arc_dyn, comp_arc_sta, comp_arc_dyn,
      logic_arc_int, logic_arc_int_op, real_arc_int, real_arc_int_op).
-   * ``^(valid|invalid)$`` — safety-analysis types
+   * ``^(draft|valid|invalid)$`` — safety-analysis types
      (feat_saf_fmea, comp_saf_fmea, plat_saf_dfa, feat_saf_dfa,
      comp_saf_dfa).
 
@@ -84,14 +84,24 @@
    :expect_not: does not follow pattern
 
 
+.. feat_saf_fmea:: Valid: ``draft`` is allowed on a safety-analysis type
+   :id: feat_saf_fmea__status__draft
+   :fault_id: FD_POS
+   :failure_effect: Positive `status` test for feat_saf_fmea.
+   :sufficient: no
+   :status: draft
+   :violates: feat_arc_sta__status_support
+   :expect_not: does not follow pattern
+
+
 .. feat_saf_fmea:: Invalid status on a safety-analysis type
    :id: feat_saf_fmea__status__bad
    :fault_id: FD_NEG
    :failure_effect: Negative `status` test for feat_saf_fmea.
    :sufficient: no
-   :status: draft
+   :status: valid_inspected
    :violates: feat_arc_sta__status_support
-   :expect: status (draft): does not follow pattern
+   :expect: status (valid_inspected): does not follow pattern
 
 
 .. feat_req:: Missing status on a feature requirement
