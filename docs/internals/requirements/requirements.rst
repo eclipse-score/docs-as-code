@@ -574,7 +574,7 @@ Architecture Attributes
    :version: 2
    :satisfies:
       gd_req__arch_attr_mandatory[version==1],
-      gd_req__arch_attr_fulfils[version==1],
+      gd_req__arch_attr_fulfils[version==2],
    :implemented: YES
    :parent_covered: YES
    :parent_has_problem: NO
@@ -599,13 +599,13 @@ Architecture Attributes
   :version: 3
   :satisfies:
    gd_req__arch_linkage_requirement_type[version==1],
-   gd_req__arch_attr_fulfils[version==1],
+   gd_req__arch_attr_fulfils[version==2],
    gd_req__arch_traceability[version==1],
    gd_req__req_linkage_fulfill[version==1],
   :parent_covered: YES
 
-  Docs-as-Code shall allow or enforce where necessary that linking via the ``fulfils``
-  attribute follows the defined rules.
+  Docs-as-Code shall allow linking via the ``fulfils``
+  attribute and enforce it follows the defined rules.
 
   Allowed source and target combinations are defined in the following table:
 
