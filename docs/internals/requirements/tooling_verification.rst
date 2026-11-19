@@ -29,9 +29,9 @@ Overview
    :labels: passed, failed, skipped
    :colors: green, red, orange
 
-   type == 'testcase' and result == 'passed'
-   type == 'testcase' and result == 'failed'
-   type == 'testcase' and result == 'skipped'
+   'test-module-score_docs_as_code' in tags and result == 'passed'
+   'test-module-score_docs_as_code' in tags and result == 'failed'
+   'test-module-score_docs_as_code' in tags and result == 'skipped'
 
 .. grid:: 2
    :class-container: score-grid
@@ -62,23 +62,23 @@ Testcase Metadata Overview
    :labels: fault-injection, interface-test, requirements-based, resource-usage
    :legend:
 
-   type == 'testcase' and test_type == 'fault-injection'
-   type == 'testcase' and test_type == 'interface-test'
-   type == 'testcase' and test_type == 'requirements-based'
-   type == 'testcase' and test_type == 'resource-usage'
+   'test-module-score_docs_as_code' in tags and test_type == 'fault-injection'
+   'test-module-score_docs_as_code' in tags and test_type == 'interface-test'
+   'test-module-score_docs_as_code' in tags and test_type == 'requirements-based'
+   'test-module-score_docs_as_code' in tags and test_type == 'resource-usage'
 
 
 .. needpie:: Derivation Techniques Used In Testcases
    :labels: requirements-analysis, design-analysis, boundary-values, equivalence-classes, fuzz-testing, error-guessing, explorative-testing
    :legend:
 
-   type == 'testcase' and derivation_technique == 'requirements-analysis'
-   type == 'testcase' and derivation_technique == 'design-analysis'
-   type == 'testcase' and derivation_technique == 'boundary-values'
-   type == 'testcase' and derivation_technique == 'equivalence-classes'
-   type == 'testcase' and derivation_technique == 'fuzz-testing'
-   type == 'testcase' and derivation_technique == 'error-guessing'
-   type == 'testcase' and derivation_technique == 'explorative-testing'
+   'test-module-score_docs_as_code' in tags and derivation_technique == 'requirements-analysis'
+   'test-module-score_docs_as_code' in tags and derivation_technique == 'design-analysis'
+   'test-module-score_docs_as_code' in tags and derivation_technique == 'boundary-values'
+   'test-module-score_docs_as_code' in tags and derivation_technique == 'equivalence-classes'
+   'test-module-score_docs_as_code' in tags and derivation_technique == 'fuzz-testing'
+   'test-module-score_docs_as_code' in tags and derivation_technique == 'error-guessing'
+   'test-module-score_docs_as_code' in tags and derivation_technique == 'explorative-testing'
 
 
 All passed Tests
@@ -86,15 +86,15 @@ All passed Tests
 
 .. needtable:: SUCCESSFUL TESTS - status and link
    :filter: result == "passed"
-   :tags: TEST
+   :tags: test-module-score_docs_as_code
    :columns: name as "testcase";result;id as "link"
 
 .. needtable:: SUCCESSFUL TESTS - verification mapping
    :filter: result == "passed"
-   :tags: TEST
+   :tags: test-module-score_docs_as_code
    :columns: name as "testcase";fully_verifies;partially_verifies
 
 .. needtable:: SUCCESSFUL TESTS - optional metadata
    :filter: result == "passed"
-   :tags: TEST
+   :tags: test-module-score_docs_as_code
    :columns: name as "testcase";test_type;derivation_technique

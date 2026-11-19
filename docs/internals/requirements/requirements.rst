@@ -1465,6 +1465,7 @@ Overview of Tool to Process Requirements
 .. needextend:: c.this_doc() and type == 'tool_req'
   :safety: ASIL_B
   :security: NO
+  :+tags: docs-as-code-requirement
 
 .. needextend:: c.this_doc() and type == 'tool_req' and not status
   :status: valid

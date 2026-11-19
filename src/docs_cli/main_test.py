@@ -284,6 +284,7 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     monkeypatch.setenv("EXTERNAL_NEEDS_FILES", '["@vendor//:needs_json"]')
     monkeypatch.setenv("GITHUB_REPOSITORY", "owner/repo")
     monkeypatch.setenv("KNOWN_GOOD_JSON", "baseline.json")
+    monkeypatch.setenv("TESTCASE_LOCAL_MODULE", "fixture_module")
     monkeypatch.setenv("ACTION", "incremental")
 
     # Act
@@ -305,6 +306,7 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
         "-A=github_repo=repo",
         "-A=doc_path=component/docs",
         f"--define=KNOWN_GOOD_JSON={workspace}/runfiles/baseline.json",
+        "--define=testcase_local_module=fixture_module",
     }
     # Every expected option is present; their relative order is irrelevant here.
     assert expected_arguments <= set(arguments)

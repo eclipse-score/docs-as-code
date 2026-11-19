@@ -17,10 +17,8 @@
 Requirement Test Coverage
 =========================
 
-This page shows which requirements are linked to tests and which have code
-links.
-The numbers shown here come from the same ``score_metrics`` calculations used
-by CI quality gates — they will always match.
+This page shows which docs-as-code requirements are linked to its tests
+and which have code links.
 
 Overall Coverage
 ----------------
@@ -28,26 +26,26 @@ Overall Coverage
 .. needpie:: Overall Requirement Coverage (non-overlapping)
    :labels: Remaining (no links), Test Link Only, Code Link Only, Fully Linked (Both)
    :colors: #ca2828, #009ad2, #d26403, #37a12d
-   :filter-func: score_metrics.sphinx_filters.get_non_overlapping_link_metrics
+   :filter-func: score_metrics.sphinx_filters.get_docs_as_code_requirement_coverage
 
 .. needpie:: Test Linkages
    :labels: Tests Not Linked, Tests Linked
    :colors: #ca2828, #37a12d
-   :filter-func: score_metrics.sphinx_filters.get_metrics_with_first_value_total(tests:total,tests:linked_to_requirements)
+   :filter-func: score_metrics.sphinx_filters.get_docs_as_code_test_linkages
 
-Requirement → Test Traceability
--------------------------------
+Tool Requirements and Code Links
+--------------------------------
 
-.. needtable:: All tool_req with Linkage Status
+.. needtable:: Docs-as-code tool requirements
    :types: tool_req
-   :columns: id;testlink;source_code_link;implemented
+   :tags: docs-as-code-requirement
+   :columns: id;source_code_link;implemented
    :style: table
 
 Test → Requirement Traceability
 -------------------------------
 
 .. needtable:: All Testcases with Covered Requirements
-   :types: testcase
-   :filter: result == "passed"
+   :filter-func: score_metrics.sphinx_filters.get_docs_as_code_passing_tests_with_coverage
    :columns: name as "Testcase";fully_verifies;partially_verifies;test_type;derivation_technique
    :style: table

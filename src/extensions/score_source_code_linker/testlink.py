@@ -149,6 +149,7 @@ class DataOfTestCase:
     # Either or HAVE to be filled.
     PartiallyVerifies: str | None = None
     FullyVerifies: str | None = None
+    source_module: str | None = None
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]):  # type-ignore
@@ -165,6 +166,7 @@ class DataOfTestCase:
             result_text=data.get("result_text"),
             PartiallyVerifies=data.get("PartiallyVerifies"),
             FullyVerifies=data.get("FullyVerifies"),
+            source_module=data.get("source_module"),
         )
 
     @classmethod
@@ -226,7 +228,7 @@ class DataOfTestCase:
         fields = [
             x
             for x in self.__dataclass_fields__
-            if x not in ["PartiallyVerifies", "FullyVerifies"]
+            if x not in {"PartiallyVerifies", "FullyVerifies", "source_module"}
         ]
         for field in fields:
             if getattr(self, field) is None:

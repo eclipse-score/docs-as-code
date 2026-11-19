@@ -862,6 +862,9 @@ def docs(
         "SOURCE_DIRECTORY": source_dir,
         "PACKAGE_DIR": native.package_name(),
         "TEST_SOURCES": str(test_sources),
+        # Local test logs have no external repository prefix. Pass the calling
+        # module's name so the importer can identify who owns those testcases.
+        "TESTCASE_LOCAL_MODULE": native.module_name() or "",
         "EXTERNAL_NEEDS_FILES": str(external_needs_labels),
         # `bazel run` starts from a runfiles tree, so this logical path is
         # resolved by score_mounts through ``RUNFILES_DIR``.

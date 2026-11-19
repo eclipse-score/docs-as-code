@@ -276,6 +276,67 @@ def get_non_overlapping_link_metrics(
     results.extend([remaining, only_test, only_code, fully])
 
 
+def _docs_as_code_coverage(
+    needs: list[NeedItem],
+) -> tuple[list[NeedItem], dict[str, set[str]], list[NeedItem]]:
+    """Select the tool's requirements, tests and verification links."""
+    requirements = [
+        need for need in needs if "docs-as-code-requirement" in need["tags"]
+    ]
+    tests = [need for need in needs if "test-module-score_docs_as_code" in need["tags"]]
+    requirement_ids = {need["id"] for need in requirements}
+    covered_by_test = {
+        test["id"]: {
+            link.id
+            for field in ("fully_verifies", "partially_verifies")
+            for link in test.get_links(field, as_str=False)
+            if link.id in requirement_ids
+        }
+        for test in tests
+    }
+    return tests, covered_by_test, requirements
+
+
+def get_docs_as_code_passing_tests_with_coverage(
+    needs: list[NeedItem], results: list[NeedItem], **kwargs: Any
+) -> None:
+    """Select passing docs-as-code tests that cover its tool requirements."""
+    tests, covered_by_test, _ = _docs_as_code_coverage(needs)
+    results.extend(
+        test
+        for test in tests
+        if test.get("result") == "passed" and covered_by_test[test["id"]]
+    )
+
+
+def get_docs_as_code_test_linkages(
+    needs: list[NeedItem], results: list[int], **kwargs: Any
+) -> None:
+    """Count docs-as-code tests with and without links to its requirements."""
+    tests, covered_by_test, _ = _docs_as_code_coverage(needs)
+    linked = sum(bool(ids) for ids in covered_by_test.values())
+    results.extend([len(tests) - linked, linked])
+
+
+def get_docs_as_code_requirement_coverage(
+    needs: list[NeedItem], results: list[int], **kwargs: Any
+) -> None:
+    """Count the tool's requirements by code and test linkage."""
+    _, covered_by_test, requirements = _docs_as_code_coverage(needs)
+    covered_ids = {
+        requirement_id
+        for requirement_ids in covered_by_test.values()
+        for requirement_id in requirement_ids
+    }
+    # The chart orders its categories as neither, test only, code only, both.
+    counts = [0, 0, 0, 0]
+    for requirement in requirements:
+        has_test = requirement["id"] in covered_ids
+        has_code = bool(requirement.get("source_code_link"))
+        counts[int(has_test) + 2 * int(has_code)] += 1
+    results.extend(counts)
+
+
 def get_component_status_metrics(
     needs: list[Any], results: list[int], **kwargs: Any
 ) -> None:

@@ -295,12 +295,13 @@ def read_test_xml_file(
                 case_properties = parse_properties(case_properties, properties_element)
                 case_properties.update(md)
 
-                test_case = DataOfTestCase.from_dict(case_properties)
-                if not test_case.is_valid():
-                    missing_prop_tests.append(testname)
-            else:
+            # Derive ownership from the XML artifact path for every test.
+            case_properties["source_module"] = md["repo_name"]
+            test_case = DataOfTestCase.from_dict(case_properties)
+            if properties_element is None:
                 non_prop_tests.append(testname)
-                test_case = DataOfTestCase.from_dict(case_properties)
+            elif not test_case.is_valid():
+                missing_prop_tests.append(testname)
             test_case_needs.append(test_case)
     return test_case_needs, non_prop_tests, missing_prop_tests
 
@@ -439,6 +440,14 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
     file = tn.file if tn.file is not None else "<placeholder_file>"
     assert tn.name is not None
     name = tn.name
+    source_module = tn.source_module or tn.repo_name
+    if source_module == "local_repo":
+        source_module = (
+            getattr(app.config, "testcase_local_module", "") or source_module
+        )
+    tags = ["TEST"]
+    if source_module:
+        tags.append(f"test-module-{source_module}")
     external_url = ""
     if tn.repo_name is None or tn.hash is None or tn.url is None:
         # I would change this to debug for now, as it seems too spammy in 'info'
@@ -462,7 +471,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             app=app,
             need_type="testcase",
             title=name,
-            tags="TEST",
+            tags=tags,
             id=f"testcase__{name}_{short_hash(file + name)}",
             name=name,
             external_url=external_url,

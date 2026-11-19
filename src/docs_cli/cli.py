@@ -207,6 +207,9 @@ def sphinx_arguments(
         f"--define=runfiles_dir={runfiles_dir.absolute() if runfiles_dir else ''}",
     ]
 
+    if testcase_local_module := env.get("TESTCASE_LOCAL_MODULE", ""):
+        base_arguments.append(f"--define=testcase_local_module={testcase_local_module}")
+
     if config.is_bazel_build:
         # The Bazel action declares ``output_dir`` as its output tree, and that
         # tree must contain only the Needs inventory consumed by downstream
