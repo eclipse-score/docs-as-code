@@ -13,8 +13,8 @@
 import pytest
 from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
 from sphinx.application import Sphinx
-from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.views import NeedsView
 
 from src.extensions.score_metamodel import CheckLogger
 from src.extensions.score_metamodel.__init__ import (

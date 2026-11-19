@@ -55,10 +55,11 @@ def test_extend_needs_json_exporter_uses_configured_value(
     ext_needs.extend_needs_json_exporter(config, ["project_url"])
     config.project_url = "https://example.test/after"
 
-    needs_list = cast(NeedsList, SimpleNamespace(needs_list={}))
+    export_data: dict[str, object] = {}
+    needs_list = cast(NeedsList, SimpleNamespace(needs_list=export_data))
     NeedsList._finalise(needs_list)  # pyright: ignore[reportPrivateUsage] - white-box test
 
-    assert needs_list.needs_list["project_url"] == "https://example.test/after"
+    assert export_data["project_url"] == "https://example.test/after"
 
 
 def test_extend_needs_json_exporter_can_override_export_metadata(
@@ -76,11 +77,12 @@ def test_extend_needs_json_exporter_can_override_export_metadata(
         export_values={"project_url": ""},
     )
 
-    needs_list = cast(NeedsList, SimpleNamespace(needs_list={}))
+    export_data: dict[str, object] = {}
+    needs_list = cast(NeedsList, SimpleNamespace(needs_list=export_data))
     NeedsList._finalise(needs_list)  # pyright: ignore[reportPrivateUsage] - white-box test
 
     assert config.project_url == "https://example.test/host"
-    assert needs_list.needs_list["project_url"] == ""
+    assert export_data["project_url"] == ""
 
 
 @pytest.mark.parametrize(

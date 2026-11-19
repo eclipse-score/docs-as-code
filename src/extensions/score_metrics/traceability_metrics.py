@@ -25,8 +25,9 @@ from typing import Any
 from score_metamodel import ScoreNeedType
 from score_metamodel.yaml_parser import load_metamodel_data
 from sphinx.application import Sphinx
-from sphinx_needs.data import NeedsView, SphinxNeedsData
+from sphinx_needs.data import SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.views import NeedsView
 
 # Import shared verification metrics helpers
 from src.helper_lib.verification_metrics import (

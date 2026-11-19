@@ -23,8 +23,8 @@ from score_metamodel import (
 from sphinx.application import Sphinx
 from sphinx_needs import logging
 from sphinx_needs.config import NeedType
-from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.views import NeedsView
 
 # This is the normal logger for this module, not for warnings on specific needs.
 # Use CheckLogger for that, which allows us to log the need id and location together with the warning message.

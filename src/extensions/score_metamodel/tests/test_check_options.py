@@ -85,7 +85,7 @@ class TestCheckOptions:
         logger = fake_check_logger()
         app = Mock(spec=Sphinx)
         app.config = Mock()
-        app.config.needs_types = self.NEED_TYPE_INFO
+        app.config.score_need_types = self.NEED_TYPE_INFO
 
         with pytest.raises(ValueError):
             check_options(app, need_1, cast(CheckLogger, logger))
@@ -114,7 +114,7 @@ class TestCheckOptions:
         logger = fake_check_logger()
         app = Mock(spec=Sphinx)
         app.config = Mock()
-        app.config.needs_types = self.NEED_TYPE_INFO_WITH_OPT_OPT
+        app.config.score_need_types = self.NEED_TYPE_INFO_WITH_OPT_OPT
         # Expect that the checks pass
         check_extra_options(app, need_1, cast(CheckLogger, logger))
 

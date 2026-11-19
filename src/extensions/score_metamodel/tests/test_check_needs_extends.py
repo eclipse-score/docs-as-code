@@ -71,7 +71,7 @@ def _run_check(
         )
 
     check_needs_extends.score_extend_needs_data_func(
-        all_needs, {"needextend-1": needextend}, Mock()
+        all_needs, {"needextend-1": needextend}, Mock(), schema=Mock()
     )
     return original_function, warnings
 

@@ -19,7 +19,7 @@ from typing import Any
 
 from sphinx.application import Sphinx
 
-from src.extensions.score_metamodel import ScoreNeedType
+from src.extensions.score_metamodel import ScoreNeedType, register_score_need_types
 
 extensions = [
     "sphinx_needs",
@@ -81,32 +81,23 @@ def setup(app: Sphinx):
         "partially_verifies_list": "^.*$",
     }
 
-    test_metadata_need_type: list[ScoreNeedType] = [
-        {
-            "directive": "test_metadata",
-            "title": "Test Metadata",
-            "prefix": "test_metadata__",
-            "tags": [],
-            "parts": 2,
-            "mandatory_options": {"id": "^test_metadata__.*$"},
-            "optional_options": add_options_regex_base | add_options_test_metadata,
-            "mandatory_links_str": {},
-            "mandatory_links": {},
-            "optional_links_str": {},
-            "optional_links": {},
-        }
-    ]
+    test_metadata_need_type: ScoreNeedType = {
+        "directive": "test_metadata",
+        "title": "Test Metadata",
+        "prefix": "test_metadata__",
+        "tags": [],
+        "parts": 2,
+        "mandatory_options": {"id": "^test_metadata__.*$"},
+        "optional_options": add_options_regex_base | add_options_test_metadata,
+        "mandatory_links_str": {},
+        "mandatory_links": {},
+        "optional_links_str": {},
+        "optional_links": {},
+    }
 
-    # At parse time these are None, as they need to be filled post-parsing when all types are available to resolve the link targets.
-    # The dict maps the link name to a list of need types that are allowed as targets for that link.
-
-    changed_needs_types = list(test_metadata_need_type)
-    all_needs_types = app.config.needs_types
-    if "test_metadata" not in {nt["directive"] for nt in all_needs_types}:
-        for need_type in all_needs_types:
-            opts: dict[str, Any] = need_type.get("optional_options") or {}
-            opts.update(add_options_regex_base)
-            need_type["optional_options"] = opts
-            changed_needs_types.append(need_type)
-        app.config.needs_types = changed_needs_types
+    # Any fixture Need can carry expected diagnostics for the checks under test.
+    need_types: list[ScoreNeedType] = app.config.score_need_types
+    for need_type in need_types:
+        need_type["optional_options"].update(add_options_regex_base)
+    register_score_need_types(app, [test_metadata_need_type])
     app.config.needs_fields.update(add_needs_fields)

@@ -18,8 +18,8 @@ from typing import Any, cast
 from unittest.mock import MagicMock
 
 import pytest
-from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.views import NeedsView
 
 from src.extensions.score_metamodel.checks.testcase import check_testcase_metadata
 from src.extensions.score_metamodel.tests import fake_check_logger, need
