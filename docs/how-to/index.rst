@@ -22,33 +22,33 @@ How To
    :maxdepth: 1
    :titlesonly:
 
-   Build documentation in an existing project <get_started>
-   Set up docs-as-code in a new project <setup>
-   Write documentation <write_docs>
+   get_started
+   setup
+   write_docs
 
 .. toctree::
    :caption: Integrate and extend documentation
    :maxdepth: 1
    :titlesonly:
 
-   Use documentation bundles <bundles/index>
-   Integrate generated documentation <generated_docs>
-   Reference other modules <other_modules>
-   Resolve cross-module compatibility findings <cross_module_compatibility>
-   Add Sphinx extensions <add_extensions>
+   bundles/index
+   generated_docs
+   other_modules
+   cross_module_compatibility
+   add_extensions
 
 .. toctree::
    :caption: Traceability and quality checks
    :maxdepth: 1
    :titlesonly:
 
-   Link source code to requirements <source_to_doc_links>
-   Link tests to requirements <test_to_doc_links>
-   Build dashboards and quality gates <dashboards_and_quality_gates>
+   source_to_doc_links
+   test_to_doc_links
+   dashboards_and_quality_gates
 
 .. toctree::
    :caption: Tool verification
    :maxdepth: 1
    :titlesonly:
 
-   Apply the SCORE Tool Management Process <perform_tool_verification>
+   perform_tool_verification

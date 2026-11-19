@@ -14,8 +14,8 @@
 
 .. _howto_add_extensions:
 
-Add Extensions
-===================
+Add Sphinx Extensions
+=====================
 
 The docs-as-code module defines its own Python environment in ``MODULE.bazel``
 and as a user you cannot extend that.

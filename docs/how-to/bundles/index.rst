@@ -14,8 +14,8 @@
 
 .. _howto_mount_external_sources:
 
-How to use bundles
-==================
+Use Documentation Bundles
+=========================
 
 This page is the getting-started guide for documentation bundles: define a
 bundle, mount it in a project, compose it with other bundles, and consume a
