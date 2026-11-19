@@ -469,30 +469,27 @@ def _apply_links_to_need(
         for test_link in links.TestLinks
     )
 
-    # NOTE: Removing & adding the need is important to make sure
-    # the needs gets 're-evaluated'.
+    # Removing the Need also clears its cached Sphinx node before reinsertion.
     needs_data.remove_need(need["id"])
     needs_data.add_need(need)
 
 
 # re-qid: gd_req__req__attr_impl
 def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
-    """
-    'Main' function that facilitates the running of all other functions
-    in correct order.
-    This function is also 'connected' to the message Sphinx emits,
-    therefore the one that's called directly.
-    Args:
-        env: Buildenvironment, this is filled automatically
-        app: Sphinx app application, this is filled automatically
-    """
+    """Apply cached source-code and test links to Needs during ``env-updated``."""
     needs_data = SphinxNeedsData(env)
-    needs = needs_data.get_needs_mutable()
-    needs_copy = deepcopy(
-        needs
-    )  # TODO: why do we create a copy? Can we also needs_copy = needs[:]? copy(needs)?
+    live_needs = needs_data.get_needs_mutable()
+    # A shallow copy duplicates the dictionary and keeps references to the
+    # original Need objects. This gives every lookup the same keys and objects
+    # while updates remove and reinsert entries in Sphinx's live collection.
+    original_needs_by_id = NeedsMutable(live_needs.copy())
 
-    _log_existing_links(needs)
+    # deepcopy records copies here under the original Python object's id(),
+    # including copies of nested objects. Links from different modules can
+    # target the same Need, so deepcopy reuses the first working copy on later hits.
+    copies_by_object_id: dict[int, Any] = {}
+
+    _log_existing_links(live_needs)
 
     scl_by_module = load_repo_source_links_json(
         get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")
@@ -503,15 +500,19 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
 
     for module_grouped_needs in scl_by_module:
         for source_code_links in module_grouped_needs.needs:
-            need = find_need(needs_copy, source_code_links.need)
-            if need is None:
+            # Resolve every reference. For example, REQ_001[version==1] can
+            # warn about an outdated version even if an earlier module
+            # already linked to REQ_001.
+            original_need = find_need(original_needs_by_id, source_code_links.need)
+            if original_need is None:
                 # TODO: print github annotations as in https://github.com/eclipse-score/bazel_registry/blob/7423b9996a45dd0a9ec868e06a970330ee71cf4f/tools/verify_semver_compatibility_level.py#L126-L129
                 _warn_missing_need(source_code_links)
                 continue
 
+            working_copy = deepcopy(original_need, memo=copies_by_object_id)
             _apply_links_to_need(
                 needs_data=needs_data,
-                need=need,
+                need=working_copy,
                 source_code_links=source_code_links,
                 metadata=module_grouped_needs.repo,
                 plain_links=plain_links,

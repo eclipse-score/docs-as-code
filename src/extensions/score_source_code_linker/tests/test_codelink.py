@@ -19,7 +19,7 @@ import json
 import subprocess
 import tempfile
 from collections.abc import Generator
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, cast
@@ -27,10 +27,11 @@ from typing import Any, cast
 import pytest
 from score_pytest.attribute_plugin import add_test_properties
 from sphinx.application import Sphinx
+from sphinx.environment import BuildEnvironment
 
 # S-CORE plugin to allow for properties/attributes in xml
 # Enables Testlinking
-from sphinx_needs.data import NeedsInfoType, NeedsMutable
+from sphinx_needs.data import NeedsInfoType, NeedsMutable, SphinxNeedsData
 from sphinx_needs.need_item import (
     NeedItem,
     NeedItemSourceUnknown,
@@ -42,11 +43,13 @@ from src.extensions.score_source_code_linker import (
     find_need,
     get_cache_filename,
     group_by_need,
+    inject_links_into_needs,
 )
 from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
 )
 from src.extensions.score_source_code_linker.needlinks import (
+    DefaultNeedLink,
     MetaData,
     NeedLink,
     NeedLinkEncoder,
@@ -57,13 +60,17 @@ from src.extensions.score_source_code_linker.needlinks import (
     store_source_code_links_json,
     store_source_code_links_with_metadata_json,
 )
-from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
+from src.extensions.score_source_code_linker.repo_source_links import (
+    RepoInfo,
+    group_needs_by_repo,
+    store_repo_source_links_json,
+)
 from src.helper_lib import (
     get_current_git_hash,
 )
 
 
-def test_need(**kwargs: Any) -> NeedItem:
+def test_need(*, extras: dict[str, Any] | None = None, **kwargs: Any) -> NeedItem:
     """Convenience function to create a NeedItem object with some defaults."""
 
     kwargs.setdefault("id", "test_need")
@@ -105,7 +112,7 @@ def test_need(**kwargs: Any) -> NeedItem:
         source=source,
         content=content,
         core=NeedsInfoType(**kwargs),
-        extras={},
+        extras=extras if extras is not None else {},
         links={},
     )
 
@@ -323,6 +330,61 @@ def test_find_need_not_found():
 
     result = find_need(all_needs, "REQ_999")
     assert result is None
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_inject_links_matches_versioned_need_across_modules(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """A later module can replace links on the same Need and still warn about its version."""
+    env = cast(BuildEnvironment, SimpleNamespace())
+    needs_data = SphinxNeedsData(env)
+    matched_need = test_need(
+        id="TREQ_ID_1",
+        extras={"version": 2, "source_code_link": "", "testlink": ""},
+    )
+    untouched_need = test_need(id="TREQ_ID_2")
+    needs_data.add_need(matched_need)
+    needs_data.add_need(untouched_need)
+    untouched_fields = dict(untouched_need)
+
+    first_module_link = replace(
+        DefaultNeedLink(),
+        need="TREQ_ID_1",
+        file=Path("first.py"),
+        line=3,
+        repo_name="first",
+        hash="abc123",
+        url="https://github.com/example/first",
+    )
+    outdated_module_link = replace(
+        first_module_link,
+        need="TREQ_ID_1[version==1]",
+        file=Path("second.py"),
+        repo_name="second",
+        hash="def456",
+        url="https://github.com/example/second",
+    )
+    links_by_need = group_by_need([first_module_link, outdated_module_link])
+    store_repo_source_links_json(
+        tmp_path / "score_repo_grouped_scl_cache.json",
+        group_needs_by_repo(links_by_need),
+    )
+    app = cast(Sphinx, SimpleNamespace(outdir=tmp_path, config=SimpleNamespace()))
+
+    inject_links_into_needs(app, env)
+
+    needs = needs_data.get_needs_mutable()
+    assert list(needs) == ["TREQ_ID_2", "TREQ_ID_1"]
+    assert dict(needs["TREQ_ID_2"]) == untouched_fields
+    assert needs["TREQ_ID_1"]["source_code_link"] == (
+        "https://github.com/example/second/blob/def456/second.py#L3<>second.py:3"
+    )
+    assert "Test links to outdated version: 'TREQ_ID_1[version==1]'" in caplog.text
 
 
 @add_test_properties(
