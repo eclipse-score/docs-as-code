@@ -184,7 +184,7 @@ def summarize(code_file_lists_path: Path, reports: list[Path]) -> dict[str, Any]
                 {"tool": tool, "rule": rule, "classification": cls, "count": count}
                 for (tool, rule, cls), count in sorted(
                     rules[c.primary_need_id].items(),
-                    key=lambda item: (-item[1], item[0]),
+                    key=lambda item: (CLASSES.index(item[0][2]), -item[1], item[0]),
                 )[:TOP_RULES]
             ],
         }
