@@ -284,9 +284,11 @@ def _check_need_messages(
     label = "info" if info else "warning"
     expected_option = "expect_info" if info else "expect"
     unexpected_option = "expect_info_not" if info else "expect_not"
-    # needextend-affected needs (those with 'modifications') are skipped here;
-    # their expectations are checked on the extending need itself.
-    if need.get("modifications"):
+    # On a NeedItem, "modifications" counts how many times the Need was extended.
+    # Check the expectations at the location of the needextend directive, where
+    # its diagnostics are reported. On that directive, "modifications" holds
+    # the parsed options, including the expectations themselves.
+    if isinstance(need, NeedItem) and need.get("modifications"):
         return
 
     line_nr = need.get("lineno")
