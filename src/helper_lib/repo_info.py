@@ -13,6 +13,25 @@ class RepoInfo:
     hash: str
     url: str
 
+    # The 'flat' form is how repo info appears on disk and on the link
+    # dataclasses: the sourcelinks file header, the inline fields of
+    # NeedLink / DataForTestLink / DataOfTestCase. There the name is
+    # called 'repo_name'.
+    def to_flat_dict(self) -> dict[str, str]:
+        return {"repo_name": self.name, "hash": self.hash, "url": self.url}
+
+    @staticmethod
+    def is_flat_dict(x: object) -> bool:
+        return isinstance(x, dict) and {"repo_name", "hash", "url"} <= x.keys()
+
+    @classmethod
+    def from_flat_dict(cls, d: dict[str, Any]) -> "RepoInfo":
+        if not cls.is_flat_dict(d):
+            raise TypeError(
+                f"Expected a dict with 'repo_name', 'hash' and 'url' keys, got: {d!r}"
+            )
+        return cls(name=d["repo_name"], hash=d["hash"], url=d["url"])
+
 
 def DefaultRepoInfo() -> RepoInfo:
     return RepoInfo(name=LOCAL_REPO, hash="", url="")

@@ -77,7 +77,7 @@ Example of requirement tags:
     "tag": "#--req-Id:",
     "need": "tool_req__docs_dd_link_source_code_link",
     "full_line": "#--req-Id: tool_req__docs_dd_link_source_code_link",
-    "repo_name": LOCAL_REPO,
+    "repo_name": "local_repo",
     "hash": "",
     "url": ""
   }
@@ -273,7 +273,7 @@ This somewhat looks like this:
 [
   {
     "repo": {
-      "name": LOCAL_REPO,
+      "name": "local_repo",
       "hash": "",
       "url": ""
     },

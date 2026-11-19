@@ -579,9 +579,9 @@ def test_get_metadata_from_test_path_local():
         "/home/root/docs-as-code/bazel-testlogs/src/extensions/foo/test.xml"
     )
     md = xml_parser.get_metadata_from_test_path(local_path, None)
-    assert md["repo_name"] == LOCAL_REPO
-    assert md["hash"] == ""
-    assert md["url"] == ""
+    assert md.name == LOCAL_REPO
+    assert md.hash == ""
+    assert md.url == ""
 
 
 def test_get_metadata_from_test_path_combo_with_hash(tmp_path: Path):
@@ -589,9 +589,9 @@ def test_get_metadata_from_test_path_combo_with_hash(tmp_path: Path):
     json_file = tmp_path / "known_good.json"
     json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_HASH))
     md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, json_file)
-    assert md["repo_name"] == "score_docs_as_code"
-    assert md["hash"] == "abc123hashvalue"
-    assert md["url"] == "https://github.com/eclipse-score/docs-as-code"
+    assert md.name == "score_docs_as_code"
+    assert md.hash == "abc123hashvalue"
+    assert md.url == "https://github.com/eclipse-score/docs-as-code"
 
 
 def test_get_metadata_from_test_path_combo_with_version(tmp_path: Path):
@@ -599,6 +599,6 @@ def test_get_metadata_from_test_path_combo_with_version(tmp_path: Path):
     json_file = tmp_path / "known_good.json"
     json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_VERSION))
     md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, json_file)
-    assert md["repo_name"] == "score_docs_as_code"
-    assert md["hash"] == "v2.1.0"
-    assert md["url"] == "https://github.com/eclipse-score/docs-as-code"
+    assert md.name == "score_docs_as_code"
+    assert md.hash == "v2.1.0"
+    assert md.url == "https://github.com/eclipse-score/docs-as-code"

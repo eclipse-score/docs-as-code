@@ -40,10 +40,6 @@ from src.helper_lib.repo_info import (
     parse_repo_name_from_path,
     LOCAL_REPO
 )
-from src.helper_lib.needlinks import (
-    DefaultMetaData,
-    MetaData,
-)
 from src.helper_lib.repo_info import RepoInfo
 from src.extensions.score_source_code_linker.testlink import (
     DataOfTestCase,
@@ -117,7 +113,7 @@ def clean_test_file_name(raw_filepath: Path) -> Path:
 
 def get_metadata_from_test_path(
     raw_filepath: Path, known_good_json: Path | None
-) -> MetaData:
+) -> RepoInfo:
     """
     Will parse out the metadata from the testpath.
     If test is local then the metadata will be:
@@ -150,11 +146,10 @@ def get_metadata_from_test_path(
     clean_filepath = clean_test_file_name(raw_filepath)
     # print(f"This is the cleaned filepath: {clean_filepath}")
     repo_name = parse_repo_name_from_path(clean_filepath)
-    md = DefaultMetaData()
-    md["repo_name"] = repo_name
+    repo = RepoInfo(name=repo_name, hash="", url="")
     if repo_name != LOCAL_REPO and known_good_json:
-        md["hash"], md["url"] = parse_info_from_known_good(known_good_json, repo_name)
-    return md
+        repo.hash, repo.url = parse_info_from_known_good(known_good_json, repo_name)
+    return repo
 
 
 def parse_testcase_result(testcase: ET.Element) -> tuple[str, str]:
@@ -294,7 +289,7 @@ def read_test_xml_file(
             # I just can't think of it right now, leaving this for future me
             if properties_element is not None:
                 case_properties = parse_properties(case_properties, properties_element)
-                case_properties.update(md)
+                case_properties.update(md.to_flat_dict())
 
                 test_case = DataOfTestCase.from_dict(case_properties)
                 if not test_case.is_valid():

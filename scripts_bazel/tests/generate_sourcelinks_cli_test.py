@@ -25,8 +25,7 @@ import pytest
 from score_pytest.attribute_plugin import add_test_properties
 
 import scripts_bazel.generate_sourcelinks_cli
-from src.helper_lib.needlinks import is_metadata
-from src.helper_lib.repo_info import LOCAL_REPO
+from src.helper_lib.repo_info import LOCAL_REPO, RepoInfo
 
 _MY_PATH = Path(__file__).parent
 
@@ -112,7 +111,7 @@ def some_function():
     assert isinstance(data, list)
     # The first dictionary has to be metadata
     assert len(data) == 2
-    assert is_metadata(data[0])
+    assert RepoInfo.is_flat_dict(data[0])
     assert data[0]["repo_name"] == LOCAL_REPO
     # hash & url can not be set in this script therefore HAVE to be empty
     assert data[0]["hash"] == ""
@@ -200,7 +199,7 @@ def some_function():
     assert isinstance(data, list)
     assert len(data) == 2
     # The first dictionary has to be metadata
-    assert is_metadata(data[0])
+    assert RepoInfo.is_flat_dict(data[0])
     assert data[0]["repo_name"] == "score_baselibs"
     # hash & url can not be set in this script therefore HAVE to be empty
     assert data[0]["hash"] == ""

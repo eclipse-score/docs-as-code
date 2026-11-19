@@ -85,7 +85,7 @@ class DataForTestLink:
     def to_dict_full(self) -> dict[str, str | Path | int]:
         return asdict(self)
 
-    # Drops MetaData fields for saving the Dataclass (saving space in json)
+    # Drops the repo fields (RepoInfo) for saving the Dataclass (saving space in json)
     # The information is in the 'Repo_Source_Link' in the end
     def to_dict_without_metadata(self) -> dict[str, str | Path | int]:
         d = asdict(self)

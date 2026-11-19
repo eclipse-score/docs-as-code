@@ -23,11 +23,8 @@ import sys
 from pathlib import Path
 
 from scripts_bazel.source_code_link_parser import extract_references_from_file
-from src.helper_lib.repo_info import parse_repo_name_from_path
-from src.helper_lib.needlinks import (
-    DefaultMetaData,
-    store_source_code_links_with_metadata_json,
-)
+from src.helper_lib.repo_info import DefaultRepoInfo, parse_repo_name_from_path
+from src.helper_lib.needlinks import store_source_code_links_with_metadata_json
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
@@ -70,11 +67,11 @@ def main():
 
     all_need_references = []
 
-    metadata = DefaultMetaData()
+    metadata = DefaultRepoInfo()
     metadata_set = False
     for file_path in args.files:
         if "known_good.json" not in str(file_path) and not metadata_set:
-            metadata["repo_name"] = parse_repo_name_from_path(file_path)
+            metadata.name = parse_repo_name_from_path(file_path)
             metadata_set = True
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path

@@ -15,28 +15,12 @@
 import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, TypedDict, TypeGuard
+from typing import Any, TypeGuard
 
 from src.helper_lib import Environment
-from src.helper_lib.repo_info import LOCAL_REPO
+from src.helper_lib.repo_info import LOCAL_REPO, RepoInfo
 
 env = Environment()
-
-
-class MetaData(TypedDict):
-    repo_name: str
-    hash: str
-    url: str
-
-
-def DefaultMetaData() -> MetaData:
-    md: MetaData = {"repo_name": LOCAL_REPO, "hash": "", "url": ""}
-    return md
-
-
-def is_metadata(x: object) -> TypeGuard[MetaData]:
-    # Make this as strict/loose as you want; at minimum, it must be a dict.
-    return isinstance(x, dict) and {"repo_name", "hash", "url"} <= x.keys()
 
 
 @dataclass(order=True)
@@ -87,7 +71,7 @@ class NeedLink:
     def to_dict_full(self) -> dict[str, str | Path | int]:
         return asdict(self)
 
-    # Drops MetaData fields for saving the Dataclass (saving space in json)
+    # Drops the repo fields (RepoInfo) for saving the Dataclass (saving space in json)
     # The information is in the 'Repo_Source_Link' in the end
     def to_dict_without_metadata(self) -> dict[str, str | Path | int]:
         d = asdict(self)
@@ -139,16 +123,16 @@ def needlink_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
 
 
 def store_source_code_links_with_metadata_json(
-    file: Path, metadata: MetaData, needlist: list[NeedLink]
+    file: Path, metadata: RepoInfo, needlist: list[NeedLink]
 ) -> None:
     """
     Writes a JSON array:
       [ meta_dict, needlink1, needlink2, ... ]
 
-    meta_dict must include:
+    meta_dict is the flat form of RepoInfo:
       repo_name, hash, url
     """
-    payload: list[object] = [metadata, *needlist]
+    payload: list[object] = [metadata.to_flat_dict(), *needlist]
 
     # After `rm -rf _build` or on clean builds the directory does not exist,
     # so we need to create it. We create any folder that might be missing
@@ -193,13 +177,13 @@ def load_source_code_links_with_metadata_json(file: Path) -> list[NeedLink]:
         object_hook=needlink_decoder,
     )
     links: list[object] = []
-    if not is_metadata(data[0]):
+    if not isinstance(data[0], dict) or not RepoInfo.is_flat_dict(data[0]):
         raise TypeError(
             "If you do not have a 'metadata' dict as the first one in the json "
             "you might wanted to call the load without metadata named: "
             "'load_source_code_links_json'"
         )
-    metadata: MetaData = data[0]
+    metadata = RepoInfo.from_flat_dict(data[0])
     links = data[1:]
     if not _is_needlink_list(links):
         raise TypeError(
@@ -207,9 +191,9 @@ def load_source_code_links_with_metadata_json(file: Path) -> list[NeedLink]:
             f"metadata must decode to NeedLink objects. File: {file}"
         )
     for d in links:
-        d.repo_name = metadata["repo_name"]
-        d.hash = metadata["hash"]
-        d.url = metadata["url"]
+        d.repo_name = metadata.name
+        d.hash = metadata.hash
+        d.url = metadata.url
     return links
 
 

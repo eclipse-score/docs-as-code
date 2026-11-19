@@ -50,10 +50,8 @@ from src.extensions.score_source_code_linker.helpers import (
 )
 from src.helper_lib.needlinks import (
     DefaultNeedLink,
-    MetaData,
     NeedLink,
     NeedLinkEncoder,
-    is_metadata,
     load_source_code_links_json,
     load_source_code_links_with_metadata_json,
     needlink_decoder,
@@ -707,10 +705,10 @@ def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
-def test_is_metadata_missing_keys():
+def test_repo_info_is_flat_dict_missing_keys():
     """Bad path: Dict missing required keys returns False"""
     incomplete = {"repo_name": "test", "hash": "abc"}
-    assert is_metadata(incomplete) is False
+    assert RepoInfo.is_flat_dict(incomplete) is False
 
 
 #            ─────────────────[ NeedLink Dataclass Tests ]─────────────────
@@ -879,11 +877,11 @@ def test_load_validates_all_items_are_needlinks(tmp_path: Path):
 )
 def test_store_and_load_with_metadata(tmp_path: Path):
     """Happy path: Store with metadata dict and load correctly"""
-    metadata: MetaData = {
-        "repo_name": "external_repo",
-        "hash": "commit_xyz",
-        "url": "https://github.com/external/repo",
-    }
+    metadata = RepoInfo(
+        name="external_repo",
+        hash="commit_xyz",
+        url="https://github.com/external/repo",
+    )
     needlinks = [
         NeedLink(
             file=Path("src/impl.py"),
@@ -1016,11 +1014,11 @@ def test_load_with_metadata_resolves_relative_path(
     workspace = tmp_path / "workspace"
     workspace.mkdir()
 
-    metadata: MetaData = {
-        "repo_name": "mod",
-        "hash": "h",
-        "url": "u",
-    }
+    metadata = RepoInfo(
+        name="mod",
+        hash="h",
+        url="u",
+    )
     needlinks = [
         NeedLink(
             file=Path("src/test.py"),
@@ -1091,11 +1089,11 @@ def test_roundtrip_standard_format(tmp_path: Path):
 )
 def test_roundtrip_metadata_format_applies_metadata(tmp_path: Path):
     """Happy path: Metadata format applies metadata to all links"""
-    metadata: MetaData = {
-        "repo_name": "shared_repo",
-        "hash": "shared_hash",
-        "url": "https://github.com/shared/repo",
-    }
+    metadata = RepoInfo(
+        name="shared_repo",
+        hash="shared_hash",
+        url="https://github.com/shared/repo",
+    )
     needlinks = [
         NeedLink(
             file=Path("src/f1.py"),
@@ -1149,11 +1147,11 @@ def test_roundtrip_empty_lists(tmp_path: Path):
 )
 def test_json_format_with_metadata_has_separate_dict(tmp_path: Path):
     """Edge case: Verify metadata format has metadata as first element"""
-    metadata: MetaData = {
-        "repo_name": "test_mod",
-        "hash": "test_hash",
-        "url": "test_url",
-    }
+    metadata = RepoInfo(
+        name="test_mod",
+        hash="test_hash",
+        url="test_url",
+    )
     needlink = NeedLink(
         file=Path("src/test.py"),
         line=1,
