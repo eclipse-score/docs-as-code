@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import json
-import shutil
 import subprocess
 from collections import Counter
 from collections.abc import Callable
@@ -27,6 +26,7 @@ from sphinx_needs.data import SphinxNeedsData
 from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.helper_lib.needlinks import NeedLink
 from src.helper_lib.repo_info import RepoInfo, LOCAL_REPO
+from src.extensions.score_source_code_linker.tests.golden_files import copy_golden_file
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataForTestLink_JSON_Decoder,
@@ -94,13 +94,13 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
 
     curr_dir = Path(__file__).absolute().parent
     # print("CURR_dir", curr_dir)
-    shutil.copyfile(
+    copy_golden_file(
         curr_dir / "expected_codelink.json", repo_path / ".expected_codelink.json"
     )
-    shutil.copyfile(
+    copy_golden_file(
         curr_dir / "expected_testlink.json", repo_path / ".expected_testlink.json"
     )
-    shutil.copyfile(
+    copy_golden_file(
         curr_dir / "expected_grouped.json", repo_path / ".expected_grouped.json"
     )
 

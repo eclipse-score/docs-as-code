@@ -16,7 +16,6 @@
 # ╙                                                          ╜
 
 import json
-import shutil
 import subprocess
 from collections.abc import Callable
 from pathlib import Path
@@ -26,6 +25,7 @@ from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 
 from src.helper_lib.repo_info import RepoInfo, LOCAL_REPO
+from src.extensions.score_source_code_linker.tests.golden_files import copy_golden_file
 from src.extensions.score_source_code_linker.repo_source_links import (
     RepoSourceLinks_JSON_Decoder,
     load_repo_source_links_json,
@@ -90,7 +90,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
     _ = (bazel_testdir / "test.xml").write_text(make_test_xml())
 
     curr_dir = Path(__file__).absolute().parent
-    _ = shutil.copyfile(
+    copy_golden_file(
         curr_dir / "expected_repo_grouped.json",
         repo_path / ".expected_repo_grouped.json",
     )
