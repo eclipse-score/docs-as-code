@@ -559,7 +559,8 @@ def _static_analysis_report(
     if report["rules"]:
         block += _rules_table(summary["top_rules"])
         return block
-    if data is None:
+    # Without any SARIF report the summary only lists the selected files.
+    if data is None or not data["tools"]:
         block += nodes.paragraph(
             text="No static analysis data available for this module."
         )
