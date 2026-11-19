@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reference Other Modules &#8212; S-CORE Docs-as-Code  documentation</title>
+    <title>Reference Documentation from Other Modules &#8212; S-CORE Docs-as-Code  documentation</title>
   
   
   
@@ -73,7 +73,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Handle Cross-Module Compatibility Findings" href="cross_module_compatibility.html" />
-    <link rel="prev" title="Write Documentation" href="write_docs.html" />
+    <link rel="prev" title="Integrate Generated Documentation" href="generated_docs.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
@@ -411,19 +411,29 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="get_started.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Build Documentation in an Existing Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Set Up Docs-as-Code in a New Project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
-<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Reference Other Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bundles/index.html">How to use bundles</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
-<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="perform_tool_verification.html">How to Apply the SCORE Tool Management Process</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Integrate and extend documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="bundles/index.html">Use Documentation Bundles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated_docs.html">Integrate Generated Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Reference Documentation from Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Sphinx Extensions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Traceability and quality checks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Link Source Code to Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Link Tests to Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tool verification</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="perform_tool_verification.html">How to Apply the SCORE Tool Management Process</a></li>
 </ul>
 </div>
 </nav></div>
@@ -467,7 +477,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Reference Other Modules</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Reference Documentation from Other Modules</span></li>
   </ul>
 </nav>
 </div>
@@ -484,8 +494,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="reference-other-modules">
-<h1>Reference Other Modules<a class="headerlink" href="#reference-other-modules" title="Link to this heading">#</a></h1>
+  <section id="reference-documentation-from-other-modules">
+<h1>Reference Documentation from Other Modules<a class="headerlink" href="#reference-documentation-from-other-modules" title="Link to this heading">#</a></h1>
 <p>This document explains how to enable cross-module (bi-directional) linking between documentation modules with Sphinx-Needs in this project.
 In short:</p>
 <ol class="arabic simple">
@@ -554,7 +564,7 @@ build, so that module’s Needs do not need to be imported separately.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>See <a class="reference internal" href="bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for the full mount reference, and
+<p>See <a class="reference internal" href="bundles/index.html#howto-mount-external-sources"><span class="std std-ref">Use Documentation Bundles</span></a> for the full mount reference, and
 <a class="reference internal" href="../concepts/bidirectional_traceability.html#docs-bidirectional-traceability"><span class="std std-ref">Bi-directional Traceability</span></a> for more on cross-module linking.</p>
 </section>
 <section id="reference-needs-across-modules">
@@ -586,12 +596,12 @@ for more details on cross-referencing needs.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="write_docs.html"
+       href="generated_docs.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Write Documentation</p>
+        <p class="prev-next-title">Integrate Generated Documentation</p>
       </div>
     </a>
     <a class="right-next"

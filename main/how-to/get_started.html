@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Getting started &#8212; S-CORE Docs-as-Code  documentation</title>
+    <title>Build Documentation in an Existing Project &#8212; S-CORE Docs-as-Code  documentation</title>
   
   
   
@@ -72,7 +72,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Setup" href="setup.html" />
+    <link rel="next" title="Set Up Docs-as-Code in a New Project" href="setup.html" />
     <link rel="prev" title="How To" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
@@ -411,19 +411,29 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Build Documentation in an Existing Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Set Up Docs-as-Code in a New Project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bundles/index.html">How to use bundles</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
-<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="perform_tool_verification.html">How to Apply the SCORE Tool Management Process</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Integrate and extend documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="bundles/index.html">Use Documentation Bundles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated_docs.html">Integrate Generated Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Documentation from Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Sphinx Extensions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Traceability and quality checks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Link Source Code to Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Link Tests to Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tool verification</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="perform_tool_verification.html">How to Apply the SCORE Tool Management Process</a></li>
 </ul>
 </div>
 </nav></div>
@@ -467,7 +477,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Getting started</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Build Documentation in an Existing Project</span></li>
   </ul>
 </nav>
 </div>
@@ -484,14 +494,14 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="getting-started">
-<h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
+  <section id="build-documentation-in-an-existing-project">
+<h1>Build Documentation in an Existing Project<a class="headerlink" href="#build-documentation-in-an-existing-project" title="Link to this heading">#</a></h1>
 <p>In an existing S-CORE repository, build the documentation by using Bazel:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
 </pre></div>
 </div>
 <p>Open the file <code class="docutils literal notranslate"><span class="pre">_build/index.html</span></code> in your browser.</p>
-<p>In a new S-CORE repository, read <a class="reference internal" href="setup.html"><span class="doc">Setup</span></a>.</p>
+<p>In a new S-CORE repository, read <a class="reference internal" href="setup.html"><span class="doc">Set Up Docs-as-Code in a New Project</span></a>.</p>
 </section>
 
 
@@ -518,7 +528,7 @@
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Setup</p>
+        <p class="prev-next-title">Set Up Docs-as-Code in a New Project</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

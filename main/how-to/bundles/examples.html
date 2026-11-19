@@ -73,7 +73,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Parent bundle" href="examples/nested/index.html" />
-    <link rel="prev" title="How to use bundles" href="index.html" />
+    <link rel="prev" title="Use Documentation Bundles" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
@@ -411,13 +411,15 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../get_started.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../setup.html">Setup</a></li>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../get_started.html">Build Documentation in an Existing Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../setup.html">Set Up Docs-as-Code in a New Project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../write_docs.html">Write Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../other_modules.html">Reference Other Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">How to use bundles</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Integrate and extend documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Use Documentation Bundles</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active has-children"><a aria-current="page" class="current reference internal" href="#">Bundle examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="examples/nested/index.html">Parent bundle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="examples/generated-data/index.html">Generated Data Page</a></li>
@@ -425,12 +427,20 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="../dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../source_to_doc_links.html">Reference Docs in Source Code</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../test_to_doc_links.html">Reference Docs in Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../perform_tool_verification.html">How to Apply the SCORE Tool Management Process</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../generated_docs.html">Integrate Generated Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../add_extensions.html">Add Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other_modules.html">Reference Documentation from Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../add_extensions.html">Add Sphinx Extensions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Traceability and quality checks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../source_to_doc_links.html">Link Source Code to Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_to_doc_links.html">Link Tests to Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tool verification</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../perform_tool_verification.html">How to Apply the SCORE Tool Management Process</a></li>
 </ul>
 </div>
 </nav></div>
@@ -475,7 +485,7 @@
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">How To</a></li>
     
     
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">How to use bundles</a></li>
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Use Documentation Bundles</a></li>
     
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Bundle examples</span></li>
   </ul>
@@ -497,7 +507,7 @@
   <section id="bundle-examples">
 <h1>Bundle examples<a class="headerlink" href="#bundle-examples" title="Link to this heading">#</a></h1>
 <p>This page is a catalog of focused bundle patterns. Start with
-<a class="reference internal" href="index.html"><span class="doc">How to use bundles</span></a> for the basic workflow; use these examples when documentation is
+<a class="reference internal" href="index.html"><span class="doc">Use Documentation Bundles</span></a> for the basic workflow; use these examples when documentation is
 split across bundles, generated during the build, or published by another
 Bazel module. Each example shows the bundle declaration, its placement in the
 consuming project, and the resulting location in the documentation output.</p>
@@ -583,7 +593,7 @@ bring their Need directives with them, so do not import the same module’s
 <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> separately.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for the full mount reference and
+<p><a class="reference internal" href="index.html#howto-mount-external-sources"><span class="std std-ref">Use Documentation Bundles</span></a> for the full mount reference and
 <a class="reference internal" href="../../reference/bazel_macros.html#docs-bazel-macros"><span class="std std-ref">Bazel macro: docs</span></a> for the <code class="docutils literal notranslate"><span class="pre">docs</span></code> and <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> attributes.</p>
 </div>
 </section>
@@ -615,7 +625,7 @@ bring their Need directives with them, so do not import the same module’s
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">How to use bundles</p>
+        <p class="prev-next-title">Use Documentation Bundles</p>
       </div>
     </a>
     <a class="right-next"
