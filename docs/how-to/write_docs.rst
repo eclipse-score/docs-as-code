@@ -68,8 +68,10 @@ For further documentation on needextends please `look here <https://sphinx-needs
 
 .. note::
 
-   Needextends may only modify needs in the current document. Add `c.this_doc()`
-   to the filter string of the needextend as shown in the examples above.
+   Needextends may only modify Needs in the current document.
+   Include ``c.this_doc()`` in each filter, as in the examples above. Within a
+   needextend filter, ``needs`` contains only the Needs from that document. A direct
+   Need ID must also belong to that document.
 
 
 Requirement ID Feature Part

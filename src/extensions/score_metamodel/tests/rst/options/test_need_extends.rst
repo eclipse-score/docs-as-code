@@ -61,7 +61,7 @@
 .. where the need is in the current document
 
 
-.. needextend:: c.this_doc() and id == 'stkh_req__test__need_extends_1'
+.. needextend:: c.this_doc() and id == 'stkh_req__test__need_extends_1' and not safety
    :safety: ASIL_B
    :expect_not: Replacing of options
 
@@ -87,3 +87,8 @@
 .. needextend:: id == 'stkh_req__test__need_extends_1'
    :security: QM
    :expect: needextend in S-CORE must always be used per document only. Please add 'c.this_doc()' to the needextend to limit its effects to the correct document.
+
+
+.. needextend:: stkh_req__test__unknown
+   :expect: Provided id 'stkh_req__test__unknown' for needextend does not exist.
+   :expect_not: Needextends may only modify needs in the current document.
