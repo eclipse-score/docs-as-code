@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 from typing import cast
 
-from src.helper_lib.repo_info import parse_info_from_known_good
+from src.helper_lib.repo_info import parse_info_from_known_good, LOCAL_REPO
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
@@ -68,7 +68,7 @@ def _merge_sourcelinks_file(
     # A known-good file is optional for standalone builds that include
     # documentation from external modules.  In that case, keep the metadata
     # produced by the individual sourcelinks file.
-    if known_good and repo_name and repo_name != "local_repo":
+    if known_good and repo_name and repo_name != LOCAL_REPO:
         hash, repo = parse_info_from_known_good(
             known_good_json=known_good, repo_name=repo_name
         )

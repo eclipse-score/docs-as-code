@@ -26,6 +26,7 @@ from score_pytest.attribute_plugin import add_test_properties
 
 import scripts_bazel.generate_sourcelinks_cli
 from src.helper_lib.needlinks import is_metadata
+from src.helper_lib.repo_info import LOCAL_REPO
 
 _MY_PATH = Path(__file__).parent
 
@@ -112,7 +113,7 @@ def some_function():
     # The first dictionary has to be metadata
     assert len(data) == 2
     assert is_metadata(data[0])
-    assert data[0]["repo_name"] == "local_repo"
+    assert data[0]["repo_name"] == LOCAL_REPO
     # hash & url can not be set in this script therefore HAVE to be empty
     assert data[0]["hash"] == ""
     assert data[0]["url"] == ""

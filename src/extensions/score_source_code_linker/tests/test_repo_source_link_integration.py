@@ -25,7 +25,7 @@ import pytest
 from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 
-from src.helper_lib.repo_info import RepoInfo
+from src.helper_lib.repo_info import RepoInfo, LOCAL_REPO
 from src.extensions.score_source_code_linker.repo_source_links import (
     RepoSourceLinks_JSON_Decoder,
     load_repo_source_links_json,
@@ -103,7 +103,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_1",
                     "full_line": "#" + " req-Id: MOD_REQ_1",
-                    "repo_name": "local_repo",
+                    "repo_name": LOCAL_REPO,
                     "hash": "",
                     "url": "",
                 },
@@ -113,7 +113,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_2",
                     "full_line": "#" + " req-Id: MOD_REQ_2",
-                    "repo_name": "local_repo",
+                    "repo_name": LOCAL_REPO,
                     "hash": "",
                     "url": "",
                 },
@@ -123,7 +123,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_1",
                     "full_line": "#" + " req-Id: MOD_REQ_1",
-                    "repo_name": "local_repo",
+                    "repo_name": LOCAL_REPO,
                     "hash": "",
                     "url": "",
                 },
@@ -133,7 +133,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_3",
                     "full_line": "#" + " req-Id: MOD_REQ_3",
-                    "repo_name": "local_repo",
+                    "repo_name": LOCAL_REPO,
                     "hash": "",
                     "url": "",
                 },
@@ -368,7 +368,7 @@ def test_repo_grouping_multiple_needs_per_repo(
         # Find the local_repo (should have all 3 requirements)
         local_repo = None
         for m in loaded:
-            if m.repo.name == "local_repo":
+            if m.repo.name == LOCAL_REPO:
                 local_repo = m
                 break
 

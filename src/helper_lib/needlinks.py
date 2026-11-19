@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any, TypedDict, TypeGuard
 
 from src.helper_lib import Environment
+from src.helper_lib.repo_info import LOCAL_REPO
 
 env = Environment()
 
@@ -29,7 +30,7 @@ class MetaData(TypedDict):
 
 
 def DefaultMetaData() -> MetaData:
-    md: MetaData = {"repo_name": "local_repo", "hash": "", "url": ""}
+    md: MetaData = {"repo_name": LOCAL_REPO, "hash": "", "url": ""}
     return md
 
 
@@ -47,7 +48,7 @@ class NeedLink:
     tag: str
     need: str
     full_line: str
-    repo_name: str = "local_repo"
+    repo_name: str = LOCAL_REPO
     hash: str = ""
     url: str = ""
 

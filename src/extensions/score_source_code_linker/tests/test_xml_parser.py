@@ -35,6 +35,7 @@ from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
 
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
+from src.helper_lib.repo_info import LOCAL_REPO
 
 
 # Unsure if I should make these last a session or not
@@ -294,7 +295,7 @@ def test_read_test_xml_file(
     # ADAPTED: Mock return value to ensure metadata is populated.
     # 'local_module' triggers the path where hash/url are empty strings,
     # which is valid but avoids the need to mock parse_info_from_known_good.
-    mock_parse_module.return_value = "local_repo"
+    mock_parse_module.return_value = LOCAL_REPO
 
     _: Path
     dir1: Path
@@ -309,7 +310,7 @@ def test_read_test_xml_file(
     assert isinstance(tcneed, DataOfTestCase)
     assert tcneed.result == "failed"
     # ADAPTED: Verify metadata fields were populated
-    assert tcneed.repo_name == "local_repo"
+    assert tcneed.repo_name == LOCAL_REPO
     assert tcneed.hash == ""
     assert tcneed.url == ""
 
@@ -578,7 +579,7 @@ def test_get_metadata_from_test_path_local():
         "/home/root/docs-as-code/bazel-testlogs/src/extensions/foo/test.xml"
     )
     md = xml_parser.get_metadata_from_test_path(local_path, None)
-    assert md["repo_name"] == "local_repo"
+    assert md["repo_name"] == LOCAL_REPO
     assert md["hash"] == ""
     assert md["url"] == ""
 

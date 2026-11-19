@@ -20,6 +20,7 @@ import pytest
 from src.helper_lib.repo_info import (
     parse_info_from_known_good,
     parse_repo_name_from_path,
+    LOCAL_REPO
 )
 from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
@@ -60,7 +61,7 @@ def test_parse_repo_name_from_local_path():
 
     result = parse_repo_name_from_path(path)
 
-    assert result == "local_repo"
+    assert result == LOCAL_REPO
 
 
 def test_parse_repo_name_from_empty_path():
@@ -69,7 +70,7 @@ def test_parse_repo_name_from_empty_path():
 
     result = parse_repo_name_from_path(path)
 
-    assert result == "local_repo"
+    assert result == LOCAL_REPO
 
 
 def test_parse_repo_name_without_plus_suffix():

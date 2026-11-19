@@ -60,7 +60,7 @@ from src.helper_lib.needlinks import (
     store_source_code_links_json,
     store_source_code_links_with_metadata_json,
 )
-from src.helper_lib.repo_info import RepoInfo
+from src.helper_lib.repo_info import RepoInfo, LOCAL_REPO
 from src.extensions.score_source_code_linker.repo_source_links import (
     group_needs_by_repo,
     store_repo_source_links_json,
@@ -210,7 +210,7 @@ def sample_needlinks() -> list[NeedLink]:
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
             full_line="#" + " req-Id: TREQ_ID_1",
-            repo_name="local_repo",
+            repo_name=LOCAL_REPO,
             hash="",
             url="",
         ),
@@ -220,7 +220,7 @@ def sample_needlinks() -> list[NeedLink]:
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
             full_line="#" + " req-Id: TREQ_ID_1",
-            repo_name="local_repo",
+            repo_name=LOCAL_REPO,
             hash="",
             url="",
         ),
@@ -230,7 +230,7 @@ def sample_needlinks() -> list[NeedLink]:
             tag="#" + " req-Id:",
             need="TREQ_ID_2",
             full_line="#" + " req-Id: TREQ_ID_2",
-            repo_name="local_repo",
+            repo_name=LOCAL_REPO,
             hash="",
             url="",
         ),
@@ -240,7 +240,7 @@ def sample_needlinks() -> list[NeedLink]:
             tag="#" + " req-Id:",
             need="TREQ_ID_200",
             full_line="#" + " req-Id: TREQ_ID_200",
-            repo_name="local_repo",
+            repo_name=LOCAL_REPO,
             hash="",
             url="",
         ),
@@ -508,7 +508,7 @@ def test_cache_file_with_encoded_comments(temp_dir: Path) -> None:
             tag="#" + " req-Id:",
             need="TEST_001",
             full_line="#" + " req-Id: TEST_001",
-            repo_name="local_repo",
+            repo_name=LOCAL_REPO,
             hash="",
             url="",
         )
@@ -612,7 +612,7 @@ def another_function():
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
             full_line="#" + " req-Id: TREQ_ID_1",
-            repo_name="local_repo",
+            repo_name=LOCAL_REPO,
             hash="",
             url="",
         ),
@@ -622,7 +622,7 @@ def another_function():
             tag="#" + " req-Id:",
             need="TREQ_ID_2",
             full_line="#" + " req-Id: TREQ_ID_2",
-            repo_name="local_repo",
+            repo_name=LOCAL_REPO,
             hash="",
             url="",
         ),
@@ -632,7 +632,7 @@ def another_function():
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
             full_line="#" + " req-Id: TREQ_ID_1",
-            repo_name="local_repo",
+            repo_name=LOCAL_REPO,
             hash="",
             url="",
         ),
@@ -656,7 +656,7 @@ def another_function():
             assert len(found_links.links.TestLinks) == 0
 
     # Test GitHub link generation
-    metadata = RepoInfo(name="local_repo", hash="", url="")
+    metadata = RepoInfo(name=LOCAL_REPO, hash="", url="")
     for needlink in loaded_links:
         github_link = get_github_link(metadata, needlink, git_root=git_repo)
         assert "https://github.com/test-user/test-repo/blob/" in github_link
@@ -697,7 +697,7 @@ def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
         full_line="#" + " req-Id: TREQ_ID_1",
     )
 
-    metadata = RepoInfo(name="local_repo", hash="", url="")
+    metadata = RepoInfo(name=LOCAL_REPO, hash="", url="")
     github_link = get_github_link(metadata, needlink, git_root=git_repo)
     assert new_hash in github_link
 

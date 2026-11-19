@@ -29,6 +29,7 @@ from pathlib import Path
 from typing import Any
 
 from sphinx_needs import logging
+from src.helper_lib.repo_info import LOCAL_REPO
 
 LOGGER = logging.get_logger(__name__)
 
@@ -42,7 +43,7 @@ class DataForTestLink:
     verify_type: str
     result: str
     result_text: str = ""
-    repo_name: str = "local_repo"
+    repo_name: str = LOCAL_REPO
     hash: str = ""
     url: str = ""
 

@@ -38,6 +38,7 @@ from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.helper_lib.repo_info import (
     parse_info_from_known_good,
     parse_repo_name_from_path,
+    LOCAL_REPO
 )
 from src.helper_lib.needlinks import (
     DefaultMetaData,
@@ -121,7 +122,7 @@ def get_metadata_from_test_path(
     Will parse out the metadata from the testpath.
     If test is local then the metadata will be:
 
-        "repo_name": "local_repo",
+        "repo_name": LOCAL_REPO (whatever the vars value is),
         "hash": "",
         "url": "",
 
@@ -151,7 +152,7 @@ def get_metadata_from_test_path(
     repo_name = parse_repo_name_from_path(clean_filepath)
     md = DefaultMetaData()
     md["repo_name"] = repo_name
-    if repo_name != "local_repo" and known_good_json:
+    if repo_name != LOCAL_REPO and known_good_json:
         md["hash"], md["url"] = parse_info_from_known_good(known_good_json, repo_name)
     return md
 
