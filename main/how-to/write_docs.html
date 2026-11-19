@@ -539,8 +539,10 @@ The scope of allowed behaviour in Docs-As-Code for needextend is limited as we d
 <p>For further documentation on needextends please <a class="reference external" href="https://sphinx-needs.readthedocs.io/en/latest/directives/needextend.html">look here</a></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Needextends may only modify needs in the current document. Add <cite>c.this_doc()</cite>
-to the filter string of the needextend as shown in the examples above.</p>
+<p>Needextends may only modify Needs in the current document.
+Include <code class="docutils literal notranslate"><span class="pre">c.this_doc()</span></code> in each filter, as in the examples above. Within a
+needextend filter, <code class="docutils literal notranslate"><span class="pre">needs</span></code> contains only the Needs from that document. A direct
+Need ID must also belong to that document.</p>
 </div>
 </section>
 <section id="requirement-id-feature-part">
