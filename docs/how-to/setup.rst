@@ -12,8 +12,8 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-Setup
-=====
+Set Up Docs-as-Code in a New Project
+====================================
 
 docs-as-code enables you to integrate Sphinx documentation generation into a
 Bazel build system.

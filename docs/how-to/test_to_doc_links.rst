@@ -14,8 +14,8 @@
 
    # Assisted-by: GitHub Copilot
 
-Reference Docs in Tests
-=======================
+Link Tests to Requirements
+==========================
 
 This guide explains how to annotate test cases so that
 docs-as-code automatically creates traceability links between tests and requirements.

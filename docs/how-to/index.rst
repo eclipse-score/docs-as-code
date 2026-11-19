@@ -17,20 +17,38 @@
 How To
 ======
 
-Here you find practical guides on how to use docs-as-code.
-
 .. toctree::
+   :caption: Getting started
    :maxdepth: 1
+   :titlesonly:
 
    get_started
    setup
    write_docs
+
+.. toctree::
+   :caption: Integrate and extend documentation
+   :maxdepth: 1
+   :titlesonly:
+
+   bundles/index
+   generated_docs
    other_modules
    cross_module_compatibility
-   bundles/index
-   dashboards_and_quality_gates
+   add_extensions
+
+.. toctree::
+   :caption: Traceability and quality checks
+   :maxdepth: 1
+   :titlesonly:
+
    source_to_doc_links
    test_to_doc_links
+   dashboards_and_quality_gates
+
+.. toctree::
+   :caption: Tool verification
+   :maxdepth: 1
+   :titlesonly:
+
    perform_tool_verification
-   generated_docs
-   add_extensions

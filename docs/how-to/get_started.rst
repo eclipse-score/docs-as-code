@@ -12,8 +12,8 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-Getting started
-===============
+Build Documentation in an Existing Project
+==========================================
 
 In an existing S-CORE repository, build the documentation by using Bazel:
 

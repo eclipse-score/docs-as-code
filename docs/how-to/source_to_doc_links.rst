@@ -12,8 +12,8 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-Reference Docs in Source Code
-=============================
+Link Source Code to Requirements
+================================
 
 In your C++/Rust/Python source code, you want to reference requirements (needs).
 The docs-as-code tool will create backlinks in the documentation in two steps:
