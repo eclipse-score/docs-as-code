@@ -48,7 +48,7 @@ from src.extensions.score_source_code_linker import (
 from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
 )
-from src.extensions.score_source_code_linker.needlinks import (
+from src.helper_lib.needlinks import (
     DefaultNeedLink,
     MetaData,
     NeedLink,

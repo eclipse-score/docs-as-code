@@ -16,7 +16,7 @@
 import logging
 from pathlib import Path
 
-from src.extensions.score_source_code_linker.needlinks import NeedLink
+from src.helper_lib.needlinks import NeedLink
 
 LOGGER = logging.getLogger(__name__)
 

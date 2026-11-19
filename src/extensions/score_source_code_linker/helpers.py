@@ -14,8 +14,8 @@ import json
 from pathlib import Path
 
 # Import types that depend on score_source_code_linker
-from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink, NeedLink
 from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
+from src.helper_lib.needlinks import DefaultNeedLink, NeedLink
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataOfTestCase,

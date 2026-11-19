@@ -25,7 +25,7 @@ from src.extensions.score_source_code_linker.need_source_links import (
     load_source_code_links_combined_json,
     store_source_code_links_combined_json,
 )
-from src.extensions.score_source_code_linker.needlinks import NeedLink
+from src.helper_lib.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import DataForTestLink
 from src.extensions.score_source_code_linker.tests.test_codelink import (
     NeedLinkTestEncoder,

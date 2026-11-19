@@ -21,7 +21,7 @@ from src.extensions.score_source_code_linker.need_source_links import (
     NeedSourceLinks,
     SourceCodeLinks,
 )
-from src.extensions.score_source_code_linker.needlinks import NeedLink
+from src.helper_lib.needlinks import NeedLink
 from src.extensions.score_source_code_linker.repo_source_links import (
     RepoInfo,
     RepoSourceLinks,

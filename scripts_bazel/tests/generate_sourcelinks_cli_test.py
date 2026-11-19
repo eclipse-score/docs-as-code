@@ -25,7 +25,7 @@ import pytest
 from score_pytest.attribute_plugin import add_test_properties
 
 import scripts_bazel.generate_sourcelinks_cli
-from src.extensions.score_source_code_linker.needlinks import is_metadata
+from src.helper_lib.needlinks import is_metadata
 
 _MY_PATH = Path(__file__).parent
 

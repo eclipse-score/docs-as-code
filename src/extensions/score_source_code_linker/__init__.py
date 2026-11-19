@@ -36,7 +36,7 @@ from src.extensions.score_source_code_linker.need_source_links import (
     load_source_code_links_combined_json,
     store_source_code_links_combined_json,
 )
-from src.extensions.score_source_code_linker.needlinks import (
+from src.helper_lib.needlinks import (
     NeedLink,
     load_source_code_links_json,
     load_source_code_links_with_metadata_json,

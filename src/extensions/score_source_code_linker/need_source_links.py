@@ -25,7 +25,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-from src.extensions.score_source_code_linker.needlinks import (
+from src.helper_lib.needlinks import (
     NeedLink,
 )
 from src.extensions.score_source_code_linker.testlink import (
