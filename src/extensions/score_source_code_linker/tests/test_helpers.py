@@ -17,15 +17,16 @@ from collections.abc import Generator
 from pathlib import Path
 
 import pytest
-
-from src.extensions.score_source_code_linker.helpers import (
-    get_github_link,
-    get_github_link_from_json,
+from src.helper_lib.repo_info import (
     parse_info_from_known_good,
     parse_repo_name_from_path,
 )
-from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
+from src.extensions.score_source_code_linker.helpers import (
+    get_github_link,
+    get_github_link_from_json,
+)
 from src.helper_lib.needlinks import DefaultNeedLink
+from src.helper_lib.repo_info import RepoInfo
 from src.helper_lib import get_current_git_hash
 
 #              ╭──────────────────────────────────────────────────────────╮

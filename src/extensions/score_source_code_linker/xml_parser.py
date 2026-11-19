@@ -34,8 +34,8 @@ from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
 from sphinx_needs.api import add_external_need
 
-from src.extensions.score_source_code_linker.helpers import (
-    get_github_link,
+from src.extensions.score_source_code_linker.helpers import get_github_link
+from src.helper_lib.repo_info import (
     parse_info_from_known_good,
     parse_repo_name_from_path,
 )
@@ -43,7 +43,7 @@ from src.helper_lib.needlinks import (
     DefaultMetaData,
     MetaData,
 )
-from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
+from src.helper_lib.repo_info import RepoInfo
 from src.extensions.score_source_code_linker.testlink import (
     DataOfTestCase,
     store_data_of_test_case_json,

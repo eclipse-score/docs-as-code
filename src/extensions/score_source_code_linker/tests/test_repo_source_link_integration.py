@@ -25,8 +25,8 @@ import pytest
 from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 
+from src.helper_lib.repo_info import RepoInfo
 from src.extensions.score_source_code_linker.repo_source_links import (
-    RepoInfo,
     RepoSourceLinks_JSON_Decoder,
     load_repo_source_links_json,
 )

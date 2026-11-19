@@ -41,8 +41,9 @@ from src.helper_lib.needlinks import (
     load_source_code_links_json,
     load_source_code_links_with_metadata_json,
 )
+from src.helper_lib.repo_info import RepoInfo
+
 from src.extensions.score_source_code_linker.repo_source_links import (
-    RepoInfo,
     group_needs_by_repo,
     load_repo_source_links_json,
     store_repo_source_links_json,

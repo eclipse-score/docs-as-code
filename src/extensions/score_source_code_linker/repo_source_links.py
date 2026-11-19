@@ -22,19 +22,10 @@ from src.extensions.score_source_code_linker.need_source_links import (
     SourceCodeLinks,
     SourceCodeLinks_JSON_Decoder,
 )
-from src.extensions.score_source_code_linker.needlinks import NeedLink
+from src.helper_lib.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import DataForTestLink
 
-
-@dataclass
-class RepoInfo:
-    name: str
-    hash: str
-    url: str
-
-
-def DefaultRepoInfo() -> RepoInfo:
-    return RepoInfo(name="local_repo", hash="", url="")
+from src.helper_lib.repo_info import RepoInfo
 
 
 @dataclass
