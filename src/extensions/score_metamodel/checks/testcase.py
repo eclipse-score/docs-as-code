@@ -14,8 +14,8 @@
 
 from score_metamodel import CheckLogger, graph_check
 from sphinx.application import Sphinx
-from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.views import NeedsView
 
 # Link-level policy is applied only to test types for which the requirement
 # defines a mapping. Other test types remain valid without an inferred mapping.

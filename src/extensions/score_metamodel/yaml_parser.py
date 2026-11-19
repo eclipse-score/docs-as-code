@@ -19,7 +19,7 @@ from typing import Any, cast
 
 from ruamel.yaml import YAML
 from sphinx_needs import logging
-from sphinx_needs.config import NeedsCoreFields
+from sphinx_needs.data import NeedsCoreFields
 
 from src.extensions.score_metamodel.metamodel_types import (
     ProhibitedWordCheck,

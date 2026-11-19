@@ -22,8 +22,8 @@ import pytest
 import score_metamodel.checks.graph_checks as graph_checks
 from score_metamodel.tests import fake_check_logger, need as test_need
 from sphinx_needs.config import NeedType
-from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.views import NeedsView
 
 
 class DummyNeedsView:

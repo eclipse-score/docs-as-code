@@ -186,7 +186,7 @@ def check_options(
     Checks that required and optional options and links are present
     and follow their defined patterns.
     """
-    need_type = get_need_type(app.config.needs_types, need["type"])
+    need_type = get_need_type(app.config.score_need_types, need["type"])
 
     validate_options(log, need_type, need)
     validate_links(log, need_type, need)
@@ -204,7 +204,7 @@ def check_extra_options(
     system attributes.
     """
 
-    production_needs_types = app.config.needs_types
+    production_needs_types = app.config.score_need_types
     need_options = get_need_type(production_needs_types, need["type"])
 
     # set() creates a copy to avoid modifying the original

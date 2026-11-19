@@ -22,8 +22,8 @@ from typing import Any
 
 from score_metamodel import CheckLogger, graph_check, local_check
 from sphinx.application import Sphinx
-from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.views import NeedsView
 
 
 def _link_values(need: NeedItem, link_name: str) -> list[str]:

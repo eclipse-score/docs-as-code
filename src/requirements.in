@@ -6,11 +6,7 @@
 # Hint: Sphinx 9.2.0 dropped support for Python 3.12
 Sphinx
 
-# Sphinx-Needs 9.x is a breaking release.
-# Sphinx-Needs 8.x pins its heavier transitive dependencies:
-#   minijinja 3.x needs Sphinx-Needs 9
-#   jsonschema-rs 0.53+ needs Sphinx-Needs 9
-sphinx-needs[plotting]<9
+sphinx-needs[plotting]==9.3.0
 sphinxcontrib-plantuml
 pydata-sphinx-theme
 sphinx-design

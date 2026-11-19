@@ -35,7 +35,7 @@ def check_id_format(app: Sphinx, need: NeedItem, log: CheckLogger):
     the requirement id or not.
     ---
     """
-    need_options = get_need_type(app.config.needs_types, need["type"])
+    need_options = get_need_type(app.config.score_need_types, need["type"])
     expected_parts = need_options.get("parts", 3)
     id_parts = need["id"].split("__")
     id_parts_len = len(id_parts)
@@ -109,7 +109,7 @@ def _check_options_for_prohibited_words(
 # req-Id: tool_req__docs_common_attr_title
 @local_check
 def check_for_prohibited_words(app: Sphinx, need: NeedItem, log: CheckLogger):
-    need_options = get_need_type(app.config.needs_types, need["type"])
+    need_options = get_need_type(app.config.score_need_types, need["type"])
     prohibited_word_checks: list[ProhibitedWordCheck] = (
         app.config.prohibited_words_checks
     )

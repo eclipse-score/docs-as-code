@@ -14,8 +14,8 @@ from typing import Any
 
 from docutils.nodes import Node
 from score_cross_module_compatibility import CompatibilityReporter
+from sphinx.util.logging import SphinxLoggerAdapter
 from sphinx_needs import logging
-from sphinx_needs.logging import SphinxLoggerAdapter
 from sphinx_needs.need_item import NeedItem
 
 Location = str | tuple[str | None, int | None] | Node | None

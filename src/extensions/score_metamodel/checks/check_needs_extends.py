@@ -26,6 +26,7 @@ from sphinx_needs.need_item import NeedItem
 from sphinx_needs.needs_schema import (
     FieldFunctionArray,
     FieldLiteralValue,
+    FieldsSchema,
     LinksFunctionArray,
     LinksLiteralValue,
 )
@@ -182,7 +183,9 @@ def score_extend_needs_data_func(
     all_needs: NeedsMutable,
     extends: dict[str, NeedsExtendType],
     needs_config: NeedsSphinxConfig,
-):
+    *,
+    schema: FieldsSchema,
+) -> None:
     """Validate SCORE's needextend policy, then let Sphinx-Needs apply it.
 
     This wrapper intentionally only reports violations. The unmodified directives
@@ -200,7 +203,9 @@ def score_extend_needs_data_func(
         for n in needs:
             _ensure_non_destructive_changes(n, needextend, _location(needextend))
 
-    return original_function(all_needs, extends, needs_config)
+    original_function(all_needs, extends, needs_config, schema=schema)
 
 
-sphinx_needs.directives.need.extend_needs_data = score_extend_needs_data_func
+# Patch the binding used by the need processor so SCORE can validate the
+# directives before Sphinx-Needs applies them.
+sphinx_needs.directives.need.extend_needs_data = score_extend_needs_data_func  # pyright: ignore[reportPrivateImportUsage]

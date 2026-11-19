@@ -21,8 +21,9 @@ from score_metamodel import ScoreNeedType
 from score_metamodel.tests import need as test_need
 from score_pytest.attribute_plugin import add_test_properties
 from sphinx.environment import BuildEnvironment
-from sphinx_needs.data import NeedsView, SphinxNeedsData
+from sphinx_needs.data import SphinxNeedsData
 from sphinx_needs.need_item import NeedItem, NeedItemSourceExternal
+from sphinx_needs.views import NeedsView
 
 
 @add_test_properties(

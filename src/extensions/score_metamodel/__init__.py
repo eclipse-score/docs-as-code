@@ -18,8 +18,10 @@ from pathlib import Path
 from score_cross_module_compatibility import get_reporter
 from sphinx.application import Sphinx
 from sphinx_needs import logging
-from sphinx_needs.data import NeedsView, SphinxNeedsData
+from sphinx_needs.config import NeedType
+from sphinx_needs.data import SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.views import NeedsView
 
 from src.extensions.score_metamodel.bundle_metadata import apply_bundle_metadata
 from src.extensions.score_metamodel.external_needs import connect_external_needs
@@ -113,12 +115,12 @@ def _location_prefix(srcdir: str | Path) -> str:
 
 
 def _run_checks(app: Sphinx) -> None:
-    # First of all postprocess the need links to convert
-    # type names into actual need types.
-    # This must be done before any checks are run.
-    # And it must be done after config was hashed, otherwise
-    # the config hash would include recusive linking between types.
-    postprocess_need_links(app.config.needs_types)
+    # Link checks use the target type's SCORE rules, so resolve the names in
+    # mandatory_links_str and optional_links_str to the corresponding type objects.
+    # Do this at write-started, after Sphinx has compared the build configuration
+    # for incremental rebuilds. Types can reference each other, so resolving them
+    # during configuration would put cycles in the values Sphinx compares.
+    postprocess_need_links(app.config.score_need_types)
 
     # Filter out external needs, as checks are only intended to be run
     # on internal needs.
@@ -133,7 +135,7 @@ def _run_checks(app: Sphinx) -> None:
     checks_filter = parse_checks_filter(app.config.score_metamodel_checks)
 
     for directive, option, pattern in validate_mandatory_regexes(
-        app.config.needs_types
+        app.config.score_need_types
     ):
         log.warning(
             f"metamodel: `{directive}` mandatory option `{option}` "
@@ -253,7 +255,32 @@ def _clear_needs_defaults(app: Sphinx):
         )
 
 
+def register_score_need_types(app: Sphinx, need_types: list[ScoreNeedType]) -> None:
+    """Register metamodel types during extension setup."""
+    # SCORE checks use the full definitions, including option patterns and valid
+    # link targets. Keep them in a config value so Sphinx can track rule changes.
+    app.config.score_need_types = [*app.config.score_need_types, *need_types]
+
+    # Sphinx-Needs registers directives and validates the keys in needs_types.
+    # Give it a separate dict with the directive and presentation fields from
+    # the SCORE metamodel. The checks can enrich their own definitions later.
+    for need_type in need_types:
+        sphinx_type: NeedType = {
+            "directive": need_type["directive"],
+            "title": need_type["title"],
+            "prefix": need_type["prefix"],
+        }
+        if "color" in need_type:
+            sphinx_type["color"] = need_type["color"]
+        if "style" in need_type:
+            sphinx_type["style"] = need_type["style"]
+        app.config.needs_types.append(sphinx_type)
+
+
 def setup(app: Sphinx) -> dict[str, str | bool]:
+    # SCORE rules affect validation of existing Needs, so changes to the rules
+    # must invalidate the Sphinx environment on incremental builds.
+    app.add_config_value("score_need_types", [], rebuild="env", types=list)
     app.add_config_value("external_needs_source", "", rebuild="env")
     app.add_config_value(
         "runfiles_dir",
@@ -273,9 +300,8 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     override_path = Path(raw_metamodel_path) if raw_metamodel_path else None
     metamodel = load_metamodel_data(override_path)
 
-    # Extend sphinx-needs config rather than overwriting
     _clear_needs_defaults(app)
-    app.config.needs_types += metamodel.needs_types
+    register_score_need_types(app, metamodel.needs_types)
     app.config.needs_links.update(metamodel.needs_links)
     app.config.needs_fields.update(metamodel.needs_fields)
     # Sphinx-Needs validates every string-link option against the active
