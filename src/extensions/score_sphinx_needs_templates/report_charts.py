@@ -22,6 +22,7 @@ has no legend. ``needpie`` itself stays untouched for every other chart.
 """
 
 import hashlib
+import html
 import json
 import textwrap
 from collections.abc import Iterator, Sequence
@@ -451,6 +452,66 @@ _FINDING_CLASSES = (
     ("medium", "#f0a500"),
     ("low", "#9bc3e6"),
 )
+# Mirrors the classification order in src/docs_cli/sarif_summary.py.
+_FINDING_CLASS_EXPLANATIONS = {
+    "critical": "CodeQL security-severity of 9.0 or more",
+    "high": "MISRA mandatory, SARIF level error, security-severity 7.0 to 8.9, "
+    "or clang-tidy bugprone-, cert-, clang-analyzer-, concurrency- checks",
+    "medium": "MISRA required, SARIF level warning, security-severity 4.0 to 6.9, "
+    "clang-tidy cppcoreguidelines-, misc-, performance-, hicpp-, clang-diagnostic- "
+    "checks, or no classification available",
+    "low": "MISRA advisory, SARIF level note, security-severity below 4.0, "
+    "or clang-tidy modernize-, readability-, google-, portability- checks",
+}
+
+
+def _finding_legend() -> nodes.raw:
+    spans = "".join(
+        f'<span title="{html.escape(_FINDING_CLASS_EXPLANATIONS[name])}">'
+        f'<span class="chart-legend-dot" style="background: {color};"></span>'
+        f"{name}</span>"
+        for name, color in _FINDING_CLASSES
+    )
+    explanations = "<br>".join(
+        f'<span class="chart-legend-dot" style="background: {color};"></span>'
+        f"<code>{name}</code> — {html.escape(_FINDING_CLASS_EXPLANATIONS[name])}"
+        for name, color in _FINDING_CLASSES
+    )
+    markup = (
+        '<div class="chart-legend"><span class="chart-legend-group">'
+        f'<span class="chart-legend-head">Findings</span>{spans}</span></div>'
+        '<details class="chart-legend-details"><summary>What the colours mean'
+        f"</summary><p>{explanations}</p></details>"
+    )
+    return nodes.raw("", markup, format="html")
+
+
+def _rules_table(rules: list[dict[str, Any]]) -> nodes.table:
+    headers = ("Rule", "Tool", "Classification", "Open findings")
+    table = nodes.table(classes=["score-static-analysis-rules"])
+    group = nodes.tgroup(cols=len(headers))
+    table += group
+    for width in (50, 15, 15, 20):
+        group += nodes.colspec(colwidth=width)
+
+    def row(cells: Sequence[str]) -> nodes.row:
+        result = nodes.row()
+        for cell in cells:
+            entry = nodes.entry()
+            entry += nodes.paragraph(text=cell)
+            result += entry
+        return result
+
+    head = nodes.thead()
+    head += row(headers)
+    body = nodes.tbody()
+    for rule in rules:
+        body += row(
+            (rule["rule"], rule["tool"], rule["classification"], str(rule["count"]))
+        )
+    group += head
+    group += body
+    return table
 
 
 class StaticAnalysisReport(nodes.General, nodes.Element):
@@ -513,6 +574,7 @@ def _static_analysis_report(
         f"Tools: {', '.join(tools) or 'none'}."
     )
     if total:
+        block += _finding_legend()
         block += _chart_image(
             app,
             docname,
@@ -528,16 +590,12 @@ def _static_analysis_report(
             prefix="score_static_analysis_bars",
         )
     if summary["top_rules"]:
-        block += nodes.paragraph(text="Most frequent rules:")
-        rules = nodes.bullet_list()
-        for rule in summary["top_rules"]:
-            item = nodes.list_item()
-            item += nodes.paragraph(
-                text=f"{rule['rule']} ({rule['tool']}, {rule['classification']}): "
-                f"{rule['count']}"
-            )
-            rules += item
-        block += rules
+        block += nodes.paragraph(
+            text=f"The {len(summary['top_rules'])} rules with the most open findings "
+            "in this component's source files. Open findings: number of "
+            "non-suppressed results of the rule in these files."
+        )
+        block += _rules_table(summary["top_rules"])
     return block
 
 
