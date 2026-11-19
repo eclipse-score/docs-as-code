@@ -557,20 +557,20 @@ def _static_analysis_report(
     }
     summary = summaries.get(need_id)
     if report["rules"]:
-        if summary and summary["top_rules"]:
-            block += _rules_table(summary["top_rules"])
-        else:
-            block += nodes.paragraph(text="No open findings for this component.")
+        block += _rules_table(summary["top_rules"])
         return block
-    if data is None or summary is None:
+    if data is None:
         block += nodes.paragraph(
-            text="No static analysis data available for this component."
+            text="No static analysis data available for this module."
+        )
+        return block
+    if summary is None or not summary["files"]["total"]:
+        block += nodes.paragraph(
+            text="No source files are assigned to this component, so no findings "
+            "can be attributed to it."
         )
         return block
     files = summary["files"]
-    if not files["total"]:
-        block += nodes.paragraph(text="No source files selected for this component.")
-        return block
     total = sum(summary["findings"].values())
     tools = sorted(
         {
@@ -599,7 +599,33 @@ def _static_analysis_report(
             ],
             prefix="score_static_analysis_bars",
         )
+    if summary["top_rules"]:
+        block += nodes.paragraph(
+            text=f"The following table lists the {len(summary['top_rules'])} most "
+            "critical rules with open findings in the source files of this "
+            "component, sorted by classification (critical first) and then by "
+            "number of open findings. Open findings is the number of "
+            "non-suppressed results of the rule in these files:"
+        )
     return block
+
+
+def _has_rules(report: StaticAnalysisReport, data: dict[str, Any] | None) -> bool:
+    need_id = str(report["need_id"]).split("[", 1)[0]
+    return any(
+        entry["primary_need_id"] == need_id and entry["top_rules"]
+        for entry in (data or {}).get("static_analysis_summaries", [])
+    )
+
+
+def _enclosing_dropdown(node: nodes.Node) -> nodes.Node:
+    # sphinx-design has already turned ``.. dropdown::`` into its HTML node here.
+    parent = node.parent
+    while parent is not None:
+        if type(parent).__name__ == "dropdown_main":
+            return parent
+        parent = parent.parent
+    return node
 
 
 def _process_static_analysis_reports(
@@ -614,6 +640,10 @@ def _process_static_analysis_reports(
         return
     data = _read_static_analysis(app)
     for report in reports:
+        if report["rules"] and not _has_rules(report, data):
+            dropdown = _enclosing_dropdown(report)
+            dropdown.parent.remove(dropdown)
+            continue
         report.replace_self(_static_analysis_report(app, report, data, docname))
 
 
