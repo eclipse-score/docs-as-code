@@ -522,12 +522,16 @@ class StaticAnalysisReportDirective(SphinxDirective):
     """Show classified static-analysis findings for the primary Need named by the argument."""
 
     required_arguments = 1
-    option_spec = {"title": directives.unchanged_required}
+    option_spec = {
+        "title": directives.unchanged_required,
+        "rules": directives.flag,
+    }
 
     def run(self) -> Sequence[nodes.Node]:
         node = StaticAnalysisReport(
             need_id=self.arguments[0],
             title=self.options.get("title", self.arguments[0]),
+            rules="rules" in self.options,
         )
         self.set_source_info(node)
         return [node]
@@ -552,6 +556,12 @@ def _static_analysis_report(
         for entry in (data or {}).get("static_analysis_summaries", [])
     }
     summary = summaries.get(need_id)
+    if report["rules"]:
+        if summary and summary["top_rules"]:
+            block += _rules_table(summary["top_rules"])
+        else:
+            block += nodes.paragraph(text="No open findings for this component.")
+        return block
     if data is None or summary is None:
         block += nodes.paragraph(
             text="No static analysis data available for this component."
@@ -589,13 +599,6 @@ def _static_analysis_report(
             ],
             prefix="score_static_analysis_bars",
         )
-    if summary["top_rules"]:
-        block += nodes.paragraph(
-            text=f"The {len(summary['top_rules'])} rules with the most open findings "
-            "in this component's source files. Open findings: number of "
-            "non-suppressed results of the rule in these files."
-        )
-        block += _rules_table(summary["top_rules"])
     return block
 
 
