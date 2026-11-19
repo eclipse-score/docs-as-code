@@ -27,4 +27,6 @@ needs_types:
       tags: .*
       content: .*
       template: .*
+    optional_links:
+      links: ANY
 links: {}
