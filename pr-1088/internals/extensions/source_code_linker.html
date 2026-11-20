@@ -726,8 +726,9 @@ This will allow us to have an easier time building the final JSON which will eli
 and group all needs according to the appropriate repository.</p>
 <p>Grouping by need is <code class="docutils literal notranslate"><span class="pre">group_by_need</span></code> in <code class="docutils literal notranslate"><span class="pre">need_source_links.py</span></code>, grouping by repository is
 <code class="docutils literal notranslate"><span class="pre">group_needs_by_repo</span></code> in <code class="docutils literal notranslate"><span class="pre">repo_source_links.py</span></code>. Both are called from <code class="docutils literal notranslate"><span class="pre">inject_links_into_needs</span></code>.</p>
-<p>The grouping runs in memory on every build. <code class="docutils literal notranslate"><span class="pre">score_scl_grouped_cache.json</span></code> and
-<code class="docutils literal notranslate"><span class="pre">score_repo_grouped_scl_cache.json</span></code> in <code class="docutils literal notranslate"><span class="pre">_build</span></code> are written for debugging only; the build never reads them back.</p>
+<p>The grouping runs in memory on every build, from the sourcelinks JSON and <code class="docutils literal notranslate"><span class="pre">score_xml_parser_cache.json</span></code>.
+With Sphinx debug verbosity (<code class="docutils literal notranslate"><span class="pre">-vv</span></code>), <code class="docutils literal notranslate"><span class="pre">score_scl_grouped_cache.json</span></code> and <code class="docutils literal notranslate"><span class="pre">score_repo_grouped_scl_cache.json</span></code>
+are also written to <code class="docutils literal notranslate"><span class="pre">_build</span></code> for debugging; the build never reads them back.</p>
 </section>
 <section id="combined-json-example">
 <h3>Combined JSON Example<a class="headerlink" href="#combined-json-example" title="Link to this heading">#</a></h3>
@@ -829,6 +830,8 @@ All link URLs are decided in one function, <code class="docutils literal notrans
 <li><p>In combo builds, known_good_json is required.</p></li>
 <li><p>inefficiencies in creating the links</p></li>
 <li><p>Not compatible with <strong>Esbonio</strong></p></li>
+<li><p>Live preview: the sourcelinks JSON is built by Bazel at start, so changed code tags show after a restart.
+The test XML cache is reused even across restarts, so new test results show only after <code class="docutils literal notranslate"><span class="pre">_build</span></code> is cleaned.</p></li>
 </ul>
 </section>
 <section id="id3">
