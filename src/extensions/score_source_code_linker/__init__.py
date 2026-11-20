@@ -32,12 +32,11 @@ from sphinx_needs.need_item import NeedItem
 
 from src.extensions.score_source_code_linker.need_source_links import (
     group_by_need,
-    load_source_code_links_combined_json,
     store_source_code_links_combined_json,
 )
 from src.extensions.score_source_code_linker.repo_source_links import (
+    RepoSourceLinks,
     group_needs_by_repo,
-    load_repo_source_links_json,
     store_repo_source_links_json,
 )
 from src.extensions.score_source_code_linker.testcase_annotations import (
@@ -122,17 +121,6 @@ def load_link_inputs(
         )
         test_links = []
     return code_links, test_links
-
-
-def build_and_save_combined_file(outdir: Path, app: Sphinx):
-    """
-    Reads the code links & the testlink cache, groups them by need and
-    saves the combined JSON cache.
-    """
-    code_links, test_links = load_link_inputs(app.config.score_sourcelinks_json, outdir)
-    store_source_code_links_combined_json(
-        outdir / "score_scl_grouped_cache.json", group_by_need(code_links, test_links)
-    )
 
 
 #          ╭──────────────────────────────────────╮
@@ -232,60 +220,6 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
         construct_and_add_need(app, tcn)
 
 
-def register_combined_linker(app: Sphinx):
-    # Registering the final combine linker to Sphinx
-    # priority is set to make sure it is called in the right order.
-    # Needs to be called after xml parsing & codelink & combined_linker
-    app.connect("env-updated", setup_combined_linker, priority=510)
-
-
-def setup_combined_linker(app: Sphinx, _: BuildEnvironment):
-    grouped_cache = get_cache_filename(app.outdir, "score_scl_grouped_cache.json")
-    grouped_cache_exists = grouped_cache.exists()
-    # TODO this cache should be done via Bazel
-    if (
-        not grouped_cache_exists
-        or not app.config.skip_rescanning_via_source_code_linker
-    ):
-        LOGGER.debug(
-            "Did not find combined json 'score_scl_grouped_cache.json' in _build."
-            "Generating new one"
-        )
-        build_and_save_combined_file(app.outdir, app)
-
-
-def register_repo_linker(app: Sphinx):
-    # Registering the combined linker to Sphinx
-    # priority is set to make sure it is called in the right order.
-    # Needs to be called after xml parsing & codelink
-    app.connect("env-updated", setup_repo_linker, priority=520)
-
-
-def build_and_save_repo_scl_file(outdir: Path):
-    scl_links = load_source_code_links_combined_json(
-        get_cache_filename(outdir, "score_scl_grouped_cache.json")
-    )
-    mcl_links = group_needs_by_repo(scl_links)
-    store_repo_source_links_json(
-        outdir / "score_repo_grouped_scl_cache.json", mcl_links
-    )
-
-
-def setup_repo_linker(app: Sphinx, _: BuildEnvironment):
-    grouped_cache = get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")
-    grouped_cache_exists = grouped_cache.exists()
-    # TODO this cache should be done via Bazel
-    if (
-        not grouped_cache_exists
-        or not app.config.skip_rescanning_via_source_code_linker
-    ):
-        LOGGER.debug(
-            "Did not find combined json 'score_module_grouped_scl_cache.json' "
-            "in _build. Generating new one"
-        )
-        build_and_save_repo_scl_file(app.outdir)
-
-
 def _clear_git_cache(_app: Sphinx, _env: BuildEnvironment) -> None:
     clear_git_cache()
 
@@ -304,10 +238,8 @@ def setup_once(app: Sphinx):
     app.connect("env-updated", _clear_git_cache, priority=500)
     setup_source_code_linker(app)
     register_test_code_linker(app)
-    register_combined_linker(app)
-    register_repo_linker(app)
 
-    # Priority=515 to ensure it's called after the test linker & combined connection
+    # After the XML parser (505), which writes score_xml_parser_cache.json
     app.connect("env-updated", inject_links_into_needs, priority=525)
 
     # sphinx-needs resolves NeedIncoming and need metadata links on the same event.
@@ -491,7 +423,33 @@ def _apply_links_to_need(
 
 # re-qid: gd_req__req__attr_impl
 def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
-    """Apply cached source-code and test links to Needs during ``env-updated``."""
+    """
+    Group the code & test links and write them into the Needs during
+    ``env-updated``. Recomputed on every build from the inputs, so nothing
+    stale is reused (also not in live preview).
+    """
+    code_links, test_links = load_link_inputs(
+        app.config.score_sourcelinks_json, app.outdir
+    )
+    links_by_need = group_by_need(code_links, test_links)
+    links_by_repo = group_needs_by_repo(links_by_need)
+    # Debug output only, never read back by the build.
+    store_source_code_links_combined_json(
+        app.outdir / "score_scl_grouped_cache.json", links_by_need
+    )
+    store_repo_source_links_json(
+        app.outdir / "score_repo_grouped_scl_cache.json", links_by_repo
+    )
+    plain_links = bool(
+        getattr(app.config, "score_source_code_linker_plain_links", False)
+    )
+    apply_links_to_needs(env, links_by_repo, plain_links)
+
+
+def apply_links_to_needs(
+    env: BuildEnvironment, links_by_repo: list[RepoSourceLinks], plain_links: bool
+) -> None:
+    """Write source_code_link and testlink into the matching Needs."""
     needs_data = SphinxNeedsData(env)
     live_needs = needs_data.get_needs_mutable()
     # A shallow copy duplicates the dictionary and keeps references to the
@@ -506,14 +464,7 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
 
     _log_existing_links(live_needs)
 
-    scl_by_module = load_repo_source_links_json(
-        get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")
-    )
-    plain_links = bool(
-        getattr(app.config, "score_source_code_linker_plain_links", False)
-    )
-
-    for module_grouped_needs in scl_by_module:
+    for module_grouped_needs in links_by_repo:
         for source_code_links in module_grouped_needs.needs:
             # Resolve every reference. For example, REQ_001[version==1] can
             # warn about an outdated version even if an earlier module

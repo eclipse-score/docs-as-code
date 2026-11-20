@@ -26,7 +26,6 @@ from typing import Any, cast
 
 import pytest
 from score_pytest.attribute_plugin import add_test_properties
-from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 
 # S-CORE plugin to allow for properties/attributes in xml
@@ -39,16 +38,14 @@ from sphinx_needs.need_item import (
 )
 
 from src.extensions.score_source_code_linker import (
-    build_and_save_combined_file,
+    apply_links_to_needs,
     find_need,
     get_cache_filename,
     group_by_need,
-    inject_links_into_needs,
     load_link_inputs,
 )
 from src.extensions.score_source_code_linker.repo_source_links import (
     group_needs_by_repo,
-    store_repo_source_links_json,
 )
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
@@ -360,13 +357,8 @@ def test_inject_links_matches_versioned_need_across_modules(
         ),
     )
     links_by_need = group_by_need([first_module_link, outdated_module_link])
-    store_repo_source_links_json(
-        tmp_path / "score_repo_grouped_scl_cache.json",
-        group_needs_by_repo(links_by_need),
-    )
-    app = cast(Sphinx, SimpleNamespace(outdir=tmp_path, config=SimpleNamespace()))
 
-    inject_links_into_needs(app, env)
+    apply_links_to_needs(env, group_needs_by_repo(links_by_need), plain_links=False)
 
     needs = needs_data.get_needs_mutable()
     assert list(needs) == ["TREQ_ID_2", "TREQ_ID_1"]
@@ -452,12 +444,7 @@ def test_combining_without_source_links_continues_with_empty_code_links(
     temp_dir: Path,
 ) -> None:
     """A build without a configured source-link input must not scan or fail."""
-    fake_config = SimpleNamespace(score_sourcelinks_json="")
-    app = cast(Sphinx, SimpleNamespace(config=fake_config))
-    build_and_save_combined_file(temp_dir, app)
-
-    grouped_cache = temp_dir / "score_scl_grouped_cache.json"
-    assert json.loads(grouped_cache.read_text(encoding="utf-8")) == []
+    assert load_link_inputs("", temp_dir) == ([], [])
 
 
 @add_test_properties(

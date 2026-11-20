@@ -221,6 +221,9 @@ and group all needs according to the appropriate repository.
 
 This all is handled in `need_source_links.py`.
 
+The grouping runs in memory on every build. `score_scl_grouped_cache.json` and
+`score_repo_grouped_scl_cache.json` in `_build` are written for debugging only; the build never reads them back.
+
 ### Combined JSON Example
 
 ```
