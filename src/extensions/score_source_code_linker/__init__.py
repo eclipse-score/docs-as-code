@@ -176,7 +176,6 @@ def setup_source_code_linker(app: Sphinx):
 def register_test_code_linker(app: Sphinx):
     # Connects function to sphinx to ensure correct execution order
     # priority is set to make sure it is called in the right order.
-    # Before inject_links_into_needs (525), which reads the testlinks it writes
     app.connect("env-updated", setup_test_code_linker, priority=505)
 
 
@@ -230,18 +229,16 @@ def setup_once(app: Sphinx):
     # might be the only way to solve this?
     if "skip_rescanning_via_source_code_linker" in app.config:
         return
-    # Register the XML parser (505) and the link injection (525)
     # Note: This extension now runs on both internal and external needs_json invocations.
     # Both modes aggregate links from local sources and external dependencies, enabling
     # unified traceability reporting in integration repositories. Impact on external needs
     # invocations is minimal since they typically don't have local test logs or source code.
-    # Before every handler below that builds links (505-525): ask git again on
-    # each build, so a long-running process (live preview) sees new commits.
+    # Ask git again on every build, so live preview sees new commits
     app.connect("env-updated", _clear_git_cache, priority=500)
     setup_source_code_linker(app)
     register_test_code_linker(app)
 
-    # After the XML parser (505), which writes score_xml_parser_cache.json
+    # After 505, which writes score_xml_parser_cache.json
     app.connect("env-updated", inject_links_into_needs, priority=525)
 
     # sphinx-needs resolves NeedIncoming and need metadata links on the same event.
@@ -368,8 +365,6 @@ def _render_test_link(
     link: DataForTestLink,
 ) -> str:
     if plain_links:
-        # Unlike code links, plain test links show only the name, without the
-        # placeholder URL. Kept as is in phase C, see E3.
         return str(link.name)
     base = get_github_link(metadata, link.file, link.line)
     if base is None:

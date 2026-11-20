@@ -34,14 +34,7 @@ from src.helper_lib.repo_info import (
     split_external_path,
 )
 
-#              ╭──────────────────────────────────────────────────────────╮
-#              │            Tests for split_external_path                 │
-#              ╰──────────────────────────────────────────────────────────╯
 
-
-# Cases taken over from the former test_clean_external_prefix
-# (scripts_bazel/tests/generate_sourcelinks_cli_test.py), now also
-# checking the repo part.
 @pytest.mark.parametrize(
     "input_path, expected_repo, expected_path",
     [
@@ -76,11 +69,6 @@ from src.helper_lib.repo_info import (
 def test_split_external_path(input_path: Path, expected_repo: str, expected_path: Path):
     """Test splitting an exec path into repo name and path inside the repo."""
     assert split_external_path(input_path) == (expected_repo, expected_path)
-
-
-#              ╭──────────────────────────────────────────────────────────╮
-#              │          Tests for parse_repo_name_from_path             │
-#              ╰──────────────────────────────────────────────────────────╯
 
 
 def test_parse_repo_name_from_external_path():
@@ -134,11 +122,6 @@ def test_parse_repo_name_without_plus_suffix():
     assert result == "repo_without_plus"
 
 
-#              ╭──────────────────────────────────────────────────────────╮
-#              │                PARSE INFO FROM KNOWN GOOD                │
-#              ╰──────────────────────────────────────────────────────────╯
-
-
 # Example of a minimal valid known_good.json structure
 VALID_KNOWN_GOOD = {
     "modules": {
@@ -160,9 +143,6 @@ VALID_KNOWN_GOOD = {
         },
     }
 }
-
-#             ────────────────────────────────────────────────────────────
-#            ──────────────────────[ Test Functions ]──────────────────────
 
 
 @pytest.fixture

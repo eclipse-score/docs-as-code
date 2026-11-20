@@ -33,10 +33,7 @@ class RepoInfo:
     hash: str
     url: str
 
-    # The 'flat' form is how repo info appears on disk and on the link
-    # dataclasses: the sourcelinks file header, the inline fields of
-    # NeedLink / DataForTestLink / DataOfTestCase. There the name is
-    # called 'repo_name'.
+    # On-disk form, as used in the JSON files. The name is stored as 'repo_name'.
     def to_flat_dict(self) -> dict[str, str]:
         return {"repo_name": self.name, "hash": self.hash, "url": self.url}
 
@@ -192,9 +189,7 @@ def get_github_link(
     git_root: Path | None = None,
 ) -> str | None:
     """
-    The one place that decides the GitHub URL of a file and line.
-
-    Outcomes, in order:
+    GitHub URL of a file and line. Checked in this order:
       1. plain_links (Bazel sandbox, no git) or repo is None (metadata
          incomplete): placeholder URL. A missing file / line becomes
          '<placeholder_file>' / 1.
@@ -222,13 +217,9 @@ def get_github_link(
 @functools.cache
 def _git_blob_url(git_root: Path) -> str:
     """
-    '<github url>/blob/<HEAD hash>' of a local checkout.
+    '<github url>/blob/<HEAD hash>' of a local checkout, cached per git root.
 
-    Only depends on the git root, so git is asked once per root instead of
-    twice per link. A failure (no remote) is not cached, it raises again on
-    the next call.
-    Call clear_git_cache at the start of every build, so a long-running
-    process (live preview) picks up new commits.
+    A failure (no remote) is not cached. clear_git_cache resets it every build.
     """
     return f"{get_github_base_url(git_root)}/blob/{get_current_git_hash(git_root)}"
 

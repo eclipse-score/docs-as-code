@@ -46,7 +46,6 @@ def build_testcase_needs(app: Sphinx, env: BuildEnvironment):
     """
     Parse the test.xml files (xml_parser), add a 'testcase' need for each
     testcase and write the two testcase caches into _build.
-    Called at env-updated priority 505 from the source_code_linker __init__.
     """
     testlogs_dir = find_test_folder()
     if testlogs_dir is None:
@@ -110,8 +109,6 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             type="score_source_code_linker",
         )
     external_url = get_github_link(tn.repo, tn.file, tn.line)
-    # Unlike code and test links, testcase needs have no fallback when git has
-    # no remote: the build fails. Kept as is in phase C, see E3.
     assert external_url is not None, (
         "Remote repository is not defined. Make sure you have a remote set. "
         + "Check this via 'git remote -v'"

@@ -54,9 +54,7 @@ def main():
     metadata = DefaultRepoInfo()
     metadata_set = False
     for file_path in args.files:
-        # In combo builds the path is `external/<repo>+/...`. The repo part
-        # names the repo, the rest is the path inside it. Without the prefix
-        # in the `file` attribute the generated links point to the right file.
+        # Combo build: `external/<repo>+/<path>` => (<repo>, <path>)
         repo_name, clean_path = split_external_path(file_path)
         if "known_good.json" not in str(file_path) and not metadata_set:
             metadata.name = repo_name
