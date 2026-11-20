@@ -150,11 +150,14 @@ def parse_info_from_known_good(
         if repo_name in category:
             m = category[repo_name]
             hash_or_version = m.get("hash") or m.get("version")
-            if hash_or_version is None:
+            if not isinstance(hash_or_version, str) or not hash_or_version:
                 raise KeyError(
                     f"Module {repo_name} has neither 'hash' nor 'version' key."
                 )
-            return (hash_or_version, m["repo"].removesuffix(".git"))
+            repo_url = m.get("repo")
+            if not isinstance(repo_url, str) or not repo_url:
+                raise KeyError(f"Module {repo_name} has no repository URL.")
+            return (hash_or_version, repo_url.removesuffix(".git"))
     raise KeyError(f"Module {repo_name} not found in known_good_json.")
 
 

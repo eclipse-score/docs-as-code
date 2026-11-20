@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 from typing import Any, cast
 
-from src.helper_lib.repo_info import load_known_good, resolve_repo
+from src.helper_lib.repo_info import RepoInfo, load_known_good, resolve_repo
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
@@ -39,6 +39,7 @@ def _reference_key(reference: dict[str, object]) -> str:
 def _merge_sourcelinks_file(
     json_file: Path,
     known_good: dict[str, Any] | None,
+    resolved_repos: dict[str, RepoInfo | None],
     merged: list[dict[str, object]],
     seen: set[str],
 ) -> None:
@@ -57,23 +58,35 @@ def _merge_sourcelinks_file(
         )
         return
     metadata = cast(dict[str, object], raw_metadata)
-    repo_name = metadata["repo_name"]
-    if not isinstance(repo_name, str):
+    shared_repo_name = metadata["repo_name"]
+    if not isinstance(shared_repo_name, str):
         logger.warning(
             f"Unexpected schema in sourcelinks file '{json_file}': "
             "expected metadata 'repo_name' to be a string. "
         )
         return
 
-    # A known-good file is optional for standalone builds that include
-    # documentation from external modules.  In that case, keep the metadata
-    # produced by the individual sourcelinks file.
-    if repo := resolve_repo(repo_name, known_good):
-        metadata.update(repo.to_flat_dict())
-
     for raw_reference in data[1:]:
         reference = cast(dict[str, object], raw_reference)
-        reference.update(metadata)
+        repo_name = reference.get("repo_name") or shared_repo_name
+        assert isinstance(repo_name, str)
+        reference["repo_name"] = repo_name
+
+        if repo_name not in resolved_repos:
+            try:
+                resolved_repos[repo_name] = resolve_repo(repo_name, known_good)
+            except KeyError as error:
+                logger.warning("Cannot resolve source-link metadata: %s", error.args[0])
+                # Remember the failed lookup so subsequent links warn only once.
+                resolved_repos[repo_name] = None
+        if repo := resolved_repos[repo_name]:
+            reference.update(repo.to_flat_dict())
+        else:
+            # Shared metadata only applies to links from that repository.
+            shared = metadata if repo_name == shared_repo_name else {}
+            reference["hash"] = reference.get("hash") or shared.get("hash", "")
+            reference["url"] = reference.get("url") or shared.get("url", "")
+
         key = _reference_key(reference)
         if key not in seen:
             seen.add(key)
@@ -93,7 +106,7 @@ def main():
     _ = parser.add_argument(
         "--known_good",
         type=Path,
-        help="Path to a required 'known good' JSON file (provided by Bazel).",
+        help="Path to the optional 'known good' JSON file provided by Bazel.",
     )
     _ = parser.add_argument(
         "files",
@@ -107,9 +120,10 @@ def main():
     merged: list[dict[str, object]] = []
     seen: set[str] = set()
     known_good = load_known_good(args.known_good) if args.known_good else None
+    resolved_repos: dict[str, RepoInfo | None] = {}
     for json_file in args.files:
         if "known_good.json" not in str(json_file):
-            _merge_sourcelinks_file(json_file, known_good, merged, seen)
+            _merge_sourcelinks_file(json_file, known_good, resolved_repos, merged, seen)
 
     with open(args.output, "w", encoding="utf-8") as file:
         json.dump(merged, file, indent=2, ensure_ascii=False)

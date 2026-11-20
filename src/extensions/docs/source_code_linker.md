@@ -90,21 +90,22 @@ Example of requirement tags:
 
 #### Step 2: Cache merge step (multi-repo aggregation)
 
-In a second Bazel step `scripts_bazel/merge_sourcelinks.py`, **all per-repo caches** are merged into a **single combined JSON**.
+In a second Bazel step `scripts_bazel/merge_sourcelinks.py`, **all per-bundle caches** are merged into a **single combined JSON**.
 
-- Input: N JSON caches (one per repo)
+- Input: N JSON caches (one per bundle)
 - Output: 1 merged JSON containing all found source_code_links
 
-This step also fills in url & hash if there is a known_good_json provided (e.g. in a combo build)
+When `known_good.json` is available, the merge uses the repository recorded on each link
+to look up its URL and revision. A missing or incomplete entry produces one warning per
+repository and leaves the affected source locations in the output.
 
 (repo-metadata-rules)=
 #### Repo metadata rules
 
 Here are some basic rules regarding the repo information (`RepoInfo` in `src/helper_lib/repo_info.py`)
 
-In a combo build, a known_good_json **must** be provided.
-If known_good_json is found then the hash & url will be filled for each need by the script.
-The lookup lives in one function, `resolve_repo`, used by both `merge_sourcelinks.py` and the XML parser.
+Provide `known_good.json` in a combo build to generate clickable URLs for external source links.
+The lookup lives in `resolve_repo`, which both `merge_sourcelinks.py` and the XML parser use.
 `known_good.json` is read once per run.
 
 Combo build:
@@ -119,7 +120,7 @@ Local build:
 - `hash`: stays empty
 - `url`: stays empty
 
-With an empty hash, the link URL is built from the local git checkout (remote URL + `HEAD`).
+For local source links with an empty hash, the URL is built from the local git checkout (remote URL + `HEAD`).
 Git is asked once per build, not once per link.
 
 ---
