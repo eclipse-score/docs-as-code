@@ -546,9 +546,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "merge_sourcelinks_test__test_merge_sourcelinks_basic",
+    "name": "merge_sourcelinks_test__test_merges_the_links_of_all_files",
     "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
-    "line": "131",
+    "line": "75",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -560,9 +560,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "merge_sourcelinks_test__test_merge_sourcelinks_deduplicates_identical_references",
+    "name": "merge_sourcelinks_test__test_identical_links_are_merged_once",
     "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
-    "line": "174",
+    "line": "93",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -574,9 +574,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "merge_sourcelinks_test__test_merge_sourcelinks_with_one_empty_file",
+    "name": "merge_sourcelinks_test__test_empty_file_adds_nothing",
     "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
-    "line": "212",
+    "line": "107",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -588,9 +588,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "merge_sourcelinks_test__test_merge_sourcelinks_wrong_schema",
+    "name": "merge_sourcelinks_test__test_file_with_a_link_without_repository_is_skipped_with_a_warning",
     "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
-    "line": "277",
+    "line": "122",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -602,9 +602,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "merge_sourcelinks_test__test_merge_sourcelinks_with_known_good",
+    "name": "merge_sourcelinks_test__test_known_good_fills_in_url_and_hash_of_external_repositories",
     "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
-    "line": "337",
+    "line": "142",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -616,9 +616,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "merge_sourcelinks_test__test_merge_sourcelinks_without_known_good_preserves_external_metadata",
+    "name": "merge_sourcelinks_test__test_without_known_good_the_input_metadata_is_kept",
     "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
-    "line": "395",
+    "line": "178",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -630,9 +630,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "merge_sourcelinks_test__test_merge_sourcelinks_resolves_each_repository_in_one_file",
+    "name": "merge_sourcelinks_test__test_links_of_one_file_get_the_url_and_hash_of_their_own_repository",
     "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
-    "line": "424",
+    "line": "197",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -644,9 +644,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_basic",
+    "name": "generate_sourcelinks_cli_test__test_python_tag_in_local_file",
     "file": "scripts_bazel/tests/generate_sourcelinks_cli_test.py",
-    "line": "48",
+    "line": "53",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -658,9 +658,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_parses_cpp_traceability_tag",
+    "name": "generate_sourcelinks_cli_test__test_cpp_tag",
     "file": "scripts_bazel/tests/generate_sourcelinks_cli_test.py",
-    "line": "94",
+    "line": "70",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -672,9 +672,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_parse_external_module",
+    "name": "generate_sourcelinks_cli_test__test_file_of_external_module",
     "file": "scripts_bazel/tests/generate_sourcelinks_cli_test.py",
-    "line": "124",
+    "line": "84",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -686,9 +686,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_records_the_repository_of_each_file",
+    "name": "generate_sourcelinks_cli_test__test_each_file_keeps_its_own_repository",
     "file": "scripts_bazel/tests/generate_sourcelinks_cli_test.py",
-    "line": "177",
+    "line": "104",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -700,9 +700,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_file_not_exists",
+    "name": "generate_sourcelinks_cli_test__test_missing_file_is_an_error",
     "file": "scripts_bazel/tests/generate_sourcelinks_cli_test.py",
-    "line": "217",
+    "line": "140",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
