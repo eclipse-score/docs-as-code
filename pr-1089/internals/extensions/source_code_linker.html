@@ -671,7 +671,8 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 <li><p>Result (e.g. passed, failed, skipped)</p></li>
 <li><p>Result text (if failed/skipped will check if message was attached to it)</p></li>
 <li><p>Verifications (<code class="docutils literal notranslate"><span class="pre">PartiallyVerifies</span></code>, <code class="docutils literal notranslate"><span class="pre">FullyVerifies</span></code>)</p></li>
-<li><p>Also parses metadata according to the <a class="reference internal" href="#repo-metadata-rules">metadata rules</a></p></li>
+<li><p>Also parses metadata according to the <a class="reference internal" href="#repo-metadata-rules">metadata rules</a>
+A missing or incomplete <code class="docutils literal notranslate"><span class="pre">known_good.json</span></code> entry produces a warning per test.xml file and leaves the test results without repository URL.</p></li>
 </ul>
 </li>
 <li><p>Cases without metadata are logged out as info (not errors).</p></li>
@@ -815,7 +816,7 @@ All link URLs are decided in one function, <code class="docutils literal notrans
 <p>During the Sphinx build process, the extension applies the computed links to needs:</p>
 <ul class="simple">
 <li><p>Each need’s <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> and <code class="docutils literal notranslate"><span class="pre">testlink</span></code> attributes contain the rendered links from all repositories that refer to it.</p></li>
-<li><p>A source location in an external repository appears as text when its URL or revision is unavailable.</p></li>
+<li><p>A source or test location in an external repository appears as text when its URL or revision is unavailable.</p></li>
 <li><p>If a referenced need ID does not exist, a build warning will be raised.</p></li>
 </ul>
 </section>
