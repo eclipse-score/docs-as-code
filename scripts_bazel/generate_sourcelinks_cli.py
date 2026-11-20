@@ -30,7 +30,7 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
-def main():
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Generate source code links JSON from source files"
     )
@@ -47,7 +47,7 @@ def main():
         help="Source files to scan for traceability tags",
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     all_need_references = []
 

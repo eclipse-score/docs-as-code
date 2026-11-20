@@ -80,7 +80,7 @@ def _merge_sourcelinks_file(
             merged.append(reference)
 
 
-def main():
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Merge multiple sourcelinks JSON files into one"
     )
@@ -102,7 +102,7 @@ def main():
         help="Input JSON files to merge",
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     merged: list[dict[str, object]] = []
     seen: set[str] = set()
