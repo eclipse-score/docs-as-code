@@ -224,12 +224,9 @@ The DataOfTestCase depicts the information gathered about one testcase.
 
 ### Early-Combined Links
 
-During the Sphinx build process, both CodeLink and TestLink data are combined and grouped by needs.
-This will allow us to have an easier time building the final JSON which will eliminate the metadata from each link,
-and group all needs according to the appropriate repository.
-
-Grouping by need is `group_by_need` in `need_source_links.py`, grouping by repository is
-`group_needs_by_repo` in `repo_source_links.py`. Both are called from `inject_links_into_needs`.
+The build groups code and test links by need with `group_by_need` in `need_source_links.py`.
+It renders each link with its own repository metadata. The diagnostic output also groups
+links by repository with `group_needs_by_repo` in `repo_source_links.py`.
 
 The grouping runs in memory on every build, from the sourcelinks JSON and `score_xml_parser_cache.json`.
 With Sphinx debug verbosity (`-vv`), `score_scl_grouped_cache.json` and `score_repo_grouped_scl_cache.json`
@@ -325,7 +322,8 @@ All link URLs are decided in one function, `get_github_link` in `src/helper_lib/
 
 During the Sphinx build process, the extension applies the computed links to needs:
 
-- Each need’s `source_code_link` and `testlink` attribute is filled from the (repo-grouped) RepoSourceLink data where applicable.
+- Each need’s `source_code_link` and `testlink` attributes contain the rendered links from all repositories that refer to it.
+- A source location in an external repository appears as text when its URL or revision is unavailable.
 - If a referenced need ID does not exist, a build warning will be raised.
 
 ---
@@ -358,7 +356,7 @@ During the Sphinx build process, the extension applies the computed links to nee
 
 1. **Bazel Script #1**: scan + parse → write **per-repo cache** (includes repo metadata if known)
 2. **Bazel Script #2**: merge caches → write **single merged JSON**
-3. **Sphinx Extension**: parse test XMLs → add testcase needs → read merged JSON + testlinks → group in memory into **RepoSourceLink** → inject source_code_link and testlink into needs
+3. **Sphinx Extension**: parse test XMLs → add testcase needs → read merged JSON and test links → group links by need and render each using its repository metadata
 
 ---
 

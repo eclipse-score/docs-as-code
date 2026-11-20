@@ -44,9 +44,6 @@ from src.extensions.score_source_code_linker import (
     group_by_need,
     load_link_inputs,
 )
-from src.extensions.score_source_code_linker.repo_source_links import (
-    group_needs_by_repo,
-)
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     store_test_xml_parsed_json,
@@ -327,7 +324,7 @@ def test_find_need_not_found():
 def test_inject_links_matches_versioned_need_across_modules(
     tmp_path: Path, caplog: pytest.LogCaptureFixture
 ) -> None:
-    """A later module can replace links on the same Need and still warn about its version."""
+    """Keep links from both modules and warn about the outdated reference."""
     env = cast(BuildEnvironment, SimpleNamespace())
     needs_data = SphinxNeedsData(env)
     matched_need = test_need(
@@ -358,15 +355,43 @@ def test_inject_links_matches_versioned_need_across_modules(
     )
     links_by_need = group_by_need([first_module_link, outdated_module_link])
 
-    apply_links_to_needs(env, group_needs_by_repo(links_by_need), plain_links=False)
+    apply_links_to_needs(env, links_by_need, plain_links=False)
 
     needs = needs_data.get_needs_mutable()
     assert list(needs) == ["TREQ_ID_2", "TREQ_ID_1"]
     assert dict(needs["TREQ_ID_2"]) == untouched_fields
     assert needs["TREQ_ID_1"]["source_code_link"] == (
+        "https://github.com/example/first/blob/abc123/first.py#L3<>first.py:3, "
         "https://github.com/example/second/blob/def456/second.py#L3<>second.py:3"
     )
     assert "Test links to outdated version: 'TREQ_ID_1[version==1]'" in caplog.text
+
+
+@pytest.mark.parametrize(
+    "repo",
+    [
+        RepoInfo("external", "", ""),
+        RepoInfo("external", "revision", ""),
+        RepoInfo("external", "", "https://github.com/example/external"),
+    ],
+    ids=["missing-both", "missing-url", "missing-revision"],
+)
+def test_external_source_with_incomplete_metadata_renders_as_text(repo: RepoInfo):
+    """Keep the file location visible without guessing the checkout URL."""
+    env = cast(BuildEnvironment, SimpleNamespace())
+    needs_data = SphinxNeedsData(env)
+    needs_data.add_need(
+        test_need(id="TREQ_ID_1", extras={"source_code_link": "", "testlink": ""})
+    )
+    unresolved_link = replace(
+        DefaultNeedLink(), need="TREQ_ID_1", file=Path("src/api.h"), line=42, repo=repo
+    )
+
+    apply_links_to_needs(env, group_by_need([unresolved_link]), plain_links=False)
+
+    assert needs_data.get_needs_mutable()["TREQ_ID_1"]["source_code_link"] == (
+        "src/api.h:42"
+    )
 
 
 @add_test_properties(
