@@ -185,6 +185,7 @@ def test_feature():
      - Result text (if failed/skipped will check if message was attached to it)
      - Verifications (`PartiallyVerifies`, `FullyVerifies`)
      - Also parses metadata according to the [metadata rules](#repo-metadata-rules)
+       A missing or incomplete `known_good.json` entry produces a warning per test.xml file and leaves the test results without repository URL.
 
    - Cases without metadata are logged out as info (not errors).
    - Test cases with metadata are converted into:

@@ -561,3 +561,17 @@ def test_get_metadata_from_test_path_combo_with_version():
     assert md.name == "score_docs_as_code"
     assert md.hash == "v2.1.0"
     assert md.url == "https://github.com/eclipse-score/docs-as-code"
+
+
+def test_get_metadata_from_test_path_combo_without_repo_url_warns():
+    """A known_good entry without a repository URL degrades to empty metadata."""
+    known_good = {
+        "modules": {"tooling": {"score_docs_as_code": {"repo": "", "hash": "abc"}}}
+    }
+    with patch.object(xml_parser.logger, "warning") as warning:
+        md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, known_good)
+    assert md.name == "score_docs_as_code"
+    assert md.hash == ""
+    assert md.url == ""
+    warning.assert_called_once()
+    assert "has no repository URL" in warning.call_args.args[0]

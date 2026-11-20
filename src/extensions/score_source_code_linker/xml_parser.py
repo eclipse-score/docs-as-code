@@ -135,9 +135,17 @@ def get_metadata_from_test_path(
     clean_filepath = clean_test_file_name(raw_filepath)
     # print(f"This is the cleaned filepath: {clean_filepath}")
     repo_name = parse_repo_name_from_path(clean_filepath)
-    return resolve_repo(repo_name, known_good) or RepoInfo(
-        name=repo_name, hash="", url=""
-    )
+    try:
+        repo = resolve_repo(repo_name, known_good)
+    except KeyError as error:
+        # Same as merge_sourcelinks.py: incomplete known_good metadata degrades
+        # the links of this repository instead of aborting the build.
+        logger.warning(
+            f"Cannot resolve repository metadata for '{raw_filepath}': {error.args[0]}",
+            type="score_source_code_linker",
+        )
+        repo = None
+    return repo or RepoInfo(name=repo_name, hash="", url="")
 
 
 def parse_testcase_result(testcase: ET.Element) -> tuple[str, str]:
