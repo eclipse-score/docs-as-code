@@ -39,7 +39,7 @@ class RepoSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
             return str(o)
         # We do not want to save the metadata inside the codelink or testlink
         # As we save this already in a structure above it
-        # (hash, module_name, url)
+        # (repo: name, hash, url)
         if isinstance(o, NeedLink | DataForTestLink):
             return o.to_dict_without_metadata()
         # We need to split this up, otherwise the nested

@@ -12,8 +12,10 @@
 # *******************************************************************************
 
 """
-In this file the actual sphinx extension is defined. It will read pre-generated
-source code links from a JSON file and add them to the needs.
+In this file the actual sphinx extension is defined. On env-updated it
+- (505) parses the test.xml files and adds testcase needs (testcase_needs.py)
+- (525) reads the pre-generated source code links JSON and the testlinks,
+  groups them in memory and adds them to the needs (inject_links_into_needs).
 """
 
 # req-Id: tool_req__docs_test_link_testcase
@@ -174,7 +176,7 @@ def setup_source_code_linker(app: Sphinx):
 def register_test_code_linker(app: Sphinx):
     # Connects function to sphinx to ensure correct execution order
     # priority is set to make sure it is called in the right order.
-    # Before the combining action
+    # Before inject_links_into_needs (525), which reads the testlinks it writes
     app.connect("env-updated", setup_test_code_linker, priority=505)
 
 
@@ -228,7 +230,7 @@ def setup_once(app: Sphinx):
     # might be the only way to solve this?
     if "skip_rescanning_via_source_code_linker" in app.config:
         return
-    # Register & Run (if needed) parsing & saving of JSON caches
+    # Register the XML parser (505) and the link injection (525)
     # Note: This extension now runs on both internal and external needs_json invocations.
     # Both modes aggregate links from local sources and external dependencies, enabling
     # unified traceability reporting in integration repositories. Impact on external needs

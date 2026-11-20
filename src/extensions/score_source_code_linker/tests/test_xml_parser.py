@@ -292,8 +292,8 @@ def test_read_test_xml_file(
 ):
     """Ensure a whole pre-defined xml file is parsed correctly"""
     # ADAPTED: Mock return value to ensure metadata is populated.
-    # 'local_module' triggers the path where hash/url are empty strings,
-    # which is valid but avoids the need to mock parse_info_from_known_good.
+    # LOCAL_REPO triggers the path where hash/url are empty strings,
+    # which is valid but avoids the need to mock resolve_repo.
     mock_parse_module.return_value = LOCAL_REPO
 
     _: Path
