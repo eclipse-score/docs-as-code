@@ -13,7 +13,9 @@
 
 
 import json
+from collections.abc import Iterable
 from dataclasses import asdict, dataclass, field
+from itertools import chain
 from pathlib import Path
 from typing import Any
 
@@ -112,27 +114,26 @@ def load_repo_source_links_json(file: Path) -> list[RepoSourceLinks]:
 
 
 def group_needs_by_repo(links: list[SourceCodeLinks]) -> list[RepoSourceLinks]:
-    repo_groups: dict[str, RepoSourceLinks] = {}
+    repo_groups: dict[RepoInfo, RepoSourceLinks] = {}
 
     for source_link in links:
-        # Check if we can take repoInfo from code or testlinks
-        if source_link.links.CodeLinks:
-            first_link = source_link.links.CodeLinks[0]
-        elif source_link.links.TestLinks:
-            first_link = source_link.links.TestLinks[0]
-        else:
-            # This should not happen?
-            continue
-        repo_key = first_link.repo.name
+        links_by_repo: dict[RepoInfo, NeedSourceLinks] = {}
+        need_links: Iterable[NeedLink | DataForTestLink] = chain(
+            source_link.links.CodeLinks, source_link.links.TestLinks
+        )
+        for link in need_links:
+            if link.repo not in links_by_repo:
+                links_by_repo[link.repo] = NeedSourceLinks()
+            if isinstance(link, NeedLink):
+                links_by_repo[link.repo].CodeLinks.append(link)
+            else:
+                links_by_repo[link.repo].TestLinks.append(link)
 
-        if repo_key not in repo_groups:
-            repo_groups[repo_key] = RepoSourceLinks(repo=first_link.repo)
+        for repo, grouped_links in links_by_repo.items():
+            if repo not in repo_groups:
+                repo_groups[repo] = RepoSourceLinks(repo=repo)
+            repo_groups[repo].needs.append(
+                SourceCodeLinks(need=source_link.need, links=grouped_links)
+            )
 
-        # TODO: Add an assert that checks if needs only are
-        # in a singular repo (not allowed to be in multiple)
-        repo_groups[repo_key].needs.append(source_link)
-
-    return [
-        RepoSourceLinks(repo=group.repo, needs=group.needs)
-        for group in repo_groups.values()
-    ]
+    return list(repo_groups.values())
