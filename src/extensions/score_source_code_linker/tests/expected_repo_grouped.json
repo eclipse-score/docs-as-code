@@ -1,7 +1,7 @@
 [
   {
     "repo": {
-      "name": "local_repo",
+      "name": "@LOCAL_REPO@",
       "hash": "",
       "url": ""
     },

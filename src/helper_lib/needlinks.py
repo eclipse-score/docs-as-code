@@ -13,32 +13,25 @@
 # req-Id: tool_req__docs_dd_link_source_code_link
 
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, TypedDict, TypeGuard
+from typing import Any, TypeGuard
 
 from src.helper_lib import Environment
+from src.helper_lib.repo_info import (
+    DefaultRepoInfo,
+    RepoInfo,
+    flatten_repo_field,
+    split_repo_fields,
+)
 
 env = Environment()
 
 
-class MetaData(TypedDict):
-    repo_name: str
-    hash: str
-    url: str
-
-
-def DefaultMetaData() -> MetaData:
-    md: MetaData = {"repo_name": "local_repo", "hash": "", "url": ""}
-    return md
-
-
-def is_metadata(x: object) -> TypeGuard[MetaData]:
-    # Make this as strict/loose as you want; at minimum, it must be a dict.
-    return isinstance(x, dict) and {"repo_name", "hash", "url"} <= x.keys()
-
-
-@dataclass(order=True)
+# unsafe_hash: the dataclass is not frozen, so it is not hashable by default.
+# Hashing & equality are needed to compare links (mainly in tests).
+# The generated __eq__ / __hash__ cover every field, including 'repo'.
+@dataclass(order=True, unsafe_hash=True)
 class NeedLink:
     """Represents a single template string finding in a file."""
 
@@ -47,53 +40,25 @@ class NeedLink:
     tag: str
     need: str
     full_line: str
-    repo_name: str = "local_repo"
-    hash: str = ""
-    url: str = ""
+    repo: RepoInfo = field(default_factory=DefaultRepoInfo)
 
-    # Adding hashing & equality as this is needed to make comparisions.
-    # Since the Dataclass is not 'frozen = true' it isn't automatically hashable
-    # This is used in tests
-    def __hash__(self):
-        return hash(
-            (
-                self.file,
-                self.line,
-                self.tag,
-                self.need,
-                self.full_line,
-                self.repo_name,
-                self.hash,
-                self.url,
-            )
-        )
+    # 'Dictionary conversion' in the on-disk form: repo flattened into
+    # repo_name, hash, url
+    def to_dict_full(self) -> dict[str, Any]:
+        return flatten_repo_field(asdict(self), self.repo)
 
-    def __eq__(self, other: Any):
-        if not isinstance(other, NeedLink):
-            return NotImplemented
-        return (
-            self.file == other.file
-            and self.line == other.line
-            and self.tag == other.tag
-            and self.need == other.need
-            and self.full_line == other.full_line
-            and self.repo_name == other.repo_name
-            and self.hash == other.hash
-            and self.url == other.url
-        )
-
-    # Normal 'dictionary conversion'. Converts all fields
-    def to_dict_full(self) -> dict[str, str | Path | int]:
-        return asdict(self)
-
-    # Drops MetaData fields for saving the Dataclass (saving space in json)
+    # Drops the repo (RepoInfo) for saving the Dataclass (saving space in json)
     # The information is in the 'Repo_Source_Link' in the end
-    def to_dict_without_metadata(self) -> dict[str, str | Path | int]:
+    def to_dict_without_metadata(self) -> dict[str, Any]:
         d = asdict(self)
-        d.pop("repo_name", None)
-        d.pop("hash", None)
-        d.pop("url", None)
+        d.pop("repo", None)
         return d
+
+    @classmethod
+    def from_flat_dict(cls, d: dict[str, Any]) -> "NeedLink":
+        """Build a NeedLink from its on-disk form. Missing repo keys => default repo."""
+        rest, repo = split_repo_fields(d)
+        return cls(**rest, repo=repo if repo is not None else DefaultRepoInfo())
 
 
 def DefaultNeedLink() -> NeedLink:
@@ -107,15 +72,14 @@ def DefaultNeedLink() -> NeedLink:
         tag="",
         need="",
         full_line="",
-        # Repo_name, hash, url are defaulted to ""
-        # therefore not needed to be listed
+        # repo defaults to DefaultRepoInfo()
     )
 
 
 class NeedLinkEncoder(json.JSONEncoder):
     def default(self, o: object):
         if isinstance(o, NeedLink):
-            return asdict(o)
+            return o.to_dict_full()
         if isinstance(o, Path):
             return str(o)
         return super().default(o)
@@ -129,25 +93,27 @@ def needlink_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
             tag=d["tag"],
             need=d["need"],
             full_line=d["full_line"],
-            repo_name=d.get("repo_name", ""),
-            hash=d.get("hash", ""),
-            url=d.get("url", ""),
+            repo=RepoInfo(
+                name=d.get("repo_name", ""),
+                hash=d.get("hash", ""),
+                url=d.get("url", ""),
+            ),
         )
     # It's something else, pass it on to other decoders
     return d
 
 
 def store_source_code_links_with_metadata_json(
-    file: Path, metadata: MetaData, needlist: list[NeedLink]
+    file: Path, metadata: RepoInfo, needlist: list[NeedLink]
 ) -> None:
     """
     Writes a JSON array:
       [ meta_dict, needlink1, needlink2, ... ]
 
-    meta_dict must include:
+    meta_dict is the flat form of RepoInfo:
       repo_name, hash, url
     """
-    payload: list[object] = [metadata, *needlist]
+    payload: list[object] = [metadata.to_flat_dict(), *needlist]
 
     # After `rm -rf _build` or on clean builds the directory does not exist,
     # so we need to create it. We create any folder that might be missing
@@ -192,13 +158,13 @@ def load_source_code_links_with_metadata_json(file: Path) -> list[NeedLink]:
         object_hook=needlink_decoder,
     )
     links: list[object] = []
-    if not is_metadata(data[0]):
+    if not isinstance(data[0], dict) or not RepoInfo.is_flat_dict(data[0]):
         raise TypeError(
             "If you do not have a 'metadata' dict as the first one in the json "
             "you might wanted to call the load without metadata named: "
             "'load_source_code_links_json'"
         )
-    metadata: MetaData = data[0]
+    metadata = RepoInfo.from_flat_dict(data[0])
     links = data[1:]
     if not _is_needlink_list(links):
         raise TypeError(
@@ -206,9 +172,7 @@ def load_source_code_links_with_metadata_json(file: Path) -> list[NeedLink]:
             f"metadata must decode to NeedLink objects. File: {file}"
         )
     for d in links:
-        d.repo_name = metadata["repo_name"]
-        d.hash = metadata["hash"]
-        d.url = metadata["url"]
+        d.repo = metadata
     return links
 
 

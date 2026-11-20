@@ -22,6 +22,7 @@ import pytest
 from score_pytest.attribute_plugin import add_test_properties
 
 import scripts_bazel.merge_sourcelinks
+from src.helper_lib.repo_info import LOCAL_REPO
 
 LOGGER = logging.getLogger(__name__)
 
@@ -51,7 +52,7 @@ def create_local_json_files(tmp_path: Path) -> tuple[Path, Path, Path]:
     file1.write_text(
         json.dumps(
             [
-                {"repo_name": "local_repo", "hash": "", "url": ""},
+                {"repo_name": LOCAL_REPO, "hash": "", "url": ""},
                 {
                     "file": "test1.py",
                     "line": 10,
@@ -67,7 +68,7 @@ def create_local_json_files(tmp_path: Path) -> tuple[Path, Path, Path]:
     file2.write_text(
         json.dumps(
             [
-                {"repo_name": "local_repo", "hash": "", "url": ""},
+                {"repo_name": LOCAL_REPO, "hash": "", "url": ""},
                 {
                     "file": "test2.py",
                     "line": 20,
@@ -108,7 +109,7 @@ def create_external_repo_json_files(tmp_path: Path) -> tuple[Path, Path, Path]:
     file2.write_text(
         json.dumps(
             [
-                {"repo_name": "local_repo", "hash": "", "url": ""},
+                {"repo_name": LOCAL_REPO, "hash": "", "url": ""},
                 {
                     "file": "test2.py",
                     "line": 20,
@@ -197,7 +198,7 @@ def test_merge_sourcelinks_deduplicates_identical_references(
             "tag": "# req-Id:",
             "need": "tool_req__docs_arch_types",
             "full_line": "# req-Id: tool_req__docs_arch_types",
-            "repo_name": "local_repo",
+            "repo_name": LOCAL_REPO,
             "hash": "",
             "url": "",
         }
@@ -215,7 +216,7 @@ def test_merge_sourcelinks_with_one_empty_file(
     """Test merge sourcelinks with one empty file."""
     file1 = tmp_path / "links1.json"
     file1_text: list[dict[str, str | int]] = [
-        {"repo_name": "local_repo", "hash": "", "url": ""},
+        {"repo_name": LOCAL_REPO, "hash": "", "url": ""},
         {
             "file": "test1.py",
             "line": 10,
@@ -253,7 +254,7 @@ def test_merge_sourcelinks_with_one_empty_file(
             "tag": "# req-Id:",
             "need": "tool_req__docs_arch_types",
             "full_line": "# req-Id: tool_req__docs_arch_types",
-            "repo_name": "local_repo",  # comes from first dict in input
+            "repo_name": LOCAL_REPO,  # comes from first dict in input
             "hash": "",  # comes from first dict in input
             "url": "",  # comes from first dict in input
         }
@@ -368,7 +369,7 @@ def test_merge_sourcelinks_with_known_good(
         "tag": "# req-Id:",
         "need": "gd_req__req_validity",
         "full_line": "# req-Id: gd_req__req_validity",
-        "repo_name": "local_repo",  # comes from first dict in input
+        "repo_name": LOCAL_REPO,  # comes from first dict in input
         "hash": "",  # comes from first dict in input
         "url": "",  # comes from first dict in input
     }

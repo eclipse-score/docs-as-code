@@ -16,7 +16,6 @@
 # ╙                                                          ╜
 
 import json
-import shutil
 import subprocess
 from collections.abc import Callable
 from pathlib import Path
@@ -26,10 +25,13 @@ from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 
 from src.extensions.score_source_code_linker.repo_source_links import (
-    RepoInfo,
     RepoSourceLinks_JSON_Decoder,
     load_repo_source_links_json,
 )
+from src.extensions.score_source_code_linker.tests.load_expected_files import (
+    copy_golden_file,
+)
+from src.helper_lib.repo_info import LOCAL_REPO, RepoInfo
 
 """
                         ────────────────INFORMATION───────────────
@@ -90,7 +92,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
     _ = (bazel_testdir / "test.xml").write_text(make_test_xml())
 
     curr_dir = Path(__file__).absolute().parent
-    _ = shutil.copyfile(
+    copy_golden_file(
         curr_dir / "expected_repo_grouped.json",
         repo_path / ".expected_repo_grouped.json",
     )
@@ -103,7 +105,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_1",
                     "full_line": "#" + " req-Id: MOD_REQ_1",
-                    "repo_name": "local_repo",
+                    "repo_name": LOCAL_REPO,
                     "hash": "",
                     "url": "",
                 },
@@ -113,7 +115,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_2",
                     "full_line": "#" + " req-Id: MOD_REQ_2",
-                    "repo_name": "local_repo",
+                    "repo_name": LOCAL_REPO,
                     "hash": "",
                     "url": "",
                 },
@@ -123,7 +125,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_1",
                     "full_line": "#" + " req-Id: MOD_REQ_1",
-                    "repo_name": "local_repo",
+                    "repo_name": LOCAL_REPO,
                     "hash": "",
                     "url": "",
                 },
@@ -133,7 +135,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_3",
                     "full_line": "#" + " req-Id: MOD_REQ_3",
-                    "repo_name": "local_repo",
+                    "repo_name": LOCAL_REPO,
                     "hash": "",
                     "url": "",
                 },
@@ -279,6 +281,8 @@ def sphinx_app_setup(
             outdir=sphinx_base_dir / "out",
             buildername="html",
             warningiserror=True,
+            # Writes the debug dumps (score_*grouped*_cache.json) read below
+            verbosity=2,
             # Source links are generated before Sphinx starts; the docs CLI
             # passes the resolved path via ``--define``, matching the Bazel
             # build contract used by the extension in production.
@@ -368,7 +372,7 @@ def test_repo_grouping_multiple_needs_per_repo(
         # Find the local_repo (should have all 3 requirements)
         local_repo = None
         for m in loaded:
-            if m.repo.name == "local_repo":
+            if m.repo.name == LOCAL_REPO:
                 local_repo = m
                 break
 

@@ -12,8 +12,10 @@
 # *******************************************************************************
 
 """
-In this file the actual sphinx extension is defined. It will read pre-generated
-source code links from a JSON file and add them to the needs.
+In this file the actual sphinx extension is defined. On env-updated it
+- (505) parses the test.xml files and adds testcase needs (testcase_needs.py)
+- (525) reads the pre-generated source code links JSON and the testlinks,
+  groups them in memory and adds them to the needs (inject_links_into_needs).
 """
 
 # req-Id: tool_req__docs_test_link_testcase
@@ -30,36 +32,34 @@ from sphinx_needs.data import NeedsMutable, SphinxNeedsData
 from sphinx_needs.logging import get_logger
 from sphinx_needs.need_item import NeedItem
 
-from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.need_source_links import (
     group_by_need,
-    load_source_code_links_combined_json,
     store_source_code_links_combined_json,
 )
-from src.extensions.score_source_code_linker.needlinks import (
-    NeedLink,
-    load_source_code_links_json,
-    load_source_code_links_with_metadata_json,
-)
 from src.extensions.score_source_code_linker.repo_source_links import (
-    RepoInfo,
+    RepoSourceLinks,
     group_needs_by_repo,
-    load_repo_source_links_json,
     store_repo_source_links_json,
 )
 from src.extensions.score_source_code_linker.testcase_annotations import (
     annotate_testcase_results,
+)
+from src.extensions.score_source_code_linker.testcase_needs import (
+    build_testcase_needs,
+    construct_and_add_need,
 )
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     load_data_of_test_case_json,
     load_test_xml_parsed_json,
 )
-from src.extensions.score_source_code_linker.xml_parser import (
-    construct_and_add_need,
-    run_xml_parser,
-)
 from src.helper_lib import find_ws_root
+from src.helper_lib.needlinks import (
+    NeedLink,
+    load_source_code_links_json,
+    load_source_code_links_with_metadata_json,
+)
+from src.helper_lib.repo_info import RepoInfo, clear_git_cache, get_github_link
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
@@ -80,16 +80,23 @@ def get_cache_filename(build_dir: Path, filename: str) -> Path:
     return build_dir / filename
 
 
-def build_and_save_combined_file(outdir: Path, app: Sphinx):
+def load_link_inputs(
+    sourcelinks_json: str, outdir: Path
+) -> tuple[list[NeedLink], list[DataForTestLink]]:
     """
-    Reads the saved partial caches of codelink & testlink
-    Builds the combined JSON cache & saves it
+    Read the inputs of the link pipeline. No Sphinx needed.
+
+    - Code links: the pre-generated sourcelinks file (config value
+      'score_sourcelinks_json', set from SCORE_SOURCELINKS by the docs CLI).
+      Empty string: no code links.
+    - Test links: 'score_xml_parser_cache.json' in outdir, written at 505.
+      Missing file: no test links.
     """
-    source_code_links_path = app.config.score_sourcelinks_json.strip()
+    source_code_links_path = sourcelinks_json.strip()
     if source_code_links_path:
         source_code_links_json = Path(source_code_links_path)
         try:
-            source_code_links = load_source_code_links_json(source_code_links_json)
+            code_links = load_source_code_links_json(source_code_links_json)
         except FileNotFoundError as exc:
             raise FileNotFoundError(
                 "Pre-generated source-code links file does not exist: "
@@ -97,7 +104,7 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx):
                 "Sphinx config value (set from SCORE_SOURCELINKS by the docs CLI)."
             ) from exc
         except AssertionError:
-            source_code_links = load_source_code_links_with_metadata_json(
+            code_links = load_source_code_links_with_metadata_json(
                 source_code_links_json
             )
     else:
@@ -105,20 +112,17 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx):
             "No pre-generated source-code links provided. Continuing without code links.",
             type="score_source_code_linker",
         )
-        source_code_links = []
+        code_links = []
     test_cache = get_cache_filename(outdir, "score_xml_parser_cache.json")
     if test_cache.exists():
-        test_code_links = load_test_xml_parsed_json(test_cache)
+        test_links = load_test_xml_parsed_json(test_cache)
     else:
         LOGGER.debug(
             "No score_xml_parser_cache.json found. Continuing without test XML links.",
             type="score_source_code_linker",
         )
-        test_code_links = []
-    scl_list = group_by_need(source_code_links, test_code_links)
-    store_source_code_links_combined_json(
-        outdir / "score_scl_grouped_cache.json", scl_list
-    )
+        test_links = []
+    return code_links, test_links
 
 
 #          ╭──────────────────────────────────────╮
@@ -172,7 +176,6 @@ def setup_source_code_linker(app: Sphinx):
 def register_test_code_linker(app: Sphinx):
     # Connects function to sphinx to ensure correct execution order
     # priority is set to make sure it is called in the right order.
-    # Before the combining action
     app.connect("env-updated", setup_test_code_linker, priority=505)
 
 
@@ -206,7 +209,7 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
             LOGGER.info(f"{'=' * 80}", type="score_source_code_linker")
             return
 
-        run_xml_parser(app, env)
+        build_testcase_needs(app, env)
         return
     tcn_cache = get_cache_filename(app.outdir, "score_testcaseneeds_cache.json")
     assert tcn_cache.exists(), (
@@ -218,75 +221,24 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
         construct_and_add_need(app, tcn)
 
 
-def register_combined_linker(app: Sphinx):
-    # Registering the final combine linker to Sphinx
-    # priority is set to make sure it is called in the right order.
-    # Needs to be called after xml parsing & codelink & combined_linker
-    app.connect("env-updated", setup_combined_linker, priority=510)
-
-
-def setup_combined_linker(app: Sphinx, _: BuildEnvironment):
-    grouped_cache = get_cache_filename(app.outdir, "score_scl_grouped_cache.json")
-    grouped_cache_exists = grouped_cache.exists()
-    # TODO this cache should be done via Bazel
-    if (
-        not grouped_cache_exists
-        or not app.config.skip_rescanning_via_source_code_linker
-    ):
-        LOGGER.debug(
-            "Did not find combined json 'score_scl_grouped_cache.json' in _build."
-            "Generating new one"
-        )
-        build_and_save_combined_file(app.outdir, app)
-
-
-def register_repo_linker(app: Sphinx):
-    # Registering the combined linker to Sphinx
-    # priority is set to make sure it is called in the right order.
-    # Needs to be called after xml parsing & codelink
-    app.connect("env-updated", setup_repo_linker, priority=520)
-
-
-def build_and_save_repo_scl_file(outdir: Path):
-    scl_links = load_source_code_links_combined_json(
-        get_cache_filename(outdir, "score_scl_grouped_cache.json")
-    )
-    mcl_links = group_needs_by_repo(scl_links)
-    store_repo_source_links_json(
-        outdir / "score_repo_grouped_scl_cache.json", mcl_links
-    )
-
-
-def setup_repo_linker(app: Sphinx, _: BuildEnvironment):
-    grouped_cache = get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")
-    grouped_cache_exists = grouped_cache.exists()
-    # TODO this cache should be done via Bazel
-    if (
-        not grouped_cache_exists
-        or not app.config.skip_rescanning_via_source_code_linker
-    ):
-        LOGGER.debug(
-            "Did not find combined json 'score_module_grouped_scl_cache.json' "
-            "in _build. Generating new one"
-        )
-        build_and_save_repo_scl_file(app.outdir)
+def _clear_git_cache(_app: Sphinx, _env: BuildEnvironment) -> None:
+    clear_git_cache()
 
 
 def setup_once(app: Sphinx):
     # might be the only way to solve this?
     if "skip_rescanning_via_source_code_linker" in app.config:
         return
-    # Register & Run (if needed) parsing & saving of JSON caches
     # Note: This extension now runs on both internal and external needs_json invocations.
     # Both modes aggregate links from local sources and external dependencies, enabling
     # unified traceability reporting in integration repositories. Impact on external needs
     # invocations is minimal since they typically don't have local test logs or source code.
+    # Ask git again on every build, so live preview sees new commits
+    app.connect("env-updated", _clear_git_cache, priority=500)
     setup_source_code_linker(app)
     register_test_code_linker(app)
-    register_combined_linker(app)
-    register_repo_linker(app)
 
-    # Priority=515 to ensure it's called after the test linker & combined connection
+    # After 505, which writes score_xml_parser_cache.json
     app.connect("env-updated", inject_links_into_needs, priority=525)
 
     # sphinx-needs resolves NeedIncoming and need metadata links on the same event.
@@ -396,15 +348,8 @@ def _log_existing_links(needs: NeedsMutable) -> None:
 
 
 def _render_code_link(plain_links: bool, metadata: RepoInfo, link: NeedLink) -> str:
-    if plain_links:
-        # Bazel sandbox builds have no git metadata, so we can't construct a real GitHub URL.
-        return (
-            "https://github.com/placeholder/placeholder/blob/unknown/"
-            f"{link.file}#L{link.line}<>{link.file}:{link.line}"
-        )
-    try:
-        base = get_github_link(metadata, link)
-    except AssertionError:
+    base = get_github_link(metadata, link.file, link.line, plain_links=plain_links)
+    if base is None:
         LOGGER.info(
             "Falling back to local code-link format (no git remote available): "
             f"{link.file}:{link.line}",
@@ -421,9 +366,8 @@ def _render_test_link(
 ) -> str:
     if plain_links:
         return str(link.name)
-    try:
-        base = get_github_link(metadata, link)
-    except AssertionError:
+    base = get_github_link(metadata, link.file, link.line)
+    if base is None:
         LOGGER.info(
             "Falling back to local test-link format (no git remote available): "
             f"{link.name}",
@@ -476,7 +420,34 @@ def _apply_links_to_need(
 
 # re-qid: gd_req__req__attr_impl
 def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
-    """Apply cached source-code and test links to Needs during ``env-updated``."""
+    """
+    Group the code & test links and write them into the Needs during
+    ``env-updated``. Recomputed on every build from the sourcelinks JSON and
+    score_xml_parser_cache.json, so the links are as current as these two files.
+    """
+    code_links, test_links = load_link_inputs(
+        app.config.score_sourcelinks_json, app.outdir
+    )
+    links_by_need = group_by_need(code_links, test_links)
+    links_by_repo = group_needs_by_repo(links_by_need)
+    # Debug output only (-vv), never read back by the build.
+    if app.verbosity >= 2:
+        store_source_code_links_combined_json(
+            app.outdir / "score_scl_grouped_cache.json", links_by_need
+        )
+        store_repo_source_links_json(
+            app.outdir / "score_repo_grouped_scl_cache.json", links_by_repo
+        )
+    plain_links = bool(
+        getattr(app.config, "score_source_code_linker_plain_links", False)
+    )
+    apply_links_to_needs(env, links_by_repo, plain_links)
+
+
+def apply_links_to_needs(
+    env: BuildEnvironment, links_by_repo: list[RepoSourceLinks], plain_links: bool
+) -> None:
+    """Write source_code_link and testlink into the matching Needs."""
     needs_data = SphinxNeedsData(env)
     live_needs = needs_data.get_needs_mutable()
     # A shallow copy duplicates the dictionary and keeps references to the
@@ -491,14 +462,7 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
 
     _log_existing_links(live_needs)
 
-    scl_by_module = load_repo_source_links_json(
-        get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")
-    )
-    plain_links = bool(
-        getattr(app.config, "score_source_code_linker_plain_links", False)
-    )
-
-    for module_grouped_needs in scl_by_module:
+    for module_grouped_needs in links_by_repo:
         for source_code_links in module_grouped_needs.needs:
             # Resolve every reference. For example, REQ_001[version==1] can
             # warn about an outdated version even if an earlier module
@@ -517,17 +481,3 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
                 metadata=module_grouped_needs.repo,
                 plain_links=plain_links,
             )
-
-
-#          ╭──────────────────────────────────────╮
-#          │ WARNING: This somehow screws up the  │
-#          │       integration test? What??       │
-#          │        Commented out for now         │
-#          ╰──────────────────────────────────────╯
-
-# source_code_link of affected needs was overwritten.
-# Make sure it's empty in all others!
-# for need in needs.values():
-#     if need["id"] not in source_code_links_by_need:
-#         need["source_code_link"] = ""  # type: ignore
-#         need["testlink"] = ""  # type: ignore

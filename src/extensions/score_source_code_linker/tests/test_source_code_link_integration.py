@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import json
-import shutil
 import subprocess
 from collections import Counter
 from collections.abc import Callable
@@ -24,16 +23,18 @@ from score_pytest.attribute_plugin import add_test_properties
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
-from src.extensions.score_source_code_linker.helpers import get_github_link
-from src.extensions.score_source_code_linker.needlinks import NeedLink
-from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataForTestLink_JSON_Decoder,
 )
+from src.extensions.score_source_code_linker.tests.load_expected_files import (
+    copy_golden_file,
+)
 from src.extensions.score_source_code_linker.tests.test_need_source_links import (
     SourceCodeLinks_TEST_JSON_Decoder,
 )
+from src.helper_lib.needlinks import NeedLink
+from src.helper_lib.repo_info import DefaultRepoInfo, get_github_link
 
 
 @pytest.fixture(scope="module")
@@ -94,13 +95,13 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
 
     curr_dir = Path(__file__).absolute().parent
     # print("CURR_dir", curr_dir)
-    shutil.copyfile(
+    copy_golden_file(
         curr_dir / "expected_codelink.json", repo_path / ".expected_codelink.json"
     )
-    shutil.copyfile(
+    copy_golden_file(
         curr_dir / "expected_testlink.json", repo_path / ".expected_testlink.json"
     )
-    shutil.copyfile(
+    copy_golden_file(
         curr_dir / "expected_grouped.json", repo_path / ".expected_grouped.json"
     )
 
@@ -228,6 +229,8 @@ def sphinx_app_setup(
             outdir=sphinx_base_dir / "out",
             buildername="html",
             warningiserror=True,
+            # Writes the debug dumps (score_*grouped*_cache.json) read below
+            verbosity=2,
             # Source links are generated before Sphinx starts; the docs CLI
             # passes the resolved path via ``--define``, matching the Bazel
             # build contract used by the extension in production.
@@ -317,9 +320,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
-                repo_name="local_repo",
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
             NeedLink(
                 file=Path("src/implementation1.py"),
@@ -327,9 +328,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
-                repo_name="local_repo",
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
         ],
         "TREQ_ID_2": [
@@ -339,9 +338,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_2",
                 full_line="#" + " req-Id: TREQ_ID_2",
-                repo_name="local_repo",
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             )
         ],
         "TREQ_ID_3": [],
@@ -360,9 +357,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="fully",
                 result="passed",
                 result_text="",
-                repo_name="local_repo",
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
         ],
         "TREQ_ID_2": [
@@ -374,9 +369,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name="local_repo",
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
             DataForTestLink(
                 name="test_error_handling",
@@ -386,9 +379,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name="local_repo",
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
         ],
         "TREQ_ID_3": [
@@ -400,9 +391,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name="local_repo",
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
             DataForTestLink(
                 name="test_error_handling",
@@ -412,9 +401,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name="local_repo",
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
         ],
     }
@@ -438,24 +425,18 @@ def example_source_link_text_non_existent(sphinx_base_dir: Path):
 
 
 def make_source_link(needlinks: list[NeedLink]):
-    metadata = RepoInfo(
-        name="local_repo",
-        url="",
-        hash="",
-    )
+    metadata = DefaultRepoInfo()
     return ", ".join(
-        f"{get_github_link(metadata, n)}<>{n.file}:{n.line}" for n in needlinks
+        f"{get_github_link(metadata, n.file, n.line)}<>{n.file}:{n.line}"
+        for n in needlinks
     )
 
 
 def make_test_link(testlinks: list[DataForTestLink]):
-    metadata = RepoInfo(
-        name="local_repo",
-        url="",
-        hash="",
-    )
+    metadata = DefaultRepoInfo()
     return ", ".join(
-        f"{get_github_link(metadata, n)}<>{n.name}<>{n.result}" for n in testlinks
+        f"{get_github_link(metadata, n.file, n.line)}<>{n.name}<>{n.result}"
+        for n in testlinks
     )
 
 

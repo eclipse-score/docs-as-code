@@ -21,15 +21,15 @@ decoder and encoder for SourceCodeLinks to enable JSON read/write
 
 import json
 from collections import defaultdict
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from src.extensions.score_source_code_linker.needlinks import (
-    NeedLink,
-)
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
+)
+from src.helper_lib.needlinks import (
+    NeedLink,
 )
 
 
@@ -56,11 +56,15 @@ class SourceCodeLinks:
 
 
 class SourceCodeLinks_JSON_Encoder(json.JSONEncoder):
-    def default(self, o: object):
-        if isinstance(o, SourceCodeLinks | NeedSourceLinks):
-            return asdict(o)
+    def default(self, o: object) -> object:
+        # Not asdict() for the containers: it would also turn the nested links
+        # into plain dicts (with a nested 'repo'), bypassing to_dict_full.
+        if isinstance(o, SourceCodeLinks):
+            return {"need": o.need, "links": o.links}
+        if isinstance(o, NeedSourceLinks):
+            return {"CodeLinks": o.CodeLinks, "TestLinks": o.TestLinks}
         if isinstance(o, NeedLink | DataForTestLink):
-            return asdict(o)
+            return o.to_dict_full()
         if isinstance(o, Path):
             return str(o)
         return super().default(o)
@@ -72,8 +76,13 @@ def SourceCodeLinks_JSON_Decoder(d: dict[str, Any]) -> SourceCodeLinks | dict[st
         return SourceCodeLinks(
             need=d["need"],
             links=NeedSourceLinks(
-                CodeLinks=[NeedLink(**cl) for cl in links.get("CodeLinks", [])],
-                TestLinks=[DataForTestLink(**tl) for tl in links.get("TestLinks", [])],
+                CodeLinks=[
+                    NeedLink.from_flat_dict(cl) for cl in links.get("CodeLinks", [])
+                ],
+                TestLinks=[
+                    DataForTestLink.from_flat_dict(tl)
+                    for tl in links.get("TestLinks", [])
+                ],
             ),
         )
     return d

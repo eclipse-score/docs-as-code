@@ -22,19 +22,9 @@ from src.extensions.score_source_code_linker.need_source_links import (
     SourceCodeLinks,
     SourceCodeLinks_JSON_Decoder,
 )
-from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import DataForTestLink
-
-
-@dataclass
-class RepoInfo:
-    name: str
-    hash: str
-    url: str
-
-
-def DefaultRepoInfo() -> RepoInfo:
-    return RepoInfo(name="local_repo", hash="", url="")
+from src.helper_lib.needlinks import NeedLink
+from src.helper_lib.repo_info import RepoInfo
 
 
 @dataclass
@@ -49,7 +39,7 @@ class RepoSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
             return str(o)
         # We do not want to save the metadata inside the codelink or testlink
         # As we save this already in a structure above it
-        # (hash, module_name, url)
+        # (repo: name, hash, url)
         if isinstance(o, NeedLink | DataForTestLink):
             return o.to_dict_without_metadata()
         # We need to split this up, otherwise the nested
@@ -133,12 +123,10 @@ def group_needs_by_repo(links: list[SourceCodeLinks]) -> list[RepoSourceLinks]:
         else:
             # This should not happen?
             continue
-        repo_key = first_link.repo_name
+        repo_key = first_link.repo.name
 
         if repo_key not in repo_groups:
-            repo_groups[repo_key] = RepoSourceLinks(
-                repo=RepoInfo(name=repo_key, hash=first_link.hash, url=first_link.url)
-            )
+            repo_groups[repo_key] = RepoSourceLinks(repo=first_link.repo)
 
         # TODO: Add an assert that checks if needs only are
         # in a singular repo (not allowed to be in multiple)

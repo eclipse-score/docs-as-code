@@ -21,7 +21,6 @@ Keep in mind that this is with the 'assertions' inside xml_parser disabled so fa
 Once we enable those we will need to change the tests
 """
 
-import json
 import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from pathlib import Path
@@ -35,6 +34,7 @@ from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
 
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
+from src.helper_lib.repo_info import LOCAL_REPO
 
 
 # Unsure if I should make these last a session or not
@@ -292,9 +292,9 @@ def test_read_test_xml_file(
 ):
     """Ensure a whole pre-defined xml file is parsed correctly"""
     # ADAPTED: Mock return value to ensure metadata is populated.
-    # 'local_module' triggers the path where hash/url are empty strings,
-    # which is valid but avoids the need to mock parse_info_from_known_good.
-    mock_parse_module.return_value = "local_repo"
+    # LOCAL_REPO triggers the path where hash/url are empty strings,
+    # which is valid but avoids the need to mock resolve_repo.
+    mock_parse_module.return_value = LOCAL_REPO
 
     _: Path
     dir1: Path
@@ -309,9 +309,10 @@ def test_read_test_xml_file(
     assert isinstance(tcneed, DataOfTestCase)
     assert tcneed.result == "failed"
     # ADAPTED: Verify metadata fields were populated
-    assert tcneed.repo_name == "local_repo"
-    assert tcneed.hash == ""
-    assert tcneed.url == ""
+    assert tcneed.repo is not None
+    assert tcneed.repo.name == LOCAL_REPO
+    assert tcneed.repo.hash == ""
+    assert tcneed.repo.url == ""
 
     assert no_props1 == []
     assert missing_props1 == []
@@ -347,57 +348,18 @@ def test_read_test_xml_file(
     assert missing_props4 == ["tc_with_missing_props"]
 
 
-@add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
-)
-def test_short_hash_consistency_and_format():
-    """Ensure shorthash has the intended format"""
-    h1 = xml_parser.short_hash("foo")
-    h2 = xml_parser.short_hash("foo")
-    assert h1 == h2
-    assert h1.isalpha()
-    assert len(h1) == 5
-
-
-def test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata(
-    monkeypatch: pytest.MonkeyPatch,
+def test_parse_test_xml_files_without_sphinx(
+    tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
 ):
-    calls: list[dict[str, object]] = []
+    """All test.xml files are parsed into testcases with plain inputs, no Sphinx app."""
+    _, dir1, dir2, dir3, dir4 = tmp_xml_dirs()
+    xml_paths = [d / "test.xml" for d in (dir1, dir2, dir3, dir4)]
 
-    def _fake_add_external_need(**kwargs: object) -> object:
-        calls.append(kwargs)
-        return object()
+    testcases = xml_parser.parse_test_xml_files(xml_paths, known_good=None)
 
-    monkeypatch.setattr(xml_parser, "add_external_need", _fake_add_external_need)
-
-    testcase = DataOfTestCase(
-        name="tc_missing_meta",
-        file="tests/foo_test.py",
-        line="10",
-        result="passed",
-        result_text="",
-        FullyVerifies="REQ_1",
-        PartiallyVerifies="",
-        TestType="requirements-based",
-        DerivationTechnique="analysis",
-        repo_name=None,
-        hash=None,
-        url=None,
-    )
-
-    app_stub: Any = object()
-    xml_parser.construct_and_add_need(
-        app=app_stub,
-        tn=testcase,
-    )
-
-    # Must not crash and should create an external need using fallback metadata.
-    assert len(calls) == 1
-    assert calls[0]["external_url"] == (
-        "https://github.com/placeholder/placeholder/blob/unknown/tests/foo_test.py#L10"
-    )
+    assert len(testcases) == 4
+    assert all(isinstance(tc, DataOfTestCase) for tc in testcases)
+    assert testcases[0].result == "failed"
 
 
 #           ╭───────────────────────────────────────────────────────────────╮
@@ -578,26 +540,24 @@ def test_get_metadata_from_test_path_local():
         "/home/root/docs-as-code/bazel-testlogs/src/extensions/foo/test.xml"
     )
     md = xml_parser.get_metadata_from_test_path(local_path, None)
-    assert md["repo_name"] == "local_repo"
-    assert md["hash"] == ""
-    assert md["url"] == ""
+    assert md.name == LOCAL_REPO
+    assert md.hash == ""
+    assert md.url == ""
 
 
-def test_get_metadata_from_test_path_combo_with_hash(tmp_path: Path):
+def test_get_metadata_from_test_path_combo_with_hash():
     """Combo builds with 'hash' in known_good.json populate metadata correctly."""
-    json_file = tmp_path / "known_good.json"
-    json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_HASH))
-    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, json_file)
-    assert md["repo_name"] == "score_docs_as_code"
-    assert md["hash"] == "abc123hashvalue"
-    assert md["url"] == "https://github.com/eclipse-score/docs-as-code"
+    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, _KNOWN_GOOD_WITH_HASH)
+    assert md.name == "score_docs_as_code"
+    assert md.hash == "abc123hashvalue"
+    assert md.url == "https://github.com/eclipse-score/docs-as-code"
 
 
-def test_get_metadata_from_test_path_combo_with_version(tmp_path: Path):
+def test_get_metadata_from_test_path_combo_with_version():
     """Combo builds with 'version' in known_good.json populate metadata correctly."""
-    json_file = tmp_path / "known_good.json"
-    json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_VERSION))
-    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, json_file)
-    assert md["repo_name"] == "score_docs_as_code"
-    assert md["hash"] == "v2.1.0"
-    assert md["url"] == "https://github.com/eclipse-score/docs-as-code"
+    md = xml_parser.get_metadata_from_test_path(
+        _COMBO_TEST_PATH, _KNOWN_GOOD_WITH_VERSION
+    )
+    assert md.name == "score_docs_as_code"
+    assert md.hash == "v2.1.0"
+    assert md.url == "https://github.com/eclipse-score/docs-as-code"
