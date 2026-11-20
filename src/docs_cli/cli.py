@@ -29,6 +29,7 @@ from sphinx_autobuild.__main__ import (
     main as sphinx_autobuild_main,  # type: ignore[reportUnknownVariableType] # sphinx_autobuild doesn't provide complete type annotations
 )
 
+from src.docs_cli import sarif_summary
 from src.docs_cli.lcov_summary import generate_summary
 from src.extensions.score_mounts._resolver import load_mounts_manifest, resolve_walk_dir
 from src.helper_lib import Environment, get_runfiles_dir
@@ -325,6 +326,24 @@ def _coverage_summary_for_run(config: DocsCliConfig) -> Path | None:
     return generate_summary(code_file_lists, report, summary)
 
 
+def _static_analysis_summary_for_run(config: DocsCliConfig) -> Path | None:
+    """Summarize the workspace SARIF reports like the coverage report."""
+    code_file_lists = env.optional_path("SCORE_CODE_FILE_LISTS")
+    if (
+        not config.is_bazel_run
+        or config.action not in ("incremental", "live_preview")
+        or code_file_lists is None
+    ):
+        return None
+    code_file_lists = _resolve_runfiles_relative_path(config, code_file_lists)
+    assert config.ws_root is not None
+    return sarif_summary.generate_summary(
+        code_file_lists,
+        config.ws_root / "static-analysis-report",
+        config.output_dir / "static_analysis_summary.json",
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the requested builder and record whether its output can be reused."""
     args = parse_args(argv)
@@ -350,8 +369,12 @@ def main(argv: list[str] | None = None) -> int:
         package_dir / "BUILD",
     ]
     coverage_summary = _coverage_summary_for_run(config)
-    if coverage_summary is not None:
-        sentinel_files.append(coverage_summary)
+    static_analysis_summary = _static_analysis_summary_for_run(config)
+    sentinel_files += [
+        summary
+        for summary in (coverage_summary, static_analysis_summary)
+        if summary is not None
+    ]
     if not config.is_bazel_build:
         clean_builddir_if_stale(output_dir, sentinel_files)
 

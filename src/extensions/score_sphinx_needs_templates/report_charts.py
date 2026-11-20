@@ -22,10 +22,13 @@ has no legend. ``needpie`` itself stays untouched for every other chart.
 """
 
 import hashlib
+import html
+import json
 import textwrap
 from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from docutils import nodes
@@ -443,12 +446,217 @@ def _process_coverage_reports(
         )
 
 
+_FINDING_CLASSES = (
+    ("critical", "#7a0000"),
+    ("high", "#ca2828"),
+    ("medium", "#f0a500"),
+    ("low", "#9bc3e6"),
+)
+# Mirrors the classification order in src/docs_cli/sarif_summary.py.
+_FINDING_CLASS_EXPLANATIONS = {
+    "critical": "CodeQL security-severity of 9.0 or more",
+    "high": "MISRA mandatory, SARIF level error, security-severity 7.0 to 8.9, "
+    "or clang-tidy bugprone-, cert-, clang-analyzer-, concurrency- checks",
+    "medium": "MISRA required, SARIF level warning, security-severity 4.0 to 6.9, "
+    "clang-tidy cppcoreguidelines-, misc-, performance-, hicpp-, clang-diagnostic- "
+    "checks, or no classification available",
+    "low": "MISRA advisory, SARIF level note, security-severity below 4.0, "
+    "or clang-tidy modernize-, readability-, google-, portability- checks",
+}
+
+
+def _finding_legend() -> nodes.raw:
+    spans = "".join(
+        f'<span title="{html.escape(_FINDING_CLASS_EXPLANATIONS[name])}">'
+        f'<span class="chart-legend-dot" style="background: {color};"></span>'
+        f"{name}</span>"
+        for name, color in _FINDING_CLASSES
+    )
+    explanations = "<br>".join(
+        f'<span class="chart-legend-dot" style="background: {color};"></span>'
+        f"<code>{name}</code> — {html.escape(_FINDING_CLASS_EXPLANATIONS[name])}"
+        for name, color in _FINDING_CLASSES
+    )
+    markup = (
+        '<div class="chart-legend"><span class="chart-legend-group">'
+        f'<span class="chart-legend-head">Findings</span>{spans}</span></div>'
+        '<details class="chart-legend-details"><summary>What the colours mean'
+        f"</summary><p>{explanations}</p></details>"
+    )
+    return nodes.raw("", markup, format="html")
+
+
+def _rules_table(rules: list[dict[str, Any]]) -> nodes.table:
+    headers = ("Rule", "Tool", "Classification", "Open findings")
+    table = nodes.table(classes=["score-static-analysis-rules"])
+    group = nodes.tgroup(cols=len(headers))
+    table += group
+    for width in (50, 15, 15, 20):
+        group += nodes.colspec(colwidth=width)
+
+    def row(cells: Sequence[str]) -> nodes.row:
+        result = nodes.row()
+        for cell in cells:
+            entry = nodes.entry()
+            entry += nodes.paragraph(text=cell)
+            result += entry
+        return result
+
+    head = nodes.thead()
+    head += row(headers)
+    body = nodes.tbody()
+    for rule in rules:
+        body += row(
+            (rule["rule"], rule["tool"], rule["classification"], str(rule["count"]))
+        )
+    group += head
+    group += body
+    return table
+
+
+class StaticAnalysisReport(nodes.General, nodes.Element):
+    """Placeholder resolved from ``static_analysis_summary.json`` during HTML writing."""
+
+
+class StaticAnalysisReportDirective(SphinxDirective):
+    """Show classified static-analysis findings for the primary Need named by the argument."""
+
+    required_arguments = 1
+    option_spec = {
+        "title": directives.unchanged_required,
+        "rules": directives.flag,
+    }
+
+    def run(self) -> Sequence[nodes.Node]:
+        node = StaticAnalysisReport(
+            need_id=self.arguments[0],
+            title=self.options.get("title", self.arguments[0]),
+            rules="rules" in self.options,
+        )
+        self.set_source_info(node)
+        return [node]
+
+
+def _read_static_analysis(app: Sphinx) -> dict[str, Any] | None:
+    # Written by the Docs CLI into the output directory before Sphinx starts.
+    path = Path(app.outdir) / "static_analysis_summary.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else None
+
+
+def _static_analysis_report(
+    app: Sphinx,
+    report: StaticAnalysisReport,
+    data: dict[str, Any] | None,
+    docname: str,
+) -> nodes.container:
+    block = nodes.container(classes=["score-static-analysis-report"])
+    need_id = str(report["need_id"]).split("[", 1)[0]
+    summaries = {
+        entry["primary_need_id"]: entry
+        for entry in (data or {}).get("static_analysis_summaries", [])
+    }
+    summary = summaries.get(need_id)
+    if report["rules"]:
+        block += _rules_table(summary["top_rules"])
+        return block
+    # Without any SARIF report the summary only lists the selected files.
+    if data is None or not data["tools"]:
+        block += nodes.paragraph(
+            text="No static analysis data available for this module."
+        )
+        return block
+    if summary is None or not summary["files"]["total"]:
+        block += nodes.paragraph(
+            text="No source files are assigned to this component, so no findings "
+            "can be attributed to it."
+        )
+        return block
+    files = summary["files"]
+    total = sum(summary["findings"].values())
+    tools = sorted(
+        {
+            f"{tool['name']} {tool['version']}" if tool.get("version") else tool["name"]
+            for tool in data["tools"]
+        }
+    )
+    block += nodes.paragraph(
+        text=f"{total} open findings in {files['with_findings']}/{files['total']} "
+        f"selected source files; {summary['suppressed']} suppressed. "
+        f"Tools: {', '.join(tools) or 'none'}."
+    )
+    if total:
+        block += _finding_legend()
+        block += _chart_image(
+            app,
+            docname,
+            f"{report['title']} Static Analysis",
+            [
+                BarRow(
+                    "Findings",
+                    [summary["findings"][name] for name, _ in _FINDING_CLASSES],
+                    [color for _, color in _FINDING_CLASSES],
+                    [name for name, _ in _FINDING_CLASSES],
+                )
+            ],
+            prefix="score_static_analysis_bars",
+        )
+    if summary["top_rules"]:
+        block += nodes.paragraph(
+            text=f"The following table lists the {len(summary['top_rules'])} most "
+            "critical rules with open findings in the source files of this "
+            "component, sorted by classification (critical first) and then by "
+            "number of open findings. Open findings is the number of "
+            "non-suppressed results of the rule in these files:"
+        )
+    return block
+
+
+def _has_rules(report: StaticAnalysisReport, data: dict[str, Any] | None) -> bool:
+    need_id = str(report["need_id"]).split("[", 1)[0]
+    return any(
+        entry["primary_need_id"] == need_id and entry["top_rules"]
+        for entry in (data or {}).get("static_analysis_summaries", [])
+    )
+
+
+def _enclosing_dropdown(node: nodes.Node) -> nodes.Node:
+    # sphinx-design has already turned ``.. dropdown::`` into its HTML node here.
+    parent = node.parent
+    while parent is not None:
+        if type(parent).__name__ == "dropdown_main":
+            return parent
+        parent = parent.parent
+    return node
+
+
+def _process_static_analysis_reports(
+    app: Sphinx, doctree: nodes.document, docname: str
+) -> None:
+    reports = list(doctree.findall(StaticAnalysisReport))
+    if not reports:
+        return
+    if app.builder.format != "html":
+        for report in reports:
+            report.replace_self([])
+        return
+    data = _read_static_analysis(app)
+    for report in reports:
+        if report["rules"] and not _has_rules(report, data):
+            dropdown = _enclosing_dropdown(report)
+            dropdown.parent.remove(dropdown)
+            continue
+        report.replace_self(_static_analysis_report(app, report, data, docname))
+
+
 def setup(app: Sphinx) -> None:
     app.add_node(ReportBars)
     app.add_node(ReportBar)
     app.add_node(CoverageReport)
     app.add_directive("score-coverage-report", CoverageReportDirective)
     app.connect("doctree-resolved", _process_coverage_reports, priority=600)
+    app.add_node(StaticAnalysisReport)
+    app.add_directive("score-static-analysis-report", StaticAnalysisReportDirective)
+    app.connect("doctree-resolved", _process_static_analysis_reports, priority=600)
     app.add_directive("score-report-bars", ReportBarsDirective)
     app.add_directive("score-report-bar", ReportBarDirective)
     # After Sphinx-Needs (default priority) has resolved all Need nodes.
