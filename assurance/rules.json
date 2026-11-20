@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "rules": [
+    {
+      "id": "CR-001",
+      "trigger": "Removed or renamed complies target",
+      "impact_class": "direct_recheck",
+      "implementation": "assurance/impact.py",
+      "source_issue": "https://github.com/eclipse-score/score/issues/2850"
+    },
+    {
+      "id": "CR-002",
+      "trigger": "Requirement type changed; dependent guidelines",
+      "impact_class": "indirect_propagation",
+      "implementation": "assurance/impact.py",
+      "source_issue": "https://github.com/eclipse-score/score/issues/2850"
+    },
+    {
+      "id": "CR-003",
+      "trigger": "Broken test reference invalidates coverage evidence",
+      "impact_class": "revision_required",
+      "implementation": "assurance/impact.py",
+      "source_issue": "https://github.com/eclipse-score/score/issues/2850"
+    },
+    {
+      "id": "CR-004",
+      "trigger": "Changed std_req content requires complying guideline review",
+      "impact_class": "revision_required",
+      "implementation": "assurance/impact.py",
+      "source_issue": "https://github.com/eclipse-score/score/issues/2850"
+    },
+    {
+      "id": "CR-005",
+      "trigger": "Native coverage drops below a configured threshold",
+      "impact_class": "direct_recheck",
+      "implementation": "scripts_bazel/traceability_gate.py",
+      "source_issue": "https://github.com/eclipse-score/score/issues/2850"
+    }
+  ]
+}

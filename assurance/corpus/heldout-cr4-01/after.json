@@ -1,0 +1,36 @@
+{
+  "needs": {
+    "R4_heldout_0": {
+      "id": "R4_heldout_0",
+      "type": "std_req",
+      "content": "Revised obligation heldout 0",
+      "testlink": [
+        "T4_heldout_0"
+      ],
+      "source_code_link": [
+        "code.cpp"
+      ]
+    },
+    "G4_heldout_0": {
+      "id": "G4_heldout_0",
+      "type": "gd_guidl",
+      "complies": [
+        "R4_heldout_0"
+      ]
+    },
+    "A4_heldout_0": {
+      "id": "A4_heldout_0",
+      "type": "evidence",
+      "links": [
+        "G4_heldout_0"
+      ]
+    },
+    "T4_heldout_0": {
+      "id": "T4_heldout_0",
+      "type": "testcase",
+      "fully_verifies": [
+        "R4_heldout_0"
+      ]
+    }
+  }
+}

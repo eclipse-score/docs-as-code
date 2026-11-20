@@ -14,6 +14,8 @@
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 
+exports_files(["traceability_metrics_schema.json", "traceability_coverage.py"])
+
 filegroup(
     name = "sources",
     srcs = glob(["**/*.py"]),

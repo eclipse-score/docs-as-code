@@ -1,0 +1,30 @@
+{
+  "schema_version": "2",
+  "generated_by": "public_native_extraction_expectation",
+  "overall_metrics": {
+    "total": 2,
+    "with_code_link": 2,
+    "with_test_link": 2,
+    "fully_linked": 2,
+    "with_code_link_pct": 100.0,
+    "with_test_link_pct": 100.0,
+    "fully_linked_pct": 100.0
+  },
+  "metrics_by_type": {
+    "tool_req": {
+      "total": 2,
+      "with_code_link": 2,
+      "with_test_link": 2,
+      "fully_linked": 2,
+      "with_code_link_pct": 100.0,
+      "with_test_link_pct": 100.0,
+      "fully_linked_pct": 100.0
+    }
+  },
+  "tests": {
+    "total": 1,
+    "linked_to_requirements": 1,
+    "linked_to_requirements_pct": 100.0,
+    "broken_references": []
+  }
+}
