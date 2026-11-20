@@ -88,3 +88,47 @@ def test_findings_are_assigned_and_classified(tmp_path: Path) -> None:
     assert summary["findings"] == {"critical": 0, "high": 1, "medium": 1, "low": 1}
     assert summary["suppressed"] == 1
     assert summary["files"] == {"total": 2, "with_findings": 2}
+
+
+def test_absolute_output_base_paths_map_to_external_repositories(
+    tmp_path: Path,
+) -> None:
+    lists = tmp_path / "lists.json"
+    lists.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "code_file_lists": [
+                    {
+                        "primary_need_id": "comp__x",
+                        "files": [{"repository": "score_x+", "path": "src/x.cc"}],
+                    }
+                ],
+            }
+        )
+    )
+    reports = tmp_path / "static-analysis-report"
+    reports.mkdir()
+    uri = (
+        "file:///home/runner/.cache/bazel/_bazel_runner/abc/external/score_x+/src/x.cc"
+    )
+    location = {"physicalLocation": {"artifactLocation": {"uri": uri}}}
+    (reports / "a.sarif").write_text(
+        json.dumps(
+            {
+                "runs": [
+                    {
+                        "tool": {"driver": {"name": "CodeQL"}},
+                        "results": [
+                            {"ruleId": "r", "level": "error", "locations": [location]}
+                        ],
+                    }
+                ]
+            }
+        )
+    )
+
+    data = json.loads(generate_summary(lists, reports, tmp_path / "s.json").read_text())
+
+    assert data["unassigned"] == 0
+    assert data["static_analysis_summaries"][0]["findings"]["high"] == 1
