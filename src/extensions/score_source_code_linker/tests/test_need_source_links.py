@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import json
-from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -46,7 +45,10 @@ def SourceCodeLinks_TEST_JSON_Decoder(
                     for cl in links.get("CodeLinks", [])
                     if isinstance(link := needlink_test_decoder(cl), NeedLink)
                 ],
-                TestLinks=[DataForTestLink(**tl) for tl in links.get("TestLinks", [])],
+                TestLinks=[
+                    DataForTestLink.from_flat_dict(tl)
+                    for tl in links.get("TestLinks", [])
+                ],
             ),
         )
     return d
@@ -62,7 +64,7 @@ class SourceCodeLinks_TEST_JSON_Encoder(json.JSONEncoder):
         if isinstance(o, NeedSourceLinks):
             return {
                 "CodeLinks": [NeedLinkTestEncoder().default(cl) for cl in o.CodeLinks],
-                "TestLinks": [asdict(tl) for tl in o.TestLinks],
+                "TestLinks": [tl.to_dict_full() for tl in o.TestLinks],
             }
         if isinstance(o, Path):
             return str(o)

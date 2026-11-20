@@ -71,14 +71,17 @@ def SourceCodeLinks_TEST_JSON_Decoder(
                 cl["tag"] = decode_comment(cl["tag"])
             if "full_line" in cl:
                 cl["full_line"] = decode_comment(cl["full_line"])
-            code_links.append(NeedLink(**cl))
+            code_links.append(NeedLink.from_flat_dict(cl))
 
         # Decode TestLinks
         return SourceCodeLinks(
             need=d["need"],
             links=NeedSourceLinks(
                 CodeLinks=code_links,
-                TestLinks=[DataForTestLink(**tl) for tl in links.get("TestLinks", [])],
+                TestLinks=[
+                    DataForTestLink.from_flat_dict(tl)
+                    for tl in links.get("TestLinks", [])
+                ],
             ),
         )
     return d
@@ -150,9 +153,9 @@ def test_json_encoder_removes_metadata_from_needlink():
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        repo_name="test_repo",
-        url="https://github.com/test/repo",
-        hash="abc123",
+        repo=RepoInfo(
+            name="test_repo", hash="abc123", url="https://github.com/test/repo"
+        ),
     )
     result = encoder.default(needlink)
 
@@ -175,9 +178,9 @@ def test_json_encoder_removes_metadata_from_testlink():
         verify_type="fully",
         result="passed",
         result_text="",
-        repo_name="test_repo",
-        url="https://github.com/test/repo",
-        hash="abc123",
+        repo=RepoInfo(
+            name="test_repo", hash="abc123", url="https://github.com/test/repo"
+        ),
     )
     result = encoder.default(testlink)
 
@@ -243,9 +246,7 @@ def test_store_and_load_roundtrip(tmp_path: Path):
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        repo_name="test_repo",
-        url="url1",
-        hash="hash1",
+        repo=RepoInfo(name="test_repo", hash="hash1", url="url1"),
     )
     scl = SourceCodeLinks(
         need="REQ_1",
@@ -314,9 +315,9 @@ def test_group_needs_single_repo_with_codelinks():
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        repo_name="shared_repo",
-        url="https://github.com/test/repo",
-        hash="hash1",
+        repo=RepoInfo(
+            name="shared_repo", hash="hash1", url="https://github.com/test/repo"
+        ),
     )
     needlink2 = NeedLink(
         file=Path("src/file2.py"),
@@ -324,9 +325,9 @@ def test_group_needs_single_repo_with_codelinks():
         tag="#" + " req-Id:",
         need="REQ_2",
         full_line="#" + " req-Id: REQ_2",
-        repo_name="shared_repo",
-        url="https://github.com/test/repo",
-        hash="hash1",
+        repo=RepoInfo(
+            name="shared_repo", hash="hash1", url="https://github.com/test/repo"
+        ),
     )
 
     scl1 = SourceCodeLinks(
@@ -354,9 +355,7 @@ def test_group_needs_multiple_repos():
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        repo_name="repo_a",
-        url="https://github.com/a/repo",
-        hash="hash_a",
+        repo=RepoInfo(name="repo_a", hash="hash_a", url="https://github.com/a/repo"),
     )
     needlink_b = NeedLink(
         file=Path("src/b.py"),
@@ -364,9 +363,7 @@ def test_group_needs_multiple_repos():
         tag="#" + " req-Id:",
         need="REQ_2",
         full_line="#" + " req-Id: REQ_2",
-        repo_name="repo_b",
-        url="https://github.com/b/repo",
-        hash="hash_b",
+        repo=RepoInfo(name="repo_b", hash="hash_b", url="https://github.com/b/repo"),
     )
 
     scl1 = SourceCodeLinks(
@@ -397,9 +394,9 @@ def test_group_needs_with_testlinks_only():
         verify_type="fully",
         result="passed",
         result_text="",
-        repo_name="test_repo",
-        url="https://github.com/test/repo",
-        hash="hash1",
+        repo=RepoInfo(
+            name="test_repo", hash="hash1", url="https://github.com/test/repo"
+        ),
     )
     testlink2 = DataForTestLink(
         name="test_feature",
@@ -409,9 +406,9 @@ def test_group_needs_with_testlinks_only():
         verify_type="partially",
         result="passed",
         result_text="",
-        repo_name="test_repo",
-        url="https://github.com/test/repo",
-        hash="hash1",
+        repo=RepoInfo(
+            name="test_repo", hash="hash1", url="https://github.com/test/repo"
+        ),
     )
 
     scl = SourceCodeLinks(
@@ -445,9 +442,9 @@ def test_group_needs_with_testlinks_different_repos():
         verify_type="fully",
         result="passed",
         result_text="",
-        repo_name="repo_a",
-        url="https://github.com/test_a/repo_a",
-        hash="hash_a",
+        repo=RepoInfo(
+            name="repo_a", hash="hash_a", url="https://github.com/test_a/repo_a"
+        ),
     )
     testlink2 = DataForTestLink(
         name="test_feature",
@@ -457,9 +454,9 @@ def test_group_needs_with_testlinks_different_repos():
         verify_type="partially",
         result="passed",
         result_text="",
-        repo_name="repo_b",
-        url="https://github.com/test_b/repo_b",
-        hash="hash_b",
+        repo=RepoInfo(
+            name="repo_b", hash="hash_b", url="https://github.com/test_b/repo_b"
+        ),
     )
 
     scl = SourceCodeLinks(
@@ -504,9 +501,7 @@ def test_group_needs_skips_needs_without_links():
                     tag="#" + " req-Id:",
                     need="REQ_1",
                     full_line="#" + " req-Id: REQ_1",
-                    repo_name="repo_a",
-                    url="url1",
-                    hash="hash1",
+                    repo=RepoInfo(name="repo_a", hash="hash1", url="url1"),
                 )
             ],
             TestLinks=[],
@@ -532,9 +527,7 @@ def test_group_needs_mixed_codelinks_and_testlinks():
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        repo_name="repo_a",
-        url="https://github.com/test/repo",
-        hash="hash1",
+        repo=RepoInfo(name="repo_a", hash="hash1", url="https://github.com/test/repo"),
     )
     testlink = DataForTestLink(
         name="test_impl",
@@ -544,9 +537,7 @@ def test_group_needs_mixed_codelinks_and_testlinks():
         verify_type="fully",
         result="passed",
         result_text="",
-        repo_name="repo_a",
-        url="https://github.com/test/repo",
-        hash="hash1",
+        repo=RepoInfo(name="repo_a", hash="hash1", url="https://github.com/test/repo"),
     )
 
     scl = SourceCodeLinks(

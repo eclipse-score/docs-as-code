@@ -71,11 +71,10 @@ def main():
     metadata_set = False
     for file_path in args.files:
         if "known_good.json" not in str(file_path) and not metadata_set:
-            metadata.name = parse_repo_name_from_path(file_path)
+            metadata.name = repo_name
             metadata_set = True
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
-        clean_path = clean_external_prefix(file_path)
         references = extract_references_from_file(
             abs_file_path.parent, Path(abs_file_path.name), clean_path
         )

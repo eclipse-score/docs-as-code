@@ -38,7 +38,7 @@ from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.helper_lib.repo_info import (
     parse_info_from_known_good,
     parse_repo_name_from_path,
-    LOCAL_REPO
+    LOCAL_REPO,
 )
 from src.helper_lib.repo_info import RepoInfo
 from src.extensions.score_source_code_linker.testlink import (
@@ -436,12 +436,11 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
     assert tn.name is not None
     name = tn.name
     external_url = ""
-    if tn.repo_name is None or tn.hash is None or tn.url is None:
+    if tn.repo is None:
         # I would change this to debug for now, as it seems too spammy in 'info'
         logger.debug(
             "Creating testcase need with fallback URL due to incomplete repo metadata: "
-            f"name={name}, file={file}, repo_name={tn.repo_name}, "
-            f"hash={tn.hash}, url={tn.url}",
+            f"name={name}, file={file}, repo={tn.repo}",
             type="score_source_code_linker",
         )
         line = tn.line if tn.line is not None else 1
@@ -449,9 +448,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             f"https://github.com/placeholder/placeholder/blob/unknown/{file}#L{line}"
         )
     else:
-        # Have to build metadata here for the gh link func
-        metadata = RepoInfo(name=tn.repo_name, hash=tn.hash, url=tn.url)
-        external_url = get_github_link(metadata, tn)
+        external_url = get_github_link(tn.repo, tn)
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
         _ = add_external_need(

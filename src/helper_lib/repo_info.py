@@ -6,8 +6,13 @@ import json
 
 LOCAL_REPO = "local_repo"
 
+# Keys of the 'flat' form, in the order they appear in the JSON files.
+REPO_FLAT_KEYS = ("repo_name", "hash", "url")
 
-@dataclass
+
+# order + unsafe_hash: the link dataclasses that hold a RepoInfo are
+# ordered and hashed field by field, so RepoInfo has to support both.
+@dataclass(order=True, unsafe_hash=True)
 class RepoInfo:
     name: str
     hash: str
@@ -22,7 +27,7 @@ class RepoInfo:
 
     @staticmethod
     def is_flat_dict(x: object) -> bool:
-        return isinstance(x, dict) and {"repo_name", "hash", "url"} <= x.keys()
+        return isinstance(x, dict) and set(REPO_FLAT_KEYS) <= x.keys()
 
     @classmethod
     def from_flat_dict(cls, d: dict[str, Any]) -> "RepoInfo":
@@ -37,6 +42,61 @@ def DefaultRepoInfo() -> RepoInfo:
     return RepoInfo(name=LOCAL_REPO, hash="", url="")
 
 
+def flatten_repo_field(d: dict[str, Any], repo: RepoInfo | None) -> dict[str, Any]:
+    """
+    Replace the 'repo' entry of a dataclass dict with the flat repo keys.
+
+    The flat keys take the place of 'repo', so the key order in the JSON
+    stays the same as when the links had three loose fields.
+    A missing repo (None) becomes three None values.
+    """
+    flat: dict[str, Any] = (
+        repo.to_flat_dict() if repo is not None else dict.fromkeys(REPO_FLAT_KEYS)
+    )
+    result: dict[str, Any] = {}
+    for key, value in d.items():
+        if key == "repo":
+            result.update(flat)
+        else:
+            result[key] = value
+    return result
+
+
+def split_repo_fields(d: dict[str, Any]) -> tuple[dict[str, Any], RepoInfo | None]:
+    """
+    Inverse of flatten_repo_field: take the flat repo keys out of a dict.
+
+    Returns the remaining keys and the RepoInfo, or None if one of the
+    three keys is missing or None.
+    """
+    rest = {key: value for key, value in d.items() if key not in REPO_FLAT_KEYS}
+    values = [d.get(key) for key in REPO_FLAT_KEYS]
+    if any(value is None for value in values):
+        return rest, None
+    return rest, RepoInfo(name=values[0], hash=values[1], url=values[2])
+
+
+def split_external_path(path: Path) -> tuple[str, Path]:
+    """
+    Split a Bazel exec path into the repo it belongs to and the path inside
+    that repo.
+
+    Combo build:
+        external/score_docs_as_code+/src/helper_lib/test_helper_lib.py
+        => ("score_docs_as_code", Path("src/helper_lib/test_helper_lib.py"))
+    Local build (`//:docs`):
+        src/helper_lib/test_helper_lib.py
+        => (LOCAL_REPO, Path("src/helper_lib/test_helper_lib.py"))  # path unchanged
+    """
+    # Only a leading `external/` counts, so files / folders may still have
+    # `external` somewhere else in their name.
+    if not str(path).startswith("external/"):
+        return LOCAL_REPO, path
+    repo_dir, _, rest = str(path).removeprefix("external/").partition("/")
+    # Bzlmod appends `+` to the canonical repo directory name.
+    return repo_dir.removesuffix("+"), Path(rest)
+
+
 def parse_repo_name_from_path(path: Path) -> str:
     """
     Parse out the Module-Name from the filename:
@@ -48,16 +108,7 @@ def parse_repo_name_from_path(path: Path) -> str:
         => LOCAL_REPO (whatever the vars value is)
 
     """
-
-    # COMBO BUILD
-
-    if str(path).startswith("external/"):
-        # This allows for files / folders etc. to have `external` in their name too.
-        module_raw = str(path).removeprefix("external/")
-        filepath_split = str(module_raw).split("/", maxsplit=1)
-        return str(filepath_split[0].removesuffix("+"))
-    # We return this when we are in a local build `//:docs` the rest of DaC knows
-    return LOCAL_REPO
+    return split_external_path(path)[0]
 
 
 def parse_info_from_known_good(

@@ -124,12 +124,10 @@ def group_needs_by_repo(links: list[SourceCodeLinks]) -> list[RepoSourceLinks]:
         else:
             # This should not happen?
             continue
-        repo_key = first_link.repo_name
+        repo_key = first_link.repo.name
 
         if repo_key not in repo_groups:
-            repo_groups[repo_key] = RepoSourceLinks(
-                repo=RepoInfo(name=repo_key, hash=first_link.hash, url=first_link.url)
-            )
+            repo_groups[repo_key] = RepoSourceLinks(repo=first_link.repo)
 
         # TODO: Add an assert that checks if needs only are
         # in a singular repo (not allowed to be in multiple)

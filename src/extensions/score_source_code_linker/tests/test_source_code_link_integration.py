@@ -25,7 +25,7 @@ from sphinx_needs.data import SphinxNeedsData
 
 from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.helper_lib.needlinks import NeedLink
-from src.helper_lib.repo_info import RepoInfo, LOCAL_REPO
+from src.helper_lib.repo_info import DefaultRepoInfo
 from src.extensions.score_source_code_linker.tests.golden_files import copy_golden_file
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
@@ -317,9 +317,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
-                repo_name=LOCAL_REPO,
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
             NeedLink(
                 file=Path("src/implementation1.py"),
@@ -327,9 +325,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
-                repo_name=LOCAL_REPO,
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
         ],
         "TREQ_ID_2": [
@@ -339,9 +335,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_2",
                 full_line="#" + " req-Id: TREQ_ID_2",
-                repo_name=LOCAL_REPO,
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             )
         ],
         "TREQ_ID_3": [],
@@ -360,9 +354,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="fully",
                 result="passed",
                 result_text="",
-                repo_name=LOCAL_REPO,
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
         ],
         "TREQ_ID_2": [
@@ -374,9 +366,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name=LOCAL_REPO,
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
             DataForTestLink(
                 name="test_error_handling",
@@ -386,9 +376,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name=LOCAL_REPO,
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
         ],
         "TREQ_ID_3": [
@@ -400,9 +388,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name=LOCAL_REPO,
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
             DataForTestLink(
                 name="test_error_handling",
@@ -412,9 +398,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name=LOCAL_REPO,
-                url="",
-                hash="",
+                repo=DefaultRepoInfo(),
             ),
         ],
     }
@@ -438,22 +422,14 @@ def example_source_link_text_non_existent(sphinx_base_dir: Path):
 
 
 def make_source_link(needlinks: list[NeedLink]):
-    metadata = RepoInfo(
-        name=LOCAL_REPO,
-        url="",
-        hash="",
-    )
+    metadata = DefaultRepoInfo()
     return ", ".join(
         f"{get_github_link(metadata, n)}<>{n.file}:{n.line}" for n in needlinks
     )
 
 
 def make_test_link(testlinks: list[DataForTestLink]):
-    metadata = RepoInfo(
-        name=LOCAL_REPO,
-        url="",
-        hash="",
-    )
+    metadata = DefaultRepoInfo()
     return ", ".join(
         f"{get_github_link(metadata, n)}<>{n.name}<>{n.result}" for n in testlinks
     )

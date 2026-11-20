@@ -310,9 +310,10 @@ def test_read_test_xml_file(
     assert isinstance(tcneed, DataOfTestCase)
     assert tcneed.result == "failed"
     # ADAPTED: Verify metadata fields were populated
-    assert tcneed.repo_name == LOCAL_REPO
-    assert tcneed.hash == ""
-    assert tcneed.url == ""
+    assert tcneed.repo is not None
+    assert tcneed.repo.name == LOCAL_REPO
+    assert tcneed.repo.hash == ""
+    assert tcneed.repo.url == ""
 
     assert no_props1 == []
     assert missing_props1 == []
@@ -383,9 +384,7 @@ def test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata(
         PartiallyVerifies="",
         TestType="requirements-based",
         DerivationTechnique="analysis",
-        repo_name=None,
-        hash=None,
-        url=None,
+        repo=None,
     )
 
     app_stub: Any = object()
