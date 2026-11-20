@@ -28,6 +28,7 @@ from src.helper_lib.needlinks import DefaultNeedLink
 from src.helper_lib.repo_info import (
     LOCAL_REPO,
     RepoInfo,
+    load_known_good,
     parse_info_from_known_good,
     parse_repo_name_from_path,
     split_external_path,
@@ -176,7 +177,7 @@ def known_good_json(tmp_path: Path):
 def test_parse_info_from_known_good_happy_path(known_good_json: Path):
     """Test parsing repo info from valid known_good.json."""
     hash_result, repo_result = parse_info_from_known_good(
-        known_good_json, "score_baselibs"
+        load_known_good(known_good_json), "score_baselibs"
     )
 
     assert hash_result == "158fe6a7b791c58f6eac5f7e4662b8db0cf9ac6e"
@@ -186,7 +187,7 @@ def test_parse_info_from_known_good_happy_path(known_good_json: Path):
 def test_parse_info_from_known_good_different_category(known_good_json: Path):
     """Test finding repo in different category."""
     hash_result, repo_result = parse_info_from_known_good(
-        known_good_json, "score_docs_as_code"
+        load_known_good(known_good_json), "score_docs_as_code"
     )
 
     assert hash_result == "c1207676afe6cafd25c35d420e73279a799515d8"
@@ -196,10 +197,10 @@ def test_parse_info_from_known_good_different_category(known_good_json: Path):
 def test_parse_info_from_known_good_repo_not_found(known_good_json: Path):
     """Test that KeyError is raised when repo doesn't exist."""
     with pytest.raises(KeyError, match="Module nonexistent not found"):
-        parse_info_from_known_good(known_good_json, "nonexistent")
+        parse_info_from_known_good(load_known_good(known_good_json), "nonexistent")
 
 
-def test_parse_info_from_known_good_empty_json(tmp_path: Path):
+def test_load_known_good_empty_json(tmp_path: Path):
     """Test that it errors when given an empty JSON file."""
     json_file = tmp_path / "example.json"
     _ = json_file.write_text("{}")
@@ -208,10 +209,10 @@ def test_parse_info_from_known_good_empty_json(tmp_path: Path):
         AssertionError,
         match=f"Known good json at: {json_file} is empty. This is not allowed",
     ):
-        parse_info_from_known_good(json_file, "any_repo")
+        _ = load_known_good(json_file)
 
 
-def test_parse_info_from_known_good_no_repo_in_json(tmp_path: Path):
+def test_load_known_good_no_modules_key(tmp_path: Path):
     """Test that assertion works when repo not in top level keys"""
     json_file = tmp_path / "example.json"
     _ = json_file.write_text(
@@ -222,10 +223,10 @@ def test_parse_info_from_known_good_no_repo_in_json(tmp_path: Path):
         AssertionError,
         match=f"Known good json at: {json_file} is missing the 'modules' key",
     ):
-        parse_info_from_known_good(json_file, "any_repo")
+        _ = load_known_good(json_file)
 
 
-def test_parse_info_from_known_good_empty_repo_dict_in_json(tmp_path: Path):
+def test_load_known_good_empty_modules(tmp_path: Path):
     """Test that assertion works if repo dictionary is empty"""
     json_file = tmp_path / "emample.json"
     _ = json_file.write_text('{"another_key": {"a": "b"}, "modules": {}}')
@@ -234,7 +235,7 @@ def test_parse_info_from_known_good_empty_repo_dict_in_json(tmp_path: Path):
         AssertionError,
         match=f"Known good json at: {json_file} has an empty 'modules' dictionary",
     ):
-        parse_info_from_known_good(json_file, "any_repo")
+        _ = load_known_good(json_file)
 
 
 VALID_KNOWN_GOOD_WITH_VERSION = {
@@ -266,7 +267,7 @@ def known_good_json_with_version(tmp_path: Path):
 def test_parse_info_from_known_good_with_version(known_good_json_with_version: Path):
     """Test that 'version' is accepted as a fallback when 'hash' is absent."""
     hash_result, repo_result = parse_info_from_known_good(
-        known_good_json_with_version, "score_baselibs"
+        load_known_good(known_good_json_with_version), "score_baselibs"
     )
 
     assert hash_result == "v1.2.3"
@@ -278,7 +279,7 @@ def test_parse_info_from_known_good_with_version_different_category(
 ):
     """Test that 'version' works for a module in a different category."""
     hash_result, repo_result = parse_info_from_known_good(
-        known_good_json_with_version, "score_docs_as_code"
+        load_known_good(known_good_json_with_version), "score_docs_as_code"
     )
 
     assert hash_result == "4.3-alpha"
@@ -304,7 +305,7 @@ def test_parse_info_from_known_good_neither_hash_nor_version(tmp_path: Path):
 
     msg = "score_baselibs has neither 'hash' nor 'version'"
     with pytest.raises(KeyError, match=msg):
-        parse_info_from_known_good(json_file, "score_baselibs")
+        parse_info_from_known_good(load_known_good(json_file), "score_baselibs")
 
 
 # Tests for get_github_link_from_json
@@ -446,7 +447,9 @@ def test_complete_workflow(known_good_json: Path):
     assert repo_name == "score_docs_as_code"
 
     # Get metadata
-    hash_val, repo_url = parse_info_from_known_good(known_good_json, repo_name)
+    hash_val, repo_url = parse_info_from_known_good(
+        load_known_good(known_good_json), repo_name
+    )
     assert hash_val == "c1207676afe6cafd25c35d420e73279a799515d8"
     assert repo_url == "https://github.com/eclipse-score/docs-as-code"
 

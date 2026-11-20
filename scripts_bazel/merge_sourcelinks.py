@@ -20,9 +20,13 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
-from src.helper_lib.repo_info import LOCAL_REPO, parse_info_from_known_good
+from src.helper_lib.repo_info import (
+    LOCAL_REPO,
+    load_known_good,
+    parse_info_from_known_good,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
@@ -38,7 +42,7 @@ def _reference_key(reference: dict[str, object]) -> str:
 
 def _merge_sourcelinks_file(
     json_file: Path,
-    known_good: Path | None,
+    known_good: dict[str, Any] | None,
     merged: list[dict[str, object]],
     seen: set[str],
 ) -> None:
@@ -69,9 +73,7 @@ def _merge_sourcelinks_file(
     # documentation from external modules.  In that case, keep the metadata
     # produced by the individual sourcelinks file.
     if known_good and repo_name and repo_name != LOCAL_REPO:
-        hash, repo = parse_info_from_known_good(
-            known_good_json=known_good, repo_name=repo_name
-        )
+        hash, repo = parse_info_from_known_good(known_good, repo_name)
         metadata["hash"] = hash
         metadata["url"] = repo
 
@@ -110,9 +112,10 @@ def main():
 
     merged: list[dict[str, object]] = []
     seen: set[str] = set()
+    known_good = load_known_good(args.known_good) if args.known_good else None
     for json_file in args.files:
         if "known_good.json" not in str(json_file):
-            _merge_sourcelinks_file(json_file, args.known_good, merged, seen)
+            _merge_sourcelinks_file(json_file, known_good, merged, seen)
 
     with open(args.output, "w", encoding="utf-8") as file:
         json.dump(merged, file, indent=2, ensure_ascii=False)

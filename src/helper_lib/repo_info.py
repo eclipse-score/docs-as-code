@@ -123,9 +123,11 @@ def parse_repo_name_from_path(path: Path) -> str:
     return split_external_path(path)[0]
 
 
-def parse_info_from_known_good(
-    known_good_json: Path, repo_name: str
-) -> tuple[str, str]:
+def load_known_good(known_good_json: Path) -> dict[str, Any]:
+    """
+    Read and check known_good.json. Load it once and pass the result to
+    parse_info_from_known_good for every repo that needs a lookup.
+    """
     with open(known_good_json) as f:
         kg_json: dict[str, Any] = json.load(f)
 
@@ -139,8 +141,14 @@ def parse_info_from_known_good(
     assert kg_json["modules"], (
         f"Known good json at: {known_good_json} has an empty 'modules' dictionary"
     )
+    return kg_json
 
-    for category in kg_json["modules"].values():
+
+def parse_info_from_known_good(
+    known_good: dict[str, Any], repo_name: str
+) -> tuple[str, str]:
+    """Return (hash or version, url) of one repo from a loaded known_good.json."""
+    for category in known_good["modules"].values():
         if repo_name in category:
             m = category[repo_name]
             hash_or_version = m.get("hash") or m.get("version")

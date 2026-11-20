@@ -44,6 +44,7 @@ from src.helper_lib import find_ws_root
 from src.helper_lib.repo_info import (
     LOCAL_REPO,
     RepoInfo,
+    load_known_good,
     parse_info_from_known_good,
     parse_repo_name_from_path,
 )
@@ -112,7 +113,7 @@ def clean_test_file_name(raw_filepath: Path) -> Path:
 
 
 def get_metadata_from_test_path(
-    raw_filepath: Path, known_good_json: Path | None
+    raw_filepath: Path, known_good: dict[str, Any] | None
 ) -> RepoInfo:
     """
     Will parse out the metadata from the testpath.
@@ -147,8 +148,8 @@ def get_metadata_from_test_path(
     # print(f"This is the cleaned filepath: {clean_filepath}")
     repo_name = parse_repo_name_from_path(clean_filepath)
     repo = RepoInfo(name=repo_name, hash="", url="")
-    if repo_name != LOCAL_REPO and known_good_json:
-        repo.hash, repo.url = parse_info_from_known_good(known_good_json, repo_name)
+    if repo_name != LOCAL_REPO and known_good:
+        repo.hash, repo.url = parse_info_from_known_good(known_good, repo_name)
     return repo
 
 
@@ -202,7 +203,7 @@ def parse_properties(case_properties: dict[str, Any], properties: Element):
 
 def read_test_xml_file(
     file: Path,
-    known_good_json: Path | None,
+    known_good: dict[str, Any] | None,
     allowed_dirs: list[str] | None = None,
 ) -> tuple[list[DataOfTestCase], list[str], list[str]]:
     """
@@ -219,7 +220,7 @@ def read_test_xml_file(
     missing_prop_tests: list[str] = []
     tree = ET.parse(file)
     root = tree.getroot()
-    md = get_metadata_from_test_path(file, known_good_json)
+    md = get_metadata_from_test_path(file, known_good)
     for testsuite in root.findall("testsuite"):
         for testcase in testsuite.findall("testcase"):
             test_file = testcase.get("file")
@@ -400,12 +401,14 @@ def build_test_needs_from_files(
         - list[TestCaseNeed]
     """
     known_good_json_str = app.config.KNOWN_GOOD_JSON.strip()
-    known_good_json = Path(known_good_json_str) if known_good_json_str else None
+    known_good = (
+        load_known_good(Path(known_good_json_str)) if known_good_json_str else None
+    )
     tcns: list[DataOfTestCase] = []
     for file in xml_paths:
         # Last value can be ignored. The 'is_valid' function already prints infos
         test_cases, tests_missing_all_props, tests_missing_some_props = (
-            read_test_xml_file(file, known_good_json, allowed_dirs)
+            read_test_xml_file(file, known_good, allowed_dirs)
         )
         non_prop_tests = ", ".join(n for n in tests_missing_all_props)
         if non_prop_tests:

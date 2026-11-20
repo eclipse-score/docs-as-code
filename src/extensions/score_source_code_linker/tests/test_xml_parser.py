@@ -21,7 +21,6 @@ Keep in mind that this is with the 'assertions' inside xml_parser disabled so fa
 Once we enable those we will need to change the tests
 """
 
-import json
 import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from pathlib import Path
@@ -583,21 +582,19 @@ def test_get_metadata_from_test_path_local():
     assert md.url == ""
 
 
-def test_get_metadata_from_test_path_combo_with_hash(tmp_path: Path):
+def test_get_metadata_from_test_path_combo_with_hash():
     """Combo builds with 'hash' in known_good.json populate metadata correctly."""
-    json_file = tmp_path / "known_good.json"
-    json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_HASH))
-    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, json_file)
+    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, _KNOWN_GOOD_WITH_HASH)
     assert md.name == "score_docs_as_code"
     assert md.hash == "abc123hashvalue"
     assert md.url == "https://github.com/eclipse-score/docs-as-code"
 
 
-def test_get_metadata_from_test_path_combo_with_version(tmp_path: Path):
+def test_get_metadata_from_test_path_combo_with_version():
     """Combo builds with 'version' in known_good.json populate metadata correctly."""
-    json_file = tmp_path / "known_good.json"
-    json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_VERSION))
-    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, json_file)
+    md = xml_parser.get_metadata_from_test_path(
+        _COMBO_TEST_PATH, _KNOWN_GOOD_WITH_VERSION
+    )
     assert md.name == "score_docs_as_code"
     assert md.hash == "v2.1.0"
     assert md.url == "https://github.com/eclipse-score/docs-as-code"
