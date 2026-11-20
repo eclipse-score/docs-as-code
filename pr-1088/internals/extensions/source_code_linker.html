@@ -830,8 +830,8 @@ All link URLs are decided in one function, <code class="docutils literal notrans
 <li><p>In combo builds, known_good_json is required.</p></li>
 <li><p>inefficiencies in creating the links</p></li>
 <li><p>Not compatible with <strong>Esbonio</strong></p></li>
-<li><p>Live preview: the sourcelinks JSON is built by Bazel at start, so changed code tags show after a restart.
-The test XML cache is reused even across restarts, so new test results show only after <code class="docutils literal notranslate"><span class="pre">_build</span></code> is cleaned.</p></li>
+<li><p>Live preview: Bazel regenerates the sourcelinks JSON when the preview starts, but unchanged pages can still show old links if Sphinx reuses its previous build.
+Clean <code class="docutils literal notranslate"><span class="pre">_build</span></code> and restart the preview to refresh all pages and test results.</p></li>
 </ul>
 </section>
 <section id="id3">
