@@ -377,7 +377,7 @@ def test_inject_links_matches_versioned_need_across_modules(
     ids=["missing-both", "missing-url", "missing-revision"],
 )
 def test_external_source_with_incomplete_metadata_renders_as_text(repo: RepoInfo):
-    """Keep the file location visible without guessing the checkout URL."""
+    """Keep the source and test locations visible without guessing the checkout URL."""
     env = cast(BuildEnvironment, SimpleNamespace())
     needs_data = SphinxNeedsData(env)
     needs_data.add_need(
@@ -386,12 +386,25 @@ def test_external_source_with_incomplete_metadata_renders_as_text(repo: RepoInfo
     unresolved_link = replace(
         DefaultNeedLink(), need="TREQ_ID_1", file=Path("src/api.h"), line=42, repo=repo
     )
-
-    apply_links_to_needs(env, group_by_need([unresolved_link]), plain_links=False)
-
-    assert needs_data.get_needs_mutable()["TREQ_ID_1"]["source_code_link"] == (
-        "src/api.h:42"
+    unresolved_testlink = DataForTestLink(
+        name="test_api",
+        file=Path("tests/test_api.py"),
+        line=7,
+        need="TREQ_ID_1",
+        verify_type="fully",
+        result="passed",
+        repo=repo,
     )
+
+    apply_links_to_needs(
+        env,
+        group_by_need([unresolved_link], [unresolved_testlink]),
+        plain_links=False,
+    )
+
+    need = needs_data.get_needs_mutable()["TREQ_ID_1"]
+    assert need["source_code_link"] == "src/api.h:42"
+    assert need["testlink"] == "test_api"
 
 
 @add_test_properties(

@@ -321,7 +321,7 @@ All link URLs are decided in one function, `get_github_link` in `src/helper_lib/
 During the Sphinx build process, the extension applies the computed links to needs:
 
 - Each need’s `source_code_link` and `testlink` attributes contain the rendered links from all repositories that refer to it.
-- A source location in an external repository appears as text when its URL or revision is unavailable.
+- A source or test location in an external repository appears as text when its URL or revision is unavailable.
 - If a referenced need ID does not exist, a build warning will be raised.
 
 ---

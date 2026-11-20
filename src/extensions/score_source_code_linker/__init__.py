@@ -59,7 +59,7 @@ from src.helper_lib.needlinks import (
     load_source_code_links_json,
     load_source_code_links_with_metadata_json,
 )
-from src.helper_lib.repo_info import LOCAL_REPO, clear_git_cache, get_github_link
+from src.helper_lib.repo_info import clear_git_cache, get_github_link
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
@@ -349,12 +349,7 @@ def _log_existing_links(needs: NeedsMutable) -> None:
 
 def _render_code_link(plain_links: bool, link: NeedLink) -> str:
     location = f"{link.file}:{link.line}"
-    # An external source without complete metadata cannot use the local checkout.
-    if (
-        not plain_links
-        and link.repo.name not in ("", LOCAL_REPO)
-        and not (link.repo.hash and link.repo.url)
-    ):
+    if not plain_links and link.repo.is_unresolved_external():
         return location
 
     base = get_github_link(link.repo, link.file, link.line, plain_links=plain_links)
@@ -372,7 +367,7 @@ def _render_test_link(
     plain_links: bool,
     link: DataForTestLink,
 ) -> str:
-    if plain_links:
+    if plain_links or link.repo.is_unresolved_external():
         return str(link.name)
     base = get_github_link(link.repo, link.file, link.line)
     if base is None:

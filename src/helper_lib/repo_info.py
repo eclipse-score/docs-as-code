@@ -47,6 +47,13 @@ class RepoInfo:
             )
         return cls(name=d["repo_name"], hash=d["hash"], url=d["url"])
 
+    def is_unresolved_external(self) -> bool:
+        """
+        An external repository whose URL or revision is unknown.
+        Its links must not fall back to the local git checkout.
+        """
+        return self.name not in ("", LOCAL_REPO) and not (self.hash and self.url)
+
 
 def DefaultRepoInfo() -> RepoInfo:
     return RepoInfo(name=LOCAL_REPO, hash="", url="")
