@@ -23,13 +23,16 @@ Via Python (requires ide_support to have been run first):
 Known non-passing tests are sometimes marked xfail and do not count as failures.
 """
 
+import io
 import os
 import re
 import shutil
 import subprocess
+import time
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 from pytest import TempPathFactory
@@ -275,29 +278,57 @@ def _run_bazel_cmd(cmd: str, repo_name: str, cwd: Path, python_version: str) -> 
             f"--@rules_python//python/config_settings:python_version={python_version}",
         )
 
-    process = subprocess.Popen(
-        args,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        universal_newlines=True,
-        bufsize=1,
-        cwd=cwd,
-    )
-
-    assert process.stdout is not None
-    for line in process.stdout:
-        print(line, end="")
-        if "WARNING" in line:
-            warnings.warn(f"{repo_name} `{cmd}`: {line.strip()}", stacklevel=2)
-    process.stdout.close()
-
-    rc = process.wait()
-    if rc != 0:
-        pytest.fail(
-            f"`{cmd}` in {repo_name} exited with code {rc}",
-            pytrace=False,
+    for attempt in range(3):
+        process = subprocess.Popen(
+            args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+            bufsize=1,
+            cwd=cwd,
         )
 
+        assert process.stdout is not None
+        transient_download_failure = False
+        for line in process.stdout:
+            print(line, end="")
+            if "WARNING" in line:
+                warnings.warn(f"{repo_name} `{cmd}`: {line.strip()}", stacklevel=2)
+            if re.search(r"GET returned 5\d\d\b", line):
+                transient_download_failure = True
+        process.stdout.close()
+
+        rc = process.wait()
+        if rc == 0:
+            return
+        if not transient_download_failure or attempt == 2:
+            pytest.fail(
+                f"`{cmd}` in {repo_name} exited with code {rc}",
+                pytrace=False,
+            )
+        time.sleep(2**attempt)
+
+
+def test_reference_integration_local_retries_http_5xx_download(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    processes = [
+        Mock(
+            stdout=io.StringIO(
+                "ERROR: download failed: GET returned 500 Internal Server Error\n"
+            )
+        ),
+        Mock(stdout=io.StringIO("")),
+    ]
+    processes[0].wait.return_value = 1
+    processes[1].wait.return_value = 0
+    popen = Mock(side_effect=processes)
+    monkeypatch.setattr(subprocess, "Popen", popen)
+    monkeypatch.setattr(time, "sleep", Mock())
+
+    _run_bazel_cmd("bazel run //:docs", "reference_integration", tmp_path, "3.14")
+
+    assert popen.call_count == 2
 
 # ---------------------------------------------------------------------------
 # Fixtures
