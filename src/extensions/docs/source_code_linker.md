@@ -63,7 +63,7 @@ Example of requirement tags:
   - Tag + full line
   - Associated need ID
   - Repository Metadata:
-    - repo_name (parsed from filepath) (local_repo if non combo build)
+    - repo_name (Bazel module name, taken from the external path or supplied by the build)
     - hash (at this stage always blank)
     - url (at this stage always blank)
 
@@ -77,7 +77,7 @@ Example of requirement tags:
     "tag": "#--req-Id:",
     "need": "tool_req__docs_dd_link_source_code_link",
     "full_line": "#--req-Id: tool_req__docs_dd_link_source_code_link",
-    "repo_name": "local_repo",
+    "repo_name": "score_docs_as_code",
     "hash": "",
     "url": ""
   }
@@ -107,13 +107,13 @@ If known_good_json is found then the hash & url will be filled for each need by 
 
 Combo build:
 
-- `repo_name`: repository name (parsed from filepath in step 1)
+- `repo_name`: Bazel module name (resolved in step 1)
 - `hash`: revision/commit hash (as provided by the known_good_json)
 - `url`: repository remote URL (as provided by the known_good_json)
 
 Local build:
 
-- `repo_name`: 'local_repo'
+- `repo_name`: the local Bazel module name
 - `hash`: will be empty at this point, and later filled via parsing the git commands
 - `url`: will be empty at this point, and later filled via parsing the git commands
 
@@ -177,19 +177,21 @@ def test_feature():
 
    - Cases without metadata are logged out as info (not errors).
    - Test cases with metadata are converted into:
-     - `DataFromTestCase` (used for external needs)
+     - `DataOfTestCase` (used for external needs)
      - `DataForTestLink` (used for linking tests to requirements)
 
 > If there is a Classname then it gets combined with the function name for the displayed link as follows: `Classname__Functionname`
 
 2. **Need Linking**
-   - Generates external Sphinx needs from `DataFromTestCase`.
+   - Generates external Sphinx needs from `DataOfTestCase`.
    - Creates `testlink` attributes on linked requirements.
    - Warns on missing need IDs.
 
-#### Example JSON Cache (DataFromTestCase)
+#### Example JSON Cache (DataOfTestCase)
 
-The DataFromTestCase depicts the information gathered about one testcase.
+The cache records the Bazel module that owns each testcase as `source_module`.
+On the testcase need, use `bazel_module` in filters, for example
+`type == "testcase" and bazel_module == "score_docs_as_code"`.
 
 ```json
 [
@@ -202,10 +204,10 @@ The DataFromTestCase depicts the information gathered about one testcase.
     "DerivationTechnique": "boundary-values",
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_common_attr_title, tool_req__docs_common_attr_description",
-    "FullyVerifies": null
-    "repo_name": "local_module",
+    "FullyVerifies": null,
+    "source_module": "score_docs_as_code",
     "hash": "",
-    "url": "",
+    "url": ""
   }
 ]
 ```
@@ -235,7 +237,7 @@ This all is handled in `need_source_links.py`.
           "tag": "#--req-Id:",# added `--` to avoid detection
           "need": "tool_req__docs_common_attr_title",
           "full_line": "#--req-Id: tool_req__docs_common_attr_title", # added `--` to avoid detection
-          "repo_name": "local_module",
+          "repo_name": "score_docs_as_code",
           "hash": "",
           "url": "",
 
@@ -250,7 +252,7 @@ This all is handled in `need_source_links.py`.
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
-          "repo_name": "local_module",
+          "repo_name": "score_docs_as_code",
           "hash": "",
           "url": "",
         }
@@ -273,7 +275,7 @@ This somewhat looks like this:
 [
   {
     "repo": {
-      "name": "local_repo",
+      "name": "score_docs_as_code",
       "hash": "",
       "url": ""
     },

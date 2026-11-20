@@ -97,6 +97,8 @@ def some_function():
     test_args: list[Path | str] = [
         _MY_PATH.parent
         / "generate_sourcelinks_cli.py",  # sys.argv[0] is always the script name
+        "--module-name",
+        "score_docs_as_code",
         "--output",
         str(output_file),
         str(test_file),
@@ -112,7 +114,7 @@ def some_function():
     # The first dictionary has to be metadata
     assert len(data) == 2
     assert is_metadata(data[0])
-    assert data[0]["repo_name"] == "local_repo"
+    assert data[0]["repo_name"] == "score_docs_as_code"
     # hash & url can not be set in this script therefore HAVE to be empty
     assert data[0]["hash"] == ""
     assert data[0]["url"] == ""
@@ -141,6 +143,8 @@ def test_generate_sourcelinks_cli_parses_cpp_traceability_tag(
         "argv",
         [
             str(_MY_PATH.parent / "generate_sourcelinks_cli.py"),
+            "--module-name",
+            "score_docs_as_code",
             "--output",
             str(output_file),
             str(test_file),
@@ -187,6 +191,8 @@ def some_function():
     test_args: list[Path | str] = [
         _MY_PATH.parent
         / "generate_sourcelinks_cli.py",  # sys.argv[0] is always the script name
+        "--module-name",
+        "score_docs_as_code",
         "--output",
         str(output_file),
         str(relative_test_file),
@@ -242,6 +248,8 @@ def some_function():
     test_args: list[Path | str] = [
         _MY_PATH.parent
         / "generate_sourcelinks_cli.py",  # sys.argv[0] is always the script name
+        "--module-name",
+        "score_docs_as_code",
         "--output",
         str(output_file),
         str(relative_test_file),

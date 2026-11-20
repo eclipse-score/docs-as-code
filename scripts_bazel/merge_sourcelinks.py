@@ -39,6 +39,7 @@ def _reference_key(reference: dict[str, object]) -> str:
 def _merge_sourcelinks_file(
     json_file: Path,
     known_good: Path | None,
+    module_name: str,
     merged: list[dict[str, object]],
     seen: set[str],
 ) -> None:
@@ -68,7 +69,7 @@ def _merge_sourcelinks_file(
     # A known-good file is optional for standalone builds that include
     # documentation from external modules.  In that case, keep the metadata
     # produced by the individual sourcelinks file.
-    if known_good and repo_name and repo_name != "local_repo":
+    if known_good and repo_name and repo_name != module_name:
         hash, repo = parse_info_from_known_good(
             known_good_json=known_good, repo_name=repo_name
         )
@@ -106,13 +107,16 @@ def main():
         help="Input JSON files to merge",
     )
 
+    _ = parser.add_argument("--module-name", required=True, help="Local Bazel module")
     args = parser.parse_args()
 
     merged: list[dict[str, object]] = []
     seen: set[str] = set()
     for json_file in args.files:
         if "known_good.json" not in str(json_file):
-            _merge_sourcelinks_file(json_file, args.known_good, merged, seen)
+            _merge_sourcelinks_file(
+                json_file, args.known_good, args.module_name, merged, seen
+            )
 
     with open(args.output, "w", encoding="utf-8") as file:
         json.dump(merged, file, indent=2, ensure_ascii=False)

@@ -10,6 +10,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+def require_module_name():
+    """Return the module of the BUILD package that called the macro."""
+    module_name = native.module_name()
+    if not module_name:
+        fail("Unnamed root module is not supported. Set module(name = \"...\") in MODULE.bazel.")
+    return module_name
+
 def join_path(prefix, rest):
     """
     Compose two docname segments with `/`. No trailing `/` is preserved.

@@ -28,11 +28,6 @@ class MetaData(TypedDict):
     url: str
 
 
-def DefaultMetaData() -> MetaData:
-    md: MetaData = {"repo_name": "local_repo", "hash": "", "url": ""}
-    return md
-
-
 def is_metadata(x: object) -> TypeGuard[MetaData]:
     # Make this as strict/loose as you want; at minimum, it must be a dict.
     return isinstance(x, dict) and {"repo_name", "hash", "url"} <= x.keys()
@@ -47,7 +42,7 @@ class NeedLink:
     tag: str
     need: str
     full_line: str
-    repo_name: str = "local_repo"
+    repo_name: str = ""
     hash: str = ""
     url: str = ""
 

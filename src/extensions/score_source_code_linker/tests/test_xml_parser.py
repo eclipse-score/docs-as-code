@@ -25,8 +25,8 @@ import json
 import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
-from unittest.mock import patch
 
 import pytest
 
@@ -34,6 +34,7 @@ import pytest
 from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
 
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
+from src.extensions.score_metamodel.yaml_parser import load_metamodel_data
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
 
 
@@ -284,32 +285,23 @@ def test_parse_properties():
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-# ADAPTED: Added patching for metadata functions
-@patch("src.extensions.score_source_code_linker.xml_parser.parse_repo_name_from_path")
 def test_read_test_xml_file(
-    mock_parse_module: Any,
     tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
 ):
     """Ensure a whole pre-defined xml file is parsed correctly"""
-    # ADAPTED: Mock return value to ensure metadata is populated.
-    # 'local_module' triggers the path where hash/url are empty strings,
-    # which is valid but avoids the need to mock parse_info_from_known_good.
-    mock_parse_module.return_value = "local_repo"
-
     _: Path
     dir1: Path
     dir2: Path
     _, dir1, dir2, dir3, dir4 = tmp_xml_dirs()
     needs1, no_props1, missing_props1 = xml_parser.read_test_xml_file(
-        dir1 / "test.xml", None
+        dir1 / "test.xml", None, local_module="score_docs_as_code"
     )
     # Should parse the properties and create a 'valid' testlink
     assert isinstance(needs1, list) and len(needs1) == 1
     tcneed = needs1[0]
     assert isinstance(tcneed, DataOfTestCase)
     assert tcneed.result == "failed"
-    # ADAPTED: Verify metadata fields were populated
-    assert tcneed.repo_name == "local_repo"
+    assert tcneed.source_module == "score_docs_as_code"
     assert tcneed.hash == ""
     assert tcneed.url == ""
 
@@ -318,17 +310,20 @@ def test_read_test_xml_file(
 
     # No properties at all => Should not be a 'valid' testlink
     needs2, no_props2, missing_props2 = xml_parser.read_test_xml_file(
-        dir2 / "test.xml", None
+        dir2 / "test.xml", None, local_module="score_docs_as_code"
     )
     assert isinstance(needs2, list) and len(needs2) == 1
     tcneed2 = needs2[0]
     assert isinstance(tcneed2, DataOfTestCase)
+    assert tcneed2.source_module == "score_docs_as_code"
+    assert tcneed2.hash is None
+    assert tcneed2.url is None
     assert no_props2 == ["tc_no_props"]
     assert missing_props2 == []
 
     # Extra Properties => Should not cause an error
     needs3, no_props3, missing_props3 = xml_parser.read_test_xml_file(
-        dir3 / "test.xml", None
+        dir3 / "test.xml", None, local_module="score_docs_as_code"
     )
     assert isinstance(needs3, list) and len(needs3) == 1
     tcneed3 = needs3[0]
@@ -338,7 +333,7 @@ def test_read_test_xml_file(
 
     # Missing some properties => Should not be a 'valid' testlink
     needs4, no_props4, missing_props4 = xml_parser.read_test_xml_file(
-        dir4 / "test.xml", None
+        dir4 / "test.xml", None, local_module="score_docs_as_code"
     )
     assert isinstance(needs4, list) and len(needs4) == 1
     tcneed4 = needs4[0]
@@ -361,9 +356,12 @@ def test_short_hash_consistency_and_format():
     assert len(h1) == 5
 
 
+@pytest.mark.parametrize("use_shipped_metamodel", [True, False])
 def test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata(
     monkeypatch: pytest.MonkeyPatch,
+    use_shipped_metamodel: bool,
 ):
+    """Testcases keep their fallback URL with the default and custom metamodels."""
     calls: list[dict[str, object]] = []
 
     def _fake_add_external_need(**kwargs: object) -> object:
@@ -382,12 +380,13 @@ def test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata(
         PartiallyVerifies="",
         TestType="requirements-based",
         DerivationTechnique="analysis",
-        repo_name=None,
+        source_module="score_docs_as_code",
         hash=None,
         url=None,
     )
 
-    app_stub: Any = object()
+    fields = load_metamodel_data().needs_fields if use_shipped_metamodel else {}
+    app_stub: Any = SimpleNamespace(config=SimpleNamespace(needs_fields=fields))
     xml_parser.construct_and_add_need(
         app=app_stub,
         tn=testcase,
@@ -398,6 +397,35 @@ def test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata(
     assert calls[0]["external_url"] == (
         "https://github.com/placeholder/placeholder/blob/unknown/tests/foo_test.py#L10"
     )
+    if use_shipped_metamodel:
+        assert calls[0]["bazel_module"] == "score_docs_as_code"
+    else:
+        assert "bazel_module" not in calls[0]
+
+
+def test_testcase_need_ids_distinguish_modules(monkeypatch: pytest.MonkeyPatch):
+    """Two modules can report the same test name and relative source path."""
+    ids: list[str] = []
+
+    def record_need_id(*, id: str, **kwargs: object) -> None:
+        ids.append(id)
+
+    monkeypatch.setattr(xml_parser, "add_external_need", record_need_id)
+    app: Any = SimpleNamespace(config=SimpleNamespace(needs_fields={}))
+
+    for module in ("module_a", "module_b", "module_a"):
+        xml_parser.construct_and_add_need(
+            app,
+            DataOfTestCase(
+                name="test_read",
+                file="tests/test_api.py",
+                source_module=module,
+            ),
+        )
+
+    first, second, first_again = ids
+    assert first != second
+    assert first == first_again
 
 
 #           ╭───────────────────────────────────────────────────────────────╮
@@ -573,12 +601,14 @@ _COMBO_TEST_PATH = Path(
 
 
 def test_get_metadata_from_test_path_local():
-    """Local builds produce empty hash/url without reading known_good.json."""
+    """Local provenance comes from Bazel while links resolve in the workspace."""
     local_path = Path(
         "/home/root/docs-as-code/bazel-testlogs/src/extensions/foo/test.xml"
     )
-    md = xml_parser.get_metadata_from_test_path(local_path, None)
-    assert md["repo_name"] == "local_repo"
+    md = xml_parser.get_metadata_from_test_path(
+        local_path, None, local_module="score_docs_as_code"
+    )
+    assert md["source_module"] == "score_docs_as_code"
     assert md["hash"] == ""
     assert md["url"] == ""
 
@@ -587,8 +617,10 @@ def test_get_metadata_from_test_path_combo_with_hash(tmp_path: Path):
     """Combo builds with 'hash' in known_good.json populate metadata correctly."""
     json_file = tmp_path / "known_good.json"
     json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_HASH))
-    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, json_file)
-    assert md["repo_name"] == "score_docs_as_code"
+    md = xml_parser.get_metadata_from_test_path(
+        _COMBO_TEST_PATH, json_file, local_module="reference_integration"
+    )
+    assert md["source_module"] == "score_docs_as_code"
     assert md["hash"] == "abc123hashvalue"
     assert md["url"] == "https://github.com/eclipse-score/docs-as-code"
 
@@ -597,7 +629,9 @@ def test_get_metadata_from_test_path_combo_with_version(tmp_path: Path):
     """Combo builds with 'version' in known_good.json populate metadata correctly."""
     json_file = tmp_path / "known_good.json"
     json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_VERSION))
-    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, json_file)
-    assert md["repo_name"] == "score_docs_as_code"
+    md = xml_parser.get_metadata_from_test_path(
+        _COMBO_TEST_PATH, json_file, local_module="reference_integration"
+    )
+    assert md["source_module"] == "score_docs_as_code"
     assert md["hash"] == "v2.1.0"
     assert md["url"] == "https://github.com/eclipse-score/docs-as-code"

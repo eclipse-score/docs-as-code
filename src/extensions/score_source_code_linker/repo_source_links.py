@@ -33,10 +33,6 @@ class RepoInfo:
     url: str
 
 
-def DefaultRepoInfo() -> RepoInfo:
-    return RepoInfo(name="local_repo", hash="", url="")
-
-
 @dataclass
 class RepoSourceLinks:
     repo: RepoInfo

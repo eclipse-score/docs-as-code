@@ -331,6 +331,13 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
             "these directories. Empty means no filtering (scan the whole workspace)."
         ),
     )
+    app.add_config_value(
+        "bazel_module_name",
+        default="",
+        rebuild="env",
+        types=str,
+        description="Bazel module that owns test artifacts without an external prefix.",
+    )
     setup_once(app)
 
     return {

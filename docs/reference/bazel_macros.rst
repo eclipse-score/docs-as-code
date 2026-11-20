@@ -23,7 +23,9 @@ and to create a Python virtual environment for IDE support (Esbonio).
 
 See :doc:`commands <commands>` for the targets/commands it creates.
 
-The macro must be called from the repository root package.
+The macro must be called from the repository root package. Set the Bazel module
+name with ``module(name = "...")`` in ``MODULE.bazel`` so the documentation build
+can identify test results from this module.
 
 Bundle content and supporting files
 -----------------------------------
