@@ -24,7 +24,7 @@ from pathlib import Path
 
 from scripts_bazel.source_code_link_parser import extract_references_from_file
 from src.helper_lib.needlinks import store_source_code_links_with_metadata_json
-from src.helper_lib.repo_info import DefaultRepoInfo, split_external_path
+from src.helper_lib.repo_info import LOCAL_REPO, RepoInfo, split_external_path
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
@@ -51,13 +51,13 @@ def main():
 
     all_need_references = []
 
-    metadata = DefaultRepoInfo()
+    metadata_repo_name = LOCAL_REPO
     metadata_set = False
     for file_path in args.files:
         # Combo build: `external/<repo>+/<path>` => (<repo>, <path>)
         repo_name, clean_path = split_external_path(file_path)
         if "known_good.json" not in str(file_path) and not metadata_set:
-            metadata.name = repo_name
+            metadata_repo_name = repo_name
             metadata_set = True
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
@@ -66,7 +66,9 @@ def main():
         )
         all_need_references.extend(references)
     store_source_code_links_with_metadata_json(
-        file=args.output, metadata=metadata, needlist=all_need_references
+        file=args.output,
+        metadata=RepoInfo(name=metadata_repo_name, hash="", url=""),
+        needlist=all_need_references,
     )
     logger.info(
         f"Found {len(all_need_references)} need references in {len(args.files)} files"

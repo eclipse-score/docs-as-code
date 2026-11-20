@@ -33,6 +33,7 @@ from sphinx_needs.logging import get_logger
 from sphinx_needs.need_item import NeedItem
 
 from src.extensions.score_source_code_linker.need_source_links import (
+    SourceCodeLinks,
     group_by_need,
     store_source_code_links_combined_json,
 )
@@ -377,9 +378,9 @@ def _render_test_link(
     return f"{base}<>{link.name}<>{link.result}"
 
 
-def _warn_missing_need(source_code_links: object) -> None:
-    links = cast(Any, source_code_links).links
-    need_id = cast(Any, source_code_links).need
+def _warn_missing_need(source_code_links: SourceCodeLinks) -> None:
+    links = source_code_links.links
+    need_id = source_code_links.need
 
     for code_link in links.CodeLinks:
         LOGGER.warning(
@@ -398,20 +399,12 @@ def _warn_missing_need(source_code_links: object) -> None:
 def _apply_links_to_need(
     needs_data: SphinxNeedsData,
     need: NeedItem,
-    source_code_links: object,
-    metadata: RepoInfo,
-    plain_links: bool,
+    code_links: list[str],
+    test_links: list[str],
 ) -> None:
-    links = cast(Any, source_code_links).links
     need_as_dict = cast(dict[str, object], need)
-    need_as_dict["source_code_link"] = ", ".join(
-        _render_code_link(plain_links, metadata, code_link)
-        for code_link in links.CodeLinks
-    )
-    need_as_dict["testlink"] = ", ".join(
-        _render_test_link(plain_links, metadata, test_link)
-        for test_link in links.TestLinks
-    )
+    need_as_dict["source_code_link"] = ", ".join(code_links)
+    need_as_dict["testlink"] = ", ".join(test_links)
 
     # Removing the Need also clears its cached Sphinx node before reinsertion.
     needs_data.remove_need(need["id"])
@@ -474,10 +467,12 @@ def apply_links_to_needs(
                 continue
 
             working_copy = deepcopy(original_need, memo=copies_by_object_id)
-            _apply_links_to_need(
-                needs_data=needs_data,
-                need=working_copy,
-                source_code_links=source_code_links,
-                metadata=module_grouped_needs.repo,
-                plain_links=plain_links,
-            )
+            code_links = [
+                _render_code_link(plain_links, module_grouped_needs.repo, link)
+                for link in source_code_links.links.CodeLinks
+            ]
+            test_links = [
+                _render_test_link(plain_links, module_grouped_needs.repo, link)
+                for link in source_code_links.links.TestLinks
+            ]
+            _apply_links_to_need(needs_data, working_copy, code_links, test_links)

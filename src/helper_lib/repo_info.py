@@ -25,9 +25,7 @@ LOCAL_REPO = "local_repo"
 REPO_FLAT_KEYS = ("repo_name", "hash", "url")
 
 
-# order + unsafe_hash: the link dataclasses that hold a RepoInfo are
-# ordered and hashed field by field, so RepoInfo has to support both.
-@dataclass(order=True, unsafe_hash=True)
+@dataclass(order=True, frozen=True)
 class RepoInfo:
     name: str
     hash: str
