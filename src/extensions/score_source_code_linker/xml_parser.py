@@ -42,11 +42,10 @@ from src.extensions.score_source_code_linker.testlink import (
 )
 from src.helper_lib import find_ws_root
 from src.helper_lib.repo_info import (
-    LOCAL_REPO,
     RepoInfo,
     load_known_good,
-    parse_info_from_known_good,
     parse_repo_name_from_path,
+    resolve_repo,
 )
 
 logger = logging.get_logger(__name__)
@@ -147,10 +146,9 @@ def get_metadata_from_test_path(
     clean_filepath = clean_test_file_name(raw_filepath)
     # print(f"This is the cleaned filepath: {clean_filepath}")
     repo_name = parse_repo_name_from_path(clean_filepath)
-    repo = RepoInfo(name=repo_name, hash="", url="")
-    if repo_name != LOCAL_REPO and known_good:
-        repo.hash, repo.url = parse_info_from_known_good(known_good, repo_name)
-    return repo
+    return resolve_repo(repo_name, known_good) or RepoInfo(
+        name=repo_name, hash="", url=""
+    )
 
 
 def parse_testcase_result(testcase: ET.Element) -> tuple[str, str]:

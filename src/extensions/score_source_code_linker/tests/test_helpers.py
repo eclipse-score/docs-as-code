@@ -31,6 +31,7 @@ from src.helper_lib.repo_info import (
     load_known_good,
     parse_info_from_known_good,
     parse_repo_name_from_path,
+    resolve_repo,
     split_external_path,
 )
 
@@ -306,6 +307,36 @@ def test_parse_info_from_known_good_neither_hash_nor_version(tmp_path: Path):
     msg = "score_baselibs has neither 'hash' nor 'version'"
     with pytest.raises(KeyError, match=msg):
         parse_info_from_known_good(load_known_good(json_file), "score_baselibs")
+
+
+# Tests for resolve_repo
+def test_resolve_repo_fills_hash_and_url():
+    repo = resolve_repo("score_docs_as_code", VALID_KNOWN_GOOD)
+    assert repo == RepoInfo(
+        name="score_docs_as_code",
+        hash="c1207676afe6cafd25c35d420e73279a799515d8",
+        url="https://github.com/eclipse-score/docs-as-code",
+    )
+
+
+@pytest.mark.parametrize(
+    ("repo_name", "known_good"),
+    [
+        (LOCAL_REPO, VALID_KNOWN_GOOD),
+        ("", VALID_KNOWN_GOOD),
+        ("score_docs_as_code", None),
+    ],
+)
+def test_resolve_repo_nothing_to_look_up(
+    repo_name: str, known_good: dict[str, object] | None
+):
+    """Local repo, empty name or no known_good: None, the caller keeps its data."""
+    assert resolve_repo(repo_name, known_good) is None
+
+
+def test_resolve_repo_unknown_repo_raises():
+    with pytest.raises(KeyError, match="Module nonexistent not found"):
+        _ = resolve_repo("nonexistent", VALID_KNOWN_GOOD)
 
 
 # Tests for get_github_link_from_json

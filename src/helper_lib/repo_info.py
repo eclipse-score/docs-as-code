@@ -126,7 +126,7 @@ def parse_repo_name_from_path(path: Path) -> str:
 def load_known_good(known_good_json: Path) -> dict[str, Any]:
     """
     Read and check known_good.json. Load it once and pass the result to
-    parse_info_from_known_good for every repo that needs a lookup.
+    resolve_repo for every repo that needs a lookup.
     """
     with open(known_good_json) as f:
         kg_json: dict[str, Any] = json.load(f)
@@ -158,3 +158,17 @@ def parse_info_from_known_good(
                 )
             return (hash_or_version, m["repo"].removesuffix(".git"))
     raise KeyError(f"Module {repo_name} not found in known_good_json.")
+
+
+def resolve_repo(repo_name: str, known_good: dict[str, Any] | None) -> RepoInfo | None:
+    """
+    Fill hash and url of a repo from a loaded known_good.json.
+
+    Returns None when there is nothing to look up: the local repo, an empty
+    name, or no known_good (standalone build). The caller then keeps what it
+    already has.
+    """
+    if not known_good or not repo_name or repo_name == LOCAL_REPO:
+        return None
+    hash_or_version, url = parse_info_from_known_good(known_good, repo_name)
+    return RepoInfo(name=repo_name, hash=hash_or_version, url=url)
