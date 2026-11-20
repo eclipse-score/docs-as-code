@@ -639,6 +639,7 @@ def another_function():
     metadata = DefaultRepoInfo()
     for needlink in loaded_links:
         github_link = get_github_link(metadata, needlink, git_root=git_repo)
+        assert github_link is not None
         assert "https://github.com/test-user/test-repo/blob/" in github_link
         assert f"src/{needlink.file.name}#L{needlink.line}" in github_link
 
@@ -679,6 +680,7 @@ def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
 
     metadata = DefaultRepoInfo()
     github_link = get_github_link(metadata, needlink, git_root=git_repo)
+    assert github_link is not None
     assert new_hash in github_link
 
 

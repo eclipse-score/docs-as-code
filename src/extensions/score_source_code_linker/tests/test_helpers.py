@@ -20,13 +20,16 @@ import pytest
 from score_pytest.attribute_plugin import add_test_properties
 
 from src.extensions.score_source_code_linker.helpers import (
+    PLACEHOLDER_URL,
     get_github_link,
     get_github_link_from_json,
 )
+from src.extensions.score_source_code_linker.testlink import DataOfTestCase
 from src.helper_lib import get_current_git_hash
 from src.helper_lib.needlinks import DefaultNeedLink
 from src.helper_lib.repo_info import (
     LOCAL_REPO,
+    DefaultRepoInfo,
     RepoInfo,
     load_known_good,
     parse_info_from_known_good,
@@ -408,6 +411,35 @@ def test_get_github_link_with_hash():
     )
 
 
+def test_get_github_link_plain_links_gives_placeholder():
+    """Bazel sandbox builds: placeholder, even with full repo info."""
+    metadata = RepoInfo(name="some_repo", url="https://github.com/org/repo", hash="h")
+    link = DefaultNeedLink()
+    link.file = Path("src/example.py")
+    link.line = 42
+
+    result = get_github_link(metadata, link, plain_links=True)
+
+    assert result == f"{PLACEHOLDER_URL}/src/example.py#L42"
+
+
+def test_get_github_link_no_repo_gives_placeholder_with_defaults():
+    """Testcase without repo info and without file/line."""
+    testcase = DataOfTestCase(name="tc", file=None, line=None)
+
+    result = get_github_link(None, testcase)
+
+    assert result == f"{PLACEHOLDER_URL}/<placeholder_file>#L1"
+
+
+def test_get_github_link_git_without_remote_gives_none(tmp_path: Path):
+    """Local build where git has no remote: no URL, the caller falls back."""
+    _ = subprocess.run(["git", "init"], cwd=tmp_path, check=True, capture_output=True)
+    link = DefaultNeedLink()
+
+    assert get_github_link(DefaultRepoInfo(), link, git_root=tmp_path) is None
+
+
 @pytest.fixture
 def temp_dir() -> Generator[Path, None, None]:
     """Create a temporary directory for tests."""
@@ -458,6 +490,7 @@ def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     link.line = 42
 
     result = get_github_link(metadata, link, git_root=git_repo)
+    assert result is not None
 
     # Should contain the base URL, hash, file path, and line number
     assert "https://github.com/test-user/test-repo/blob/" in result

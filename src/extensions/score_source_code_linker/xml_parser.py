@@ -436,7 +436,6 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
     file = tn.file if tn.file is not None else "<placeholder_file>"
     assert tn.name is not None
     name = tn.name
-    external_url = ""
     if tn.repo is None:
         # I would change this to debug for now, as it seems too spammy in 'info'
         logger.debug(
@@ -444,12 +443,13 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             f"name={name}, file={file}, repo={tn.repo}",
             type="score_source_code_linker",
         )
-        line = tn.line if tn.line is not None else 1
-        external_url = (
-            f"https://github.com/placeholder/placeholder/blob/unknown/{file}#L{line}"
-        )
-    else:
-        external_url = get_github_link(tn.repo, tn)
+    external_url = get_github_link(tn.repo, tn)
+    # Unlike code and test links, testcase needs have no fallback when git has
+    # no remote: the build fails. Kept as is in phase C, see E3.
+    assert external_url is not None, (
+        "Remote repository is not defined. Make sure you have a remote set. "
+        + "Check this via 'git remote -v'"
+    )
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
         _ = add_external_need(

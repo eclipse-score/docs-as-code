@@ -396,15 +396,8 @@ def _log_existing_links(needs: NeedsMutable) -> None:
 
 
 def _render_code_link(plain_links: bool, metadata: RepoInfo, link: NeedLink) -> str:
-    if plain_links:
-        # Bazel sandbox builds have no git metadata, so we can't construct a real GitHub URL.
-        return (
-            "https://github.com/placeholder/placeholder/blob/unknown/"
-            f"{link.file}#L{link.line}<>{link.file}:{link.line}"
-        )
-    try:
-        base = get_github_link(metadata, link)
-    except AssertionError:
+    base = get_github_link(metadata, link, plain_links=plain_links)
+    if base is None:
         LOGGER.info(
             "Falling back to local code-link format (no git remote available): "
             f"{link.file}:{link.line}",
@@ -420,10 +413,11 @@ def _render_test_link(
     link: DataForTestLink,
 ) -> str:
     if plain_links:
+        # Unlike code links, plain test links show only the name, without the
+        # placeholder URL. Kept as is in phase C, see E3.
         return str(link.name)
-    try:
-        base = get_github_link(metadata, link)
-    except AssertionError:
+    base = get_github_link(metadata, link)
+    if base is None:
         LOGGER.info(
             "Falling back to local test-link format (no git remote available): "
             f"{link.name}",

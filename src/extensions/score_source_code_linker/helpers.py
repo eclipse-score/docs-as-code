@@ -26,32 +26,51 @@ from src.helper_lib import (
 from src.helper_lib.needlinks import DefaultNeedLink, NeedLink
 from src.helper_lib.repo_info import RepoInfo
 
+# Used when there is no real URL: Bazel sandbox builds (plain links) and
+# testcases without repo metadata.
+PLACEHOLDER_URL = "https://github.com/placeholder/placeholder/blob/unknown"
+
+Link = NeedLink | DataForTestLink | DataOfTestCase
+
 
 def get_github_link(
-    metadata: RepoInfo,
-    link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
+    repo: RepoInfo | None,
+    link: Link | None = None,
     git_root: Path | None = None,
-) -> str:
+    plain_links: bool = False,
+) -> str | None:
     """
-    Get GitHub link for a file and line number using git information from the local repository.
+    The one place that decides the GitHub URL of a link.
 
-    Args:
-        git_root: Optional path to the git repository root. If not provided, it will be auto-detected.
+    Outcomes, in order:
+      1. plain_links (Bazel sandbox, no git) or repo is None (metadata
+         incomplete): placeholder URL.
+      2. repo.hash is set (combo build, filled from known_good): URL from repo.
+      3. Otherwise (local build): URL from the local git checkout.
+      4. The local git checkout has no remote: None. The caller decides the
+         fallback.
+
+    The label part ('<>name<>result' etc.) belongs to the callers.
     """
     if link is None:
         link = DefaultNeedLink()
-    if not metadata.hash:
-        if not git_root:
-            git_root = find_git_root() or Path()
-        # Local path (//:docs)
-        return get_github_link_from_git(git_root, link)
-    # Reference-integration path (mounted external documentation)
-    return get_github_link_from_json(metadata, link)
+    if plain_links or repo is None:
+        file = link.file if link.file is not None else "<placeholder_file>"
+        line = link.line if link.line is not None else 1
+        return f"{PLACEHOLDER_URL}/{file}#L{line}"
+    if repo.hash:
+        # Reference-integration path (mounted external documentation)
+        return get_github_link_from_json(repo, link)
+    # Local path (//:docs)
+    try:
+        return get_github_link_from_git(git_root or find_git_root() or Path(), link)
+    except AssertionError:
+        return None
 
 
 def get_github_link_from_git(
     git_root: Path,
-    link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
+    link: Link | None = None,
 ) -> str:
     if link is None:
         link = DefaultNeedLink()
@@ -62,7 +81,7 @@ def get_github_link_from_git(
 
 def get_github_link_from_json(
     metadata: RepoInfo,
-    link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
+    link: Link | None = None,
 ) -> str:
     if link is None:
         link = DefaultNeedLink()
