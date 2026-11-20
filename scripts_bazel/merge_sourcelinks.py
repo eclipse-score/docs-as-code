@@ -69,7 +69,13 @@ def _merge_sourcelinks_file(
     for raw_reference in data[1:]:
         reference = cast(dict[str, object], raw_reference)
         repo_name = reference.get("repo_name") or shared_repo_name
-        assert isinstance(repo_name, str)
+        if not isinstance(repo_name, str):
+            logger.warning(
+                f"Unexpected schema in sourcelinks file '{json_file}': "
+                "expected reference 'repo_name' to be a string. "
+                f"Skipping reference {reference.get('file')}:{reference.get('line')}."
+            )
+            continue
         reference["repo_name"] = repo_name
 
         if repo_name not in resolved_repos:

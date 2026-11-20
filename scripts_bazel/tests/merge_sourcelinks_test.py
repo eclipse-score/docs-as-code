@@ -306,6 +306,50 @@ def test_merge_sourcelinks_wrong_schema(
     assert error_text in caplog.text
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_merge_sourcelinks_skips_reference_with_invalid_repo_name(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+):
+    """A reference with a non-string repo_name is skipped with a warning."""
+    valid: dict[str, str | int] = {
+        "file": "valid.py",
+        "line": 1,
+        "tag": "# req-Id:",
+        "need": "tool_req__docs_arch_types",
+        "full_line": "# req-Id: tool_req__docs_arch_types",
+    }
+    invalid: dict[str, str | int] = {**valid, "file": "invalid.py", "repo_name": 123}
+    file1 = tmp_path / "links1.json"
+    file1.write_text(
+        json.dumps([{"repo_name": LOCAL_REPO, "hash": "", "url": ""}, invalid, valid])
+    )
+    output_file = tmp_path / "merged.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            _MY_PATH.parent / "merge_sourcelinks.py",
+            "--output",
+            str(output_file),
+            str(file1),
+        ],
+    )
+
+    scripts_bazel.merge_sourcelinks.main()
+
+    merged = json.loads(output_file.read_text())
+    assert [entry["file"] for entry in merged] == ["valid.py"]
+    assert (
+        f"Unexpected schema in sourcelinks file '{file1}': "
+        "expected reference 'repo_name' to be a string. "
+        "Skipping reference invalid.py:1."
+    ) in caplog.text
+
+
 # Taken from score_source_code_linker.test_helpers
 VALID_KNOWN_GOOD = {
     "modules": {
