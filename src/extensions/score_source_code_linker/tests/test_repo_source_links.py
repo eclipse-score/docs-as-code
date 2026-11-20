@@ -347,8 +347,11 @@ def test_group_needs_single_repo_with_codelinks():
     assert len(result[0].needs[1].links.CodeLinks) == 1
 
 
-def test_group_needs_multiple_repos():
-    """Happy path: Needs from different repos create separate groups"""
+@pytest.mark.parametrize(
+    "same_need", [False, True], ids=["different-needs", "same-need"]
+)
+def test_group_needs_multiple_repos(same_need: bool):
+    """Keep each repository's own links even when they reference the same Need."""
     needlink_a = NeedLink(
         file=Path("src/a.py"),
         line=10,
@@ -357,11 +360,12 @@ def test_group_needs_multiple_repos():
         full_line="#" + " req-Id: REQ_1",
         repo=RepoInfo(name="repo_a", hash="hash_a", url="https://github.com/a/repo"),
     )
+    other_need = "REQ_1" if same_need else "REQ_2"
     needlink_b = NeedLink(
         file=Path("src/b.py"),
         line=20,
         tag="#" + " req-Id:",
-        need="REQ_2",
+        need=other_need,
         full_line="#" + " req-Id: REQ_2",
         repo=RepoInfo(name="repo_b", hash="hash_b", url="https://github.com/b/repo"),
     )
@@ -370,10 +374,12 @@ def test_group_needs_multiple_repos():
         need="REQ_1", links=NeedSourceLinks(CodeLinks=[needlink_a], TestLinks=[])
     )
     scl2 = SourceCodeLinks(
-        need="REQ_2", links=NeedSourceLinks(CodeLinks=[needlink_b], TestLinks=[])
+        need=other_need, links=NeedSourceLinks(CodeLinks=[needlink_b], TestLinks=[])
     )
 
-    result = group_needs_by_repo([scl1, scl2])
+    if same_need:
+        scl1.links.CodeLinks.append(needlink_b)
+    result = group_needs_by_repo([scl1] if same_need else [scl1, scl2])
 
     assert len(result) == 2
     assert result[0].repo.name == "repo_a"
@@ -382,6 +388,8 @@ def test_group_needs_multiple_repos():
     assert result[1].repo.name == "repo_b"
     assert result[1].repo.hash == "hash_b"
     assert result[1].repo.url == "https://github.com/b/repo"
+    assert result[0].needs[0].links.CodeLinks == [needlink_a]
+    assert result[1].needs[0].links.CodeLinks == [needlink_b]
 
 
 def test_group_needs_with_testlinks_only():

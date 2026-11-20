@@ -28,7 +28,7 @@ The feature is split into **two layers**:
    Note that "hash" might also be a "version" tag.
 
 2. **Sphinx extension (during the Sphinx build)**
-   Reads the aggregated JSON, validates and adapts it, and finally injects the links into Sphinx needs in the final layout (**RepoSourceLink**).
+   Reads the aggregated JSON, validates and adapts it, and finally injects the links into Sphinx needs.
 
 This separation makes combo builds faster and more deterministic, because the expensive repository scanning/parsing happens **outside** the Sphinx process.
 
@@ -131,8 +131,8 @@ All steps run on the Sphinx `env-updated` event, in this order:
 1. **Priority 505: testcases.** `xml_parser.py` parses the `test.xml` files (no Sphinx needed).
    `testcase_needs.py` adds a `testcase` need per testcase and writes the testlinks to
    `score_xml_parser_cache.json`.
-2. **Priority 525: links.** `inject_links_into_needs` (`__init__.py`) reads the merged JSON produced by Bazel
-   and the testlinks, groups them by need and then by repository (**RepoSourceLink**), all in memory,
+2. **Priority 525: links.** `inject_links_into_needs` (`__init__.py`) reads the JSON produced by Bazel
+   and the testlinks, groups them by need in memory, renders each link with its own repository
    and writes `source_code_link` / `testlink` into the needs.
 
 #### Codelinks
@@ -225,11 +225,9 @@ The DataOfTestCase depicts the information gathered about one testcase.
 ### Early-Combined Links
 
 During the Sphinx build process, both CodeLink and TestLink data are combined and grouped by needs.
-This will allow us to have an easier time building the final JSON which will eliminate the metadata from each link,
-and group all needs according to the appropriate repository.
+A need can have links from several repositories.
 
-Grouping by need is `group_by_need` in `need_source_links.py`, grouping by repository is
-`group_needs_by_repo` in `repo_source_links.py`. Both are called from `inject_links_into_needs`.
+Grouping by need is `group_by_need` in `need_source_links.py`, called from `inject_links_into_needs`.
 
 The grouping runs in memory on every build, from the sourcelinks JSON and `score_xml_parser_cache.json`.
 With Sphinx debug verbosity (`-vv`), `score_scl_grouped_cache.json` and `score_repo_grouped_scl_cache.json`
@@ -274,12 +272,15 @@ are also written to `_build` for debugging; the build never reads them back.
 ]
 ```
 
-#### Final layout: RepoSourceLink
+#### Debug layout: RepoSourceLink
 
-Instead of repeating `repo_name/hash/url` for every single link entry, the final output groups links **by repository**:
+With `-vv`, the extension also writes `score_repo_grouped_scl_cache.json` (`group_needs_by_repo` in `repo_source_links.py`).
+The build never reads it back.
+Instead of repeating `repo_name/hash/url` for every single link entry, it groups links **by repository**:
 
 - Repository metadata appears **once per repository**
 - All links belonging to that repository are stored beneath it
+- A need with links from several repositories appears once below each of them
 
 This somewhat looks like this:
 
@@ -312,8 +313,6 @@ This somewhat looks like this:
 Due to not saving the `repo_name, url and hash` in each link but grouping them we can eleminate a lot of unnecessary
 length to the JSON document here.
 
-This is the structure the extension uses to attach links to needs (via the `source_code_link` attribute), while keeping the resulting data compact and normalized.
-
 :::hint
 If the repo is the local one, the hash and url come from the local git checkout (see [repo metadata rules](#repo-metadata-rules)).
 All link URLs are decided in one function, `get_github_link` in `src/helper_lib/repo_info.py`.
@@ -325,7 +324,7 @@ All link URLs are decided in one function, `get_github_link` in `src/helper_lib/
 
 During the Sphinx build process, the extension applies the computed links to needs:
 
-- Each need’s `source_code_link` and `testlink` attribute is filled from the (repo-grouped) RepoSourceLink data where applicable.
+- Each need’s `source_code_link` and `testlink` attribute contains the links from all repositories that refer to it.
 - If a referenced need ID does not exist, a build warning will be raised.
 
 ---
@@ -358,7 +357,7 @@ During the Sphinx build process, the extension applies the computed links to nee
 
 1. **Bazel Script #1**: scan + parse → write **per-bundle cache** (each link names its repository)
 2. **Bazel Script #2**: merge caches + fill url & hash per link → write **single merged JSON**
-3. **Sphinx Extension**: parse test XMLs → add testcase needs → read merged JSON + testlinks → group in memory into **RepoSourceLink** → inject source_code_link and testlink into needs
+3. **Sphinx Extension**: parse test XMLs → add testcase needs → read merged JSON + testlinks → group by need in memory → inject source_code_link and testlink into needs
 
 ---
 
