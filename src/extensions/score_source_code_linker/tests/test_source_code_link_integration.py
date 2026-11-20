@@ -27,7 +27,9 @@ from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataForTestLink_JSON_Decoder,
 )
-from src.extensions.score_source_code_linker.tests.golden_files import copy_golden_file
+from src.extensions.score_source_code_linker.tests.load_expected_files import (
+    copy_golden_file,
+)
 from src.extensions.score_source_code_linker.tests.test_need_source_links import (
     SourceCodeLinks_TEST_JSON_Decoder,
 )

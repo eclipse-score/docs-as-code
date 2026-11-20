@@ -28,7 +28,9 @@ from src.extensions.score_source_code_linker.repo_source_links import (
     RepoSourceLinks_JSON_Decoder,
     load_repo_source_links_json,
 )
-from src.extensions.score_source_code_linker.tests.golden_files import copy_golden_file
+from src.extensions.score_source_code_linker.tests.load_expected_files import (
+    copy_golden_file,
+)
 from src.helper_lib.repo_info import LOCAL_REPO, RepoInfo
 
 """
