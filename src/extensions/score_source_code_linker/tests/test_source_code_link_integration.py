@@ -24,16 +24,16 @@ from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
 from src.extensions.score_source_code_linker.helpers import get_github_link
-from src.helper_lib.needlinks import NeedLink
-from src.helper_lib.repo_info import DefaultRepoInfo
-from src.extensions.score_source_code_linker.tests.golden_files import copy_golden_file
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataForTestLink_JSON_Decoder,
 )
+from src.extensions.score_source_code_linker.tests.golden_files import copy_golden_file
 from src.extensions.score_source_code_linker.tests.test_need_source_links import (
     SourceCodeLinks_TEST_JSON_Decoder,
 )
+from src.helper_lib.needlinks import NeedLink
+from src.helper_lib.repo_info import DefaultRepoInfo
 
 
 @pytest.fixture(scope="module")

@@ -35,18 +35,18 @@ from sphinx_needs import logging
 from sphinx_needs.api import add_external_need
 
 from src.extensions.score_source_code_linker.helpers import get_github_link
-from src.helper_lib.repo_info import (
-    parse_info_from_known_good,
-    parse_repo_name_from_path,
-    LOCAL_REPO,
-)
-from src.helper_lib.repo_info import RepoInfo
 from src.extensions.score_source_code_linker.testlink import (
     DataOfTestCase,
     store_data_of_test_case_json,
     store_test_xml_parsed_json,
 )
 from src.helper_lib import find_ws_root
+from src.helper_lib.repo_info import (
+    LOCAL_REPO,
+    RepoInfo,
+    parse_info_from_known_good,
+    parse_repo_name_from_path,
+)
 
 logger = logging.get_logger(__name__)
 logger.setLevel("DEBUG")

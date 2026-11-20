@@ -19,19 +19,19 @@ from pathlib import Path
 import pytest
 from score_pytest.attribute_plugin import add_test_properties
 
-from src.helper_lib.repo_info import (
-    LOCAL_REPO,
-    parse_info_from_known_good,
-    parse_repo_name_from_path,
-    split_external_path,
-)
 from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
     get_github_link_from_json,
 )
-from src.helper_lib.needlinks import DefaultNeedLink
-from src.helper_lib.repo_info import RepoInfo
 from src.helper_lib import get_current_git_hash
+from src.helper_lib.needlinks import DefaultNeedLink
+from src.helper_lib.repo_info import (
+    LOCAL_REPO,
+    RepoInfo,
+    parse_info_from_known_good,
+    parse_repo_name_from_path,
+    split_external_path,
+)
 
 #              ╭──────────────────────────────────────────────────────────╮
 #              │            Tests for split_external_path                 │

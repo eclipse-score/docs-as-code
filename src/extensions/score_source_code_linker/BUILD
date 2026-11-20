@@ -77,6 +77,6 @@ score_pytest(
     deps = [
         ":score_source_code_linker",
         "//src/extensions/score_metamodel",
-        "//src/helper_lib:helper_lib"
+        "//src/helper_lib",
     ],
 )

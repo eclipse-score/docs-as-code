@@ -1,8 +1,20 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-
-import json
 
 LOCAL_REPO = "local_repo"
 
@@ -70,10 +82,10 @@ def split_repo_fields(d: dict[str, Any]) -> tuple[dict[str, Any], RepoInfo | Non
     three keys is missing or None.
     """
     rest = {key: value for key, value in d.items() if key not in REPO_FLAT_KEYS}
-    values = [d.get(key) for key in REPO_FLAT_KEYS]
-    if any(value is None for value in values):
+    name, hash_, url = (d.get(key) for key in REPO_FLAT_KEYS)
+    if name is None or hash_ is None or url is None:
         return rest, None
-    return rest, RepoInfo(name=values[0], hash=values[1], url=values[2])
+    return rest, RepoInfo(name=name, hash=hash_, url=url)
 
 
 def split_external_path(path: Path) -> tuple[str, Path]:

@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 from typing import cast
 
-from src.helper_lib.repo_info import parse_info_from_known_good, LOCAL_REPO
+from src.helper_lib.repo_info import LOCAL_REPO, parse_info_from_known_good
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)

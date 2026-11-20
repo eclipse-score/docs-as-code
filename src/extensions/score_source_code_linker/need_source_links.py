@@ -25,11 +25,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from src.helper_lib.needlinks import (
-    NeedLink,
-)
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
+)
+from src.helper_lib.needlinks import (
+    NeedLink,
 )
 
 
@@ -56,7 +56,7 @@ class SourceCodeLinks:
 
 
 class SourceCodeLinks_JSON_Encoder(json.JSONEncoder):
-    def default(self, o: object):
+    def default(self, o: object) -> object:
         # Not asdict() for the containers: it would also turn the nested links
         # into plain dicts (with a nested 'repo'), bypassing to_dict_full.
         if isinstance(o, SourceCodeLinks):

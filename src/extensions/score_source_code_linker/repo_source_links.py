@@ -22,9 +22,8 @@ from src.extensions.score_source_code_linker.need_source_links import (
     SourceCodeLinks,
     SourceCodeLinks_JSON_Decoder,
 )
-from src.helper_lib.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import DataForTestLink
-
+from src.helper_lib.needlinks import NeedLink
 from src.helper_lib.repo_info import RepoInfo
 
 

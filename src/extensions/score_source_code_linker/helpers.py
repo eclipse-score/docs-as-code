@@ -10,12 +10,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import json
 from pathlib import Path
 
-# Import types that depend on score_source_code_linker
-from src.helper_lib.needlinks import DefaultNeedLink, NeedLink
-from src.helper_lib.repo_info import RepoInfo
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataOfTestCase,
@@ -25,6 +21,10 @@ from src.helper_lib import (
     get_current_git_hash,
     get_github_base_url,
 )
+
+# Import types that depend on score_source_code_linker
+from src.helper_lib.needlinks import DefaultNeedLink, NeedLink
+from src.helper_lib.repo_info import RepoInfo
 
 
 def get_github_link(
@@ -69,5 +69,3 @@ def get_github_link_from_json(
     base_url = metadata.url
     current_hash = metadata.hash
     return f"{base_url}/blob/{current_hash}/{link.file}#L{link.line}"
-
-

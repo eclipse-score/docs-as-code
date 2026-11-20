@@ -23,7 +23,6 @@ import pytest
 # This depends on the `attribute_plugin` in our tooling repository
 from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
 
-from src.helper_lib.repo_info import RepoInfo
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataForTestLink_JSON_Decoder,
@@ -36,6 +35,7 @@ from src.extensions.score_source_code_linker.testlink import (
     store_data_of_test_case_json,
     store_test_xml_parsed_json,
 )
+from src.helper_lib.repo_info import RepoInfo
 
 
 @add_test_properties(

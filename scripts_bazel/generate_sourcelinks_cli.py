@@ -23,8 +23,8 @@ import sys
 from pathlib import Path
 
 from scripts_bazel.source_code_link_parser import extract_references_from_file
-from src.helper_lib.repo_info import DefaultRepoInfo, split_external_path
 from src.helper_lib.needlinks import store_source_code_links_with_metadata_json
+from src.helper_lib.repo_info import DefaultRepoInfo, split_external_path
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)

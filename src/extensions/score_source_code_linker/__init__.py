@@ -36,13 +36,6 @@ from src.extensions.score_source_code_linker.need_source_links import (
     load_source_code_links_combined_json,
     store_source_code_links_combined_json,
 )
-from src.helper_lib.needlinks import (
-    NeedLink,
-    load_source_code_links_json,
-    load_source_code_links_with_metadata_json,
-)
-from src.helper_lib.repo_info import RepoInfo
-
 from src.extensions.score_source_code_linker.repo_source_links import (
     group_needs_by_repo,
     load_repo_source_links_json,
@@ -61,6 +54,12 @@ from src.extensions.score_source_code_linker.xml_parser import (
     run_xml_parser,
 )
 from src.helper_lib import find_ws_root
+from src.helper_lib.needlinks import (
+    NeedLink,
+    load_source_code_links_json,
+    load_source_code_links_with_metadata_json,
+)
+from src.helper_lib.repo_info import RepoInfo
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging

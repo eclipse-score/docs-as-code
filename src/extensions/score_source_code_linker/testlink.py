@@ -29,6 +29,7 @@ from pathlib import Path
 from typing import Any
 
 from sphinx_needs import logging
+
 from src.helper_lib.repo_info import (
     DefaultRepoInfo,
     RepoInfo,
@@ -200,12 +201,12 @@ class DataOfTestCase:
             for x in self.__dataclass_fields__
             if x not in ["PartiallyVerifies", "FullyVerifies"]
         ]
-        for field in fields:
-            if getattr(self, field) is None:
+        for fld in fields:
+            if getattr(self, fld) is None:
                 # This might be a warning in the future, but for now we want be lenient.
                 LOGGER.info(
                     f"TestCase: {self.name} has a None value for the field: "
-                    f"{field}. This test case will be skipped and not linked.",
+                    f"{fld}. This test case will be skipped and not linked.",
                     type="score_source_code_linker",
                 )
                 return False

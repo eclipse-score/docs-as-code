@@ -21,8 +21,6 @@ from src.extensions.score_source_code_linker.need_source_links import (
     NeedSourceLinks,
     SourceCodeLinks,
 )
-from src.helper_lib.needlinks import NeedLink
-from src.helper_lib.repo_info import RepoInfo
 from src.extensions.score_source_code_linker.repo_source_links import (
     RepoSourceLinks,
     RepoSourceLinks_JSON_Decoder,
@@ -31,6 +29,8 @@ from src.extensions.score_source_code_linker.repo_source_links import (
     store_repo_source_links_json,
 )
 from src.extensions.score_source_code_linker.testlink import DataForTestLink
+from src.helper_lib.needlinks import NeedLink
+from src.helper_lib.repo_info import RepoInfo
 
 """
                         ────────────────INFORMATION───────────────
