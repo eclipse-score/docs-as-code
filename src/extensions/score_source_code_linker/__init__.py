@@ -54,11 +54,7 @@ from src.extensions.score_source_code_linker.testlink import (
     load_test_xml_parsed_json,
 )
 from src.helper_lib import find_ws_root
-from src.helper_lib.needlinks import (
-    NeedLink,
-    load_source_code_links_json,
-    load_source_code_links_with_metadata_json,
-)
+from src.helper_lib.needlinks import NeedLink, load_source_code_links_json
 from src.helper_lib.repo_info import RepoInfo, clear_git_cache, get_github_link
 
 LOGGER = get_logger(__name__)
@@ -103,10 +99,6 @@ def load_link_inputs(
                 f"{source_code_links_json}. Check the score_sourcelinks_json "
                 "Sphinx config value (set from SCORE_SOURCELINKS by the docs CLI)."
             ) from exc
-        except AssertionError:
-            code_links = load_source_code_links_with_metadata_json(
-                source_code_links_json
-            )
     else:
         LOGGER.debug(
             "No pre-generated source-code links provided. Continuing without code links.",

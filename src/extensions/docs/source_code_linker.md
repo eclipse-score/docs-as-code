@@ -41,14 +41,14 @@ This separation makes combo builds faster and more deterministic, because the ex
 The Bazel parts are responsible for producing the **intermediate caches** that the source_code_linker extension later will consumes.
 
 (step-1-per-repository-cache-generation)=
-#### Step 1: Per-repository cache generation
+#### Step 1: Per-bundle cache generation
 
 Each `docs_bundle` scans the source files selected by its `code_targets`
 attribute. A *per bundle JSON cache* is then generated and saved; Bazel
 reuses it until its source inputs change.
 This script `scripts_bazel/generate_sourcelinks_cli.py` finds all codelinks per file, and gathers them into
-one JSON cache per repository.
-It also adds metadata to each needlink that is needed in further steps.
+one JSON cache per bundle.
+A bundle can contain source files of several repositories, so each needlink records the repository of its own file.
 
 Example of requirement tags:
 
@@ -67,7 +67,7 @@ Example of requirement tags:
     - hash (at this stage always blank)
     - url (at this stage always blank)
 
-##### Example JSON cache (per repository)
+##### Example JSON cache (per bundle)
 
 ```{code-block} json
 [
@@ -90,12 +90,12 @@ Example of requirement tags:
 
 #### Step 2: Cache merge step (multi-repo aggregation)
 
-In a second Bazel step `scripts_bazel/merge_sourcelinks.py`, **all per-repo caches** are merged into a **single combined JSON**.
+In a second Bazel step `scripts_bazel/merge_sourcelinks.py`, **all per-bundle caches** are merged into a **single combined JSON**.
 
-- Input: N JSON caches (one per repo)
-- Output: 1 merged JSON containing all found source_code_links
+- Input: N JSON caches (one per bundle)
+- Output: 1 merged JSON containing all found source_code_links, in the same format as the input
 
-This step also fills in url & hash if there is a known_good_json provided (e.g. in a combo build)
+This step also fills in url & hash of each link from the entry of its repository, if there is a known_good_json provided (e.g. in a combo build)
 
 (repo-metadata-rules)=
 #### Repo metadata rules
@@ -356,8 +356,8 @@ During the Sphinx build process, the extension applies the computed links to nee
 
 ## High-level Data Flow Summary
 
-1. **Bazel Script #1**: scan + parse → write **per-repo cache** (includes repo metadata if known)
-2. **Bazel Script #2**: merge caches → write **single merged JSON**
+1. **Bazel Script #1**: scan + parse → write **per-bundle cache** (each link names its repository)
+2. **Bazel Script #2**: merge caches + fill url & hash per link → write **single merged JSON**
 3. **Sphinx Extension**: parse test XMLs → add testcase needs → read merged JSON + testlinks → group in memory into **RepoSourceLink** → inject source_code_link and testlink into needs
 
 ---

@@ -28,6 +28,9 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
+_LINK_KEYS = {"file", "line", "tag", "need", "full_line", "repo_name"}
+
+
 def _reference_key(reference: dict[str, object]) -> str:
     """Return a stable, hashable representation of one source-link reference."""
     # References are dictionaries and therefore cannot be added to ``seen`` directly.
@@ -45,35 +48,25 @@ def _merge_sourcelinks_file(
     """Add the unique references from one sourcelinks JSON file to ``merged``."""
     with open(json_file, encoding="utf-8") as file:
         data = cast(list[object], json.load(file))
-    if not data:
-        return
-
-    raw_metadata = data[0]
-    if not isinstance(raw_metadata, dict) or "repo_name" not in raw_metadata:
+    # Also rejects the repository header that older caches start with.
+    if not all(
+        isinstance(reference, dict)
+        and reference.keys() >= _LINK_KEYS
+        and isinstance(reference["repo_name"], str)
+        for reference in data
+    ):
         logger.warning(
             f"Unexpected schema in sourcelinks file '{json_file}': "
-            "expected first element to be a metadata dict "
-            "with a 'repo_name' key. "
-        )
-        return
-    metadata = cast(dict[str, object], raw_metadata)
-    repo_name = metadata["repo_name"]
-    if not isinstance(repo_name, str):
-        logger.warning(
-            f"Unexpected schema in sourcelinks file '{json_file}': "
-            "expected metadata 'repo_name' to be a string. "
+            "expected a list of source links with a string 'repo_name'. "
         )
         return
 
-    # A known-good file is optional for standalone builds that include
-    # documentation from external modules.  In that case, keep the metadata
-    # produced by the individual sourcelinks file.
-    if repo := resolve_repo(repo_name, known_good):
-        metadata.update(repo.to_flat_dict())
-
-    for raw_reference in data[1:]:
-        reference = cast(dict[str, object], raw_reference)
-        reference.update(metadata)
+    for reference in cast(list[dict[str, object]], data):
+        # A known-good file is optional for standalone builds that include
+        # documentation from external modules.  In that case, keep the link as
+        # it was generated.
+        if repo := resolve_repo(cast(str, reference["repo_name"]), known_good):
+            reference.update(repo.to_flat_dict())
         key = _reference_key(reference)
         if key not in seen:
             seen.add(key)

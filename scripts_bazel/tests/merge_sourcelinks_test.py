@@ -53,9 +53,9 @@ def read_json(path: str) -> object:
     derivation_technique="explorative-testing",
 )
 def test_merge_sourcelinks_basic(fs: FFS):
-    """Each link gets the repository of its file's header."""
-    write_json(fs, "a.json", [repo(LOCAL_REPO), link("a.py")])
-    write_json(fs, "b.json", [repo(LOCAL_REPO), link("b.py")])
+    """The output has the same format as the inputs."""
+    write_json(fs, "a.json", [link("a.py") | repo(LOCAL_REPO)])
+    write_json(fs, "b.json", [link("b.py") | repo(LOCAL_REPO)])
 
     merge_sourcelinks(["--output", "merged.json", "a.json", "b.json"])
 
@@ -72,7 +72,7 @@ def test_merge_sourcelinks_basic(fs: FFS):
 )
 def test_merge_sourcelinks_deduplicates_identical_references(fs: FFS):
     """The same link from two inputs appears once in the output."""
-    write_json(fs, "a.json", [repo(LOCAL_REPO), link("a.py")])
+    write_json(fs, "a.json", [link("a.py") | repo(LOCAL_REPO)])
 
     merge_sourcelinks(["--output", "merged.json", "a.json", "a.json"])
 
@@ -86,7 +86,7 @@ def test_merge_sourcelinks_deduplicates_identical_references(fs: FFS):
 )
 def test_merge_sourcelinks_with_one_empty_file(fs: FFS):
     """An input without any entry is a no-op."""
-    write_json(fs, "a.json", [repo(LOCAL_REPO), link("a.py")])
+    write_json(fs, "a.json", [link("a.py") | repo(LOCAL_REPO)])
     write_json(fs, "empty.json", [])
 
     merge_sourcelinks(["--output", "merged.json", "a.json", "empty.json"])
@@ -100,7 +100,7 @@ def test_merge_sourcelinks_with_one_empty_file(fs: FFS):
     derivation_technique="explorative-testing",
 )
 def test_merge_sourcelinks_wrong_schema(fs: FFS, caplog: pytest.LogCaptureFixture):
-    """An input that does not start with the repository header is not merged."""
+    """An input is only merged if each of its links names a repository."""
     write_json(fs, "a.json", [link("a.py")])
 
     merge_sourcelinks(["--output", "merged.json", "a.json"])
@@ -108,7 +108,7 @@ def test_merge_sourcelinks_wrong_schema(fs: FFS, caplog: pytest.LogCaptureFixtur
     assert read_json("merged.json") == []
     assert (
         "Unexpected schema in sourcelinks file 'a.json': "
-        "expected first element to be a metadata dict with a 'repo_name' key. "
+        "expected a list of source links with a string 'repo_name'. "
     ) in caplog.text
 
 
@@ -124,8 +124,8 @@ def test_merge_sourcelinks_with_known_good(fs: FFS):
         hash="old-hash",
         url="https://github.com/eclipse-score/baselibs.git",
     )
-    write_json(fs, "external.json", [baselibs, link("external.py")])
-    write_json(fs, "local.json", [repo(LOCAL_REPO), link("local.py")])
+    write_json(fs, "external.json", [link("external.py") | baselibs])
+    write_json(fs, "local.json", [link("local.py") | repo(LOCAL_REPO)])
     write_json(
         fs,
         "known_good.json",
@@ -175,12 +175,85 @@ def test_merge_sourcelinks_without_known_good_preserves_external_metadata(fs: FF
         hash="abc123",
         url="https://github.com/eclipse-score/baselibs.git",
     )
-    write_json(fs, "external.json", [baselibs, link("external.py")])
-    write_json(fs, "local.json", [repo(LOCAL_REPO), link("local.py")])
+    write_json(fs, "external.json", [link("external.py") | baselibs])
+    write_json(fs, "local.json", [link("local.py") | repo(LOCAL_REPO)])
 
     merge_sourcelinks(["--output", "merged.json", "external.json", "local.json"])
 
     assert read_json("merged.json") == [
         link("external.py") | baselibs,
         link("local.py") | repo(LOCAL_REPO),
+    ]
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_merge_sourcelinks_skips_file_with_legacy_header(
+    fs: FFS, caplog: pytest.LogCaptureFixture
+):
+    """A cache of an older build starts with a repository header; it is not merged."""
+    write_json(fs, "old.json", [repo(LOCAL_REPO), link("a.py") | repo(LOCAL_REPO)])
+
+    merge_sourcelinks(["--output", "merged.json", "old.json"])
+
+    assert read_json("merged.json") == []
+    assert "Unexpected schema in sourcelinks file 'old.json'" in caplog.text
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_merge_sourcelinks_resolves_each_repository_in_one_file(fs: FFS):
+    """A bundle can contain source files of several repositories."""
+    write_json(
+        fs,
+        "mixed.json",
+        [
+            link("local.py") | repo(LOCAL_REPO),
+            link("baselibs.py") | repo("score_baselibs"),
+            link("communication.py") | repo("score_communication"),
+        ],
+    )
+    write_json(
+        fs,
+        "known_good.json",
+        {
+            "modules": {
+                "target_sw": {
+                    "score_baselibs": {
+                        "repo": "https://github.com/eclipse-score/baselibs.git",
+                        "hash": "abc123",
+                    },
+                    "score_communication": {
+                        "repo": "https://github.com/eclipse-score/communication.git",
+                        "hash": "def456",
+                    },
+                }
+            }
+        },
+    )
+
+    merge_sourcelinks(
+        ["--output", "merged.json", "--known_good", "known_good.json", "mixed.json"]
+    )
+
+    assert read_json("merged.json") == [
+        link("local.py") | repo(LOCAL_REPO),
+        link("baselibs.py")
+        | repo(
+            "score_baselibs",
+            hash="abc123",
+            url="https://github.com/eclipse-score/baselibs",
+        ),
+        link("communication.py")
+        | repo(
+            "score_communication",
+            hash="def456",
+            url="https://github.com/eclipse-score/communication",
+        ),
     ]

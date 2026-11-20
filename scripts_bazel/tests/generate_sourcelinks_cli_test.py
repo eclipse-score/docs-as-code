@@ -58,8 +58,7 @@ def test_generate_sourcelinks_cli_basic(fs: FFS):
     generate_sourcelinks_cli(["--output", "links.json", "src/source.py"])
 
     assert read_json("links.json") == [
-        {"repo_name": LOCAL_REPO, "hash": "", "url": ""},
-        link("src/source.py", line=2, tag="# req-Id:", repo_name=LOCAL_REPO),
+        link("src/source.py", line=2, tag="# req-Id:", repo_name=LOCAL_REPO)
     ]
 
 
@@ -75,8 +74,7 @@ def test_generate_sourcelinks_cli_parses_cpp_traceability_tag(fs: FFS):
     generate_sourcelinks_cli(["--output", "links.json", "src/source.cc"])
 
     assert read_json("links.json") == [
-        {"repo_name": LOCAL_REPO, "hash": "", "url": ""},
-        link("src/source.cc", line=1, tag="// req-Id:", repo_name=LOCAL_REPO),
+        link("src/source.cc", line=1, tag="// req-Id:", repo_name=LOCAL_REPO)
     ]
 
 
@@ -97,8 +95,46 @@ def test_generate_sourcelinks_cli_parse_external_module(fs: FFS):
     )
 
     assert read_json("links.json") == [
-        {"repo_name": "score_baselibs", "hash": "", "url": ""},
-        link("src/source.py", line=1, tag="# req-Id:", repo_name=LOCAL_REPO),
+        link("src/source.py", line=1, tag="# req-Id:", repo_name="score_baselibs")
+    ]
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_generate_sourcelinks_cli_records_the_repository_of_each_file(fs: FFS):
+    """Files of several repositories can be scanned in one call."""
+    fs.create_file("src/local.py", contents="# req-Id: tool_req__docs_arch_types\n")
+    fs.create_file(
+        "external/score_baselibs+/src/baselibs.py",
+        contents="# req-Id: tool_req__docs_arch_types\n",
+    )
+    fs.create_file(
+        "external/score_communication+/src/communication.cc",
+        contents="// req-Id: tool_req__docs_arch_types\n",
+    )
+
+    generate_sourcelinks_cli(
+        [
+            "--output",
+            "links.json",
+            "src/local.py",
+            "external/score_baselibs+/src/baselibs.py",
+            "external/score_communication+/src/communication.cc",
+        ]
+    )
+
+    assert read_json("links.json") == [
+        link("src/local.py", line=1, tag="# req-Id:", repo_name=LOCAL_REPO),
+        link("src/baselibs.py", line=1, tag="# req-Id:", repo_name="score_baselibs"),
+        link(
+            "src/communication.cc",
+            line=1,
+            tag="// req-Id:",
+            repo_name="score_communication",
+        ),
     ]
 
 

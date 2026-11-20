@@ -59,10 +59,8 @@ from src.helper_lib.needlinks import (
     NeedLink,
     NeedLinkEncoder,
     load_source_code_links_json,
-    load_source_code_links_with_metadata_json,
     needlink_decoder,
     store_source_code_links_json,
-    store_source_code_links_with_metadata_json,
 )
 from src.helper_lib.repo_info import DefaultRepoInfo, RepoInfo, get_github_link
 
@@ -874,97 +872,6 @@ def test_load_validates_all_items_are_needlinks(tmp_path: Path):
 # Adding additional tests to test the metadata stuff (excluding it if wanted)
 
 
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_store_and_load_with_metadata(tmp_path: Path):
-    """Happy path: Store with metadata dict and load correctly"""
-    metadata = RepoInfo(
-        name="external_repo",
-        hash="commit_xyz",
-        url="https://github.com/external/repo",
-    )
-    needlinks = [
-        NeedLink(
-            file=Path("src/impl.py"),
-            line=10,
-            tag="#" + " req-Id:",
-            need="REQ_1",
-            full_line="#" + " req-Id: REQ_1",
-            repo=RepoInfo(name="", hash="", url=""),
-        ),
-        NeedLink(
-            file=Path("src/impl2.py"),
-            line=20,
-            tag="#" + " req-Id:",
-            need="REQ_2",
-            full_line="#" + " req-Id: REQ_2",
-            repo=RepoInfo(name="", hash="", url=""),
-        ),
-    ]
-
-    test_file = tmp_path / "with_metadata.json"
-    store_source_code_links_with_metadata_json(test_file, metadata, needlinks)
-    loaded = load_source_code_links_with_metadata_json(test_file)
-
-    assert len(loaded) == 2
-    # Verify metadata was applied to all links
-    for nl in loaded:
-        assert nl.repo.name == "external_repo"
-        assert nl.repo.url == "https://github.com/external/repo"
-        assert nl.repo.hash == "commit_xyz"
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_load_with_metadata_missing_metadata_dict(tmp_path: Path):
-    """
-    Test if loading file without metadata dict via
-    the scl_with_metadata loader raises TypeError
-    """
-    # Store without metadata (just needlinks)
-    needlinks = [
-        NeedLink(
-            file=Path("src/test.py"),
-            line=1,
-            tag="#" + " req-Id:",
-            need="REQ_1",
-            full_line="#" + " req-Id: REQ_1",
-        )
-    ]
-
-    test_file = tmp_path / "no_metadata.json"
-    store_source_code_links_json(test_file, needlinks)
-
-    # Try to load as if it has metadata
-    with pytest.raises(TypeError, match="you might wanted to call"):
-        load_source_code_links_with_metadata_json(test_file)
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_load_with_metadata_invalid_items_after_metadata(tmp_path: Path):
-    """Test wrong JSON structure"""
-    test_file = tmp_path / "bad_items.json"
-    # Manually create invalid JSON
-    _ = test_file.write_text(
-        json.dumps(
-            [{"repo_name": "mod", "hash": "h", "url": "u"}, {"invalid": "structure"}]
-        )
-    )
-
-    with pytest.raises(TypeError, match="must decode to NeedLink objects"):
-        load_source_code_links_with_metadata_json(test_file)
-
-
 #            ────────────────[ File Path Resolution Tests ]────────────────
 
 
@@ -1000,43 +907,6 @@ def test_load_resolves_relative_path_with_env_var(
 
     assert len(loaded) == 1
     assert loaded[0].need == "REQ_1"
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_load_with_metadata_resolves_relative_path(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-):
-    """Edge case: load_with_metadata resolves relative paths using env var"""
-    workspace = tmp_path / "workspace"
-    workspace.mkdir()
-
-    metadata = RepoInfo(
-        name="mod",
-        hash="h",
-        url="u",
-    )
-    needlinks = [
-        NeedLink(
-            file=Path("src/test.py"),
-            line=1,
-            tag="#" + "  req-Id:",
-            need="REQ_1",
-            full_line="#" + " req-Id: REQ_1",
-        )
-    ]
-
-    cache_file = workspace / "metadata_cache.json"
-    store_source_code_links_with_metadata_json(cache_file, metadata, needlinks)
-
-    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(workspace))
-    loaded = load_source_code_links_with_metadata_json(Path("metadata_cache.json"))
-
-    assert len(loaded) == 1
-    assert loaded[0].repo.name == "mod"
 
 
 #            ─────────────────────[ Roundtrip Tests ]───────────────────
@@ -1083,47 +953,6 @@ def test_roundtrip_standard_format(tmp_path: Path):
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
-def test_roundtrip_metadata_format_applies_metadata(tmp_path: Path):
-    """Happy path: Metadata format applies metadata to all links"""
-    metadata = RepoInfo(
-        name="shared_repo",
-        hash="shared_hash",
-        url="https://github.com/shared/repo",
-    )
-    needlinks = [
-        NeedLink(
-            file=Path("src/f1.py"),
-            line=5,
-            tag="#" + " req-Id:",
-            need="R1",
-            full_line="#" + " req-Id: R1",
-        ),
-        NeedLink(
-            file=Path("src/f2.py"),
-            line=15,
-            tag="#" + " req-Id:",
-            need="R2",
-            full_line="#" + " req-Id: R2",
-        ),
-    ]
-
-    test_file = tmp_path / "with_metadata.json"
-    store_source_code_links_with_metadata_json(test_file, metadata, needlinks)
-    loaded = load_source_code_links_with_metadata_json(test_file)
-
-    assert len(loaded) == 2
-    # Both should have the same metadata applied
-    for link in loaded:
-        assert link.repo.name == "shared_repo"
-        assert link.repo.hash == "shared_hash"
-        assert link.repo.url == "https://github.com/shared/repo"
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
 def test_roundtrip_empty_lists(tmp_path: Path):
     """Edge case: Empty list can be stored and loaded"""
     test_file = tmp_path / "empty.json"
@@ -1134,40 +963,6 @@ def test_roundtrip_empty_lists(tmp_path: Path):
 
 
 #            ──────────────[ JSON Format Verification Tests ]──────────────
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_json_format_with_metadata_has_separate_dict(tmp_path: Path):
-    """Edge case: Verify metadata format has metadata as first element"""
-    metadata = RepoInfo(
-        name="test_mod",
-        hash="test_hash",
-        url="test_url",
-    )
-    needlink = NeedLink(
-        file=Path("src/test.py"),
-        line=1,
-        tag="#" + " req-Id:",
-        need="REQ_1",
-        full_line="#" + " req-Id: REQ_1",
-    )
-
-    test_file = tmp_path / "metadata_format.json"
-    store_source_code_links_with_metadata_json(test_file, metadata, [needlink])
-
-    with open(test_file) as f:
-        raw_json = json.load(f)
-
-    assert isinstance(raw_json, list)
-    assert len(raw_json) == 2  # metadata + 1 needlink
-    # First element should be metadata dict
-    assert raw_json[0]["repo_name"] == "test_mod"
-    assert raw_json[0]["hash"] == "test_hash"
-    assert raw_json[0]["url"] == "test_url"
 
 
 #            ───────────[ NeedLink Equality and Hashing Tests ]─────────

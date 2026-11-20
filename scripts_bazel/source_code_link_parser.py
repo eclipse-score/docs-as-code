@@ -17,6 +17,7 @@ import logging
 from pathlib import Path
 
 from src.helper_lib.needlinks import NeedLink
+from src.helper_lib.repo_info import RepoInfo
 
 LOGGER = logging.getLogger(__name__)
 
@@ -41,7 +42,7 @@ def _extract_references_from_line(line: str):
 
 
 def extract_references_from_file(
-    root: Path, file_path_name: Path, file_path: Path
+    root: Path, file_path_name: Path, file_path: Path, *, repo: RepoInfo
 ) -> list[NeedLink]:
     """Scan a single file for traceability tags and return the findings.
 
@@ -69,6 +70,7 @@ def extract_references_from_file(
                             tag=tag,
                             need=req,
                             full_line=line.strip(),
+                            repo=repo,
                         )
                     )
     except (UnicodeDecodeError, PermissionError, OSError) as e:
