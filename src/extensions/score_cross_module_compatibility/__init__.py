@@ -27,11 +27,13 @@ logger = logging.getLogger(__name__)
 
 MANDATORY_ATTRIBUTE = "mandatory-attribute"
 MANDATORY_LINK = "mandatory-link"
+MISSING_GRAPH_LINK = "missing-graph-link"
 VERSION_MISMATCH = "version-mismatch"
 
 _CONFIG_BY_CATEGORY = {
     MANDATORY_ATTRIBUTE: "score_cross_module_compatibility_allow_missing_mandatory_attributes",
     MANDATORY_LINK: "score_cross_module_compatibility_allow_missing_mandatory_links",
+    MISSING_GRAPH_LINK: "score_cross_module_compatibility_allow_missing_graph_links",
     VERSION_MISMATCH: "score_cross_module_compatibility_allow_version_mismatches",
 }
 
@@ -51,6 +53,8 @@ class CompatibilityFinding:
     message: str
     target_id: str = ""
     target_module: str = ""
+    rule_id: str = ""
+    relation: str = ""
 
 
 class CompatibilityReporter:
@@ -128,6 +132,8 @@ class CompatibilityReporter:
         source: str,
         *,
         target: NeedItem | dict[str, Any] | None = None,
+        rule_id: str = "",
+        relation: str = "",
     ) -> bool:
         if category not in self._enabled_categories:
             return False
@@ -144,6 +150,8 @@ class CompatibilityReporter:
             message,
             str(target.get("id", "")) if target is not None else "",
             target_module or "",
+            rule_id,
+            relation,
         )
         if finding in self._findings:
             return True
@@ -198,6 +206,12 @@ class CompatibilityReporter:
                     + " ("
                     + html.escape(item.category)
                     + "): "
+                    + (
+                        f"<code>{html.escape(item.rule_id)}</code> · "
+                        f"<code>{html.escape(item.relation)}</code> — "
+                        if item.rule_id
+                        else ""
+                    )
                     + html.escape(item.message)
                     + "</li>"
                     for item in items

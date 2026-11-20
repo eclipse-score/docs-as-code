@@ -24,10 +24,16 @@ Each allowance applies only to needs owned by mounted or imported modules. It
 can downgrade these findings:
 
 * missing mandatory attributes;
-* missing mandatory links; and
+* missing mandatory links declared on a need type;
+* absent relations required by metamodel graph rules on mounted needs; and
 * an exact need-link version condition such as ``target[version==1]`` that does
   not match when at least one link endpoint is external.
 
-All other metamodel findings, all-local links, and every malformed or failed
-Sphinx-Needs link condition remain fatal. An allowance makes an integration
-possible during version skew; it does not make the underlying mismatch valid.
+For a graph rule, the allowance applies to an empty relation checked by
+``check_one``, including a backlink. A declared link with an unresolved target
+or a target that fails the graph predicate still fails validation. The report
+includes the graph rule ID and relation.
+
+All other metamodel findings and all-local links keep their usual validation
+behavior. An allowance makes an integration possible during version skew; it
+does not make the underlying mismatch valid.

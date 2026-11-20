@@ -24,7 +24,8 @@ Build the documentation as usual:
 
 By default, all validation findings fail the build. Check the build output to
 identify whether the mounted module has a missing mandatory attribute, a
-missing mandatory link, or an exact version condition that no longer matches.
+missing mandatory link, a missing relation required by a graph rule, or an
+exact version condition that no longer matches.
 
 2. Allow only the affected category
 -----------------------------------
@@ -36,6 +37,7 @@ Add the corresponding temporary setting to the consumer's ``docs/conf.py``:
    # Use only the setting that matches the finding.
    score_cross_module_compatibility_allow_missing_mandatory_attributes = True
    score_cross_module_compatibility_allow_missing_mandatory_links = True
+   score_cross_module_compatibility_allow_missing_graph_links = True
    score_cross_module_compatibility_allow_version_mismatches = True
 
 Choose the setting that matches the failure:
@@ -43,7 +45,9 @@ Choose the setting that matches the failure:
 * ``score_cross_module_compatibility_allow_missing_mandatory_attributes`` for
   a required attribute missing in an external module;
 * ``score_cross_module_compatibility_allow_missing_mandatory_links`` for a
-  required link missing in an external module; or
+  link that the need type requires and an external module omits;
+* ``score_cross_module_compatibility_allow_missing_graph_links`` for an empty
+  relation required by a ``check_one`` graph rule on a mounted need; or
 * ``score_cross_module_compatibility_allow_version_mismatches`` for an exact
   link condition such as ``target[version==1]`` that does not match an external
   endpoint.
@@ -60,7 +64,7 @@ the HTML output directory contains:
 ``compatibility-findings.json``
   Use this machine-readable report in CI or issue tracking. Each finding
   identifies the owning module, source need, optional target need, category,
-  and message.
+  and message. Graph findings also identify the rule ID and the missing relation.
 
 ``compatibility-findings.html``
   Open this report to review findings grouped by supplying module.

@@ -20,6 +20,11 @@ import pytest
 
 # Adjust this import path if your project layout differs.
 import score_metamodel.checks.graph_checks as graph_checks
+from score_cross_module_compatibility import (
+    MISSING_GRAPH_LINK,
+    CompatibilityReporter,
+    ExternalMount,
+)
 from score_metamodel.tests import fake_check_logger, need as test_need
 from sphinx_needs.config import NeedType
 from sphinx_needs.data import NeedsView
@@ -234,13 +239,21 @@ def graph_check_config(*check_keys: str, **options: Any) -> dict[str, Any]:
     }
 
 
-def run_graph_check(check_config: dict[str, Any], parent_ids: list[str]):
+def run_graph_check(
+    check_config: dict[str, Any],
+    parent_ids: list[str],
+    *,
+    compatibility: CompatibilityReporter | None = None,
+    docname: str = "docname",
+):
     """Run the graph check on one child need linking to the given parents."""
-    log = fake_check_logger()
+    log = fake_check_logger(compatibility)
     app = MagicMock()
     app.config.graph_checks = {"test_check": check_config}
     app.config.needs_types = NEEDS_TYPES
-    child = test_need(id="child", type="req", status="valid", implements=parent_ids)
+    child = test_need(
+        id="child", type="req", status="valid", implements=parent_ids, docname=docname
+    )
     all_needs = cast(NeedsView, DummyNeedsView([child, *PARENTS]))
 
     graph_checks.check_metamodel_graph(app, all_needs, log)
@@ -301,6 +314,54 @@ def test_check_one(parent_ids: list[str], expected_warnings: int) -> None:
             else "No linked need in `implements` fulfills condition `safety != QM`."
             " Explanation: Test explanation."
         )
+
+
+@pytest.mark.parametrize(
+    ("docname", "allow_missing_graph_links", "parent_ids", "is_finding"),
+    [
+        ("supplier/index", True, [], True),
+        ("consumer/index", True, [], False),
+        ("supplier/index", False, [], False),
+        ("supplier/index", True, ["qm_1"], False),
+        ("supplier/index", True, ["unknown_parent"], False),
+    ],
+    ids=[
+        "allowed",
+        "local",
+        "strict-default",
+        "wrong-target",
+        "dead-link",
+    ],
+)
+def test_graph_link_allowance_requires_an_absent_mounted_link(
+    docname: str,
+    allow_missing_graph_links: bool,
+    parent_ids: list[str],
+    is_finding: bool,
+) -> None:
+    reporter = CompatibilityReporter(
+        [ExternalMount("supplier", "supplier_module")],
+        frozenset({MISSING_GRAPH_LINK}) if allow_missing_graph_links else frozenset(),
+    )
+    log = run_graph_check(
+        graph_check_config("check_one"),
+        parent_ids,
+        compatibility=reporter,
+        docname=docname,
+    )
+
+    if not is_finding:
+        assert log.warnings == 1
+        assert reporter.findings == []
+        return
+
+    assert log.warnings == 0
+    (finding,) = reporter.findings
+    assert finding.category == "missing-graph-link"
+    assert finding.module == "supplier_module"
+    assert finding.need_id == "child"
+    assert finding.rule_id == "test_check"
+    assert finding.relation == "implements"
 
 
 @pytest.mark.parametrize(

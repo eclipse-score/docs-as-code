@@ -16,7 +16,7 @@ from src.tests.docs_bzl.helpers import repo_root, run_scenario
 
 
 def _write_cross_module_consumer(
-    workspace: Path, compatibility_config: str = ""
+    workspace: Path, compatibility_config: str = "", *, graph_checks: str = ""
 ) -> None:
     source_root = repo_root()
     fixture = source_root / "src/tests/docs_bzl/cross_module_fixture"
@@ -56,7 +56,7 @@ required_in_id = ["host", "fixture"]
         encoding="utf-8",
     )
     docs.joinpath("metamodel.yaml").write_text(
-        """needs_types:
+        f"""needs_types:
   test_req:
     title: Test Requirement
     prefix: test_req__
@@ -71,7 +71,8 @@ required_in_id = ["host", "fixture"]
       template: .*
     optional_links:
       links: ANY
-links: {}
+links: {{}}
+{graph_checks}
 """,
         encoding="utf-8",
     )
@@ -93,13 +94,23 @@ links: {}
 
 @pytest.mark.bazel_slow
 @pytest.mark.parametrize("python_version", ["3.12", "3.14"])
-def test_cross_module_version_mismatch_is_reported_without_failing(
+def test_cross_module_findings_are_reported_without_failing(
     tmp_path: Path, python_version: str
 ) -> None:
     _write_cross_module_consumer(
         tmp_path,
         "score_cross_module_compatibility_allow_missing_mandatory_attributes = True\n"
-        "score_cross_module_compatibility_allow_version_mismatches = True",
+        "score_cross_module_compatibility_allow_version_mismatches = True\n"
+        "score_cross_module_compatibility_allow_missing_graph_links = True",
+        graph_checks="""graph_checks:
+  requires_backlink:
+    needs:
+      include: test_req
+      condition: id == test_req__fixture__source
+    check_one:
+      links_back: status == valid
+    explanation: Supplier requirements need at least one valid incoming link.
+""",
     )
     result = subprocess.run(
         [
@@ -118,10 +129,11 @@ def test_cross_module_version_mismatch_is_reported_without_failing(
     report = json.loads(
         (tmp_path / "_build/compatibility-findings.json").read_text(encoding="utf-8")
     )
-    assert report["summary"] == {"count": 2, "modules": 1}
+    assert report["summary"] == {"count": 3, "modules": 1}
     findings = report["findings"]
     assert {finding["category"] for finding in findings} == {
         "mandatory-attribute",
+        "missing-graph-link",
         "version-mismatch",
     }
     assert {finding["need_id"] for finding in findings} == {"test_req__fixture__source"}
@@ -129,10 +141,19 @@ def test_cross_module_version_mismatch_is_reported_without_failing(
         finding for finding in findings if finding["category"] == "version-mismatch"
     )
     assert version_finding["target_id"] == "test_req__host__target"
+    graph_finding = next(
+        finding for finding in findings if finding["category"] == "missing-graph-link"
+    )
+    assert graph_finding["rule_id"] == "requires_backlink"
+    assert graph_finding["relation"] == "links_back"
 
     index = (tmp_path / "_build/index.html").read_text(encoding="utf-8")
     assert "External documentation compatibility findings" in index
-    assert (tmp_path / "_build/compatibility-findings.html").is_file()
+    html_report = (tmp_path / "_build/compatibility-findings.html").read_text(
+        encoding="utf-8"
+    )
+    assert "<code>requires_backlink</code>" in html_report
+    assert "<code>links_back</code>" in html_report
 
 
 @pytest.mark.bazel_slow
