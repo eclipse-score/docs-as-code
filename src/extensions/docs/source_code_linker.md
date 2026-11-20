@@ -337,8 +337,8 @@ During the Sphinx build process, the extension applies the computed links to nee
 - In combo builds, known_good_json is required.
 - inefficiencies in creating the links
 - Not compatible with **Esbonio**
-- Live preview: the sourcelinks JSON is built by Bazel at start, so changed code tags show after a restart.
-  The test XML cache is reused even across restarts, so new test results show only after `_build` is cleaned.
+- Live preview: Bazel regenerates the sourcelinks JSON when the preview starts, but unchanged pages can still show old links if Sphinx reuses its previous build.
+  Clean `_build` and restart the preview to refresh all pages and test results.
 
 ### Codelinks
 
