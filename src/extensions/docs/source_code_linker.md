@@ -222,7 +222,7 @@ The DataOfTestCase depicts the information gathered about one testcase.
 ---
 
 
-### Early-Combined Links
+### Combined Links
 
 During the Sphinx build process, both CodeLink and TestLink data are combined and grouped by needs.
 A need can have links from several repositories.
@@ -230,8 +230,8 @@ A need can have links from several repositories.
 Grouping by need is `group_by_need` in `need_source_links.py`, called from `inject_links_into_needs`.
 
 The grouping runs in memory on every build, from the sourcelinks JSON and `score_xml_parser_cache.json`.
-With Sphinx debug verbosity (`-vv`), `score_scl_grouped_cache.json` and `score_repo_grouped_scl_cache.json`
-are also written to `_build` for debugging; the build never reads them back.
+With Sphinx debug verbosity (`-vv`), `score_scl_grouped_cache.json` is also written to `_build` for debugging;
+the build never reads it back.
 
 ### Combined JSON Example
 
@@ -271,47 +271,6 @@ are also written to `_build` for debugging; the build never reads them back.
   }
 ]
 ```
-
-#### Debug layout: RepoSourceLink
-
-With `-vv`, the extension also writes `score_repo_grouped_scl_cache.json` (`group_needs_by_repo` in `repo_source_links.py`).
-The build never reads it back.
-Instead of repeating `repo_name/hash/url` for every single link entry, it groups links **by repository**:
-
-- Repository metadata appears **once per repository**
-- All links belonging to that repository are stored beneath it
-- A need with links from several repositories appears once below each of them
-
-This somewhat looks like this:
-
-```{code-block} json
-[
-  {
-    "repo": {
-      "name": "local_repo",
-      "hash": "",
-      "url": ""
-    },
-    "needs": [
-      {
-        "need": "tool_req__docs_common_attr_id_scheme",
-        "links": {
-          "CodeLinks": [
-            {
-              "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-              "line": 30,
-              "tag": "# req-Id:",
-              "need": "tool_req__docs_common_attr_id_scheme",
-              "full_line": "# req-Id: tool_req__docs_common_attr_id_scheme"
-            }
-          ],
-          "TestLinks": []
-        }
-      },
-    ],
-```
-Due to not saving the `repo_name, url and hash` in each link but grouping them we can eleminate a lot of unnecessary
-length to the JSON document here.
 
 :::hint
 If the repo is the local one, the hash and url come from the local git checkout (see [repo metadata rules](#repo-metadata-rules)).
@@ -389,7 +348,6 @@ The Sphinx extension
 score_source_code_linker/
 ├── __init__.py                   # Main Sphinx extension; combines CodeLinks + TestLinks
 ├── need_source_links.py         # Data model for combined links
-├── repo_source_links.py         # Data model for Repo combined links (Final output JSON)
 ├── testlink.py                  # DataForTestLink definition & logic
 ├── xml_parser.py                # Parses XML files into test case data (no Sphinx)
 ├── testcase_needs.py            # Turns parsed test cases into testcase needs

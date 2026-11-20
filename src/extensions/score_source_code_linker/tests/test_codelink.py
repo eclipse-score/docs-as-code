@@ -765,32 +765,6 @@ def test_repo_info_is_flat_dict_missing_keys():
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
-def test_needlink_to_dict_without_metadata():
-    """to_dict_without_metadata should return NeedLink without metadata"""
-    needlink = NeedLink(
-        file=Path("src/test.py"),
-        line=10,
-        tag="#" + " req-Id:",
-        need="REQ_1",
-        full_line="#" + " req-Id: REQ_1",
-        repo=RepoInfo(
-            name="test_repo", hash="abc123", url="https://github.com/test/repo"
-        ),
-    )
-    result = needlink.to_dict_without_metadata()
-
-    assert "repo_name" not in result
-    assert "hash" not in result
-    assert "url" not in result
-    assert result["need"] == "REQ_1"
-    assert result["line"] == 10
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
 def test_needlink_to_dict_full():
     """to_dict_full includes all fields"""
     needlink = NeedLink(

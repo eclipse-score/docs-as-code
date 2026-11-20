@@ -37,10 +37,6 @@ from src.extensions.score_source_code_linker.need_source_links import (
     group_by_need,
     store_source_code_links_combined_json,
 )
-from src.extensions.score_source_code_linker.repo_source_links import (
-    group_needs_by_repo,
-    store_repo_source_links_json,
-)
 from src.extensions.score_source_code_linker.testcase_annotations import (
     annotate_testcase_results,
 )
@@ -417,10 +413,6 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     if app.verbosity >= 2:
         store_source_code_links_combined_json(
             app.outdir / "score_scl_grouped_cache.json", links_by_need
-        )
-        store_repo_source_links_json(
-            app.outdir / "score_repo_grouped_scl_cache.json",
-            group_needs_by_repo(links_by_need),
         )
     plain_links = bool(
         getattr(app.config, "score_source_code_linker_plain_links", False)

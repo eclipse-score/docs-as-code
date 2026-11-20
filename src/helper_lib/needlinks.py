@@ -47,13 +47,6 @@ class NeedLink:
     def to_dict_full(self) -> dict[str, Any]:
         return flatten_repo_field(asdict(self), self.repo)
 
-    # Drops the repo (RepoInfo) for saving the Dataclass (saving space in json)
-    # The information is in the 'Repo_Source_Link' in the end
-    def to_dict_without_metadata(self) -> dict[str, Any]:
-        d = asdict(self)
-        d.pop("repo", None)
-        return d
-
     @classmethod
     def from_flat_dict(cls, d: dict[str, Any]) -> "NeedLink":
         """Build a NeedLink from its on-disk form. Missing repo keys => default repo."""
