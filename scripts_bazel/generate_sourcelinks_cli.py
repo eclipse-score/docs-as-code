@@ -23,27 +23,11 @@ import sys
 from pathlib import Path
 
 from scripts_bazel.source_code_link_parser import extract_references_from_file
-from src.helper_lib.repo_info import DefaultRepoInfo, parse_repo_name_from_path
+from src.helper_lib.repo_info import DefaultRepoInfo, split_external_path
 from src.helper_lib.needlinks import store_source_code_links_with_metadata_json
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
-
-
-def clean_external_prefix(path: Path) -> Path:
-    """
-    As it can be in combo builds that the path is:
-    `external/score_docs_as_code+/....` or similar
-    We have to remove this prefix from the file
-    before we pass it to the extract function. Otherwise we have
-    this prefix inside the `file` attribute leading to wrong links
-    """
-    if not str(path).startswith("external/"):
-        return path
-    # This allows for files / folders etc. to have `external` in their name too.
-    path_raw = str(path).removeprefix("external/")
-    filepath_split = str(path_raw).split("/", maxsplit=1)
-    return Path("".join(filepath_split[1:]))
 
 
 def main():
@@ -70,6 +54,10 @@ def main():
     metadata = DefaultRepoInfo()
     metadata_set = False
     for file_path in args.files:
+        # In combo builds the path is `external/<repo>+/...`. The repo part
+        # names the repo, the rest is the path inside it. Without the prefix
+        # in the `file` attribute the generated links point to the right file.
+        repo_name, clean_path = split_external_path(file_path)
         if "known_good.json" not in str(file_path) and not metadata_set:
             metadata.name = repo_name
             metadata_set = True

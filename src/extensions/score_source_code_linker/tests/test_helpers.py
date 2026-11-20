@@ -17,10 +17,13 @@ from collections.abc import Generator
 from pathlib import Path
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
+
 from src.helper_lib.repo_info import (
+    LOCAL_REPO,
     parse_info_from_known_good,
     parse_repo_name_from_path,
-    LOCAL_REPO
+    split_external_path,
 )
 from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
@@ -29,6 +32,50 @@ from src.extensions.score_source_code_linker.helpers import (
 from src.helper_lib.needlinks import DefaultNeedLink
 from src.helper_lib.repo_info import RepoInfo
 from src.helper_lib import get_current_git_hash
+
+#              ╭──────────────────────────────────────────────────────────╮
+#              │            Tests for split_external_path                 │
+#              ╰──────────────────────────────────────────────────────────╯
+
+
+# Cases taken over from the former test_clean_external_prefix
+# (scripts_bazel/tests/generate_sourcelinks_cli_test.py), now also
+# checking the repo part.
+@pytest.mark.parametrize(
+    "input_path, expected_repo, expected_path",
+    [
+        # Path starts with "external/" and has a project name
+        (
+            Path("external/score_docs_as_code+/docs/index.md"),
+            "score_docs_as_code",
+            Path("docs/index.md"),
+        ),
+        # Path does NOT start with "external/"
+        (Path("src/main.py"), LOCAL_REPO, Path("src/main.py")),
+        # Path has "external" elsewhere in the string (should not be removed)
+        (
+            Path("my_external_data/file.txt"),
+            LOCAL_REPO,
+            Path("my_external_data/file.txt"),
+        ),
+        # Deeply nested path inside an external prefix, repo without '+'
+        (Path("external/repo/subfolder/file.py"), "repo", Path("subfolder/file.py")),
+        # Path is exactly "external/": Path() drops the trailing '/', so it is
+        # no external prefix any more
+        (Path("external/"), LOCAL_REPO, Path("external")),
+        # External repo directory without anything inside
+        (Path("external/score_x+"), "score_x", Path(".")),
+    ],
+)
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_split_external_path(input_path: Path, expected_repo: str, expected_path: Path):
+    """Test splitting an exec path into repo name and path inside the repo."""
+    assert split_external_path(input_path) == (expected_repo, expected_path)
+
 
 #              ╭──────────────────────────────────────────────────────────╮
 #              │          Tests for parse_repo_name_from_path             │
