@@ -11,10 +11,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+import functools
 import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+from src.helper_lib import find_git_root, get_current_git_hash, get_github_base_url
 
 LOCAL_REPO = "local_repo"
 
@@ -172,3 +175,63 @@ def resolve_repo(repo_name: str, known_good: dict[str, Any] | None) -> RepoInfo 
         return None
     hash_or_version, url = parse_info_from_known_good(known_good, repo_name)
     return RepoInfo(name=repo_name, hash=hash_or_version, url=url)
+
+
+#   ───────────────────────[ GitHub links ]───────────────────────
+
+# Used when there is no real URL: Bazel sandbox builds (plain links) and
+# testcases without repo metadata.
+PLACEHOLDER_URL = "https://github.com/placeholder/placeholder/blob/unknown"
+
+
+def get_github_link(
+    repo: RepoInfo | None,
+    file: Path | str | None,
+    line: int | str | None,
+    plain_links: bool = False,
+    git_root: Path | None = None,
+) -> str | None:
+    """
+    The one place that decides the GitHub URL of a file and line.
+
+    Outcomes, in order:
+      1. plain_links (Bazel sandbox, no git) or repo is None (metadata
+         incomplete): placeholder URL. A missing file / line becomes
+         '<placeholder_file>' / 1.
+      2. repo.hash is set (combo build, filled from known_good): URL from repo.
+      3. Otherwise (local build): URL from the local git checkout.
+      4. The local git checkout has no remote: None. The caller decides the
+         fallback.
+    """
+    if plain_links or repo is None:
+        file = file if file is not None else "<placeholder_file>"
+        line = line if line is not None else 1
+        return f"{PLACEHOLDER_URL}/{file}#L{line}"
+    if repo.hash:
+        # Reference-integration path (mounted external documentation)
+        blob_url = f"{repo.url}/blob/{repo.hash}"
+    else:
+        # Local path (//:docs)
+        try:
+            blob_url = _git_blob_url(git_root or find_git_root() or Path())
+        except AssertionError:
+            return None
+    return f"{blob_url}/{file}#L{line}"
+
+
+@functools.cache
+def _git_blob_url(git_root: Path) -> str:
+    """
+    '<github url>/blob/<HEAD hash>' of a local checkout.
+
+    Only depends on the git root, so git is asked once per root instead of
+    twice per link. A failure (no remote) is not cached, it raises again on
+    the next call.
+    Call clear_git_cache at the start of every build, so a long-running
+    process (live preview) picks up new commits.
+    """
+    return f"{get_github_base_url(git_root)}/blob/{get_current_git_hash(git_root)}"
+
+
+def clear_git_cache() -> None:
+    _git_blob_url.cache_clear()

@@ -51,7 +51,6 @@ py_library(
 py_library(
     name = "source_code_linker_helpers",
     srcs = [
-        "helpers.py",
         "repo_source_links.py",
         "testlink.py",
         "xml_parser.py",

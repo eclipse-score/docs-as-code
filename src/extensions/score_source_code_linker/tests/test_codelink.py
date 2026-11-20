@@ -45,9 +45,6 @@ from src.extensions.score_source_code_linker import (
     group_by_need,
     inject_links_into_needs,
 )
-from src.extensions.score_source_code_linker.helpers import (
-    get_github_link,
-)
 from src.extensions.score_source_code_linker.repo_source_links import (
     group_needs_by_repo,
     store_repo_source_links_json,
@@ -65,7 +62,7 @@ from src.helper_lib.needlinks import (
     store_source_code_links_json,
     store_source_code_links_with_metadata_json,
 )
-from src.helper_lib.repo_info import DefaultRepoInfo, RepoInfo
+from src.helper_lib.repo_info import DefaultRepoInfo, RepoInfo, get_github_link
 
 
 def test_need(*, extras: dict[str, Any] | None = None, **kwargs: Any) -> NeedItem:
@@ -638,7 +635,9 @@ def another_function():
     # Test GitHub link generation
     metadata = DefaultRepoInfo()
     for needlink in loaded_links:
-        github_link = get_github_link(metadata, needlink, git_root=git_repo)
+        github_link = get_github_link(
+            metadata, needlink.file, needlink.line, git_root=git_repo
+        )
         assert github_link is not None
         assert "https://github.com/test-user/test-repo/blob/" in github_link
         assert f"src/{needlink.file.name}#L{needlink.line}" in github_link
@@ -679,7 +678,9 @@ def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
     )
 
     metadata = DefaultRepoInfo()
-    github_link = get_github_link(metadata, needlink, git_root=git_repo)
+    github_link = get_github_link(
+        metadata, needlink.file, needlink.line, git_root=git_repo
+    )
     assert github_link is not None
     assert new_hash in github_link
 

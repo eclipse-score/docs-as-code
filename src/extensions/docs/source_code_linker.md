@@ -375,7 +375,6 @@ score_source_code_linker/
 ├── __init__.py                   # Main Sphinx extension; combines CodeLinks + TestLinks
 ├── need_source_links.py         # Data model for combined links
 ├── repo_source_links.py         # Data model for Repo combined links (Final output JSON)
-├── helpers.py                   # Misc. functions used throughout SCL
 ├── needlinks.py                 # CodeLink dataclass & JSON encoder/decoder
 ├── testlink.py                  # DataForTestLink definition & logic
 ├── xml_parser.py                # Parses XML files into test case data

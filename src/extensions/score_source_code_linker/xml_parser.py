@@ -34,7 +34,6 @@ from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
 from sphinx_needs.api import add_external_need
 
-from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.testlink import (
     DataOfTestCase,
     store_data_of_test_case_json,
@@ -43,6 +42,7 @@ from src.extensions.score_source_code_linker.testlink import (
 from src.helper_lib import find_ws_root
 from src.helper_lib.repo_info import (
     RepoInfo,
+    get_github_link,
     load_known_good,
     parse_repo_name_from_path,
     resolve_repo,
@@ -443,7 +443,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             f"name={name}, file={file}, repo={tn.repo}",
             type="score_source_code_linker",
         )
-    external_url = get_github_link(tn.repo, tn)
+    external_url = get_github_link(tn.repo, tn.file, tn.line)
     # Unlike code and test links, testcase needs have no fallback when git has
     # no remote: the build fails. Kept as is in phase C, see E3.
     assert external_url is not None, (

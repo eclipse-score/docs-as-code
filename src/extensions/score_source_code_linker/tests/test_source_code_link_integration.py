@@ -23,7 +23,6 @@ from score_pytest.attribute_plugin import add_test_properties
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
-from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataForTestLink_JSON_Decoder,
@@ -33,7 +32,7 @@ from src.extensions.score_source_code_linker.tests.test_need_source_links import
     SourceCodeLinks_TEST_JSON_Decoder,
 )
 from src.helper_lib.needlinks import NeedLink
-from src.helper_lib.repo_info import DefaultRepoInfo
+from src.helper_lib.repo_info import DefaultRepoInfo, get_github_link
 
 
 @pytest.fixture(scope="module")
@@ -424,14 +423,16 @@ def example_source_link_text_non_existent(sphinx_base_dir: Path):
 def make_source_link(needlinks: list[NeedLink]):
     metadata = DefaultRepoInfo()
     return ", ".join(
-        f"{get_github_link(metadata, n)}<>{n.file}:{n.line}" for n in needlinks
+        f"{get_github_link(metadata, n.file, n.line)}<>{n.file}:{n.line}"
+        for n in needlinks
     )
 
 
 def make_test_link(testlinks: list[DataForTestLink]):
     metadata = DefaultRepoInfo()
     return ", ".join(
-        f"{get_github_link(metadata, n)}<>{n.name}<>{n.result}" for n in testlinks
+        f"{get_github_link(metadata, n.file, n.line)}<>{n.name}<>{n.result}"
+        for n in testlinks
     )
 
 

@@ -19,18 +19,14 @@ from pathlib import Path
 import pytest
 from score_pytest.attribute_plugin import add_test_properties
 
-from src.extensions.score_source_code_linker.helpers import (
-    PLACEHOLDER_URL,
-    get_github_link,
-    get_github_link_from_json,
-)
-from src.extensions.score_source_code_linker.testlink import DataOfTestCase
 from src.helper_lib import get_current_git_hash
-from src.helper_lib.needlinks import DefaultNeedLink
 from src.helper_lib.repo_info import (
     LOCAL_REPO,
+    PLACEHOLDER_URL,
     DefaultRepoInfo,
     RepoInfo,
+    clear_git_cache,
+    get_github_link,
     load_known_good,
     parse_info_from_known_good,
     parse_repo_name_from_path,
@@ -342,23 +338,16 @@ def test_resolve_repo_unknown_repo_raises():
         _ = resolve_repo("nonexistent", VALID_KNOWN_GOOD)
 
 
-# Tests for get_github_link_from_json
-def test_get_github_link_from_json_happy_path():
-    """
-    Test generating GitHub link with fully filled metadata
-    =>this happens in combo builds
-    """
+# Tests for get_github_link
+def test_get_github_link_with_hash():
+    """Combo build: hash and url come from the repo info (known_good)."""
     metadata = RepoInfo(
         name="project_name",
         url="https://github.com/eclipse/project",
         hash="commit123abc",
     )
 
-    link = DefaultNeedLink()
-    link.file = Path("docs/index.rst")
-    link.line = 100
-
-    result = get_github_link_from_json(metadata, link)
+    result = get_github_link(metadata, Path("docs/index.rst"), 100)
 
     assert (
         result
@@ -366,68 +355,28 @@ def test_get_github_link_from_json_happy_path():
     )
 
 
-def test_get_github_link_from_json_with_none_link():
-    """Test that None link creates DefaultNeedLink."""
-    metadata = RepoInfo(
-        name="test_repo", url="https://github.com/test/repo", hash="def456"
-    )
-
-    result = get_github_link_from_json(metadata, None)
-
-    assert result.startswith("https://github.com/test/repo/blob/def456/")
-    assert "#L" in result
-
-
-def test_get_github_link_from_json_with_line_zero():
-    """Test generating link with line number 0."""
+def test_get_github_link_with_line_zero():
     metadata = RepoInfo(
         name="test_repo", url="https://github.com/test/repo", hash="hash123"
     )
 
-    link = DefaultNeedLink()
-    link.file = Path("file.py")
-    link.line = 0
-
-    result = get_github_link_from_json(metadata, link)
+    result = get_github_link(metadata, Path("file.py"), 0)
 
     assert result == "https://github.com/test/repo/blob/hash123/file.py#L0"
-
-
-# Tests for get_github_link
-def test_get_github_link_with_hash():
-    """Test get_github_link uses json method when hash is present."""
-    metadata = RepoInfo(
-        name="some_repo", url="https://github.com/org/repo", hash="commit_hash_123"
-    )
-
-    link = DefaultNeedLink()
-    link.file = Path("src/example.py")
-    link.line = 42
-
-    result = get_github_link(metadata, link)
-
-    assert (
-        result == "https://github.com/org/repo/blob/commit_hash_123/src/example.py#L42"
-    )
 
 
 def test_get_github_link_plain_links_gives_placeholder():
     """Bazel sandbox builds: placeholder, even with full repo info."""
     metadata = RepoInfo(name="some_repo", url="https://github.com/org/repo", hash="h")
-    link = DefaultNeedLink()
-    link.file = Path("src/example.py")
-    link.line = 42
 
-    result = get_github_link(metadata, link, plain_links=True)
+    result = get_github_link(metadata, Path("src/example.py"), 42, plain_links=True)
 
     assert result == f"{PLACEHOLDER_URL}/src/example.py#L42"
 
 
 def test_get_github_link_no_repo_gives_placeholder_with_defaults():
     """Testcase without repo info and without file/line."""
-    testcase = DataOfTestCase(name="tc", file=None, line=None)
-
-    result = get_github_link(None, testcase)
+    result = get_github_link(None, None, None)
 
     assert result == f"{PLACEHOLDER_URL}/<placeholder_file>#L1"
 
@@ -435,9 +384,8 @@ def test_get_github_link_no_repo_gives_placeholder_with_defaults():
 def test_get_github_link_git_without_remote_gives_none(tmp_path: Path):
     """Local build where git has no remote: no URL, the caller falls back."""
     _ = subprocess.run(["git", "init"], cwd=tmp_path, check=True, capture_output=True)
-    link = DefaultNeedLink()
 
-    assert get_github_link(DefaultRepoInfo(), link, git_root=tmp_path) is None
+    assert get_github_link(DefaultRepoInfo(), "a.py", 1, git_root=tmp_path) is None
 
 
 @pytest.fixture
@@ -479,17 +427,34 @@ def git_repo(temp_dir: Path) -> Path:
     return git_dir
 
 
+def test_git_lookup_is_cached_until_cleared(git_repo: Path) -> None:
+    """Git is asked once per build. clear_git_cache picks up a new commit."""
+    clear_git_cache()
+    first = get_github_link(DefaultRepoInfo(), "a.py", 1, git_root=git_repo)
+    old_hash = get_current_git_hash(git_repo)
+
+    _ = subprocess.run(
+        ["git", "commit", "--allow-empty", "-m", "next"], cwd=git_repo, check=True
+    )
+    new_hash = get_current_git_hash(git_repo)
+
+    # Same build: still the cached hash
+    assert get_github_link(DefaultRepoInfo(), "a.py", 1, git_root=git_repo) == first
+    assert first is not None and old_hash in first
+
+    # Next build
+    clear_git_cache()
+    second = get_github_link(DefaultRepoInfo(), "a.py", 1, git_root=git_repo)
+    assert second is not None and new_hash in second
+
+
 def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     """
     Test generating GitHub link without url/hash.
     """
     metadata = RepoInfo(name="some_repo", url="", hash="")
 
-    link = DefaultNeedLink()
-    link.file = Path("src/example.py")
-    link.line = 42
-
-    result = get_github_link(metadata, link, git_root=git_repo)
+    result = get_github_link(metadata, Path("src/example.py"), 42, git_root=git_repo)
     assert result is not None
 
     # Should contain the base URL, hash, file path, and line number
@@ -519,11 +484,8 @@ def test_complete_workflow(known_good_json: Path):
 
     # Generate link
     metadata = RepoInfo(name=repo_name, url=repo_url, hash=hash_val)
-    link = DefaultNeedLink()
-    link.file = Path("src/helper_lib/test_helper_lib.py")
-    link.line = 75
 
-    result = get_github_link(metadata, link)
+    result = get_github_link(metadata, Path("src/helper_lib/test_helper_lib.py"), 75)
 
     assert (
         result

@@ -30,7 +30,6 @@ from sphinx_needs.data import NeedsMutable, SphinxNeedsData
 from sphinx_needs.logging import get_logger
 from sphinx_needs.need_item import NeedItem
 
-from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.need_source_links import (
     group_by_need,
     load_source_code_links_combined_json,
@@ -59,7 +58,7 @@ from src.helper_lib.needlinks import (
     load_source_code_links_json,
     load_source_code_links_with_metadata_json,
 )
-from src.helper_lib.repo_info import RepoInfo
+from src.helper_lib.repo_info import RepoInfo, clear_git_cache, get_github_link
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
@@ -272,6 +271,10 @@ def setup_repo_linker(app: Sphinx, _: BuildEnvironment):
         build_and_save_repo_scl_file(app.outdir)
 
 
+def _clear_git_cache(_app: Sphinx, _env: BuildEnvironment) -> None:
+    clear_git_cache()
+
+
 def setup_once(app: Sphinx):
     # might be the only way to solve this?
     if "skip_rescanning_via_source_code_linker" in app.config:
@@ -281,6 +284,9 @@ def setup_once(app: Sphinx):
     # Both modes aggregate links from local sources and external dependencies, enabling
     # unified traceability reporting in integration repositories. Impact on external needs
     # invocations is minimal since they typically don't have local test logs or source code.
+    # Before every handler below that builds links (505-525): ask git again on
+    # each build, so a long-running process (live preview) sees new commits.
+    app.connect("env-updated", _clear_git_cache, priority=500)
     setup_source_code_linker(app)
     register_test_code_linker(app)
     register_combined_linker(app)
@@ -396,7 +402,7 @@ def _log_existing_links(needs: NeedsMutable) -> None:
 
 
 def _render_code_link(plain_links: bool, metadata: RepoInfo, link: NeedLink) -> str:
-    base = get_github_link(metadata, link, plain_links=plain_links)
+    base = get_github_link(metadata, link.file, link.line, plain_links=plain_links)
     if base is None:
         LOGGER.info(
             "Falling back to local code-link format (no git remote available): "
@@ -416,7 +422,7 @@ def _render_test_link(
         # Unlike code links, plain test links show only the name, without the
         # placeholder URL. Kept as is in phase C, see E3.
         return str(link.name)
-    base = get_github_link(metadata, link)
+    base = get_github_link(metadata, link.file, link.line)
     if base is None:
         LOGGER.info(
             "Falling back to local test-link format (no git remote available): "
