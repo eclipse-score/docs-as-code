@@ -529,7 +529,8 @@ Reads the aggregated JSON, validates and adapts it, and finally injects the link
 attribute. A <em>per bundle JSON cache</em> is then generated and saved; Bazel
 reuses it until its source inputs change.
 The script <code class="docutils literal notranslate"><span class="pre">scripts_bazel/generate_sourcelinks_cli.py</span></code> gathers source code links into
-one JSON cache per bundle. Each link carries the repository of its source file.</p>
+one JSON cache per bundle. Each link carries the repository of its source file.
+The header’s repository name is empty when links come from multiple repositories.</p>
 <p>Example of requirement tags:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Choose one or the other, both mentioned here to avoid detection</span>
 <span class="c1"># req-Id/req-traceability: &lt;NEED_ID&gt;</span>
@@ -582,14 +583,15 @@ one JSON cache per bundle. Each link carries the repository of its source file.<
 <li><p>Input: N JSON caches (one per bundle)</p></li>
 <li><p>Output: 1 merged JSON containing all found source_code_links</p></li>
 </ul>
-<p>When <code class="docutils literal notranslate"><span class="pre">known_good.json</span></code> is available, this step fills in the URL and revision for each external repository referenced by the links.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">known_good.json</span></code> is available, the merge uses the repository recorded on each link
+to look up its URL and revision. A missing or incomplete entry produces one warning per
+repository and leaves the affected source locations in the output.</p>
 </section>
 <section id="repo-metadata-rules">
 <span id="id1"></span><h4>Repo metadata rules<a class="headerlink" href="#repo-metadata-rules" title="Link to this heading">#</a></h4>
 <p>Here are some basic rules regarding the repo information (<code class="docutils literal notranslate"><span class="pre">RepoInfo</span></code> in <code class="docutils literal notranslate"><span class="pre">src/helper_lib/repo_info.py</span></code>)</p>
-<p>In a combo build, a known_good_json <strong>must</strong> be provided.
-The merge resolves the hash and URL using the repository recorded on each link.
-The lookup lives in one function, <code class="docutils literal notranslate"><span class="pre">resolve_repo</span></code>, used by both <code class="docutils literal notranslate"><span class="pre">merge_sourcelinks.py</span></code> and the XML parser.
+<p>Provide <code class="docutils literal notranslate"><span class="pre">known_good.json</span></code> in a combo build to generate clickable URLs for external source links.
+The lookup lives in <code class="docutils literal notranslate"><span class="pre">resolve_repo</span></code>, which both <code class="docutils literal notranslate"><span class="pre">merge_sourcelinks.py</span></code> and the XML parser use.
 <code class="docutils literal notranslate"><span class="pre">known_good.json</span></code> is read once per run.</p>
 <p>Combo build:</p>
 <ul class="simple">
@@ -603,7 +605,7 @@ The lookup lives in one function, <code class="docutils literal notranslate"><sp
 <li><p><code class="docutils literal notranslate"><span class="pre">hash</span></code>: stays empty</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">url</span></code>: stays empty</p></li>
 </ul>
-<p>With an empty hash, the link URL is built from the local git checkout (remote URL + <code class="docutils literal notranslate"><span class="pre">HEAD</span></code>).
+<p>For local source links with an empty hash, the URL is built from the local git checkout (remote URL + <code class="docutils literal notranslate"><span class="pre">HEAD</span></code>).
 Git is asked once per build, not once per link.</p>
 </section>
 </section>
@@ -766,9 +768,9 @@ are also written to <code class="docutils literal notranslate"><span class="pre"
 <span class="p">]</span>
 </pre></div>
 </div>
-<section id="final-layout-reposourcelink">
-<h4>Final layout: RepoSourceLink<a class="headerlink" href="#final-layout-reposourcelink" title="Link to this heading">#</a></h4>
-<p>Instead of repeating <code class="docutils literal notranslate"><span class="pre">repo_name/hash/url</span></code> for every single link entry, the final output groups links <strong>by repository</strong>:</p>
+<section id="repository-grouped-diagnostic-output">
+<h4>Repository-grouped diagnostic output<a class="headerlink" href="#repository-grouped-diagnostic-output" title="Link to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">score_repo_grouped_scl_cache.json</span></code> diagnostic groups links by repository metadata:</p>
 <ul class="simple">
 <li><p>Repository metadata appears <strong>once per repository</strong></p></li>
 <li><p>All links belonging to that repository are stored beneath it</p></li>
@@ -800,9 +802,6 @@ are also written to <code class="docutils literal notranslate"><span class="pre"
 <span class="w">    </span><span class="p">],</span>
 </pre></div>
 </div>
-<p>Due to not saving the <code class="docutils literal notranslate"><span class="pre">repo_name,</span> <span class="pre">url</span> <span class="pre">and</span> <span class="pre">hash</span></code> in each link but grouping them we can eleminate a lot of unnecessary
-length to the JSON document here.</p>
-<p>This is the structure the extension uses to attach links to needs (via the <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> attribute), while keeping the resulting data compact and normalized.</p>
 <div class="hint docutils">
 <p>If the repo is the local one, the hash and url come from the local git checkout (see <a class="reference internal" href="#repo-metadata-rules">repo metadata rules</a>).
 All link URLs are decided in one function, <code class="docutils literal notranslate"><span class="pre">get_github_link</span></code> in <code class="docutils literal notranslate"><span class="pre">src/helper_lib/repo_info.py</span></code>.</p>
@@ -816,6 +815,7 @@ All link URLs are decided in one function, <code class="docutils literal notrans
 <p>During the Sphinx build process, the extension applies the computed links to needs:</p>
 <ul class="simple">
 <li><p>Each need’s <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> and <code class="docutils literal notranslate"><span class="pre">testlink</span></code> attributes contain the rendered links from all repositories that refer to it.</p></li>
+<li><p>A source location in an external repository appears as text when its URL or revision is unavailable.</p></li>
 <li><p>If a referenced need ID does not exist, a build warning will be raised.</p></li>
 </ul>
 </section>
@@ -825,7 +825,7 @@ All link URLs are decided in one function, <code class="docutils literal notrans
 <section id="general">
 <h3>General<a class="headerlink" href="#general" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>In combo builds, known_good_json is required.</p></li>
+<li><p>External test links in combo builds need <code class="docutils literal notranslate"><span class="pre">known_good.json</span></code> for their repository URLs.</p></li>
 <li><p>inefficiencies in creating the links</p></li>
 <li><p>Not compatible with <strong>Esbonio</strong></p></li>
 <li><p>Live preview: Bazel regenerates the sourcelinks JSON when the preview starts, but unchanged pages can still show old links if Sphinx reuses its previous build.
@@ -976,7 +976,7 @@ Clean <code class="docutils literal notranslate"><span class="pre">_build</span>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#early-combined-links">Early-Combined Links</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combined-json-example">Combined JSON Example</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#final-layout-reposourcelink">Final layout: RepoSourceLink</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#repository-grouped-diagnostic-output">Repository-grouped diagnostic output</a></li>
 </ul>
 </li>
 </ul>
