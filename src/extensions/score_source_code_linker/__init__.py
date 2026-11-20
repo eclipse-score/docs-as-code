@@ -422,21 +422,22 @@ def _apply_links_to_need(
 def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     """
     Group the code & test links and write them into the Needs during
-    ``env-updated``. Recomputed on every build from the inputs, so nothing
-    stale is reused (also not in live preview).
+    ``env-updated``. Recomputed on every build from the sourcelinks JSON and
+    score_xml_parser_cache.json, so the links are as current as these two files.
     """
     code_links, test_links = load_link_inputs(
         app.config.score_sourcelinks_json, app.outdir
     )
     links_by_need = group_by_need(code_links, test_links)
     links_by_repo = group_needs_by_repo(links_by_need)
-    # Debug output only, never read back by the build.
-    store_source_code_links_combined_json(
-        app.outdir / "score_scl_grouped_cache.json", links_by_need
-    )
-    store_repo_source_links_json(
-        app.outdir / "score_repo_grouped_scl_cache.json", links_by_repo
-    )
+    # Debug output only (-vv), never read back by the build.
+    if app.verbosity >= 2:
+        store_source_code_links_combined_json(
+            app.outdir / "score_scl_grouped_cache.json", links_by_need
+        )
+        store_repo_source_links_json(
+            app.outdir / "score_repo_grouped_scl_cache.json", links_by_repo
+        )
     plain_links = bool(
         getattr(app.config, "score_source_code_linker_plain_links", False)
     )

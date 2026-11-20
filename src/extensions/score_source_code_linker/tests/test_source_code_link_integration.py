@@ -229,6 +229,8 @@ def sphinx_app_setup(
             outdir=sphinx_base_dir / "out",
             buildername="html",
             warningiserror=True,
+            # Writes the debug dumps (score_*grouped*_cache.json) read below
+            verbosity=2,
             # Source links are generated before Sphinx starts; the docs CLI
             # passes the resolved path via ``--define``, matching the Bazel
             # build contract used by the extension in production.

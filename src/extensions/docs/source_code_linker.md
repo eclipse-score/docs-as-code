@@ -231,8 +231,9 @@ and group all needs according to the appropriate repository.
 Grouping by need is `group_by_need` in `need_source_links.py`, grouping by repository is
 `group_needs_by_repo` in `repo_source_links.py`. Both are called from `inject_links_into_needs`.
 
-The grouping runs in memory on every build. `score_scl_grouped_cache.json` and
-`score_repo_grouped_scl_cache.json` in `_build` are written for debugging only; the build never reads them back.
+The grouping runs in memory on every build, from the sourcelinks JSON and `score_xml_parser_cache.json`.
+With Sphinx debug verbosity (`-vv`), `score_scl_grouped_cache.json` and `score_repo_grouped_scl_cache.json`
+are also written to `_build` for debugging; the build never reads them back.
 
 ### Combined JSON Example
 
@@ -336,6 +337,8 @@ During the Sphinx build process, the extension applies the computed links to nee
 - In combo builds, known_good_json is required.
 - inefficiencies in creating the links
 - Not compatible with **Esbonio**
+- Live preview: the sourcelinks JSON is built by Bazel at start, so changed code tags show after a restart.
+  The test XML cache is reused even across restarts, so new test results show only after `_build` is cleaned.
 
 ### Codelinks
 
