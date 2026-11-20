@@ -19,7 +19,6 @@ from typing import Any, TypeGuard
 
 from src.helper_lib import Environment
 from src.helper_lib.repo_info import (
-    DefaultRepoInfo,
     RepoInfo,
     flatten_repo_field,
     split_repo_fields,
@@ -40,7 +39,7 @@ class NeedLink:
     tag: str
     need: str
     full_line: str
-    repo: RepoInfo = field(default_factory=DefaultRepoInfo)
+    repo: RepoInfo = field(default_factory=lambda: RepoInfo(name="", hash="", url=""))
 
     # 'Dictionary conversion' in the on-disk form: repo flattened into
     # repo_name, hash, url
@@ -56,9 +55,9 @@ class NeedLink:
 
     @classmethod
     def from_flat_dict(cls, d: dict[str, Any]) -> "NeedLink":
-        """Build a NeedLink from its on-disk form. Missing repo keys => default repo."""
+        """Build a NeedLink from its on-disk form, leaving missing metadata empty."""
         rest, repo = split_repo_fields(d)
-        return cls(**rest, repo=repo if repo is not None else DefaultRepoInfo())
+        return cls(**rest) if repo is None else cls(**rest, repo=repo)
 
 
 def DefaultNeedLink() -> NeedLink:
@@ -72,7 +71,6 @@ def DefaultNeedLink() -> NeedLink:
         tag="",
         need="",
         full_line="",
-        # repo defaults to DefaultRepoInfo()
     )
 
 
@@ -171,8 +169,14 @@ def load_source_code_links_with_metadata_json(file: Path) -> list[NeedLink]:
             "In local build context all items after"
             f"metadata must decode to NeedLink objects. File: {file}"
         )
-    for d in links:
-        d.repo = metadata
+    for link in links:
+        name = link.repo.name or metadata.name
+        if name == metadata.name:
+            link.repo = RepoInfo(
+                name=name,
+                hash=link.repo.hash or metadata.hash,
+                url=link.repo.url or metadata.url,
+            )
     return links
 
 

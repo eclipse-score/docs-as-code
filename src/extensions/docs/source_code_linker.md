@@ -48,6 +48,7 @@ attribute. A *per bundle JSON cache* is then generated and saved; Bazel
 reuses it until its source inputs change.
 The script `scripts_bazel/generate_sourcelinks_cli.py` gathers source code links into
 one JSON cache per bundle. Each link carries the repository of its source file.
+The header's repository name is empty when links come from multiple repositories.
 
 Example of requirement tags:
 
@@ -272,9 +273,9 @@ are also written to `_build` for debugging; the build never reads them back.
 ]
 ```
 
-#### Final layout: RepoSourceLink
+#### Repository-grouped diagnostic output
 
-Instead of repeating `repo_name/hash/url` for every single link entry, the final output groups links **by repository**:
+The `score_repo_grouped_scl_cache.json` diagnostic groups links by repository metadata:
 
 - Repository metadata appears **once per repository**
 - All links belonging to that repository are stored beneath it
@@ -307,11 +308,6 @@ This somewhat looks like this:
       },
     ],
 ```
-Due to not saving the `repo_name, url and hash` in each link but grouping them we can eleminate a lot of unnecessary
-length to the JSON document here.
-
-This is the structure the extension uses to attach links to needs (via the `source_code_link` attribute), while keeping the resulting data compact and normalized.
-
 :::hint
 If the repo is the local one, the hash and url come from the local git checkout (see [repo metadata rules](#repo-metadata-rules)).
 All link URLs are decided in one function, `get_github_link` in `src/helper_lib/repo_info.py`.
@@ -333,7 +329,7 @@ During the Sphinx build process, the extension applies the computed links to nee
 
 ### General
 
-- In combo builds, known_good_json is required.
+- External test links in combo builds need `known_good.json` for their repository URLs.
 - inefficiencies in creating the links
 - Not compatible with **Esbonio**
 - Live preview: Bazel regenerates the sourcelinks JSON when the preview starts, but unchanged pages can still show old links if Sphinx reuses its previous build.

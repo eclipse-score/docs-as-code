@@ -213,7 +213,7 @@ def test_generate_sourcelinks_cli_records_module_per_file(
 
     assert scripts_bazel.generate_sourcelinks_cli.main() == 0
     metadata, *links = json.loads(output_file.read_text())
-    assert metadata["repo_name"] == LOCAL_REPO
+    assert metadata["repo_name"] == ""
     assert [(link["repo_name"], link["file"], link["need"]) for link in links] == [
         (LOCAL_REPO, "src/impl.py", "tool_req__docs_arch_types"),
         ("score_baselibs", "src/impl.py", "tool_req__docs_arch_types"),

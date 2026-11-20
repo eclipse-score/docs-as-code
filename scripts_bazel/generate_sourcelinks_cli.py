@@ -53,15 +53,9 @@ def main():
     args = parser.parse_args()
 
     all_need_references: list[NeedLink] = []
-
-    metadata_repo_name = LOCAL_REPO
-    metadata_set = False
     for file_path in args.files:
         # Combo build: `external/<repo>+/<path>` => (<repo>, <path>)
         repo_name, clean_path = split_external_path(file_path)
-        if "known_good.json" not in str(file_path) and not metadata_set:
-            metadata_repo_name = repo_name
-            metadata_set = True
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
         references = extract_references_from_file(
@@ -71,9 +65,13 @@ def main():
             repo=RepoInfo(name=repo_name, hash="", url=""),
         )
         all_need_references.extend(references)
+
+    # A mixed cache has no shared repository metadata.
+    repositories = {reference.repo.name for reference in all_need_references}
+    repo_name = next(iter(repositories), LOCAL_REPO) if len(repositories) <= 1 else ""
     store_source_code_links_with_metadata_json(
         file=args.output,
-        metadata=RepoInfo(name=metadata_repo_name, hash="", url=""),
+        metadata=RepoInfo(name=repo_name, hash="", url=""),
         needlist=all_need_references,
     )
     logger.info(

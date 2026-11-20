@@ -23,6 +23,7 @@ from pathlib import Path
 import pytest
 from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
+from sphinx_needs.data import SphinxNeedsData
 
 from src.extensions.score_source_code_linker.repo_source_links import (
     RepoSourceLinks_JSON_Decoder,
@@ -321,6 +322,74 @@ def test_repo_grouped_cache_generated(
             assert hasattr(item, "needs")
             assert isinstance(item.repo, RepoInfo)
 
+    finally:
+        app.cleanup()
+
+
+def test_source_links_to_same_need_render_with_their_own_repository(
+    sphinx_app_setup: Callable[[], SphinxTestApp],
+    sphinx_base_dir: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
+    local_links: list[dict[str, str | int]] = json.loads(
+        (sphinx_base_dir / "source_links.json").read_text()
+    )
+    external_link: dict[str, str | int] = {
+        **local_links[0],
+        "repo_name": "score_baselibs",
+        "hash": "external-revision",
+        "url": "https://github.com/eclipse-score/baselibs",
+    }
+    unresolved_link: dict[str, str | int] = {
+        **external_link,
+        "repo_name": "vendor",
+        "file": "src/vendor_api.h",
+        "line": 42,
+        "hash": "",
+        "url": "",
+    }
+    mixed_cache = tmp_path / "mixed_sourcelinks.json"
+    mixed_cache.write_text(
+        json.dumps(
+            [
+                {"repo_name": "", "hash": "", "url": ""},
+                external_link,
+                *local_links,
+                unresolved_link,
+            ]
+        )
+    )
+    local_revision = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=sphinx_base_dir, text=True
+    ).strip()
+
+    app = sphinx_app_setup()
+    app.config.score_sourcelinks_json = str(mixed_cache)
+    try:
+        app.build()
+        need = SphinxNeedsData(app.env).get_needs_view()["MOD_REQ_1"]
+        links = need["source_code_link"].split(", ")
+        assert links == [
+            "https://github.com/eclipse-score/baselibs/blob/"
+            "external-revision/src/repo_a_impl.py#L3<>src/repo_a_impl.py:3",
+            "https://github.com/testorg/modulerepo/blob/"
+            f"{local_revision}/src/repo_a_impl.py#L3<>src/repo_a_impl.py:3",
+            "https://github.com/testorg/modulerepo/blob/"
+            f"{local_revision}/src/repo_b_impl.py#L3<>src/repo_b_impl.py:3",
+            "src/vendor_api.h:42",
+        ]
+        html = (app.outdir / "index.html").read_text(encoding="utf-8")
+        for link in links[:-1]:
+            url, _ = link.split("<>")
+            assert f'href="{url}"' in html
+        assert "src/vendor_api.h:42" in html
+        assert "/src/vendor_api.h#L42" not in html
+        assert need["testlink"] == (
+            "https://github.com/testorg/modulerepo/blob/"
+            f"{local_revision}/src/test_repo_a.py#L10<>test_repo_a<>passed"
+        )
     finally:
         app.cleanup()
 
