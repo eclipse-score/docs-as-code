@@ -111,9 +111,10 @@ def _file(result: dict[str, Any]) -> FileIdentity | None:
         .get("uri", "")
     )
     uri = unquote(uri.removeprefix("file://"))
-    if uri.startswith("/") and "/external/" in uri:
+    parts = uri.split("/")
+    if "external" in parts and (uri.startswith("/") or parts[0] == "execroot"):
         # Analysed from a Bazel workspace: external sources live below the output base.
-        uri = "external/" + uri.split("/external/", 1)[1]
+        uri = "/".join(parts[parts.index("external") :])
     try:
         return file_identity(uri)
     except CoverageError:
