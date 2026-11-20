@@ -11,9 +11,15 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
 load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])
+
+bool_flag(
+    name = "dependency_warnings_as_error",
+    build_setting_default = True,
+)
 
 exports_files([
     "pyproject.toml",

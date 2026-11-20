@@ -178,6 +178,13 @@ def _resolve_runfiles_relative_path(config: DocsCliConfig, value: Path) -> Path:
     return value.absolute()
 
 
+def _warnings_as_errors(config: DocsCliConfig) -> bool:
+    """Interactive builds stay strict; inventory actions receive their policy."""
+    if not config.is_bazel_build:
+        return True
+    return env.get("SPHINX_DEPENDENCY_WARNINGS_AS_ERRORS", "true") != "false"
+
+
 def sphinx_arguments(
     config: DocsCliConfig,
 ) -> list[str]:
@@ -191,7 +198,6 @@ def sphinx_arguments(
     base_arguments = [
         str(config.source_dir),
         str(output_dir),
-        "-W",  # treat warning as errors
         "--keep-going",  # do not abort after one error
         "-T",  # show details in case of errors in extensions
         "--jobs",
@@ -206,6 +212,9 @@ def sphinx_arguments(
         # inputs without reading the process environment itself.
         f"--define=runfiles_dir={runfiles_dir.absolute() if runfiles_dir else ''}",
     ]
+
+    if _warnings_as_errors(config):
+        base_arguments.append("-W")
 
     if config.is_bazel_build:
         # The Bazel action declares ``output_dir`` as its output tree, and that
