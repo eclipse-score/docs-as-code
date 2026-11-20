@@ -480,17 +480,3 @@ def apply_links_to_needs(
                 metadata=module_grouped_needs.repo,
                 plain_links=plain_links,
             )
-
-
-#          ╭──────────────────────────────────────╮
-#          │ WARNING: This somehow screws up the  │
-#          │       integration test? What??       │
-#          │        Commented out for now         │
-#          ╰──────────────────────────────────────╯
-
-# source_code_link of affected needs was overwritten.
-# Make sure it's empty in all others!
-# for need in needs.values():
-#     if need["id"] not in source_code_links_by_need:
-#         need["source_code_link"] = ""  # type: ignore
-#         need["testlink"] = ""  # type: ignore
