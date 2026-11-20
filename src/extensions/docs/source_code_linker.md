@@ -41,14 +41,13 @@ This separation makes combo builds faster and more deterministic, because the ex
 The Bazel parts are responsible for producing the **intermediate caches** that the source_code_linker extension later will consumes.
 
 (step-1-per-repository-cache-generation)=
-#### Step 1: Per-repository cache generation
+#### Step 1: Per-bundle cache generation
 
 Each `docs_bundle` scans the source files selected by its `code_targets`
 attribute. A *per bundle JSON cache* is then generated and saved; Bazel
 reuses it until its source inputs change.
-This script `scripts_bazel/generate_sourcelinks_cli.py` finds all codelinks per file, and gathers them into
-one JSON cache per repository.
-It also adds metadata to each needlink that is needed in further steps.
+The script `scripts_bazel/generate_sourcelinks_cli.py` gathers source code links into
+one JSON cache per bundle. Each link carries the repository of its source file.
 
 Example of requirement tags:
 
@@ -67,10 +66,11 @@ Example of requirement tags:
     - hash (at this stage always blank)
     - url (at this stage always blank)
 
-##### Example JSON cache (per repository)
+##### Example JSON cache (single repository)
 
 ```{code-block} json
 [
+  {"repo_name": "local_repo", "hash": "", "url": ""},
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
     "line": 17,
@@ -354,7 +354,7 @@ During the Sphinx build process, the extension applies the computed links to nee
 
 ## High-level Data Flow Summary
 
-1. **Bazel Script #1**: scan + parse → write **per-repo cache** (includes repo metadata if known)
+1. **Bazel Script #1**: scan source files → write a **per-bundle cache** with the repository of each link
 2. **Bazel Script #2**: merge caches → write **single merged JSON**
 3. **Sphinx Extension**: parse test XMLs → add testcase needs → read merged JSON and test links → group links by need and render each using its repository metadata
 

@@ -187,6 +187,44 @@ def some_function():
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
+def test_generate_sourcelinks_cli_records_module_per_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Files with the same repository-relative path keep their own module."""
+    monkeypatch.chdir(tmp_path)
+    local_file = Path("src/impl.py")
+    external_file = Path("external/score_baselibs+/src/impl.py")
+    for source in (local_file, external_file):
+        source.parent.mkdir(parents=True)
+        source.write_text("#" + " req-Id: tool_req__docs_arch_types\n")
+
+    output_file = tmp_path / "output.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "generate_sourcelinks_cli.py",
+            "--output",
+            str(output_file),
+            str(local_file),
+            str(external_file),
+        ],
+    )
+
+    assert scripts_bazel.generate_sourcelinks_cli.main() == 0
+    metadata, *links = json.loads(output_file.read_text())
+    assert metadata["repo_name"] == LOCAL_REPO
+    assert [(link["repo_name"], link["file"], link["need"]) for link in links] == [
+        (LOCAL_REPO, "src/impl.py", "tool_req__docs_arch_types"),
+        ("score_baselibs", "src/impl.py", "tool_req__docs_arch_types"),
+    ]
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generate_sourcelinks_cli_file_not_exists(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
