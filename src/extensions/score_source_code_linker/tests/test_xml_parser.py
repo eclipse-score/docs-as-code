@@ -348,55 +348,18 @@ def test_read_test_xml_file(
     assert missing_props4 == ["tc_with_missing_props"]
 
 
-@add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
-)
-def test_short_hash_consistency_and_format():
-    """Ensure shorthash has the intended format"""
-    h1 = xml_parser.short_hash("foo")
-    h2 = xml_parser.short_hash("foo")
-    assert h1 == h2
-    assert h1.isalpha()
-    assert len(h1) == 5
-
-
-def test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata(
-    monkeypatch: pytest.MonkeyPatch,
+def test_parse_test_xml_files_without_sphinx(
+    tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
 ):
-    calls: list[dict[str, object]] = []
+    """All test.xml files are parsed into testcases with plain inputs, no Sphinx app."""
+    _, dir1, dir2, dir3, dir4 = tmp_xml_dirs()
+    xml_paths = [d / "test.xml" for d in (dir1, dir2, dir3, dir4)]
 
-    def _fake_add_external_need(**kwargs: object) -> object:
-        calls.append(kwargs)
-        return object()
+    testcases = xml_parser.parse_test_xml_files(xml_paths, known_good=None)
 
-    monkeypatch.setattr(xml_parser, "add_external_need", _fake_add_external_need)
-
-    testcase = DataOfTestCase(
-        name="tc_missing_meta",
-        file="tests/foo_test.py",
-        line="10",
-        result="passed",
-        result_text="",
-        FullyVerifies="REQ_1",
-        PartiallyVerifies="",
-        TestType="requirements-based",
-        DerivationTechnique="analysis",
-        repo=None,
-    )
-
-    app_stub: Any = object()
-    xml_parser.construct_and_add_need(
-        app=app_stub,
-        tn=testcase,
-    )
-
-    # Must not crash and should create an external need using fallback metadata.
-    assert len(calls) == 1
-    assert calls[0]["external_url"] == (
-        "https://github.com/placeholder/placeholder/blob/unknown/tests/foo_test.py#L10"
-    )
+    assert len(testcases) == 4
+    assert all(isinstance(tc, DataOfTestCase) for tc in testcases)
+    assert testcases[0].result == "failed"
 
 
 #           ╭───────────────────────────────────────────────────────────────╮

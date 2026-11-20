@@ -12,16 +12,12 @@
 # *******************************************************************************
 """
 This file deals with finding and parsing of test.xml files that get created during
-`bazel test`. It also generates external needs out of the parsed testcases to enable
-linking to requirements &gathering statistics
+`bazel test`. It does not need Sphinx: turning the testcases into needs happens in
+testcase_needs.py
 """
 
 # req-Id: tool_req__docs_test_link_testcase
 
-import base64
-import contextlib
-import hashlib
-import itertools
 import json
 import os
 import xml.etree.ElementTree as ET
@@ -29,21 +25,14 @@ from pathlib import Path
 from typing import Any, cast
 from xml.etree.ElementTree import Element
 
-from sphinx.application import Sphinx
-from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
-from sphinx_needs.api import add_external_need
 
 from src.extensions.score_source_code_linker.testlink import (
     DataOfTestCase,
-    store_data_of_test_case_json,
-    store_test_xml_parsed_json,
 )
 from src.helper_lib import find_ws_root
 from src.helper_lib.repo_info import (
     RepoInfo,
-    get_github_link,
-    load_known_good,
     parse_repo_name_from_path,
     resolve_repo,
 )
@@ -343,65 +332,18 @@ def find_test_folder(base_path: Path | None = None) -> Path | None:
     return None
 
 
-def run_xml_parser(app: Sphinx, env: BuildEnvironment):
-    """
-    This is the 'main' function for parsing test.xml's and
-    building testcase needs.
-    It gets called from the source_code_linker __init__
-    """
-    testlogs_dir = find_test_folder()
-    if testlogs_dir is None:
-        return
-    allowed_dirs = parse_testcase_source_dirs(
-        getattr(app.config, "testcase_source_dirs", "")
-    )
-    if allowed_dirs:
-        logger.info(
-            f"Scoping testcase needs to source dirs: {allowed_dirs}",
-            type="score_source_code_linker",
-        )
-    xml_file_paths = find_xml_files(testlogs_dir)
-    test_case_needs = build_test_needs_from_files(
-        app, env, xml_file_paths, allowed_dirs
-    )
-    # Saving the test case needs for cache
-    logger.info(
-        f"Saving {len(test_case_needs)} test case needs to the cache `score_testcaseneeds_cache.json` in _build/."
-    )
-    store_data_of_test_case_json(
-        app.outdir / "score_testcaseneeds_cache.json", test_case_needs
-    )
-    output = list(
-        itertools.chain.from_iterable(tcn.get_test_links() for tcn in test_case_needs)
-    )
-    # This is not ideal, due to duplication, but I can't think of a better solution
-    # right now
-    logger.info(
-        f"Saving {len(output)} parsed testcases to the cache `score_xml_parser_cache.json` in _build/."
-    )
-    store_test_xml_parsed_json(app.outdir / "score_xml_parser_cache.json", output)
-
-
-def build_test_needs_from_files(
-    app: Sphinx,
-    enw_: BuildEnvironment,
+def parse_test_xml_files(
     xml_paths: list[Path],
+    known_good: dict[str, Any] | None,
     allowed_dirs: list[str] | None = None,
 ) -> list[DataOfTestCase]:
     """
-    Reading in all test.xml files, and building 'testcase' external need objects out of
-    them.
+    Parse all test.xml files into testcases. No Sphinx needed: adding them
+    as needs is done by testcase_needs.build_testcase_needs.
 
     When `allowed_dirs` is non-empty, only testcases whose source file lives under one
-    of those repo-relative directories are turned into needs (see read_test_xml_file).
-
-    Returns:
-        - list[TestCaseNeed]
+    of those repo-relative directories are returned (see read_test_xml_file).
     """
-    known_good_json_str = app.config.KNOWN_GOOD_JSON.strip()
-    known_good = (
-        load_known_good(Path(known_good_json_str)) if known_good_json_str else None
-    )
     tcns: list[DataOfTestCase] = []
     for file in xml_paths:
         # Last value can be ignored. The 'is_valid' function already prints infos
@@ -415,59 +357,4 @@ def build_test_needs_from_files(
         if missing_prop_tests:
             logger.info(f"Tests missing some properties: {missing_prop_tests}")
         tcns.extend(test_cases)
-        for tc in test_cases:
-            construct_and_add_need(app, tc)
     return tcns
-
-
-def short_hash(input_str: str, length: int = 5) -> str:
-    # Get a stable hash
-    sha256 = hashlib.sha256(input_str.encode()).digest()
-    # Encode to base32 (A-Z + 2-7), decode to str, remove padding
-    b32 = base64.b32encode(sha256).decode("utf-8").rstrip("=")
-    # Keep only alphabetic characters
-    letters_only = "".join(filter(str.isalpha, b32))
-    # Return the first `length` letters
-    return letters_only[:length].lower()
-
-
-def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
-    # We will now allow file to be empty in case of non fully fleshed out testcases
-    file = tn.file if tn.file is not None else "<placeholder_file>"
-    assert tn.name is not None
-    name = tn.name
-    if tn.repo is None:
-        # I would change this to debug for now, as it seems too spammy in 'info'
-        logger.debug(
-            "Creating testcase need with fallback URL due to incomplete repo metadata: "
-            f"name={name}, file={file}, repo={tn.repo}",
-            type="score_source_code_linker",
-        )
-    external_url = get_github_link(tn.repo, tn.file, tn.line)
-    # Unlike code and test links, testcase needs have no fallback when git has
-    # no remote: the build fails. Kept as is in phase C, see E3.
-    assert external_url is not None, (
-        "Remote repository is not defined. Make sure you have a remote set. "
-        + "Check this via 'git remote -v'"
-    )
-    # IDK if this is ideal or not
-    with contextlib.suppress(BaseException):
-        _ = add_external_need(
-            app=app,
-            need_type="testcase",
-            title=name,
-            tags="TEST",
-            id=f"testcase__{name}_{short_hash(file + name)}",
-            name=name,
-            external_url=external_url,
-            fully_verifies=tn.FullyVerifies if tn.FullyVerifies is not None else "",
-            partially_verifies=tn.PartiallyVerifies
-            if tn.PartiallyVerifies is not None
-            else "",
-            test_type=tn.TestType,
-            derivation_technique=tn.DerivationTechnique,
-            file=file,
-            line=tn.line,
-            result=tn.result,  # We just want the 'failed' or whatever
-            result_text=tn.result_text if tn.result_text else "",
-        )

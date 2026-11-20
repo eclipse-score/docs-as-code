@@ -380,7 +380,8 @@ score_source_code_linker/
 ├── repo_source_links.py         # Data model for Repo combined links (Final output JSON)
 ├── needlinks.py                 # CodeLink dataclass & JSON encoder/decoder
 ├── testlink.py                  # DataForTestLink definition & logic
-├── xml_parser.py                # Parses XML files into test case data
+├── xml_parser.py                # Parses XML files into test case data (no Sphinx)
+├── testcase_needs.py            # Turns parsed test cases into testcase needs
 ├── testcase_annotations.py      # Adds result annotations to GitHub testcase links
 ├── tests/                       # Testsuite, containing unit & integration tests
 │   └── ...

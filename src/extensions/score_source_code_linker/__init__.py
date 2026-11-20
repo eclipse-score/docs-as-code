@@ -42,14 +42,14 @@ from src.extensions.score_source_code_linker.repo_source_links import (
 from src.extensions.score_source_code_linker.testcase_annotations import (
     annotate_testcase_results,
 )
+from src.extensions.score_source_code_linker.testcase_needs import (
+    build_testcase_needs,
+    construct_and_add_need,
+)
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     load_data_of_test_case_json,
     load_test_xml_parsed_json,
-)
-from src.extensions.score_source_code_linker.xml_parser import (
-    construct_and_add_need,
-    run_xml_parser,
 )
 from src.helper_lib import find_ws_root
 from src.helper_lib.needlinks import (
@@ -208,7 +208,7 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
             LOGGER.info(f"{'=' * 80}", type="score_source_code_linker")
             return
 
-        run_xml_parser(app, env)
+        build_testcase_needs(app, env)
         return
     tcn_cache = get_cache_filename(app.outdir, "score_testcaseneeds_cache.json")
     assert tcn_cache.exists(), (
