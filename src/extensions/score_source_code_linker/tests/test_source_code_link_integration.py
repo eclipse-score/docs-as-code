@@ -232,6 +232,7 @@ def sphinx_app_setup(
             # passes the resolved path via ``--define``, matching the Bazel
             # build contract used by the extension in production.
             confoverrides={
+                "bazel_module_name": "score_docs_as_code",
                 "score_sourcelinks_json": str(
                     sphinx_base_dir / ".expected_codelink.json"
                 ),
@@ -317,7 +318,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
-                repo_name="local_repo",
+                repo_name="score_docs_as_code",
                 url="",
                 hash="",
             ),
@@ -327,7 +328,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
-                repo_name="local_repo",
+                repo_name="score_docs_as_code",
                 url="",
                 hash="",
             ),
@@ -339,7 +340,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_2",
                 full_line="#" + " req-Id: TREQ_ID_2",
-                repo_name="local_repo",
+                repo_name="score_docs_as_code",
                 url="",
                 hash="",
             )
@@ -360,7 +361,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="fully",
                 result="passed",
                 result_text="",
-                repo_name="local_repo",
+                repo_name="score_docs_as_code",
                 url="",
                 hash="",
             ),
@@ -374,7 +375,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name="local_repo",
+                repo_name="score_docs_as_code",
                 url="",
                 hash="",
             ),
@@ -386,7 +387,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name="local_repo",
+                repo_name="score_docs_as_code",
                 url="",
                 hash="",
             ),
@@ -400,7 +401,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name="local_repo",
+                repo_name="score_docs_as_code",
                 url="",
                 hash="",
             ),
@@ -412,7 +413,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                repo_name="local_repo",
+                repo_name="score_docs_as_code",
                 url="",
                 hash="",
             ),
@@ -439,7 +440,7 @@ def example_source_link_text_non_existent(sphinx_base_dir: Path):
 
 def make_source_link(needlinks: list[NeedLink]):
     metadata = RepoInfo(
-        name="local_repo",
+        name="score_docs_as_code",
         url="",
         hash="",
     )
@@ -450,7 +451,7 @@ def make_source_link(needlinks: list[NeedLink]):
 
 def make_test_link(testlinks: list[DataForTestLink]):
     metadata = RepoInfo(
-        name="local_repo",
+        name="score_docs_as_code",
         url="",
         hash="",
     )

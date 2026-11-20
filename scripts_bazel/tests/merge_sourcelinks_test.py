@@ -51,7 +51,7 @@ def create_local_json_files(tmp_path: Path) -> tuple[Path, Path, Path]:
     file1.write_text(
         json.dumps(
             [
-                {"repo_name": "local_repo", "hash": "", "url": ""},
+                {"repo_name": "score_docs_as_code", "hash": "", "url": ""},
                 {
                     "file": "test1.py",
                     "line": 10,
@@ -67,7 +67,7 @@ def create_local_json_files(tmp_path: Path) -> tuple[Path, Path, Path]:
     file2.write_text(
         json.dumps(
             [
-                {"repo_name": "local_repo", "hash": "", "url": ""},
+                {"repo_name": "score_docs_as_code", "hash": "", "url": ""},
                 {
                     "file": "test2.py",
                     "line": 20,
@@ -108,7 +108,7 @@ def create_external_repo_json_files(tmp_path: Path) -> tuple[Path, Path, Path]:
     file2.write_text(
         json.dumps(
             [
-                {"repo_name": "local_repo", "hash": "", "url": ""},
+                {"repo_name": "score_docs_as_code", "hash": "", "url": ""},
                 {
                     "file": "test2.py",
                     "line": 20,
@@ -137,6 +137,8 @@ def test_merge_sourcelinks_basic(
     test_args: list[Path | str] = [
         _MY_PATH.parent
         / "merge_sourcelinks.py",  # sys.argv[0] is always the script name
+        "--module-name",
+        "score_docs_as_code",
         "--output",
         str(output_file),
         str(file1),
@@ -182,6 +184,8 @@ def test_merge_sourcelinks_deduplicates_identical_references(
         "argv",
         [
             str(_MY_PATH.parent / "merge_sourcelinks.py"),
+            "--module-name",
+            "score_docs_as_code",
             "--output",
             str(output_file),
             str(file1),
@@ -197,7 +201,7 @@ def test_merge_sourcelinks_deduplicates_identical_references(
             "tag": "# req-Id:",
             "need": "tool_req__docs_arch_types",
             "full_line": "# req-Id: tool_req__docs_arch_types",
-            "repo_name": "local_repo",
+            "repo_name": "score_docs_as_code",
             "hash": "",
             "url": "",
         }
@@ -215,7 +219,7 @@ def test_merge_sourcelinks_with_one_empty_file(
     """Test merge sourcelinks with one empty file."""
     file1 = tmp_path / "links1.json"
     file1_text: list[dict[str, str | int]] = [
-        {"repo_name": "local_repo", "hash": "", "url": ""},
+        {"repo_name": "score_docs_as_code", "hash": "", "url": ""},
         {
             "file": "test1.py",
             "line": 10,
@@ -231,6 +235,8 @@ def test_merge_sourcelinks_with_one_empty_file(
     test_args: list[Path | str] = [
         _MY_PATH.parent
         / "merge_sourcelinks.py",  # sys.argv[0] is always the script name
+        "--module-name",
+        "score_docs_as_code",
         "--output",
         str(output_file),
         str(file1),
@@ -253,7 +259,7 @@ def test_merge_sourcelinks_with_one_empty_file(
             "tag": "# req-Id:",
             "need": "tool_req__docs_arch_types",
             "full_line": "# req-Id: tool_req__docs_arch_types",
-            "repo_name": "local_repo",  # comes from first dict in input
+            "repo_name": "score_docs_as_code",  # comes from first dict in input
             "hash": "",  # comes from first dict in input
             "url": "",  # comes from first dict in input
         }
@@ -291,6 +297,8 @@ def test_merge_sourcelinks_wrong_schema(
     test_args: list[Path | str] = [
         _MY_PATH.parent
         / "merge_sourcelinks.py",  # sys.argv[0] is always the script name
+        "--module-name",
+        "score_docs_as_code",
         "--output",
         str(output_file),
         str(file1),
@@ -346,6 +354,8 @@ def test_merge_sourcelinks_with_known_good(
     test_args: list[Path | str] = [
         _MY_PATH.parent
         / "merge_sourcelinks.py",  # sys.argv[0] is always the script name
+        "--module-name",
+        "score_docs_as_code",
         "--output",
         str(output_file),
         "--known_good",
@@ -368,7 +378,7 @@ def test_merge_sourcelinks_with_known_good(
         "tag": "# req-Id:",
         "need": "gd_req__req_validity",
         "full_line": "# req-Id: gd_req__req_validity",
-        "repo_name": "local_repo",  # comes from first dict in input
+        "repo_name": "score_docs_as_code",  # comes from first dict in input
         "hash": "",  # comes from first dict in input
         "url": "",  # comes from first dict in input
     }
@@ -399,6 +409,8 @@ def test_merge_sourcelinks_without_known_good_preserves_external_metadata(
     file1, file2, output_file = create_external_repo_json_files
     test_args: list[Path | str] = [
         _MY_PATH.parent / "merge_sourcelinks.py",
+        "--module-name",
+        "score_docs_as_code",
         "--output",
         str(output_file),
         str(file1),

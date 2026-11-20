@@ -42,7 +42,7 @@ class DataForTestLink:
     verify_type: str
     result: str
     result_text: str = ""
-    repo_name: str = "local_repo"
+    repo_name: str = ""
     hash: str = ""
     url: str = ""
 
@@ -139,7 +139,7 @@ class DataOfTestCase:
     file: str | None = None
     line: str | None = None
     result: str | None = None  # passed | falied | skipped | disabled
-    repo_name: str | None = None
+    source_module: str | None = None
     hash: str | None = None
     url: str | None = None
     # Intentionally not snakecase to make dict parsing simple
@@ -157,7 +157,7 @@ class DataOfTestCase:
             file=data.get("file"),
             line=data.get("line"),
             result=data.get("result"),
-            repo_name=data.get("repo_name"),
+            source_module=data.get("source_module"),
             hash=data.get("hash"),
             url=data.get("url"),
             TestType=data.get("TestType"),
@@ -221,12 +221,11 @@ class DataOfTestCase:
         #         and self.TestType is not None
         #         and self.DerivationTechnique is not None
         # ):
-        # Hash & URL are explictily allowed to be empty but not none.
-        # repo_name has to be always filled or something went wrong
+        # Hash and URL may be empty when a link resolves through the checkout.
         fields = [
             x
             for x in self.__dataclass_fields__
-            if x not in ["PartiallyVerifies", "FullyVerifies"]
+            if x not in {"PartiallyVerifies", "FullyVerifies"}
         ]
         for field in fields:
             if getattr(self, field) is None:
@@ -264,7 +263,7 @@ class DataOfTestCase:
             assert self.file is not None
             assert self.line is not None
             assert self.result is not None
-            assert self.repo_name is not None
+            assert self.source_module is not None
             assert self.hash is not None
             assert self.url is not None
             assert self.result_text is not None
@@ -280,7 +279,7 @@ class DataOfTestCase:
                     verify_type=verify_type,
                     result=self.result,
                     result_text=self.result_text,
-                    repo_name=self.repo_name,
+                    repo_name=self.source_module,
                     hash=self.hash,
                     url=self.url,
                 )
@@ -311,18 +310,9 @@ def DataOfTestCase_JSON_Decoder(d: dict[str, Any]) -> DataOfTestCase | dict[str,
         "result_text",
         "PartiallyVerifies",
         "FullyVerifies",
+        "source_module",
     } <= d.keys():
-        return DataOfTestCase(
-            name=d["name"],
-            file=d["file"],
-            line=d["line"],
-            result=d["result"],
-            TestType=d["TestType"],
-            DerivationTechnique=d["DerivationTechnique"],
-            result_text=d["result_text"],
-            PartiallyVerifies=d["PartiallyVerifies"],
-            FullyVerifies=d["FullyVerifies"],
-        )
+        return DataOfTestCase.from_dict(d)
     # It's something else, pass it on to other decoders
     return d
 

@@ -56,6 +56,7 @@ load(
     "@score_docs_as_code//:bzl/basics.bzl",
     "glob_doc_sources",
     "join_path",
+    "require_module_name",
 )
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
@@ -105,6 +106,7 @@ def _needs_sphinx_extra_opts(
             ("master_doc", master_doc),
             ("score_bundle_needs_export", score_bundle_needs_export),
             ("score_source_code_linker_plain_links", score_source_code_linker_plain_links),
+            ("bazel_module_name", native.module_name()),
         ]
         for option in _sphinx_define(name, value)
     ]
@@ -186,13 +188,6 @@ def _needs_sphinx_docs(
         visibility = visibility,
         tags = ["manual"],
     )
-
-def _module_name_without_prefix():
-    """Return the current Bazel module name without its first prefix."""
-    module_name = native.module_name()
-    if not module_name:
-        return ""
-    return module_name.split("_", 1)[-1]
 
 def _bundle_internal_target(name, target):
     """Return the conventional name for a target internal to a bundle."""
@@ -732,6 +727,11 @@ def docs(
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
+    # Test logs from this repository carry no external repository prefix, so
+    # their source module must come from the calling Bazel module.
+    module_name = require_module_name()
+    module_name_without_prefix = module_name.split("_", 1)[-1]
+
     # Needs inventories are imported only through ``external_needs``. Reject them
     # in ``data`` so a project cannot import the same Needs through two routes.
     inventories_in_data = [str(label) for label in data if _is_needs_inventory_target(label)]
@@ -761,7 +761,7 @@ def docs(
         interactive_config_options = sphinx_config_options(
             project = project,
             project_url = project_url,
-            required_in_id = _module_name_without_prefix(),
+            required_in_id = module_name_without_prefix,
         )
 
     # Publish the root project's structured configuration independently from
@@ -777,9 +777,9 @@ def docs(
     )
     root_docs_config = declare_docs_config_target(
         name = _bundle_internal_target("docs", "config"),
-        project = project or _module_name_without_prefix(),
+        project = project or module_name_without_prefix,
         project_url = project_url or "",
-        required_in_id = _module_name_without_prefix(),
+        required_in_id = module_name_without_prefix,
         metamodel = bundle_config_metamodel,
         visibility = [":" + config_visibility],
     )
@@ -862,6 +862,7 @@ def docs(
         "SOURCE_DIRECTORY": source_dir,
         "PACKAGE_DIR": native.package_name(),
         "TEST_SOURCES": str(test_sources),
+        "BAZEL_MODULE_NAME": module_name,
         "EXTERNAL_NEEDS_FILES": str(external_needs_labels),
         # `bazel run` starts from a runfiles tree, so this logical path is
         # resolved by score_mounts through ``RUNFILES_DIR``.

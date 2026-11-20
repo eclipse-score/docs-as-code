@@ -207,6 +207,9 @@ def sphinx_arguments(
         f"--define=runfiles_dir={runfiles_dir.absolute() if runfiles_dir else ''}",
     ]
 
+    if bazel_module_name := env.get("BAZEL_MODULE_NAME", ""):
+        base_arguments.append(f"--define=bazel_module_name={bazel_module_name}")
+
     if config.is_bazel_build:
         # The Bazel action declares ``output_dir`` as its output tree, and that
         # tree must contain only the Needs inventory consumed by downstream

@@ -28,7 +28,7 @@
 # its entries are consumed by the mounts manifest action. Keeping both consumers
 # on this provider ensures that source ownership and runtime placement agree.
 
-load("@score_docs_as_code//:bzl/basics.bzl", "join_path")
+load("@score_docs_as_code//:bzl/basics.bzl", "join_path", "require_module_name")
 
 # Internal data passed between bundle targets and eventually consumed by an
 # adapter such as the Sphinx mounts manifest. Users configure bundles through
@@ -842,6 +842,9 @@ def _merge_bundle_sourcelinks_impl(ctx):
     out = ctx.actions.declare_file(ctx.label.name + ".json")
     args = ctx.actions.args()
     args.add("--output", out.path)
+
+    # The build's own module does not have an entry in known_good.
+    args.add("--module-name", ctx.attr.module_name)
     if ctx.file.known_good:
         args.add("--known_good", ctx.file.known_good.path)
     args.add_all(sourcelinks)
@@ -862,6 +865,7 @@ _merge_bundle_sourcelinks = rule(
     attrs = {
         "bundle": attr.label(providers = [DocsBundleInfo]),
         "known_good": attr.label(allow_single_file = True),
+        "module_name": attr.string(mandatory = True),
         "_merge_sourcelinks": attr.label(
             default = Label("//scripts_bazel:merge_sourcelinks"),
             cfg = "exec",
@@ -875,6 +879,9 @@ def merge_bundle_sourcelinks(name, bundle, known_good = None, visibility = None)
     _merge_bundle_sourcelinks(
         name = name,
         bundle = bundle,
+        # Resolve the calling package's module during loading, then pass it
+        # across the analysis boundary as an attribute of the private rule.
+        module_name = require_module_name(),
         known_good = known_good,
         visibility = visibility,
     )
@@ -888,6 +895,9 @@ def _code_targets_sourcelinks_impl(ctx):
     output = ctx.actions.declare_file(ctx.label.name + ".json")
     arguments = ctx.actions.args()
     arguments.add("--output", output.path)
+
+    # Files from the main repository have no external prefix in their paths.
+    arguments.add("--module-name", ctx.attr.module_name)
     arguments.add_all(source_files)
     ctx.actions.run(
         executable = ctx.executable._generate_sourcelinks,
@@ -902,6 +912,7 @@ _code_targets_sourcelinks = rule(
     implementation = _code_targets_sourcelinks_impl,
     attrs = {
         "code_files": attr.label(mandatory = True),
+        "module_name": attr.string(mandatory = True),
         "_generate_sourcelinks": attr.label(
             default = Label("//scripts_bazel:generate_sourcelinks"),
             cfg = "exec",
@@ -916,6 +927,7 @@ def generate_code_target_sourcelinks(name, code_files, visibility = None):
     _code_targets_sourcelinks(
         name = name,
         code_files = code_files,
+        module_name = require_module_name(),
         visibility = visibility,
     )
     return ":" + name

@@ -1007,6 +1007,7 @@ needs_types:
     title: Testcase Needs parsed from test.xml files
     optional_options:
       name: ^.*$
+      bazel_module: ^[a-zA-Z0-9_.+-]+$
       file: ^.*$
       line: ^.*$
       test_type: ^.*$

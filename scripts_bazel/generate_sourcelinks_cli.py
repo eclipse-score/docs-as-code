@@ -23,9 +23,9 @@ import sys
 from pathlib import Path
 
 from scripts_bazel.source_code_link_parser import extract_references_from_file
-from src.extensions.score_source_code_linker.helpers import parse_repo_name_from_path
+from src.extensions.score_source_code_linker.helpers import parse_module_name_from_path
 from src.extensions.score_source_code_linker.needlinks import (
-    DefaultMetaData,
+    MetaData,
     store_source_code_links_with_metadata_json,
 )
 
@@ -66,16 +66,23 @@ def main():
         help="Source files to scan for traceability tags",
     )
 
+    _ = parser.add_argument("--module-name", required=True, help="Local Bazel module")
     args = parser.parse_args()
 
+    # Use the first input file other than known_good.json to identify the
+    # module for the cache header. An external path contains the module name.
+    # For a local path or no source files, use the name passed via --module-name.
+    first_source_path = next(
+        (path for path in args.files if "known_good.json" not in str(path)), None
+    )
+    module_name = (
+        parse_module_name_from_path(first_source_path, local_module=args.module_name)
+        if first_source_path is not None
+        else args.module_name
+    )
+    metadata: MetaData = {"repo_name": module_name, "hash": "", "url": ""}
     all_need_references = []
-
-    metadata = DefaultMetaData()
-    metadata_set = False
     for file_path in args.files:
-        if "known_good.json" not in str(file_path) and not metadata_set:
-            metadata["repo_name"] = parse_repo_name_from_path(file_path)
-            metadata_set = True
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
         clean_path = clean_external_prefix(file_path)

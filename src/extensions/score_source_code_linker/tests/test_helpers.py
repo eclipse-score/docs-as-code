@@ -22,56 +22,56 @@ from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
     get_github_link_from_json,
     parse_info_from_known_good,
-    parse_repo_name_from_path,
+    parse_module_name_from_path,
 )
 from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink
 from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.helper_lib import get_current_git_hash
 
 #              ╭──────────────────────────────────────────────────────────╮
-#              │          Tests for parse_repo_name_from_path             │
+#              │          Tests for parse_module_name_from_path             │
 #              ╰──────────────────────────────────────────────────────────╯
 
 
-def test_parse_repo_name_from_external_path():
-    """Test parsing repo name from external/combo build path."""
+def test_parse_module_name_from_external_path():
+    """Test parsing module name from external/combo build path."""
     path = Path("external/score_docs_as_code+/src/helper_lib/test_helper_lib.py")
 
-    result = parse_repo_name_from_path(path)
+    result = parse_module_name_from_path(path, local_module="fixture_host")
 
     assert result == "score_docs_as_code"
 
 
-def test_parse_repo_name_from_external_path_2():
+def test_parse_module_name_from_external_path_2():
     """Test that an extra 'external' in the path does not change the output"""
     path = Path(
         "external/score_docs_as_code+/src/external/helper_lib/test_helper_lib.py"
     )
 
-    result = parse_repo_name_from_path(path)
+    result = parse_module_name_from_path(path, local_module="fixture_host")
 
     assert result == "score_docs_as_code"
 
 
-def test_parse_repo_name_from_local_path():
-    """Test parsing repo name from local build path."""
+def test_parse_module_name_from_local_path():
+    """Test parsing module name from local build path."""
     path = Path("src/helper_lib/test_helper_lib.py")
 
-    result = parse_repo_name_from_path(path)
+    result = parse_module_name_from_path(path, local_module="fixture_host")
 
-    assert result == "local_repo"
+    assert result == "fixture_host"
 
 
-def test_parse_repo_name_from_empty_path():
-    """Test parsing repo name from an empty path."""
+def test_parse_module_name_from_empty_path():
+    """Test parsing module name from an empty path."""
     path = Path("")
 
-    result = parse_repo_name_from_path(path)
+    result = parse_module_name_from_path(path, local_module="fixture_host")
 
-    assert result == "local_repo"
+    assert result == "fixture_host"
 
 
-def test_parse_repo_name_without_plus_suffix():
+def test_parse_module_name_without_plus_suffix():
     """
     Test parsing external repo without plus suffix.
     This should never happen (due to bazel adding the '+')
@@ -79,7 +79,7 @@ def test_parse_repo_name_without_plus_suffix():
     """
     path = Path("external/repo_without_plus/file.py")
 
-    result = parse_repo_name_from_path(path)
+    result = parse_module_name_from_path(path, local_module="fixture_host")
 
     assert result == "repo_without_plus"
 
@@ -393,7 +393,7 @@ def test_complete_workflow(known_good_json: Path):
 
     # Parse path
     path = Path("external/score_docs_as_code+/src/helper_lib/test_helper_lib.py")
-    repo_name = parse_repo_name_from_path(path)
+    repo_name = parse_module_name_from_path(path, local_module="fixture_host")
     assert repo_name == "score_docs_as_code"
 
     # Get metadata

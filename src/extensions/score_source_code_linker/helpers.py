@@ -71,7 +71,7 @@ def get_github_link_from_json(
     return f"{base_url}/blob/{current_hash}/{link.file}#L{link.line}"
 
 
-def parse_repo_name_from_path(path: Path) -> str:
+def parse_module_name_from_path(path: Path, local_module: str) -> str:
     """
     Parse out the Module-Name from the filename:
     Combo Example:
@@ -79,7 +79,7 @@ def parse_repo_name_from_path(path: Path) -> str:
         => score_docs_as_code
     Local:
         Path: src/helper_lib/test_helper_lib.py
-        => local_repo
+        => local_module
 
     """
 
@@ -90,8 +90,8 @@ def parse_repo_name_from_path(path: Path) -> str:
         module_raw = str(path).removeprefix("external/")
         filepath_split = str(module_raw).split("/", maxsplit=1)
         return str(filepath_split[0].removesuffix("+"))
-    # We return this when we are in a local build `//:docs` the rest of DaC knows
-    return "local_repo"
+    else:
+        return local_module
 
 
 def parse_info_from_known_good(

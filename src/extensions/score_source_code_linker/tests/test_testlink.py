@@ -120,8 +120,7 @@ def test_testcaseneed_to_dict_multiple_links():
         result_text="Something went wrong",
         PartiallyVerifies="REQ-1, REQ-2",
         FullyVerifies="REQ-3",
-        # ADAPTED: Added new fields which are now required for valid TestLinks
-        repo_name="test_repo",
+        source_module="test_repo",
         hash="hash123",
         url="http://github.com",
     )
@@ -243,7 +242,7 @@ def test_dataoftestcase_check_verifies_fields_missing_both():
         result_text="",
         PartiallyVerifies=None,
         FullyVerifies=None,
-        repo_name="mod",
+        source_module="mod",
         hash="h",
         url="u",
     )
@@ -262,7 +261,7 @@ def test_dataoftestcase_is_valid_fails_on_none_field():
         DerivationTechnique="manual",
         result_text="",
         PartiallyVerifies="REQ_1",
-        repo_name="mod",
+        source_module="mod",
         hash="h",
         url="u",
     )
@@ -298,7 +297,7 @@ def test_dataoftestcase_decoder_valid_dict():
         "result_text": "Good",
         "PartiallyVerifies": "REQ_1",
         "FullyVerifies": "REQ_2",
-        "repo_name": "mod",
+        "source_module": "mod",
         "hash": "h",
         "url": "u",
     }
@@ -307,6 +306,7 @@ def test_dataoftestcase_decoder_valid_dict():
     assert isinstance(result, DataOfTestCase)
     assert result.name == "TC_01"
     assert result.file == "src/test.py"
+    assert result.source_module == "mod"
 
 
 def test_dataoftestcase_decoder_non_testcase_dict():
@@ -317,7 +317,7 @@ def test_dataoftestcase_decoder_non_testcase_dict():
 
 
 def test_store_and_load_data_of_test_case_roundtrip(tmp_path: Path):
-    """Cover lines 376-386: store and load DataOfTestCase roundtrip"""
+    """Reloading the cache preserves provenance and source link metadata."""
     test_cases = [
         DataOfTestCase(
             name="TC_A",
@@ -329,9 +329,9 @@ def test_store_and_load_data_of_test_case_roundtrip(tmp_path: Path):
             result_text="OK",
             PartiallyVerifies="REQ_A",
             FullyVerifies=None,
-            repo_name="mod_a",
-            hash="hash_a",
-            url="url_a",
+            source_module="mod_a",
+            hash="",
+            url="",
         ),
         DataOfTestCase(
             name="TC_B",
@@ -343,7 +343,7 @@ def test_store_and_load_data_of_test_case_roundtrip(tmp_path: Path):
             result_text="Failed",
             PartiallyVerifies=None,
             FullyVerifies="REQ_B",
-            repo_name="mod_b",
+            source_module="mod_b",
             hash="hash_b",
             url="url_b",
         ),
@@ -353,9 +353,9 @@ def test_store_and_load_data_of_test_case_roundtrip(tmp_path: Path):
     store_data_of_test_case_json(test_file, test_cases)
     loaded = load_data_of_test_case_json(test_file)
 
-    assert len(loaded) == 2
-    assert loaded[0].name == "TC_A"
-    assert loaded[1].name == "TC_B"
+    assert loaded == test_cases
+    assert [link.repo_name for link in loaded[0].get_test_links()] == ["mod_a"]
+    assert [link.repo_name for link in loaded[1].get_test_links()] == ["mod_b"]
 
 
 def test_load_data_of_test_case_validates_list(tmp_path: Path):

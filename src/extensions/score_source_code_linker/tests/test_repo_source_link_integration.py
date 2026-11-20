@@ -103,7 +103,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_1",
                     "full_line": "#" + " req-Id: MOD_REQ_1",
-                    "repo_name": "local_repo",
+                    "repo_name": "score_docs_as_code",
                     "hash": "",
                     "url": "",
                 },
@@ -113,7 +113,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_2",
                     "full_line": "#" + " req-Id: MOD_REQ_2",
-                    "repo_name": "local_repo",
+                    "repo_name": "score_docs_as_code",
                     "hash": "",
                     "url": "",
                 },
@@ -123,7 +123,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_1",
                     "full_line": "#" + " req-Id: MOD_REQ_1",
-                    "repo_name": "local_repo",
+                    "repo_name": "score_docs_as_code",
                     "hash": "",
                     "url": "",
                 },
@@ -133,7 +133,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                     "tag": "#" + " req-Id:",
                     "need": "MOD_REQ_3",
                     "full_line": "#" + " req-Id: MOD_REQ_3",
-                    "repo_name": "local_repo",
+                    "repo_name": "score_docs_as_code",
                     "hash": "",
                     "url": "",
                 },
@@ -283,6 +283,7 @@ def sphinx_app_setup(
             # passes the resolved path via ``--define``, matching the Bazel
             # build contract used by the extension in production.
             confoverrides={
+                "bazel_module_name": "score_docs_as_code",
                 "score_sourcelinks_json": str(sphinx_base_dir / "source_links.json"),
             },
         )
@@ -365,17 +366,19 @@ def test_repo_grouping_multiple_needs_per_repo(
         repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
         loaded = load_repo_source_links_json(repo_cache)
 
-        # Find the local_repo (should have all 3 requirements)
-        local_repo = None
+        # Find the local_module_group (should have all 3 requirements)
+        local_module_group = None
         for m in loaded:
-            if m.repo.name == "local_repo":
-                local_repo = m
+            if m.repo.name == "score_docs_as_code":
+                local_module_group = m
                 break
 
-        assert local_repo is not None, "local_repo not found in grouped cache"
+        assert local_module_group is not None, (
+            "local_module_group not found in grouped cache"
+        )
 
         # All 3 MOD_REQ should be in this repo
-        need_ids = {need.need for need in local_repo.needs}
+        need_ids = {need.need for need in local_module_group.needs}
         assert {"MOD_REQ_1", "MOD_REQ_2", "MOD_REQ_3"}.issubset(need_ids)
 
     finally:

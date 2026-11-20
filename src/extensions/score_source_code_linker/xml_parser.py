@@ -26,22 +26,19 @@ import json
 import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, TypedDict, cast
 from xml.etree.ElementTree import Element
 
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
+from sphinx.errors import ConfigError
 from sphinx_needs import logging
 from sphinx_needs.api import add_external_need
 
 from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
     parse_info_from_known_good,
-    parse_repo_name_from_path,
-)
-from src.extensions.score_source_code_linker.needlinks import (
-    DefaultMetaData,
-    MetaData,
+    parse_module_name_from_path,
 )
 from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.testlink import (
@@ -114,22 +111,27 @@ def clean_test_file_name(raw_filepath: Path) -> Path:
     )
 
 
-def get_metadata_from_test_path(
-    raw_filepath: Path, known_good_json: Path | None
-) -> MetaData:
-    """
-    Will parse out the metadata from the testpath.
-    If test is local then the metadata will be:
+class TestPathMetadata(TypedDict):
+    source_module: str
+    hash: str
+    url: str
 
-        "repo_name": "local_repo",
+
+def get_metadata_from_test_path(
+    raw_filepath: Path, known_good_json: Path | None, *, local_module: str
+) -> TestPathMetadata:
+    """
+    Resolve the module name and repository metadata from the test path.
+    Local reports use the supplied module name and leave hash and URL empty:
+
+        "source_module": local_module,
         "hash": "",
         "url": "",
 
-    Else it will parse the repo_name e.g. `score_docs_as_code`
-    match this in the known_good_json and grab the accompanying
-    hash, url as well and return metadata like so for example:
+    External reports use the module name from the path. When known_good_json
+    is supplied, look up that module's hash and URL:
 
-          "repo_name": "score_docs_as_code",
+          "source_module": "score_docs_as_code",
           "hash": "c1207676afe6cafd25c35d420e73279a799515d8",
           "url": "https://github.com/eclipse-score/docs-as-code"
 
@@ -142,17 +144,18 @@ def get_metadata_from_test_path(
     For local builds:
     <root path>/bazel-testlogs/src/ext/score_.../score_any_folder_tests/test.xml
 
-    Therefore will we 'clean' it before passing it to the parse_module func.
-    Removing everything up to and including 'bazel-testlogs' or 'tests-report'
+    Strip everything through 'bazel-testlogs' or 'tests-report' before
+    resolving the module name.
     """
-    # print("THIs IS FILEPATH IN GET MD FROm TestPATH: ", raw_filepath)
     clean_filepath = clean_test_file_name(raw_filepath)
-    # print(f"This is the cleaned filepath: {clean_filepath}")
-    repo_name = parse_repo_name_from_path(clean_filepath)
-    md = DefaultMetaData()
-    md["repo_name"] = repo_name
-    if repo_name != "local_repo" and known_good_json:
-        md["hash"], md["url"] = parse_info_from_known_good(known_good_json, repo_name)
+    source_module = parse_module_name_from_path(
+        clean_filepath, local_module=local_module
+    )
+    md: TestPathMetadata = {"source_module": source_module, "hash": "", "url": ""}
+    if source_module != local_module and known_good_json:
+        md["hash"], md["url"] = parse_info_from_known_good(
+            known_good_json, source_module
+        )
     return md
 
 
@@ -208,6 +211,8 @@ def read_test_xml_file(
     file: Path,
     known_good_json: Path | None,
     allowed_dirs: list[str] | None = None,
+    *,
+    local_module: str,
 ) -> tuple[list[DataOfTestCase], list[str], list[str]]:
     """
     Reading & parsing the test.xml files into TestCaseNeeds
@@ -223,7 +228,7 @@ def read_test_xml_file(
     missing_prop_tests: list[str] = []
     tree = ET.parse(file)
     root = tree.getroot()
-    md = get_metadata_from_test_path(file, known_good_json)
+    md = get_metadata_from_test_path(file, known_good_json, local_module=local_module)
     for testsuite in root.findall("testsuite"):
         for testcase in testsuite.findall("testcase"):
             test_file = testcase.get("file")
@@ -300,6 +305,8 @@ def read_test_xml_file(
                     missing_prop_tests.append(testname)
             else:
                 non_prop_tests.append(testname)
+                # Unannotated tests still appear as testcase needs.
+                case_properties["source_module"] = md["source_module"]
                 test_case = DataOfTestCase.from_dict(case_properties)
             test_case_needs.append(test_case)
     return test_case_needs, non_prop_tests, missing_prop_tests
@@ -405,11 +412,18 @@ def build_test_needs_from_files(
     """
     known_good_json_str = app.config.KNOWN_GOOD_JSON.strip()
     known_good_json = Path(known_good_json_str) if known_good_json_str else None
+    local_module = app.config.bazel_module_name
+    if xml_paths and not local_module:
+        raise ConfigError(
+            "Set the Sphinx option bazel_module_name to import JUnit test reports."
+        )
     tcns: list[DataOfTestCase] = []
     for file in xml_paths:
         # Last value can be ignored. The 'is_valid' function already prints infos
         test_cases, tests_missing_all_props, tests_missing_some_props = (
-            read_test_xml_file(file, known_good_json, allowed_dirs)
+            read_test_xml_file(
+                file, known_good_json, allowed_dirs, local_module=local_module
+            )
         )
         non_prop_tests = ", ".join(n for n in tests_missing_all_props)
         if non_prop_tests:
@@ -439,12 +453,17 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
     file = tn.file if tn.file is not None else "<placeholder_file>"
     assert tn.name is not None
     name = tn.name
+    # Different modules can report the same testcase name and relative path.
+    testcase_hash = short_hash(f"{tn.source_module}\0{file}\0{name}", length=6)
+    module_options: dict[str, Any] = {}
+    if tn.source_module and "bazel_module" in app.config.needs_fields:
+        module_options["bazel_module"] = tn.source_module
     external_url = ""
-    if tn.repo_name is None or tn.hash is None or tn.url is None:
+    if tn.source_module is None or tn.hash is None or tn.url is None:
         # I would change this to debug for now, as it seems too spammy in 'info'
         logger.debug(
             "Creating testcase need with fallback URL due to incomplete repo metadata: "
-            f"name={name}, file={file}, repo_name={tn.repo_name}, "
+            f"name={name}, file={file}, source_module={tn.source_module}, "
             f"hash={tn.hash}, url={tn.url}",
             type="score_source_code_linker",
         )
@@ -454,7 +473,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
         )
     else:
         # Have to build metadata here for the gh link func
-        metadata = RepoInfo(name=tn.repo_name, hash=tn.hash, url=tn.url)
+        metadata = RepoInfo(name=tn.source_module, hash=tn.hash, url=tn.url)
         external_url = get_github_link(metadata, tn)
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
@@ -463,7 +482,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             need_type="testcase",
             title=name,
             tags="TEST",
-            id=f"testcase__{name}_{short_hash(file + name)}",
+            id=f"testcase__{name}_{testcase_hash}",
             name=name,
             external_url=external_url,
             fully_verifies=tn.FullyVerifies if tn.FullyVerifies is not None else "",
@@ -476,4 +495,5 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             line=tn.line,
             result=tn.result,  # We just want the 'failed' or whatever
             result_text=tn.result_text if tn.result_text else "",
+            **module_options,
         )
