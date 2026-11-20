@@ -79,16 +79,23 @@ def get_cache_filename(build_dir: Path, filename: str) -> Path:
     return build_dir / filename
 
 
-def build_and_save_combined_file(outdir: Path, app: Sphinx):
+def load_link_inputs(
+    sourcelinks_json: str, outdir: Path
+) -> tuple[list[NeedLink], list[DataForTestLink]]:
     """
-    Reads the saved partial caches of codelink & testlink
-    Builds the combined JSON cache & saves it
+    Read the inputs of the link pipeline. No Sphinx needed.
+
+    - Code links: the pre-generated sourcelinks file (config value
+      'score_sourcelinks_json', set from SCORE_SOURCELINKS by the docs CLI).
+      Empty string: no code links.
+    - Test links: 'score_xml_parser_cache.json' in outdir, written at 505.
+      Missing file: no test links.
     """
-    source_code_links_path = app.config.score_sourcelinks_json.strip()
+    source_code_links_path = sourcelinks_json.strip()
     if source_code_links_path:
         source_code_links_json = Path(source_code_links_path)
         try:
-            source_code_links = load_source_code_links_json(source_code_links_json)
+            code_links = load_source_code_links_json(source_code_links_json)
         except FileNotFoundError as exc:
             raise FileNotFoundError(
                 "Pre-generated source-code links file does not exist: "
@@ -96,7 +103,7 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx):
                 "Sphinx config value (set from SCORE_SOURCELINKS by the docs CLI)."
             ) from exc
         except AssertionError:
-            source_code_links = load_source_code_links_with_metadata_json(
+            code_links = load_source_code_links_with_metadata_json(
                 source_code_links_json
             )
     else:
@@ -104,19 +111,27 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx):
             "No pre-generated source-code links provided. Continuing without code links.",
             type="score_source_code_linker",
         )
-        source_code_links = []
+        code_links = []
     test_cache = get_cache_filename(outdir, "score_xml_parser_cache.json")
     if test_cache.exists():
-        test_code_links = load_test_xml_parsed_json(test_cache)
+        test_links = load_test_xml_parsed_json(test_cache)
     else:
         LOGGER.debug(
             "No score_xml_parser_cache.json found. Continuing without test XML links.",
             type="score_source_code_linker",
         )
-        test_code_links = []
-    scl_list = group_by_need(source_code_links, test_code_links)
+        test_links = []
+    return code_links, test_links
+
+
+def build_and_save_combined_file(outdir: Path, app: Sphinx):
+    """
+    Reads the code links & the testlink cache, groups them by need and
+    saves the combined JSON cache.
+    """
+    code_links, test_links = load_link_inputs(app.config.score_sourcelinks_json, outdir)
     store_source_code_links_combined_json(
-        outdir / "score_scl_grouped_cache.json", scl_list
+        outdir / "score_scl_grouped_cache.json", group_by_need(code_links, test_links)
     )
 
 

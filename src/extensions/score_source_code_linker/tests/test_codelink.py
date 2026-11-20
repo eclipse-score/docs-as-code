@@ -44,10 +44,15 @@ from src.extensions.score_source_code_linker import (
     get_cache_filename,
     group_by_need,
     inject_links_into_needs,
+    load_link_inputs,
 )
 from src.extensions.score_source_code_linker.repo_source_links import (
     group_needs_by_repo,
     store_repo_source_links_json,
+)
+from src.extensions.score_source_code_linker.testlink import (
+    DataForTestLink,
+    store_test_xml_parsed_json,
 )
 from src.helper_lib import (
     get_current_git_hash,
@@ -460,16 +465,43 @@ def test_combining_without_source_links_continues_with_empty_code_links(
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
+def test_load_link_inputs_reads_code_and_test_links(
+    temp_dir: Path, sample_needlinks: list[NeedLink]
+) -> None:
+    """Both inputs are read from plain paths, no Sphinx app needed."""
+    sourcelinks = temp_dir / "sourcelinks.json"
+    store_source_code_links_json(sourcelinks, sample_needlinks)
+    testlink = DataForTestLink(
+        name="test_a",
+        file=Path("tests/test_a.py"),
+        line=7,
+        need="TREQ_ID_1",
+        verify_type="fully",
+        result="passed",
+    )
+    store_test_xml_parsed_json(
+        get_cache_filename(temp_dir, "score_xml_parser_cache.json"), [testlink]
+    )
+
+    code_links, test_links = load_link_inputs(f"  {sourcelinks}  ", temp_dir)
+
+    assert code_links == sample_needlinks
+    assert test_links == [testlink]
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_combining_with_missing_source_links_reports_configured_path(
     temp_dir: Path,
 ) -> None:
     """Report the configured source-link file when it cannot be found."""
     missing_file = temp_dir / "missing_source_links.json"
-    fake_config = SimpleNamespace(score_sourcelinks_json=str(missing_file))
-    app = cast(Sphinx, SimpleNamespace(config=fake_config))
 
     with pytest.raises(FileNotFoundError) as exc_info:
-        build_and_save_combined_file(temp_dir, app)
+        _ = load_link_inputs(str(missing_file), temp_dir)
 
     assert str(exc_info.value) == (
         "Pre-generated source-code links file does not exist: "
