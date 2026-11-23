@@ -1410,7 +1410,7 @@
     "source_module": "local_repo"
   },
   {
-    "name": "test_bundle_lifecycle__test_tool_requirements_follow_their_document_bundle",
+    "name": "test_bundle_lifecycle__test_needs_follow_their_document_bundle",
     "file": "src/extensions/score_metamodel/tests/test_bundle_lifecycle.py",
     "line": "189",
     "result": "passed",
@@ -1427,7 +1427,7 @@
   {
     "name": "test_bundle_lifecycle__test_unchanged_bundle_metadata_does_not_rewrite_the_document",
     "file": "src/extensions/score_metamodel/tests/test_bundle_lifecycle.py",
-    "line": "232",
+    "line": "242",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -1442,7 +1442,7 @@
   {
     "name": "test_bundle_lifecycle__test_bundle_metadata_is_cleared_when_primary_need_is_missing",
     "file": "src/extensions/score_metamodel/tests/test_bundle_lifecycle.py",
-    "line": "268",
+    "line": "278",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -1457,7 +1457,7 @@
   {
     "name": "test_bundle_lifecycle__test_current_bundle_metadata_replaces_old_values",
     "file": "src/extensions/score_metamodel/tests/test_bundle_lifecycle.py",
-    "line": "310",
+    "line": "320",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
