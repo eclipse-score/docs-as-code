@@ -35,6 +35,7 @@ from src.extensions.score_source_code_linker.testlink import (
     store_data_of_test_case_json,
     store_test_xml_parsed_json,
 )
+from src.helper_lib.repo_info import RepoInfo
 
 
 @add_test_properties(
@@ -53,9 +54,9 @@ def test_testlink_serialization_roundtrip():
         result="passed",
         result_text="All good",
         # ADAPTED: Added new fields
-        repo_name="test_repo",
-        hash="abc12345",
-        url="https://github.com/org/repo",
+        repo=RepoInfo(
+            name="test_repo", hash="abc12345", url="https://github.com/org/repo"
+        ),
     )
     dumped = json.dumps(link, cls=DataForTestLink_JSON_Encoder)
     loaded = json.loads(dumped, object_hook=DataForTestLink_JSON_Decoder)
@@ -121,9 +122,7 @@ def test_testcaseneed_to_dict_multiple_links():
         PartiallyVerifies="REQ-1, REQ-2",
         FullyVerifies="REQ-3",
         # ADAPTED: Added new fields which are now required for valid TestLinks
-        repo_name="test_repo",
-        hash="hash123",
-        url="http://github.com",
+        repo=RepoInfo(name="test_repo", hash="hash123", url="http://github.com"),
     )
 
     links = case.get_test_links()
@@ -138,9 +137,9 @@ def test_testcaseneed_to_dict_multiple_links():
         assert link.name == "TC_01"
         assert link.result == "failed"
         # ADAPTED: Verify new fields are propagated
-        assert link.repo_name == "test_repo"
-        assert link.hash == "hash123"
-        assert link.url == "http://github.com"
+        assert link.repo.name == "test_repo"
+        assert link.repo.hash == "hash123"
+        assert link.repo.url == "http://github.com"
 
 
 @add_test_properties(
@@ -162,9 +161,7 @@ def test_store_and_load_testlinks_roundtrip(tmp_path: Path):
             result="passed",
             result_text="Looks good",
             # ADAPTED: Added new fields
-            repo_name="mod1",
-            hash="h1",
-            url="u1",
+            repo=RepoInfo(name="mod1", hash="h1", url="u1"),
         ),
         DataForTestLink(
             name="L2",
@@ -175,9 +172,7 @@ def test_store_and_load_testlinks_roundtrip(tmp_path: Path):
             result="failed",
             result_text="Needs work",
             # ADAPTED: Added new fields
-            repo_name="mod2",
-            hash="h2",
-            url="u2",
+            repo=RepoInfo(name="mod2", hash="h2", url="u2"),
         ),
     ]
 
@@ -201,9 +196,9 @@ def test_datafortestlink_to_dict_full():
         verify_type="fully",
         result="passed",
         result_text="All good",
-        repo_name="test_repo",
-        hash="abc123",
-        url="https://github.com/test/repo",
+        repo=RepoInfo(
+            name="test_repo", hash="abc123", url="https://github.com/test/repo"
+        ),
     )
     result = link.to_dict_full()
 
@@ -243,9 +238,7 @@ def test_dataoftestcase_check_verifies_fields_missing_both():
         result_text="",
         PartiallyVerifies=None,
         FullyVerifies=None,
-        repo_name="mod",
-        hash="h",
-        url="u",
+        repo=RepoInfo(name="mod", hash="h", url="u"),
     )
 
     assert case.check_verifies_fields() is False
@@ -262,9 +255,7 @@ def test_dataoftestcase_is_valid_fails_on_none_field():
         DerivationTechnique="manual",
         result_text="",
         PartiallyVerifies="REQ_1",
-        repo_name="mod",
-        hash="h",
-        url="u",
+        repo=RepoInfo(name="mod", hash="h", url="u"),
     )
 
     assert case.is_valid() is False
@@ -329,9 +320,7 @@ def test_store_and_load_data_of_test_case_roundtrip(tmp_path: Path):
             result_text="OK",
             PartiallyVerifies="REQ_A",
             FullyVerifies=None,
-            repo_name="mod_a",
-            hash="hash_a",
-            url="url_a",
+            repo=RepoInfo(name="mod_a", hash="hash_a", url="url_a"),
         ),
         DataOfTestCase(
             name="TC_B",
@@ -343,9 +332,7 @@ def test_store_and_load_data_of_test_case_roundtrip(tmp_path: Path):
             result_text="Failed",
             PartiallyVerifies=None,
             FullyVerifies="REQ_B",
-            repo_name="mod_b",
-            hash="hash_b",
-            url="url_b",
+            repo=RepoInfo(name="mod_b", hash="hash_b", url="url_b"),
         ),
     ]
 

@@ -20,12 +20,15 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
-from src.extensions.score_source_code_linker.helpers import parse_info_from_known_good
+from src.helper_lib.repo_info import load_known_good, resolve_repo
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
+
+
+_LINK_KEYS = {"file", "line", "tag", "need", "full_line", "repo_name"}
 
 
 def _reference_key(reference: dict[str, object]) -> str:
@@ -38,53 +41,39 @@ def _reference_key(reference: dict[str, object]) -> str:
 
 def _merge_sourcelinks_file(
     json_file: Path,
-    known_good: Path | None,
+    known_good: dict[str, Any] | None,
     merged: list[dict[str, object]],
     seen: set[str],
 ) -> None:
     """Add the unique references from one sourcelinks JSON file to ``merged``."""
     with open(json_file, encoding="utf-8") as file:
         data = cast(list[object], json.load(file))
-    if not data:
-        return
-
-    raw_metadata = data[0]
-    if not isinstance(raw_metadata, dict) or "repo_name" not in raw_metadata:
+    # Also rejects the repository header that older caches start with.
+    if not all(
+        isinstance(reference, dict)
+        and reference.keys() >= _LINK_KEYS
+        and isinstance(reference["repo_name"], str)
+        for reference in data
+    ):
         logger.warning(
             f"Unexpected schema in sourcelinks file '{json_file}': "
-            "expected first element to be a metadata dict "
-            "with a 'repo_name' key. "
-        )
-        return
-    metadata = cast(dict[str, object], raw_metadata)
-    repo_name = metadata["repo_name"]
-    if not isinstance(repo_name, str):
-        logger.warning(
-            f"Unexpected schema in sourcelinks file '{json_file}': "
-            "expected metadata 'repo_name' to be a string. "
+            "expected a list of source links with a string 'repo_name'. "
         )
         return
 
-    # A known-good file is optional for standalone builds that include
-    # documentation from external modules.  In that case, keep the metadata
-    # produced by the individual sourcelinks file.
-    if known_good and repo_name and repo_name != "local_repo":
-        hash, repo = parse_info_from_known_good(
-            known_good_json=known_good, repo_name=repo_name
-        )
-        metadata["hash"] = hash
-        metadata["url"] = repo
-
-    for raw_reference in data[1:]:
-        reference = cast(dict[str, object], raw_reference)
-        reference.update(metadata)
+    for reference in cast(list[dict[str, object]], data):
+        # A known-good file is optional for standalone builds that include
+        # documentation from external modules.  In that case, keep the link as
+        # it was generated.
+        if repo := resolve_repo(cast(str, reference["repo_name"]), known_good):
+            reference.update(repo.to_flat_dict())
         key = _reference_key(reference)
         if key not in seen:
             seen.add(key)
             merged.append(reference)
 
 
-def main():
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Merge multiple sourcelinks JSON files into one"
     )
@@ -106,13 +95,14 @@ def main():
         help="Input JSON files to merge",
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     merged: list[dict[str, object]] = []
     seen: set[str] = set()
+    known_good = load_known_good(args.known_good) if args.known_good else None
     for json_file in args.files:
         if "known_good.json" not in str(json_file):
-            _merge_sourcelinks_file(json_file, args.known_good, merged, seen)
+            _merge_sourcelinks_file(json_file, known_good, merged, seen)
 
     with open(args.output, "w", encoding="utf-8") as file:
         json.dump(merged, file, indent=2, ensure_ascii=False)

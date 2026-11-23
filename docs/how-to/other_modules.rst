@@ -12,8 +12,8 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-Reference Other Modules
-=======================
+Reference Documentation from Other Modules
+==========================================
 
 This document explains how to enable cross-module (bi-directional) linking between documentation modules with Sphinx-Needs in this project.
 In short:

@@ -28,7 +28,7 @@ The feature is split into **two layers**:
    Note that "hash" might also be a "version" tag.
 
 2. **Sphinx extension (during the Sphinx build)**
-   Reads the aggregated JSON, validates and adapts it, and finally injects the links into Sphinx needs in the final layout (**RepoSourceLink**).
+   Reads the aggregated JSON, validates and adapts it, and finally injects the links into Sphinx needs.
 
 This separation makes combo builds faster and more deterministic, because the expensive repository scanning/parsing happens **outside** the Sphinx process.
 
@@ -41,14 +41,14 @@ This separation makes combo builds faster and more deterministic, because the ex
 The Bazel parts are responsible for producing the **intermediate caches** that the source_code_linker extension later will consumes.
 
 (step-1-per-repository-cache-generation)=
-#### Step 1: Per-repository cache generation
+#### Step 1: Per-bundle cache generation
 
 Each `docs_bundle` scans the source files selected by its `code_targets`
 attribute. A *per bundle JSON cache* is then generated and saved; Bazel
 reuses it until its source inputs change.
 This script `scripts_bazel/generate_sourcelinks_cli.py` finds all codelinks per file, and gathers them into
-one JSON cache per repository.
-It also adds metadata to each needlink that is needed in further steps.
+one JSON cache per bundle.
+A bundle can contain source files of several repositories, so each needlink records the repository of its own file.
 
 Example of requirement tags:
 
@@ -67,7 +67,7 @@ Example of requirement tags:
     - hash (at this stage always blank)
     - url (at this stage always blank)
 
-##### Example JSON cache (per repository)
+##### Example JSON cache (per bundle)
 
 ```{code-block} json
 [
@@ -90,20 +90,22 @@ Example of requirement tags:
 
 #### Step 2: Cache merge step (multi-repo aggregation)
 
-In a second Bazel step `scripts_bazel/merge_sourcelinks.py`, **all per-repo caches** are merged into a **single combined JSON**.
+In a second Bazel step `scripts_bazel/merge_sourcelinks.py`, **all per-bundle caches** are merged into a **single combined JSON**.
 
-- Input: N JSON caches (one per repo)
-- Output: 1 merged JSON containing all found source_code_links
+- Input: N JSON caches (one per bundle)
+- Output: 1 merged JSON containing all found source_code_links, in the same format as the input
 
-This step also fills in url & hash if there is a known_good_json provided (e.g. in a combo build)
+This step also fills in url & hash of each link from the entry of its repository, if there is a known_good_json provided (e.g. in a combo build)
 
 (repo-metadata-rules)=
 #### Repo metadata rules
 
-Here are some basic rules regarding the MetaData information
+Here are some basic rules regarding the repo information (`RepoInfo` in `src/helper_lib/repo_info.py`)
 
 In a combo build, a known_good_json **must** be provided.
 If known_good_json is found then the hash & url will be filled for each need by the script.
+The lookup lives in one function, `resolve_repo`, used by both `merge_sourcelinks.py` and the XML parser.
+`known_good.json` is read once per run.
 
 Combo build:
 
@@ -114,17 +116,24 @@ Combo build:
 Local build:
 
 - `repo_name`: 'local_repo'
-- `hash`: will be empty at this point, and later filled via parsing the git commands
-- `url`: will be empty at this point, and later filled via parsing the git commands
+- `hash`: stays empty
+- `url`: stays empty
+
+With an empty hash, the link URL is built from the local git checkout (remote URL + `HEAD`).
+Git is asked once per build, not once per link.
 
 ---
 
 ### Source Code Linker Extension
 
-1a. **Reads the merged JSON** produced by Bazel
-1b. **Reads test.xml files and generates testlinks JSON**
-2. **Validates and adapts** both JSON cache files
-3. **Merges and converts** them into the final structure: **RepoSourceLink**
+All steps run on the Sphinx `env-updated` event, in this order:
+
+1. **Priority 505: testcases.** `xml_parser.py` parses the `test.xml` files (no Sphinx needed).
+   `testcase_needs.py` adds a `testcase` need per testcase and writes the testlinks to
+   `score_xml_parser_cache.json`.
+2. **Priority 525: links.** `inject_links_into_needs` (`__init__.py`) reads the JSON produced by Bazel
+   and the testlinks, groups them by need in memory, renders each link with its own repository
+   and writes `source_code_link` / `testlink` into the needs.
 
 #### Codelinks
 
@@ -164,7 +173,7 @@ def test_feature():
 
 #### Data Flow
 
-1. **XML Parsing** (`xml_parser.py`)
+1. **XML Parsing** (`xml_parser.py`, no Sphinx needed)
    - Scans `bazel-testlogs/` or `tests-report` for `test.xml` files.
    - Parses test cases and extracts:
      - Name & Classname
@@ -177,19 +186,19 @@ def test_feature():
 
    - Cases without metadata are logged out as info (not errors).
    - Test cases with metadata are converted into:
-     - `DataFromTestCase` (used for external needs)
+     - `DataOfTestCase` (used for external needs)
      - `DataForTestLink` (used for linking tests to requirements)
 
 > If there is a Classname then it gets combined with the function name for the displayed link as follows: `Classname__Functionname`
 
-2. **Need Linking**
-   - Generates external Sphinx needs from `DataFromTestCase`.
+2. **Need Linking** (`testcase_needs.py` and `__init__.py`)
+   - Generates external Sphinx needs from `DataOfTestCase`.
    - Creates `testlink` attributes on linked requirements.
    - Warns on missing need IDs.
 
-#### Example JSON Cache (DataFromTestCase)
+#### Example JSON Cache (DataOfTestCase)
 
-The DataFromTestCase depicts the information gathered about one testcase.
+The DataOfTestCase depicts the information gathered about one testcase.
 
 ```json
 [
@@ -203,7 +212,7 @@ The DataFromTestCase depicts the information gathered about one testcase.
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_common_attr_title, tool_req__docs_common_attr_description",
     "FullyVerifies": null
-    "repo_name": "local_module",
+    "repo_name": "local_repo",
     "hash": "",
     "url": "",
   }
@@ -213,13 +222,16 @@ The DataFromTestCase depicts the information gathered about one testcase.
 ---
 
 
-### Early-Combined Links
+### Combined Links
 
 During the Sphinx build process, both CodeLink and TestLink data are combined and grouped by needs.
-This will allow us to have an easier time building the final JSON which will eliminate the metadata from each link,
-and group all needs according to the appropriate repository.
+A need can have links from several repositories.
 
-This all is handled in `need_source_links.py`.
+Grouping by need is `group_by_need` in `need_source_links.py`, called from `inject_links_into_needs`.
+
+The grouping runs in memory on every build, from the sourcelinks JSON and `score_xml_parser_cache.json`.
+With Sphinx debug verbosity (`-vv`), `score_scl_grouped_cache.json` is also written to `_build` for debugging;
+the build never reads it back.
 
 ### Combined JSON Example
 
@@ -235,7 +247,7 @@ This all is handled in `need_source_links.py`.
           "tag": "#--req-Id:",# added `--` to avoid detection
           "need": "tool_req__docs_common_attr_title",
           "full_line": "#--req-Id: tool_req__docs_common_attr_title", # added `--` to avoid detection
-          "repo_name": "local_module",
+          "repo_name": "local_repo",
           "hash": "",
           "url": "",
 
@@ -250,7 +262,7 @@ This all is handled in `need_source_links.py`.
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
-          "repo_name": "local_module",
+          "repo_name": "local_repo",
           "hash": "",
           "url": "",
         }
@@ -260,49 +272,9 @@ This all is handled in `need_source_links.py`.
 ]
 ```
 
-#### Final layout: RepoSourceLink
-
-Instead of repeating `repo_name/hash/url` for every single link entry, the final output groups links **by repository**:
-
-- Repository metadata appears **once per repository**
-- All links belonging to that repository are stored beneath it
-
-This somewhat looks like this:
-
-```{code-block} json
-[
-  {
-    "repo": {
-      "name": "local_repo",
-      "hash": "",
-      "url": ""
-    },
-    "needs": [
-      {
-        "need": "tool_req__docs_common_attr_id_scheme",
-        "links": {
-          "CodeLinks": [
-            {
-              "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-              "line": 30,
-              "tag": "# req-Id:",
-              "need": "tool_req__docs_common_attr_id_scheme",
-              "full_line": "# req-Id: tool_req__docs_common_attr_id_scheme"
-            }
-          ],
-          "TestLinks": []
-        }
-      },
-    ],
-```
-Due to not saving the `repo_name, url and hash` in each link but grouping them we can eleminate a lot of unnecessary
-length to the JSON document here.
-
-This is the structure the extension uses to attach links to needs (via the `source_code_link` attribute), while keeping the resulting data compact and normalized.
-
 :::hint
-Currently if the repo is the local one, SCL is still using the hash and url it gets from executing the git functions parsing.
-This is a known inefficiency and will be improved upon later
+If the repo is the local one, the hash and url come from the local git checkout (see [repo metadata rules](#repo-metadata-rules)).
+All link URLs are decided in one function, `get_github_link` in `src/helper_lib/repo_info.py`.
 :::
 
 ---
@@ -311,7 +283,7 @@ This is a known inefficiency and will be improved upon later
 
 During the Sphinx build process, the extension applies the computed links to needs:
 
-- Each need’s `source_code_link` and `testlink` attribute is filled from the (repo-grouped) RepoSourceLink data where applicable.
+- Each need’s `source_code_link` and `testlink` attribute contains the links from all repositories that refer to it.
 - If a referenced need ID does not exist, a build warning will be raised.
 
 ---
@@ -321,8 +293,10 @@ During the Sphinx build process, the extension applies the computed links to nee
 ### General
 
 - In combo builds, known_good_json is required.
-- inefficiencies in creating the links and saving the JSON caches
-- Not compatible with **Esbonio/Live_preview**
+- inefficiencies in creating the links
+- Not compatible with **Esbonio**
+- Live preview: Bazel regenerates the sourcelinks JSON when the preview starts, but unchanged pages can still show old links if Sphinx reuses its previous build.
+  Clean `_build` and restart the preview to refresh all pages and test results.
 
 ### Codelinks
 
@@ -340,9 +314,9 @@ During the Sphinx build process, the extension applies the computed links to nee
 
 ## High-level Data Flow Summary
 
-1. **Bazel Script #1**: scan + parse → write **per-repo cache** (includes repo metadata if known)
-2. **Bazel Script #2**: merge caches → write **single merged JSON**
-3. **Sphinx Extension**: read merged JSON → adapt to **RepoSourceLink** → inject source_code_link and testlink into needs
+1. **Bazel Script #1**: scan + parse → write **per-bundle cache** (each link names its repository)
+2. **Bazel Script #2**: merge caches + fill url & hash per link → write **single merged JSON**
+3. **Sphinx Extension**: parse test XMLs → add testcase needs → read merged JSON + testlinks → group by need in memory → inject source_code_link and testlink into needs
 
 ---
 
@@ -374,14 +348,20 @@ The Sphinx extension
 score_source_code_linker/
 ├── __init__.py                   # Main Sphinx extension; combines CodeLinks + TestLinks
 ├── need_source_links.py         # Data model for combined links
-├── repo_source_links.py         # Data model for Repo combined links (Final output JSON)
-├── helpers.py                   # Misc. functions used throughout SCL
-├── needlinks.py                 # CodeLink dataclass & JSON encoder/decoder
 ├── testlink.py                  # DataForTestLink definition & logic
-├── xml_parser.py                # Parses XML files into test case data
+├── xml_parser.py                # Parses XML files into test case data (no Sphinx)
+├── testcase_needs.py            # Turns parsed test cases into testcase needs
 ├── testcase_annotations.py      # Adds result annotations to GitHub testcase links
 ├── tests/                       # Testsuite, containing unit & integration tests
 │   └── ...
+```
+
+Shared parts in `src/helper_lib/` (also used by the Bazel scripts):
+
+```text
+helper_lib/
+├── needlinks.py                 # CodeLink (NeedLink) dataclass & JSON encoder/decoder
+├── repo_info.py                 # RepoInfo, known_good lookup (resolve_repo), GitHub link URLs (get_github_link)
 ```
 
 ---

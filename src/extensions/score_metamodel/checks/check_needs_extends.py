@@ -12,6 +12,9 @@
 # *******************************************************************************
 from __future__ import annotations
 
+from collections import defaultdict
+from dataclasses import dataclass, field
+
 import sphinx_needs.directives.need
 from sphinx_needs.config import NeedsSphinxConfig
 from sphinx_needs.data import (
@@ -45,47 +48,32 @@ def _warn(message: str, location: NeedextendLocation) -> None:
     log_warning(logger, message, "needextend", location=location)
 
 
-def _verify_needs_are_in_document(
-    needs: list[NeedItem], location: NeedextendLocation
-) -> None:
-    """Report selected needs outside the directive's source document.
-
-    Both ID and expression targets resolve to need records. Validating that shared
-    representation keeps the document-boundary policy identical for both syntaxes.
-    """
-    remote_ids = {need["id"] for need in needs if need["docname"] != location[0]}
-    if remote_ids:
-        _warn(
-            "Needextends may only modify needs in the current document. "
-            f"Matching needs: {', '.join(sorted(remote_ids))}.",
-            location,
-        )
-
-
-def _fetch_needs(
+def _resolve_needextend_targets(
+    local_needs: NeedsMutable,
     all_needs: NeedsMutable,
     needextend: NeedsExtendType,
     needs_config: NeedsSphinxConfig,
 ) -> list[NeedItem]:
-    """Resolve either supported target syntax to the needs it selects."""
+    """Find local targets and report violations of the document scope rules."""
     location = _location(needextend)
-
     if needextend["filter_is_id"]:
-        # ``.. needextend:: NEED_ID`` has no expression to constrain, so inspect
-        # its resolved target in the shared document-boundary check below.
         need_id = needextend["filter"]
-        try:
-            return [all_needs[need_id]]
-        except KeyError:
+        if need_id in local_needs:
+            return [local_needs[need_id]]
+        elif need_id in all_needs:
             _warn(
-                f"Provided id {need_id!r} for needextend does not exist.",
+                "Needextends may only modify needs in the current document. "
+                f"Matching needs: {need_id}.",
                 location,
             )
-            return []
+        # Sphinx-Needs reports unknown IDs when it applies the directive.
+        return []
 
     else:
         need_filter = needextend["filter"]
 
+        # The local Needs enforce document scope. This check enforces the authoring
+        # convention that filters explicitly include c.this_doc().
         if "c.this_doc()" not in need_filter:
             _warn(
                 "needextend in S-CORE must always be used per document only. "
@@ -96,7 +84,7 @@ def _fetch_needs(
 
         try:
             return filter_needs_mutable(
-                all_needs,
+                local_needs,
                 needs_config,
                 need_filter,
                 location=location,
@@ -112,7 +100,7 @@ def _validate_list_modifications(
     needextend: NeedsExtendType,
     location: NeedextendLocation,
 ) -> None:
-    """Reject destructive changes to link lists, which would erase traceability."""
+    """Warn about destructive changes to link lists that would erase traceability."""
     for _, action, value in needextend["list_modifications"]:
         replaces_or_deletes_links = action in {
             ExtendType.REPLACE,
@@ -131,7 +119,7 @@ def _validate_field_modifications(
     needextend: NeedsExtendType,
     location: NeedextendLocation,
 ) -> None:
-    """Reject field changes that discard data or append to scalar fields."""
+    """Warn about field changes that discard data or append to scalar fields."""
     for option_name, action, value in needextend["modifications"]:
         is_scalar_append = (
             action == ExtendType.APPEND
@@ -167,7 +155,7 @@ def _ensure_non_destructive_changes(
     needextend: NeedsExtendType,
     location: NeedextendLocation,
 ) -> None:
-    """Apply SCORE's non-destructive extension policy to one selected need."""
+    """Warn about changes that violate SCORE's needextend policy."""
     if need["is_external"]:
         _warn(
             f"Error when extending need: {need['id']}. "
@@ -176,6 +164,45 @@ def _ensure_non_destructive_changes(
         )
     _validate_list_modifications(need, needextend, location)
     _validate_field_modifications(need, needextend, location)
+
+
+@dataclass
+class _NeedsAndExtends:
+    needextends: dict[str, NeedsExtendType] = field(default_factory=dict)
+    needs: NeedsMutable = field(default_factory=lambda: NeedsMutable({}))
+
+
+# Keyed by the Sphinx source document name.
+_DocumentToNeedsAndExtends = dict[str, _NeedsAndExtends]
+
+
+def _group_needs_and_extends_by_document(
+    all_needs: NeedsMutable, needextends: dict[str, NeedsExtendType]
+) -> _DocumentToNeedsAndExtends:
+    """Build the local candidate maps shared by validation and application.
+
+    Sphinx-Needs 8.5 stores mutable Needs by ID. Its filter walks every Need
+    it receives, even for c.this_doc(). Indexing by docname once lets every
+    directive scan only the Needs in its own document.
+    """
+    by_docname: _DocumentToNeedsAndExtends = defaultdict(_NeedsAndExtends)
+    # Start with directives because only those documents will request a
+    # candidate map. This also gives directives in a document without Needs
+    # an empty map, so they still go through validation and application.
+    for needextend_id, needextend in needextends.items():
+        by_docname[needextend["docname"]].needextends[needextend_id] = needextend
+
+    # The ID map does not tell us which Needs belong to a document, so read
+    # each Need's source docname once. c.this_doc() uses that same source.
+    for need_id, need in all_needs.items():
+        docname = need.source.dict_repr.get("docname")
+        if docname is not None and docname in by_docname:
+            # Share the original Need object. Sphinx-Needs applies updates in
+            # place, so later filters and the full graph must see those updates.
+            by_docname[docname].needs[need_id] = need
+
+    # Parallel reads can change insertion order. Sort for stable diagnostics.
+    return dict(sorted(by_docname.items()))
 
 
 def score_extend_needs_data_func(
@@ -189,18 +216,27 @@ def score_extend_needs_data_func(
     are still passed to Sphinx-Needs so its normal processing and diagnostics remain
     authoritative.
     """
-    # Sphinx-Needs applies extensions in source order as well. Matching that order
-    # keeps warning output stable and mirrors the later application order.
-    ordered_extends = sorted(extends.values(), key=_location)
 
-    for needextend in ordered_extends:
-        needs = _fetch_needs(all_needs, needextend, needs_config)
-        _verify_needs_are_in_document(needs, _location(needextend))
+    if not extends:
+        return
 
-        for n in needs:
-            _ensure_non_destructive_changes(n, needextend, _location(needextend))
+    by_docname = _group_needs_and_extends_by_document(all_needs, extends)
 
-    return original_function(all_needs, extends, needs_config)
+    # Give both passes the same local map so they enforce the same scope and
+    # both avoid scanning the full graph. Preserve source order for diagnostics
+    # and for directives that depend on earlier changes.
+    for document_data in by_docname.values():
+        # Sphinx-Needs applies extensions in source order as well. Matching that order
+        # keeps warning output stable and mirrors the later application order.
+        ordered_extends = sorted(document_data.needextends.values(), key=_location)
+
+        for needextend in ordered_extends:
+            target_needs = _resolve_needextend_targets(
+                document_data.needs, all_needs, needextend, needs_config
+            )
+            for need in target_needs:
+                _ensure_non_destructive_changes(need, needextend, _location(needextend))
+        original_function(document_data.needs, document_data.needextends, needs_config)
 
 
 sphinx_needs.directives.need.extend_needs_data = score_extend_needs_data_func

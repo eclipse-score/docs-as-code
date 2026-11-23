@@ -11,31 +11,30 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+from pathlib import Path
 from typing import cast
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
 
 import pytest
 from score_metamodel.checks import check_needs_extends
-from sphinx_needs.data import NeedsExtendType, NeedsMutable
-from sphinx_needs.need_item import NeedItem
-
-# TODO(#688): Replace these mocked tests with multi-file RST tests once the
-# RST runner can build complete cross-document test cases.
-CROSS_DOCUMENT_WARNING = (
-    "Needextends may only modify needs in the current document. "
-    "Matching needs: remote-need."
-)
+from sphinx.testing.util import SphinxTestApp
+from sphinx_needs.config import NeedsSphinxConfig
+from sphinx_needs.data import NeedsExtendType, NeedsMutable, SphinxNeedsData
+from sphinx_needs.need_item import NeedItem, NeedItemSourceUnknown
 
 
-def _need(need_id: str, document: str) -> NeedItem:
-    """Create the minimal need record used by the location check."""
-    return cast(
-        NeedItem,
-        {"id": need_id, "docname": document, "is_external": False},
-    )
+def _mock_need(need_id: str, docname: str) -> NeedItem:
+    """Provide the source and fields used by the needextend checks."""
+    need = MagicMock(spec=NeedItem, source=NeedItemSourceUnknown(docname=docname))
+    need.__getitem__.side_effect = {
+        "id": need_id,
+        "docname": docname,
+        "is_external": False,
+    }.__getitem__
+    return need
 
 
-def _needextend(target: str, *, target_is_id: bool) -> NeedsExtendType:
+def _make_needextend(target: str, *, target_is_id: bool) -> NeedsExtendType:
     """Create a needextend with no modifications; only target resolution matters."""
     return cast(
         NeedsExtendType,
@@ -51,66 +50,117 @@ def _needextend(target: str, *, target_is_id: bool) -> NeedsExtendType:
     )
 
 
-def _run_check(
-    monkeypatch: pytest.MonkeyPatch,
-    all_needs: NeedsMutable,
-    needextend: NeedsExtendType,
-    *,
-    filter_matches: list[NeedItem] | None = None,
-) -> tuple[Mock, Mock]:
-    """Run the wrapper with isolated Sphinx-Needs dependencies."""
-    warnings = Mock()
-    original_function = Mock()
-    monkeypatch.setattr(check_needs_extends, "log_warning", warnings)
-    monkeypatch.setattr(check_needs_extends, "original_function", original_function)
-    if filter_matches is not None:
-        monkeypatch.setattr(
-            check_needs_extends,
-            "filter_needs_mutable",
-            Mock(return_value=filter_matches),
-        )
-
-    check_needs_extends.score_extend_needs_data_func(
-        all_needs, {"needextend-1": needextend}, Mock()
-    )
-    return original_function, warnings
-
-
-def _assert_cross_document_warning(warnings: Mock) -> None:
-    messages = [call.args[1] for call in warnings.call_args_list]
-    assert CROSS_DOCUMENT_WARNING in messages
-
-
-def test_filter_reports_cross_document_or_match_without_changing_directive(
+def test_id_shorthand_warns_for_a_need_in_another_document(
     monkeypatch: pytest.MonkeyPatch,
 ):
-    local_need = _need("local-need", "local")
-    remote_need = _need("remote-need", "remote")
-    all_needs = cast(
-        NeedsMutable,
-        {"local-need": local_need, "remote-need": remote_need},
-    )
-    needextend = _needextend("c.this_doc() or id == 'remote-need'", target_is_id=False)
+    """Check a direct ID in a document with no Needs of its own.
 
-    original_function, warnings = _run_check(
-        monkeypatch,
+    SCORE warns that the target belongs to another document and forwards the
+    directive with an empty candidate map.
+    """
+    remote_need = _mock_need("remote-need", "remote")
+    all_needs = NeedsMutable({"remote-need": remote_need})
+    log_warning_mock = Mock()
+    apply_needextends_mock = Mock()
+    monkeypatch.setattr(check_needs_extends, "log_warning", log_warning_mock)
+    monkeypatch.setattr(
+        check_needs_extends, "original_function", apply_needextends_mock
+    )
+
+    check_needs_extends.score_extend_needs_data_func(
         all_needs,
-        needextend,
-        filter_matches=[local_need, remote_need],
+        {"needextend-1": _make_needextend("remote-need", target_is_id=True)},
+        Mock(spec=NeedsSphinxConfig),
     )
 
-    assert original_function.call_args.args[1]["needextend-1"] is needextend
-    _assert_cross_document_warning(warnings)
+    apply_needextends_mock.assert_called_once()
+    candidate_needs, needextends, _ = apply_needextends_mock.call_args.args
+    assert not candidate_needs
+    assert tuple(needextends) == ("needextend-1",)
+    log_warning_mock.assert_called_once()
+    assert "Matching needs: remote-need." in log_warning_mock.call_args.args[1]
 
 
-def test_id_shorthand_reports_cross_document_match(monkeypatch: pytest.MonkeyPatch):
-    remote_need = _need("remote-need", "remote")
-    all_needs = cast(NeedsMutable, {"remote-need": remote_need})
+def test_both_passes_use_the_document_index(monkeypatch: pytest.MonkeyPatch):
+    """Check two filters in a document with one local Need.
 
-    _, warnings = _run_check(
-        monkeypatch,
-        all_needs,
-        _needextend("remote-need", target_is_id=True),
+    SCORE evaluates both filters against the local Need alone. Application
+    receives the same candidate map and both directives.
+    """
+    local_need = _mock_need("local-need", "local")
+    remote_need = _mock_need("remote-need", "remote")
+    all_needs = NeedsMutable({"remote-need": remote_need, "local-need": local_need})
+    config = Mock(spec=NeedsSphinxConfig)
+    needextends = {
+        "extend-a": _make_needextend("c.this_doc()", target_is_id=False),
+        "extend-b": _make_needextend(
+            "docname is not None and c.this_doc()", target_is_id=False
+        ),
+    }
+    filter_needs_mock = Mock(return_value=[])
+    apply_needextends_mock = Mock()
+    monkeypatch.setattr(check_needs_extends, "filter_needs_mutable", filter_needs_mock)
+    monkeypatch.setattr(
+        check_needs_extends, "original_function", apply_needextends_mock
     )
 
-    _assert_cross_document_warning(warnings)
+    check_needs_extends.score_extend_needs_data_func(all_needs, needextends, config)
+
+    assert [tuple(call.args[0]) for call in filter_needs_mock.call_args_list] == [
+        ("local-need",),
+        ("local-need",),
+    ]
+    apply_needextends_mock.assert_called_once_with(
+        filter_needs_mock.call_args.args[0], needextends, config
+    )
+
+
+def test_local_needextend_can_match_fields_set_by_an_earlier_directive(
+    tmp_path: Path,
+):
+    """Check two successive needextends in a real build with two documents.
+
+    The first filter names the remote Need in an OR branch, but adds a tag only
+    to the local Need. The second sees that tag and checks that its `needs`
+    collection excludes the remote Need before adding the verification tag.
+    """
+    (tmp_path / "conf.py").write_text(
+        "extensions = ['sphinx_needs']\n", encoding="utf-8"
+    )
+    (tmp_path / "index.rst").write_text(
+        """Local
+=====
+
+.. toctree::
+
+   remote
+
+.. req:: Local requirement
+   :id: REQ_LOCAL
+
+.. needextend:: c.this_doc() or id == 'REQ_REMOTE'
+   :+tags: selected
+
+.. needextend:: c.this_doc() and 'selected' in tags and not any(n['id'] == 'REQ_REMOTE' for n in needs)
+   :+tags: verified
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "remote.rst").write_text(
+        """Remote
+======
+
+.. req:: Remote requirement
+   :id: REQ_REMOTE
+""",
+        encoding="utf-8",
+    )
+    app = SphinxTestApp(srcdir=tmp_path)
+    try:
+        app.build()
+        needs = SphinxNeedsData(app.env).get_needs_view()
+        assert "verified" in needs["REQ_LOCAL"]["tags"]
+        assert needs["REQ_REMOTE"]["tags"] == []
+        assert not app.warning.getvalue()
+    finally:
+        app.cleanup()

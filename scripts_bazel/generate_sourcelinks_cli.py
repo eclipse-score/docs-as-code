@@ -23,33 +23,14 @@ import sys
 from pathlib import Path
 
 from scripts_bazel.source_code_link_parser import extract_references_from_file
-from src.extensions.score_source_code_linker.helpers import parse_repo_name_from_path
-from src.extensions.score_source_code_linker.needlinks import (
-    DefaultMetaData,
-    store_source_code_links_with_metadata_json,
-)
+from src.helper_lib.needlinks import NeedLink, store_source_code_links_json
+from src.helper_lib.repo_info import RepoInfo, split_external_path
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
-def clean_external_prefix(path: Path) -> Path:
-    """
-    As it can be in combo builds that the path is:
-    `external/score_docs_as_code+/....` or similar
-    We have to remove this prefix from the file
-    before we pass it to the extract function. Otherwise we have
-    this prefix inside the `file` attribute leading to wrong links
-    """
-    if not str(path).startswith("external/"):
-        return path
-    # This allows for files / folders etc. to have `external` in their name too.
-    path_raw = str(path).removeprefix("external/")
-    filepath_split = str(path_raw).split("/", maxsplit=1)
-    return Path("".join(filepath_split[1:]))
-
-
-def main():
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Generate source code links JSON from source files"
     )
@@ -66,26 +47,23 @@ def main():
         help="Source files to scan for traceability tags",
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
-    all_need_references = []
-
-    metadata = DefaultMetaData()
-    metadata_set = False
+    all_need_references: list[NeedLink] = []
     for file_path in args.files:
-        if "known_good.json" not in str(file_path) and not metadata_set:
-            metadata["repo_name"] = parse_repo_name_from_path(file_path)
-            metadata_set = True
+        # Combo build: `external/<repo>+/<path>` => (<repo>, <path>)
+        repo_name, clean_path = split_external_path(file_path)
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
-        clean_path = clean_external_prefix(file_path)
         references = extract_references_from_file(
-            abs_file_path.parent, Path(abs_file_path.name), clean_path
+            abs_file_path.parent,
+            Path(abs_file_path.name),
+            clean_path,
+            # The merge fills in hash and url from known_good.json.
+            repo=RepoInfo(name=repo_name, hash="", url=""),
         )
         all_need_references.extend(references)
-    store_source_code_links_with_metadata_json(
-        file=args.output, metadata=metadata, needlist=all_need_references
-    )
+    store_source_code_links_json(args.output, all_need_references)
     logger.info(
         f"Found {len(all_need_references)} need references in {len(args.files)} files"
     )

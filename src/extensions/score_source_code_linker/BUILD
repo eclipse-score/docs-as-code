@@ -51,9 +51,6 @@ py_library(
 py_library(
     name = "source_code_linker_helpers",
     srcs = [
-        "helpers.py",
-        "needlinks.py",
-        "repo_source_links.py",
         "testlink.py",
         "xml_parser.py",
     ],
@@ -78,5 +75,6 @@ score_pytest(
     deps = [
         ":score_source_code_linker",
         "//src/extensions/score_metamodel",
+        "//src/helper_lib",
     ],
 )
