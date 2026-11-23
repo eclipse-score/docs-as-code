@@ -19,15 +19,13 @@ from typing import Any
 
 from src.helper_lib import find_git_root, get_current_git_hash, get_github_base_url
 
-LOCAL_REPO = "local_repo"
-
 # Keys of the 'flat' form, in the order they appear in the JSON files.
 REPO_FLAT_KEYS = ("repo_name", "hash", "url")
 
 
-# order + unsafe_hash: the link dataclasses that hold a RepoInfo are
+# The link dataclasses that hold a RepoInfo are
 # ordered and hashed field by field, so RepoInfo has to support both.
-@dataclass(order=True, unsafe_hash=True)
+@dataclass(order=True, frozen=True)
 class RepoInfo:
     name: str
     hash: str
@@ -51,7 +49,7 @@ class RepoInfo:
 
 
 def DefaultRepoInfo() -> RepoInfo:
-    return RepoInfo(name=LOCAL_REPO, hash="", url="")
+    return RepoInfo(name="", hash="", url="")
 
 
 def flatten_repo_field(d: dict[str, Any], repo: RepoInfo | None) -> dict[str, Any]:
@@ -88,7 +86,7 @@ def split_repo_fields(d: dict[str, Any]) -> tuple[dict[str, Any], RepoInfo | Non
     return rest, RepoInfo(name=name, hash=hash_, url=url)
 
 
-def split_external_path(path: Path) -> tuple[str, Path]:
+def split_external_path(path: Path, *, local_module: str) -> tuple[str, Path]:
     """
     Split a Bazel exec path into the repo it belongs to and the path inside
     that repo.
@@ -98,29 +96,15 @@ def split_external_path(path: Path) -> tuple[str, Path]:
         => ("score_docs_as_code", Path("src/helper_lib/test_helper_lib.py"))
     Local build (`//:docs`):
         src/helper_lib/test_helper_lib.py
-        => (LOCAL_REPO, Path("src/helper_lib/test_helper_lib.py"))  # path unchanged
+        => (local_module, Path("src/helper_lib/test_helper_lib.py"))
     """
     # Only a leading `external/` counts, so files / folders may still have
     # `external` somewhere else in their name.
     if not str(path).startswith("external/"):
-        return LOCAL_REPO, path
+        return local_module, path
     repo_dir, _, rest = str(path).removeprefix("external/").partition("/")
     # Bzlmod appends `+` to the canonical repo directory name.
     return repo_dir.removesuffix("+"), Path(rest)
-
-
-def parse_repo_name_from_path(path: Path) -> str:
-    """
-    Parse out the Module-Name from the filename:
-    Combo Example:
-        Path: external/score_docs_as_code+/src/helper_lib/test_helper_lib.py
-        => score_docs_as_code
-    Local:
-        Path: src/helper_lib/test_helper_lib.py
-        => LOCAL_REPO (whatever the vars value is)
-
-    """
-    return split_external_path(path)[0]
 
 
 def load_known_good(known_good_json: Path) -> dict[str, Any]:
@@ -160,25 +144,42 @@ def parse_info_from_known_good(
     raise KeyError(f"Module {repo_name} not found in known_good_json.")
 
 
-def resolve_repo(repo_name: str, known_good: dict[str, Any] | None) -> RepoInfo | None:
-    """
-    Fill hash and url of a repo from a loaded known_good.json.
+def resolve_repo(
+    repo_name: str, known_good: dict[str, Any] | None, *, local_module: str
+) -> RepoInfo | None:
+    """Resolve the Git pin of a source link's or JUnit report's module.
 
-    Returns None when there is nothing to look up: the local repo, an empty
-    name, or no known_good (standalone build). The caller then keeps what it
-    already has.
+    `repo_name` identifies the declaring module and `local_module` names the
+    root module of the documentation build. `known_good` holds the loaded
+    known_good.json, or None when the build has no such file.
+
+    Return None when the build has no known-good file, the module name is
+    empty, or the module is the root module. In those cases the caller keeps
+    its existing repository metadata.
+    A supplied known-good file must contain the external module's revision and
+    repository URL. A missing entry or field raises KeyError.
     """
-    if not known_good or not repo_name or repo_name == LOCAL_REPO:
+    # Without a known-good file there is no Git pin. The root module and
+    # direct Sphinx builds (empty module name) use the checkout at render time.
+    if not known_good or not repo_name or repo_name == local_module:
         return None
+
+    # The consuming build supplies the Git pin for an external module.
     hash_or_version, url = parse_info_from_known_good(known_good, repo_name)
     return RepoInfo(name=repo_name, hash=hash_or_version, url=url)
 
 
 #   ───────────────────────[ GitHub links ]───────────────────────
 
-# Used when there is no real URL: Bazel sandbox builds (plain links) and
-# testcases without repo metadata.
+# Used when there is no real URL. Bazel sandbox builds and testcase Needs
+# without a Git link use this placeholder.
 PLACEHOLDER_URL = "https://github.com/placeholder/placeholder/blob/unknown"
+
+
+def get_placeholder_github_link(file: Path | str | None, line: int | str | None) -> str:
+    file = file if file is not None else "<placeholder_file>"
+    line = line if line is not None else 1
+    return f"{PLACEHOLDER_URL}/{file}#L{line}"
 
 
 def get_github_link(
@@ -187,31 +188,37 @@ def get_github_link(
     line: int | str | None,
     plain_links: bool = False,
     git_root: Path | None = None,
+    *,
+    local_module: str = "",
 ) -> str | None:
     """
-    GitHub URL of a file and line. Checked in this order:
+    GitHub URL of a file, with a line anchor when a line is available.
+    Checked in this order:
       1. plain_links (Bazel sandbox, no git) or repo is None (metadata
          incomplete): placeholder URL. A missing file / line becomes
          '<placeholder_file>' / 1.
-      2. repo.hash is set (combo build, filled from known_good): URL from repo.
-      3. Otherwise (local build): URL from the local git checkout.
-      4. The local git checkout has no remote: None. The caller decides the
-         fallback.
+      2. repo has a hash and URL (filled from known_good): URL from repo.
+      3. Return None for an unpinned external module.
+      4. Use the local git checkout for the root module or an empty repo name.
+         Return None if the checkout has no remote.
     """
     if plain_links or repo is None:
-        file = file if file is not None else "<placeholder_file>"
-        line = line if line is not None else 1
-        return f"{PLACEHOLDER_URL}/{file}#L{line}"
-    if repo.hash:
+        return get_placeholder_github_link(file, line)
+    file_location = str(file) if line in (None, "") else f"{file}#L{line}"
+    if repo.hash and repo.url:
         # Reference-integration path (mounted external documentation)
-        blob_url = f"{repo.url}/blob/{repo.hash}"
-    else:
-        # Local path (//:docs)
-        try:
-            blob_url = _git_blob_url(git_root or find_git_root() or Path())
-        except AssertionError:
-            return None
-    return f"{blob_url}/{file}#L{line}"
+        return f"{repo.url}/blob/{repo.hash}/{file_location}"
+    if repo.name and repo.name != local_module:
+        # A link to an unpinned external module would point into the wrong
+        # repository if it used the local checkout.
+        return None
+
+    # Local path (//:docs)
+    try:
+        blob_url = _git_blob_url(git_root or find_git_root() or Path())
+    except AssertionError:
+        return None
+    return f"{blob_url}/{file_location}"
 
 
 @functools.cache

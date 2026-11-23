@@ -21,7 +21,6 @@ from score_pytest.attribute_plugin import add_test_properties
 
 from src.helper_lib import get_current_git_hash
 from src.helper_lib.repo_info import (
-    LOCAL_REPO,
     PLACEHOLDER_URL,
     DefaultRepoInfo,
     RepoInfo,
@@ -29,7 +28,6 @@ from src.helper_lib.repo_info import (
     get_github_link,
     load_known_good,
     parse_info_from_known_good,
-    parse_repo_name_from_path,
     resolve_repo,
     split_external_path,
 )
@@ -40,23 +38,24 @@ from src.helper_lib.repo_info import (
     [
         # Path starts with "external/" and has a project name
         (
-            Path("external/score_docs_as_code+/docs/index.md"),
+            Path("external/score_docs_as_code+/docs/external/index.md"),
             "score_docs_as_code",
-            Path("docs/index.md"),
+            Path("docs/external/index.md"),
         ),
         # Path does NOT start with "external/"
-        (Path("src/main.py"), LOCAL_REPO, Path("src/main.py")),
+        (Path("src/main.py"), "host_module", Path("src/main.py")),
+        (Path(), "host_module", Path()),
         # Path has "external" elsewhere in the string (should not be removed)
         (
             Path("my_external_data/file.txt"),
-            LOCAL_REPO,
+            "host_module",
             Path("my_external_data/file.txt"),
         ),
         # Deeply nested path inside an external prefix, repo without '+'
         (Path("external/repo/subfolder/file.py"), "repo", Path("subfolder/file.py")),
         # Path is exactly "external/": Path() drops the trailing '/', so it is
         # no external prefix any more
-        (Path("external/"), LOCAL_REPO, Path("external")),
+        (Path("external/"), "host_module", Path("external")),
         # External repo directory without anything inside
         (Path("external/score_x+"), "score_x", Path(".")),
     ],
@@ -68,58 +67,10 @@ from src.helper_lib.repo_info import (
 )
 def test_split_external_path(input_path: Path, expected_repo: str, expected_path: Path):
     """Test splitting an exec path into repo name and path inside the repo."""
-    assert split_external_path(input_path) == (expected_repo, expected_path)
-
-
-def test_parse_repo_name_from_external_path():
-    """Test parsing repo name from external/combo build path."""
-    path = Path("external/score_docs_as_code+/src/helper_lib/test_helper_lib.py")
-
-    result = parse_repo_name_from_path(path)
-
-    assert result == "score_docs_as_code"
-
-
-def test_parse_repo_name_from_external_path_2():
-    """Test that an extra 'external' in the path does not change the output"""
-    path = Path(
-        "external/score_docs_as_code+/src/external/helper_lib/test_helper_lib.py"
+    assert split_external_path(input_path, local_module="host_module") == (
+        expected_repo,
+        expected_path,
     )
-
-    result = parse_repo_name_from_path(path)
-
-    assert result == "score_docs_as_code"
-
-
-def test_parse_repo_name_from_local_path():
-    """Test parsing repo name from local build path."""
-    path = Path("src/helper_lib/test_helper_lib.py")
-
-    result = parse_repo_name_from_path(path)
-
-    assert result == LOCAL_REPO
-
-
-def test_parse_repo_name_from_empty_path():
-    """Test parsing repo name from an empty path."""
-    path = Path("")
-
-    result = parse_repo_name_from_path(path)
-
-    assert result == LOCAL_REPO
-
-
-def test_parse_repo_name_without_plus_suffix():
-    """
-    Test parsing external repo without plus suffix.
-    This should never happen (due to bazel adding the '+')
-    But testing this edge case anyway
-    """
-    path = Path("external/repo_without_plus/file.py")
-
-    result = parse_repo_name_from_path(path)
-
-    assert result == "repo_without_plus"
 
 
 # Example of a minimal valid known_good.json structure
@@ -290,7 +241,9 @@ def test_parse_info_from_known_good_neither_hash_nor_version(tmp_path: Path):
 
 # Tests for resolve_repo
 def test_resolve_repo_fills_hash_and_url():
-    repo = resolve_repo("score_docs_as_code", VALID_KNOWN_GOOD)
+    repo = resolve_repo(
+        "score_docs_as_code", VALID_KNOWN_GOOD, local_module="host_module"
+    )
     assert repo == RepoInfo(
         name="score_docs_as_code",
         hash="c1207676afe6cafd25c35d420e73279a799515d8",
@@ -301,21 +254,21 @@ def test_resolve_repo_fills_hash_and_url():
 @pytest.mark.parametrize(
     ("repo_name", "known_good"),
     [
-        (LOCAL_REPO, VALID_KNOWN_GOOD),
+        ("score_docs_as_code", VALID_KNOWN_GOOD),
         ("", VALID_KNOWN_GOOD),
-        ("score_docs_as_code", None),
+        ("dependency", None),
     ],
 )
 def test_resolve_repo_nothing_to_look_up(
     repo_name: str, known_good: dict[str, object] | None
 ):
-    """Local repo, empty name or no known_good: None, the caller keeps its data."""
-    assert resolve_repo(repo_name, known_good) is None
+    """Keep existing metadata when there is no external pin to look up."""
+    assert not resolve_repo(repo_name, known_good, local_module="score_docs_as_code")
 
 
 def test_resolve_repo_unknown_repo_raises():
     with pytest.raises(KeyError, match="Module nonexistent not found"):
-        _ = resolve_repo("nonexistent", VALID_KNOWN_GOOD)
+        _ = resolve_repo("nonexistent", VALID_KNOWN_GOOD, local_module="host_module")
 
 
 # Tests for get_github_link
@@ -434,7 +387,13 @@ def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     """
     metadata = RepoInfo(name="some_repo", url="", hash="")
 
-    result = get_github_link(metadata, Path("src/example.py"), 42, git_root=git_repo)
+    result = get_github_link(
+        metadata,
+        Path("src/example.py"),
+        42,
+        git_root=git_repo,
+        local_module="some_repo",
+    )
     assert result is not None
 
     # Should contain the base URL, hash, file path, and line number
@@ -446,13 +405,21 @@ def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     actual_hash = get_current_git_hash(git_repo)
     assert hash_from_link == actual_hash
 
+    # An unpinned dependency cannot use the same checkout.
+    assert (
+        get_github_link(
+            metadata, Path("src/example.py"), 42, git_root=git_repo, local_module="host"
+        )
+        is None
+    )
+
 
 def test_complete_workflow(known_good_json: Path):
     """Test complete workflow from path to GitHub link."""
 
     # Parse path
     path = Path("external/score_docs_as_code+/src/helper_lib/test_helper_lib.py")
-    repo_name = parse_repo_name_from_path(path)
+    repo_name, _ = split_external_path(path, local_module="host_module")
     assert repo_name == "score_docs_as_code"
 
     # Get metadata

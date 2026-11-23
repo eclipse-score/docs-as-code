@@ -10,6 +10,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+def require_bazel_module_name():
+    """Read the declaring module name while expanding a documentation macro."""
+    module_name = native.module_name()
+    if not module_name:
+        # Bundle provenance needs the declaring module even when the root
+        # module's canonical labels omit its repository name.
+        fail('docs() and docs_bundle() require a named Bazel module. Add module(name = "your_module") to MODULE.bazel.')
+    return module_name
+
 def join_path(prefix, rest):
     """
     Compose two docname segments with `/`. No trailing `/` is preserved.

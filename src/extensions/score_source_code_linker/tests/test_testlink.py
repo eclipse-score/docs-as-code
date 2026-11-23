@@ -340,9 +340,7 @@ def test_store_and_load_data_of_test_case_roundtrip(tmp_path: Path):
     store_data_of_test_case_json(test_file, test_cases)
     loaded = load_data_of_test_case_json(test_file)
 
-    assert len(loaded) == 2
-    assert loaded[0].name == "TC_A"
-    assert loaded[1].name == "TC_B"
+    assert loaded == test_cases
 
 
 def test_load_data_of_test_case_validates_list(tmp_path: Path):

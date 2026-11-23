@@ -371,7 +371,7 @@ def test_inject_links_matches_versioned_need_across_modules(
     derivation_technique="explorative-testing",
 )
 def test_inject_links_renders_each_test_link_with_its_repository() -> None:
-    """Test links of one Need from two repositories keep their own URL and revision."""
+    """Test links retain pinned URLs and show plain names for unpinned modules."""
     env = cast(BuildEnvironment, SimpleNamespace())
     needs_data = SphinxNeedsData(env)
     needs_data.add_need(
@@ -396,10 +396,17 @@ def test_inject_links_renders_each_test_link_with_its_repository() -> None:
             name="second", hash="def456", url="https://github.com/example/second"
         ),
     )
+    unpinned_module_test = replace(
+        first_module_test,
+        name="test_unpinned",
+        repo=RepoInfo(name="unpinned", hash="", url=""),
+    )
 
     apply_links_to_needs(
         env,
-        group_by_need([], [first_module_test, second_module_test]),
+        group_by_need(
+            [], [first_module_test, second_module_test, unpinned_module_test]
+        ),
         plain_links=False,
     )
 
@@ -407,7 +414,7 @@ def test_inject_links_renders_each_test_link_with_its_repository() -> None:
         "https://github.com/example/first/blob/abc123/first_test.py#L3"
         "<>test_first<>passed, "
         "https://github.com/example/second/blob/def456/second_test.py#L3"
-        "<>test_second<>passed"
+        "<>test_second<>passed, test_unpinned"
     )
 
 
