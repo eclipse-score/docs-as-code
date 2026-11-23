@@ -15,7 +15,7 @@
 import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, TypeGuard
+from typing import Any
 
 from src.helper_lib import Environment
 from src.helper_lib.repo_info import (
@@ -46,13 +46,6 @@ class NeedLink:
     # repo_name, hash, url
     def to_dict_full(self) -> dict[str, Any]:
         return flatten_repo_field(asdict(self), self.repo)
-
-    # Drops the repo (RepoInfo) for saving the Dataclass (saving space in json)
-    # The information is in the 'Repo_Source_Link' in the end
-    def to_dict_without_metadata(self) -> dict[str, Any]:
-        d = asdict(self)
-        d.pop("repo", None)
-        return d
 
     @classmethod
     def from_flat_dict(cls, d: dict[str, Any]) -> "NeedLink":
@@ -103,25 +96,6 @@ def needlink_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
     return d
 
 
-def store_source_code_links_with_metadata_json(
-    file: Path, metadata: RepoInfo, needlist: list[NeedLink]
-) -> None:
-    """
-    Writes a JSON array:
-      [ meta_dict, needlink1, needlink2, ... ]
-
-    meta_dict is the flat form of RepoInfo:
-      repo_name, hash, url
-    """
-    payload: list[object] = [metadata.to_flat_dict(), *needlist]
-
-    # After `rm -rf _build` or on clean builds the directory does not exist,
-    # so we need to create it. We create any folder that might be missing
-    file.parent.mkdir(exist_ok=True, parents=True)
-    with open(file, "w", encoding="utf-8") as f:
-        json.dump(payload, f, cls=NeedLinkEncoder, indent=2, ensure_ascii=False)
-
-
 def store_source_code_links_json(file: Path, needlist: list[NeedLink]) -> None:
     """
     Writes a JSON array:
@@ -135,56 +109,13 @@ def store_source_code_links_json(file: Path, needlist: list[NeedLink]) -> None:
         json.dump(needlist, f, cls=NeedLinkEncoder, indent=2, ensure_ascii=False)
 
 
-def _is_needlink_list(xs: list[object]) -> TypeGuard[list[NeedLink]]:
-    return all(isinstance(link, NeedLink) for link in xs)
-
-
-def load_source_code_links_with_metadata_json(file: Path) -> list[NeedLink]:
-    """
-    Expects the JSON array where first is a meta_dict:
-      [ meta_dict, needlink1, needlink2, ... ]
-    Returns:
-      [NeedLink, NeedLink, ...]
-
-    This normally should be the one called 'locally' => :docs target
-    """
-    if not file.is_absolute():
-        ws_root = env.get("BUILD_WORKSPACE_DIRECTORY", "")
-        if ws_root:
-            file = Path(ws_root) / file
-
-    data: list[object] = json.loads(
-        file.read_text(encoding="utf-8"),
-        object_hook=needlink_decoder,
-    )
-    links: list[object] = []
-    if not isinstance(data[0], dict) or not RepoInfo.is_flat_dict(data[0]):
-        raise TypeError(
-            "If you do not have a 'metadata' dict as the first one in the json "
-            "you might wanted to call the load without metadata named: "
-            "'load_source_code_links_json'"
-        )
-    metadata = RepoInfo.from_flat_dict(data[0])
-    links = data[1:]
-    if not _is_needlink_list(links):
-        raise TypeError(
-            "In local build context all items after"
-            f"metadata must decode to NeedLink objects. File: {file}"
-        )
-    for d in links:
-        d.repo = metadata
-    return links
-
-
 def load_source_code_links_json(file: Path) -> list[NeedLink]:
     """
-    Expects the JSON array with needlinks
-    *that already have extra info in them* (repo_name, hash, url):
+    Expects the JSON array with needlinks, each with its own repo_name, hash
+    and url:
       [ needlink1, needlink2, ... ]
     Returns:
       [NeedLink, NeedLink, ...]
-
-    This is used when mounted external documentation contributes source links.
     """
     if not file.is_absolute():
         # use env variable set by Bazel

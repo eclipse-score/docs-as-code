@@ -24,7 +24,7 @@ In this file the actual sphinx extension is defined. On env-updated it
 
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, cast
+from typing import cast
 
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
@@ -33,13 +33,9 @@ from sphinx_needs.logging import get_logger
 from sphinx_needs.need_item import NeedItem
 
 from src.extensions.score_source_code_linker.need_source_links import (
+    SourceCodeLinks,
     group_by_need,
     store_source_code_links_combined_json,
-)
-from src.extensions.score_source_code_linker.repo_source_links import (
-    RepoSourceLinks,
-    group_needs_by_repo,
-    store_repo_source_links_json,
 )
 from src.extensions.score_source_code_linker.testcase_annotations import (
     annotate_testcase_results,
@@ -54,12 +50,8 @@ from src.extensions.score_source_code_linker.testlink import (
     load_test_xml_parsed_json,
 )
 from src.helper_lib import find_ws_root
-from src.helper_lib.needlinks import (
-    NeedLink,
-    load_source_code_links_json,
-    load_source_code_links_with_metadata_json,
-)
-from src.helper_lib.repo_info import RepoInfo, clear_git_cache, get_github_link
+from src.helper_lib.needlinks import NeedLink, load_source_code_links_json
+from src.helper_lib.repo_info import clear_git_cache, get_github_link
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
@@ -103,10 +95,6 @@ def load_link_inputs(
                 f"{source_code_links_json}. Check the score_sourcelinks_json "
                 "Sphinx config value (set from SCORE_SOURCELINKS by the docs CLI)."
             ) from exc
-        except AssertionError:
-            code_links = load_source_code_links_with_metadata_json(
-                source_code_links_json
-            )
     else:
         LOGGER.debug(
             "No pre-generated source-code links provided. Continuing without code links.",
@@ -347,26 +335,26 @@ def _log_existing_links(needs: NeedsMutable) -> None:
             )
 
 
-def _render_code_link(plain_links: bool, metadata: RepoInfo, link: NeedLink) -> str:
-    base = get_github_link(metadata, link.file, link.line, plain_links=plain_links)
+def _render_code_link(plain_links: bool, link: NeedLink) -> str:
+    location = f"{link.file}:{link.line}"
+    base = get_github_link(link.repo, link.file, link.line, plain_links=plain_links)
     if base is None:
         LOGGER.info(
             "Falling back to local code-link format (no git remote available): "
             f"{link.file}:{link.line}",
             type="score_source_code_linker",
         )
-        return f"{link.file}:{link.line}"
-    return f"{base}<>{link.file}:{link.line}"
+        return location
+    return f"{base}<>{location}"
 
 
 def _render_test_link(
     plain_links: bool,
-    metadata: RepoInfo,
     link: DataForTestLink,
 ) -> str:
     if plain_links:
         return str(link.name)
-    base = get_github_link(metadata, link.file, link.line)
+    base = get_github_link(link.repo, link.file, link.line)
     if base is None:
         LOGGER.info(
             "Falling back to local test-link format (no git remote available): "
@@ -377,9 +365,9 @@ def _render_test_link(
     return f"{base}<>{link.name}<>{link.result}"
 
 
-def _warn_missing_need(source_code_links: object) -> None:
-    links = cast(Any, source_code_links).links
-    need_id = cast(Any, source_code_links).need
+def _warn_missing_need(source_code_links: SourceCodeLinks) -> None:
+    links = source_code_links.links
+    need_id = source_code_links.need
 
     for code_link in links.CodeLinks:
         LOGGER.warning(
@@ -398,20 +386,12 @@ def _warn_missing_need(source_code_links: object) -> None:
 def _apply_links_to_need(
     needs_data: SphinxNeedsData,
     need: NeedItem,
-    source_code_links: object,
-    metadata: RepoInfo,
-    plain_links: bool,
+    code_links: list[str],
+    test_links: list[str],
 ) -> None:
-    links = cast(Any, source_code_links).links
     need_as_dict = cast(dict[str, object], need)
-    need_as_dict["source_code_link"] = ", ".join(
-        _render_code_link(plain_links, metadata, code_link)
-        for code_link in links.CodeLinks
-    )
-    need_as_dict["testlink"] = ", ".join(
-        _render_test_link(plain_links, metadata, test_link)
-        for test_link in links.TestLinks
-    )
+    need_as_dict["source_code_link"] = ", ".join(code_links)
+    need_as_dict["testlink"] = ", ".join(test_links)
 
     # Removing the Need also clears its cached Sphinx node before reinsertion.
     needs_data.remove_need(need["id"])
@@ -429,55 +409,45 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         app.config.score_sourcelinks_json, app.outdir
     )
     links_by_need = group_by_need(code_links, test_links)
-    links_by_repo = group_needs_by_repo(links_by_need)
     # Debug output only (-vv), never read back by the build.
     if app.verbosity >= 2:
         store_source_code_links_combined_json(
             app.outdir / "score_scl_grouped_cache.json", links_by_need
         )
-        store_repo_source_links_json(
-            app.outdir / "score_repo_grouped_scl_cache.json", links_by_repo
-        )
     plain_links = bool(
         getattr(app.config, "score_source_code_linker_plain_links", False)
     )
-    apply_links_to_needs(env, links_by_repo, plain_links)
+    apply_links_to_needs(env, links_by_need, plain_links)
 
 
 def apply_links_to_needs(
-    env: BuildEnvironment, links_by_repo: list[RepoSourceLinks], plain_links: bool
+    env: BuildEnvironment, links_by_need: list[SourceCodeLinks], plain_links: bool
 ) -> None:
     """Write source_code_link and testlink into the matching Needs."""
     needs_data = SphinxNeedsData(env)
     live_needs = needs_data.get_needs_mutable()
-    # A shallow copy duplicates the dictionary and keeps references to the
-    # original Need objects. This gives every lookup the same keys and objects
-    # while updates remove and reinsert entries in Sphinx's live collection.
-    original_needs_by_id = NeedsMutable(live_needs.copy())
-
-    # deepcopy records copies here under the original Python object's id(),
-    # including copies of nested objects. Links from different modules can
-    # target the same Need, so deepcopy reuses the first working copy on later hits.
-    copies_by_object_id: dict[int, Any] = {}
-
     _log_existing_links(live_needs)
+    rendered_links_by_need: dict[str, tuple[list[str], list[str]]] = {}
 
-    for module_grouped_needs in links_by_repo:
-        for source_code_links in module_grouped_needs.needs:
-            # Resolve every reference. For example, REQ_001[version==1] can
-            # warn about an outdated version even if an earlier module
-            # already linked to REQ_001.
-            original_need = find_need(original_needs_by_id, source_code_links.need)
-            if original_need is None:
-                # TODO: print github annotations as in https://github.com/eclipse-score/bazel_registry/blob/7423b9996a45dd0a9ec868e06a970330ee71cf4f/tools/verify_semver_compatibility_level.py#L126-L129
-                _warn_missing_need(source_code_links)
-                continue
+    for source_code_links in links_by_need:
+        # Resolve each reference so outdated versions are still reported.
+        need = find_need(live_needs, source_code_links.need)
+        if need is None:
+            _warn_missing_need(source_code_links)
+            continue
 
-            working_copy = deepcopy(original_need, memo=copies_by_object_id)
-            _apply_links_to_need(
-                needs_data=needs_data,
-                need=working_copy,
-                source_code_links=source_code_links,
-                metadata=module_grouped_needs.repo,
-                plain_links=plain_links,
-            )
+        code_links, test_links = rendered_links_by_need.setdefault(need["id"], ([], []))
+        code_links.extend(
+            _render_code_link(plain_links, link)
+            for link in source_code_links.links.CodeLinks
+        )
+        test_links.extend(
+            _render_test_link(plain_links, link)
+            for link in source_code_links.links.TestLinks
+        )
+
+    # Versioned and unversioned references can resolve to the same Need.
+    for need_id, (code_links, test_links) in rendered_links_by_need.items():
+        _apply_links_to_need(
+            needs_data, deepcopy(live_needs[need_id]), code_links, test_links
+        )
