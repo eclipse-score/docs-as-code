@@ -6120,9 +6120,24 @@
     "source_module": ""
   },
   {
-    "name": "test_source_code_link_integration__test_source_link_integration_ok",
+    "name": "test_source_code_link_integration__test_source_link_integration_ok[reports]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": "508",
+    "line": "539",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements-based",
+    "DerivationTechnique": "requirements-analysis",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m8, potential_tool_malfunction__docs_as_code__m9",
+    "source_module": ""
+  },
+  {
+    "name": "test_source_code_link_integration__test_source_link_integration_ok[cache]",
+    "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
+    "line": "539",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -6137,7 +6152,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_non_existent_id",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": "597",
+    "line": "638",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -7487,7 +7502,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[incremental-html]",
     "file": "src/docs_cli/main_test.py",
-    "line": "66",
+    "line": "65",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7502,7 +7517,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[check-needs]",
     "file": "src/docs_cli/main_test.py",
-    "line": "66",
+    "line": "65",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7517,7 +7532,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[linkcheck-linkcheck]",
     "file": "src/docs_cli/main_test.py",
-    "line": "66",
+    "line": "65",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7532,7 +7547,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[build_needs_json-needs]",
     "file": "src/docs_cli/main_test.py",
-    "line": "66",
+    "line": "65",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7547,7 +7562,7 @@
   {
     "name": "main_test__test_docs_build_dir_overrides_interactive_output_dir[None-/workspace/component/_build]",
     "file": "src/docs_cli/main_test.py",
-    "line": "122",
+    "line": "121",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7562,7 +7577,7 @@
   {
     "name": "main_test__test_docs_build_dir_overrides_interactive_output_dir[-/workspace/component/_build]",
     "file": "src/docs_cli/main_test.py",
-    "line": "122",
+    "line": "121",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7577,7 +7592,7 @@
   {
     "name": "main_test__test_docs_build_dir_overrides_interactive_output_dir[docs_build_tmp-/workspace/component/docs_build_tmp]",
     "file": "src/docs_cli/main_test.py",
-    "line": "122",
+    "line": "121",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7592,7 +7607,7 @@
   {
     "name": "main_test__test_docs_build_dir_overrides_interactive_output_dir[/tmp/docs_out-/tmp/docs_out]",
     "file": "src/docs_cli/main_test.py",
-    "line": "122",
+    "line": "121",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7607,7 +7622,7 @@
   {
     "name": "main_test__test_docs_build_dir_rejects_paths_that_cleanup_could_destroy[.]",
     "file": "src/docs_cli/main_test.py",
-    "line": "150",
+    "line": "149",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -7622,7 +7637,7 @@
   {
     "name": "main_test__test_docs_build_dir_rejects_paths_that_cleanup_could_destroy[..]",
     "file": "src/docs_cli/main_test.py",
-    "line": "150",
+    "line": "149",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -7637,7 +7652,7 @@
   {
     "name": "main_test__test_docs_build_dir_rejects_paths_that_cleanup_could_destroy[/]",
     "file": "src/docs_cli/main_test.py",
-    "line": "150",
+    "line": "149",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -7652,7 +7667,7 @@
   {
     "name": "main_test__test_docs_build_dir_rejects_paths_that_cleanup_could_destroy[/workspace]",
     "file": "src/docs_cli/main_test.py",
-    "line": "150",
+    "line": "149",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -7667,7 +7682,7 @@
   {
     "name": "main_test__test_docs_build_dir_rejects_paths_that_cleanup_could_destroy[docs]",
     "file": "src/docs_cli/main_test.py",
-    "line": "150",
+    "line": "149",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -7682,7 +7697,7 @@
   {
     "name": "main_test__test_failed_build_returns_exit_code_and_forces_next_build_clean",
     "file": "src/docs_cli/main_test.py",
-    "line": "164",
+    "line": "163",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -7697,7 +7712,7 @@
   {
     "name": "main_test__test_live_preview_uses_port_and_bundle_watches",
     "file": "src/docs_cli/main_test.py",
-    "line": "211",
+    "line": "210",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7712,7 +7727,7 @@
   {
     "name": "main_test__test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_path",
     "file": "src/docs_cli/main_test.py",
-    "line": "271",
+    "line": "270",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7727,7 +7742,7 @@
   {
     "name": "main_test__test_configuration_free_build_forwards_structured_sphinx_options",
     "file": "src/docs_cli/main_test.py",
-    "line": "316",
+    "line": "313",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7742,7 +7757,7 @@
   {
     "name": "main_test__test_bazel_build_resolves_mount_manifest_from_execroot",
     "file": "src/docs_cli/main_test.py",
-    "line": "340",
+    "line": "337",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7757,7 +7772,7 @@
   {
     "name": "main_test__test_bazel_needs_action_uses_external_needs_labels_channel",
     "file": "src/docs_cli/main_test.py",
-    "line": "372",
+    "line": "369",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -7772,7 +7787,7 @@
   {
     "name": "main_test__test_direct_invocation_resolves_paths_relative_to_cwd",
     "file": "src/docs_cli/main_test.py",
-    "line": "396",
+    "line": "393",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",

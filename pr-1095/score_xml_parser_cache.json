@@ -876,9 +876,9 @@
     "url": ""
   },
   {
-    "name": "test_source_code_link_integration__test_source_link_integration_ok",
+    "name": "test_source_code_link_integration__test_source_link_integration_ok[reports]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 508,
+    "line": 539,
     "need": "potential_tool_malfunction__docs_as_code__m8",
     "verify_type": "fully",
     "result": "passed",
@@ -888,9 +888,33 @@
     "url": ""
   },
   {
-    "name": "test_source_code_link_integration__test_source_link_integration_ok",
+    "name": "test_source_code_link_integration__test_source_link_integration_ok[reports]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 508,
+    "line": 539,
+    "need": "potential_tool_malfunction__docs_as_code__m9",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_source_code_link_integration__test_source_link_integration_ok[cache]",
+    "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
+    "line": 539,
+    "need": "potential_tool_malfunction__docs_as_code__m8",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_source_code_link_integration__test_source_link_integration_ok[cache]",
+    "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
+    "line": 539,
     "need": "potential_tool_malfunction__docs_as_code__m9",
     "verify_type": "fully",
     "result": "passed",
