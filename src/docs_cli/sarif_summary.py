@@ -157,10 +157,10 @@ def summarize(code_file_lists_path: Path, reports: list[Path]) -> dict[str, Any]
             )
             for result in results:
                 file = _file(result)
-                need_ids = owners.get(file, []) if file is not None else []
-                if not need_ids:
+                if file is None or not owners.get(file):
                     unassigned += 1
                     continue
+                need_ids = owners[file]
                 classification = classify(result, _rule(run, result))
                 rule_id = str(result.get("ruleId", "unknown"))
                 for need_id in need_ids:

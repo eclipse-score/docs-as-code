@@ -557,7 +557,8 @@ def _static_analysis_report(
     }
     summary = summaries.get(need_id)
     if report["rules"]:
-        block += _rules_table(summary["top_rules"])
+        if summary is not None:
+            block += _rules_table(summary["top_rules"])
         return block
     # Without any SARIF report the summary only lists the selected files.
     if data is None or not data["tools"]:
