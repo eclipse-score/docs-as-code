@@ -89,7 +89,7 @@ def _rule(run: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
     tool = run.get("tool", {})
     reference = result.get("rule", {})
     component = reference.get("toolComponent", {})
-    rules = tool.get("driver", {}).get("rules", [])
+    rules: list[dict[str, Any]] = tool.get("driver", {}).get("rules", [])
     if "index" in component:
         rules = tool.get("extensions", [])[component["index"]].get("rules", [])
     index = reference.get("index", result.get("ruleIndex"))
@@ -101,10 +101,10 @@ def _rule(run: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
 
 def _file(result: dict[str, Any]) -> FileIdentity | None:
     """Return the repository-relative file of the primary location, if any."""
-    locations = result.get("locations") or []
+    locations: list[dict[str, Any]] = result.get("locations") or []
     if not locations:
         return None
-    uri = (
+    uri: str = (
         locations[0]
         .get("physicalLocation", {})
         .get("artifactLocation", {})
@@ -171,7 +171,7 @@ def summarize(code_file_lists_path: Path, reports: list[Path]) -> dict[str, Any]
                     files_with_findings[need_id].add(file)
                     rules[need_id][(tool_name, rule_id, classification)] += 1
 
-    summaries = [
+    summaries: list[dict[str, Any]] = [
         {
             "primary_need_id": c.primary_need_id,
             "files": {
