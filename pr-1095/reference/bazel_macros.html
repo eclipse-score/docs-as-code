@@ -482,7 +482,10 @@ that creates a small set of Bazel targets
 to build, verify and preview the project’s Sphinx documentation,
 and to create a Python virtual environment for IDE support (Esbonio).</p>
 <p>See <a class="reference internal" href="commands.html"><span class="doc">commands</span></a> for the targets/commands it creates.</p>
-<p>The macro must be called from the repository root package.</p>
+<p>The macro must be called from the repository root package.
+Both <code class="docutils literal notranslate"><span class="pre">docs()</span></code> and <code class="docutils literal notranslate"><span class="pre">docs_bundle()</span></code> require the declaring module to set a name
+with <code class="docutils literal notranslate"><span class="pre">module(name</span> <span class="pre">=</span> <span class="pre">&quot;...&quot;)</span></code> in <code class="docutils literal notranslate"><span class="pre">MODULE.bazel</span></code>. The name identifies the source
+module of documentation even when another module mounts the bundle.</p>
 <section id="bundle-content-and-supporting-files">
 <h2>Bundle content and supporting files<a class="headerlink" href="#bundle-content-and-supporting-files" title="Link to this heading">#</a></h2>
 <p>There are two ways to add files to a bundle. The <code class="docutils literal notranslate"><span class="pre">data</span></code> argument of <code class="docutils literal notranslate"><span class="pre">docs()</span></code>

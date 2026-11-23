@@ -587,19 +587,21 @@ A bundle can contain source files of several repositories, so each needlink reco
 <section id="repo-metadata-rules">
 <span id="id1"></span><h4>Repo metadata rules<a class="headerlink" href="#repo-metadata-rules" title="Link to this heading">#</a></h4>
 <p>Here are some basic rules regarding the repo information (<code class="docutils literal notranslate"><span class="pre">RepoInfo</span></code> in <code class="docutils literal notranslate"><span class="pre">src/helper_lib/repo_info.py</span></code>)</p>
-<p>In a combo build, a known_good_json <strong>must</strong> be provided.
-If known_good_json is found then the hash &amp; url will be filled for each need by the script.
-The lookup lives in one function, <code class="docutils literal notranslate"><span class="pre">resolve_repo</span></code>, used by both <code class="docutils literal notranslate"><span class="pre">merge_sourcelinks.py</span></code> and the XML parser.
-<code class="docutils literal notranslate"><span class="pre">known_good.json</span></code> is read once per run.</p>
-<p>Combo build:</p>
+<p>In a combo build, provide <code class="docutils literal notranslate"><span class="pre">known_good.json</span></code> to resolve external source URLs.
+The source-link merger and JUnit parser each load this file once and use it to
+look up external repositories. External JUnit reports keep their module when
+no file is configured and use placeholder source URLs.</p>
+<p><strong>External repository</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">repo_name</span></code>: repository name (parsed from filepath in step 1)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">hash</span></code>: revision/commit hash (as provided by the known_good_json)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">url</span></code>: repository remote URL (as provided by the known_good_json)</p></li>
 </ul>
-<p>Local build:</p>
+<p><strong>Local repository</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">repo_name</span></code>: ‘local_repo’</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">repo_name</span></code>: <code class="docutils literal notranslate"><span class="pre">local_repo</span></code> for implementation links. For JUnit, the root Bazel
+module from the mount manifest identifies the testcase in the cache and in
+Sphinx.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">hash</span></code>: stays empty</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">url</span></code>: stays empty</p></li>
 </ul>
@@ -708,10 +710,10 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 <span class="w">    </span><span class="nt">"DerivationTechnique"</span><span class="p">:</span><span class="w"> </span><span class="s2">"boundary-values"</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">"result_text"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">"PartiallyVerifies"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tool_req__docs_common_attr_title, tool_req__docs_common_attr_description"</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">"FullyVerifies"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
-<span class="w">    </span><span class="nt">"repo_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"local_repo"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"FullyVerifies"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"repo_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"score_docs_as_code"</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">"hash"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">]</span>
 </pre></div>
@@ -756,7 +758,7 @@ the build never reads it back.</p>
           <span class="s2">"verify_type"</span><span class="p">:</span> <span class="s2">"partially"</span><span class="p">,</span>
           <span class="s2">"result"</span><span class="p">:</span> <span class="s2">"passed"</span><span class="p">,</span>
           <span class="s2">"result_text"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
-          <span class="s2">"repo_name"</span><span class="p">:</span> <span class="s2">"local_repo"</span><span class="p">,</span>
+          <span class="s2">"repo_name"</span><span class="p">:</span> <span class="s2">"score_docs_as_code"</span><span class="p">,</span>
           <span class="s2">"hash"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
           <span class="s2">"url"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
         <span class="p">}</span>
