@@ -77,7 +77,7 @@ def classify(result: dict[str, Any], rule: dict[str, Any]) -> str:
     level = result.get("level") or rule.get("defaultConfiguration", {}).get("level")
     if level in _LEVELS:
         return _LEVELS[level]
-    rule_id = str(result.get("ruleId", ""))
+    rule_id = _rule_id(result, rule)
     for family in sorted(_RULE_FAMILIES, key=len, reverse=True):
         if rule_id.startswith(family + "-"):
             return _RULE_FAMILIES[family]
@@ -99,17 +99,28 @@ def _rule(run: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
     return next((rule for rule in rules if rule.get("id") == rule_id), {})
 
 
-def _file(result: dict[str, Any]) -> FileIdentity | None:
+def _rule_id(result: dict[str, Any], rule: dict[str, Any]) -> str:
+    return str(
+        result.get("ruleId")
+        or result.get("rule", {}).get("id")
+        or rule.get("id")
+        or "unknown"
+    )
+
+
+def _file(run: dict[str, Any], result: dict[str, Any]) -> FileIdentity | None:
     """Return the repository-relative file of the primary location, if any."""
     locations: list[dict[str, Any]] = result.get("locations") or []
     if not locations:
         return None
-    uri: str = (
-        locations[0]
-        .get("physicalLocation", {})
-        .get("artifactLocation", {})
-        .get("uri", "")
+    artifact: dict[str, Any] = (
+        locations[0].get("physicalLocation", {}).get("artifactLocation", {})
     )
+    artifacts: list[dict[str, Any]] = run.get("artifacts", [])
+    index = artifact.get("index")
+    if "uri" not in artifact and isinstance(index, int) and 0 <= index < len(artifacts):
+        artifact = artifacts[index].get("location", {})
+    uri: str = artifact.get("uri", "")
     uri = unquote(uri.removeprefix("file://"))
     try:
         return file_identity(uri)
@@ -118,8 +129,9 @@ def _file(result: dict[str, Any]) -> FileIdentity | None:
 
 
 def _suppressed(result: dict[str, Any]) -> bool:
+    # Pending (underReview) and rejected suppressions keep the finding open.
     return any(
-        suppression.get("status", "accepted") != "rejected"
+        suppression.get("status", "accepted") == "accepted"
         for suppression in result.get("suppressions", [])
     )
 
@@ -156,13 +168,17 @@ def summarize(code_file_lists_path: Path, reports: list[Path]) -> dict[str, Any]
                 }
             )
             for result in results:
-                file = _file(result)
+                # Successful or inapplicable checks are not findings.
+                if result.get("kind", "fail") in ("pass", "notApplicable"):
+                    continue
+                file = _file(run, result)
                 if file is None or not owners.get(file):
                     unassigned += 1
                     continue
                 need_ids = owners[file]
-                classification = classify(result, _rule(run, result))
-                rule_id = str(result.get("ruleId", "unknown"))
+                rule = _rule(run, result)
+                classification = classify(result, rule)
+                rule_id = _rule_id(result, rule)
                 for need_id in need_ids:
                     if _suppressed(result):
                         suppressed[need_id] += 1

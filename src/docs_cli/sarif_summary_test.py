@@ -88,3 +88,66 @@ def test_findings_are_assigned_and_classified(tmp_path: Path) -> None:
     assert summary["findings"] == {"critical": 0, "high": 1, "medium": 1, "low": 1}
     assert summary["suppressed"] == 1
     assert summary["files"] == {"total": 2, "with_findings": 2}
+
+
+def test_indexed_artifacts_rules_and_result_kinds(tmp_path: Path) -> None:
+    lists = tmp_path / "lists.json"
+    lists.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "code_file_lists": [
+                    {
+                        "primary_need_id": "comp__a",
+                        "files": [{"repository": "_main", "path": "src/a.cc"}],
+                    }
+                ],
+            }
+        )
+    )
+    reports = tmp_path / "static-analysis-report"
+    reports.mkdir()
+    location = {"physicalLocation": {"artifactLocation": {"index": 0}}}
+    (reports / "lint.sarif").write_text(
+        json.dumps(
+            {
+                "version": "2.1.0",
+                "runs": [
+                    {
+                        "tool": {
+                            "driver": {
+                                "name": "ClangTidy",
+                                "rules": [{"id": "modernize-use-nodiscard"}],
+                            }
+                        },
+                        "artifacts": [{"location": {"uri": "src/a.cc"}}],
+                        "results": [
+                            {"ruleIndex": 0, "locations": [location]},
+                            {
+                                "ruleIndex": 0,
+                                "locations": [location],
+                                "suppressions": [{"status": "underReview"}],
+                            },
+                            {"ruleIndex": 0, "kind": "pass", "locations": [location]},
+                        ],
+                    }
+                ],
+            }
+        )
+    )
+
+    output = generate_summary(lists, reports, tmp_path / "summary.json")
+
+    data = json.loads(output.read_text())
+    assert data["unassigned"] == 0
+    (summary,) = data["static_analysis_summaries"]
+    assert summary["findings"] == {"critical": 0, "high": 0, "medium": 0, "low": 2}
+    assert summary["suppressed"] == 0
+    assert summary["top_rules"] == [
+        {
+            "tool": "ClangTidy",
+            "rule": "modernize-use-nodiscard",
+            "classification": "low",
+            "count": 2,
+        }
+    ]
