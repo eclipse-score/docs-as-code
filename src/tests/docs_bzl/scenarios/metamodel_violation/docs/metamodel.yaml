@@ -27,4 +27,8 @@ needs_types:
       tags: .*
       content: .*
       template: .*
+      # Custom string option, so needextend can be tested on an unset scalar.
+      safety: ^(QM|ASIL_B)$
+    optional_links:
+      links: ANY
 links: {}
