@@ -42,7 +42,7 @@ from src.extensions.score_source_code_linker.testcase_annotations import (
 )
 from src.extensions.score_source_code_linker.testcase_needs import (
     build_testcase_needs,
-    construct_and_add_need,
+    replace_testcase_needs,
 )
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
@@ -167,16 +167,19 @@ def register_test_code_linker(app: Sphinx):
     app.connect("env-updated", setup_test_code_linker, priority=505)
 
 
-def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
+def setup_test_code_linker(app: Sphinx, _env: BuildEnvironment) -> set[str] | None:
     # TODO instead of implementing our own caching here, we should rely on Bazel
     tl_cache_json = get_cache_filename(app.outdir, "score_xml_parser_cache.json")
+    tcn_cache = get_cache_filename(app.outdir, "score_testcaseneeds_cache.json")
     if (
         not tl_cache_json.exists()
         or not app.config.skip_rescanning_via_source_code_linker
     ):
         ws_root = find_ws_root()
         if not ws_root:
-            return
+            tl_cache_json.unlink(missing_ok=True)
+            tcn_cache.unlink(missing_ok=True)
+            return replace_testcase_needs(app, [])
         LOGGER.debug(
             "INFO: Generating score_xml_parser JSON file.",
             type="score_source_code_linker",
@@ -184,7 +187,7 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
         # sanity check if extension is enabled
         bazel_testlogs = ws_root / "bazel-testlogs"
         test_folder = ws_root / "tests-report"
-        if not (bazel_testlogs.exists() or test_folder.exists()):
+        if not (bazel_testlogs.is_dir() or test_folder.is_dir()):
             LOGGER.info(f"{'=' * 80}", type="score_source_code_linker")
             LOGGER.info(
                 f"{'=' * 32}SCORE XML PARSER{'=' * 32}", type="score_source_code_linker"
@@ -195,18 +198,17 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
                 type="score_source_code_linker",
             )
             LOGGER.info(f"{'=' * 80}", type="score_source_code_linker")
-            return
+            tl_cache_json.unlink(missing_ok=True)
+            tcn_cache.unlink(missing_ok=True)
+            return replace_testcase_needs(app, [])
 
-        build_testcase_needs(app, env)
-        return
-    tcn_cache = get_cache_filename(app.outdir, "score_testcaseneeds_cache.json")
+        return build_testcase_needs(app, ws_root)
     assert tcn_cache.exists(), (
         f"TestCaseNeed Cache file does not exist.Checked Path: {tcn_cache}"
     )
     # TODO: Make this more efficent, idk how though.
     test_case_needs = load_data_of_test_case_json(tcn_cache)
-    for tcn in test_case_needs:
-        construct_and_add_need(app, tcn)
+    return replace_testcase_needs(app, test_case_needs)
 
 
 def _clear_git_cache(_app: Sphinx, _env: BuildEnvironment) -> None:
@@ -234,7 +236,7 @@ def setup_once(app: Sphinx):
     app.connect("doctree-resolved", annotate_testcase_results, priority=800)
 
 
-def setup(app: Sphinx) -> dict[str, str | bool]:
+def setup(app: Sphinx) -> dict[str, str | int | bool]:
     # Esbonio will execute setup() on every iteration.
     # setup_once will only be called once.
 
@@ -275,6 +277,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
 
     return {
         "version": "0.1",
+        "env_version": 2,  # Saved environments track the JUnit testcase IDs.
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }

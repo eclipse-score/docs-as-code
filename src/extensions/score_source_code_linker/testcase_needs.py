@@ -16,15 +16,15 @@ Sphinx side of the testcases: turns the testcases parsed by xml_parser.py into
 """
 
 import base64
-import contextlib
 import hashlib
 import itertools
 from pathlib import Path
 
 from sphinx.application import Sphinx
-from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
 from sphinx_needs.api import add_external_need
+from sphinx_needs.data import SphinxNeedsData
+from sphinx_needs.exceptions import InvalidNeedException
 
 from src.extensions.score_source_code_linker.testlink import (
     DataOfTestCase,
@@ -42,14 +42,14 @@ from src.helper_lib.repo_info import get_github_link, load_known_good
 logger = logging.get_logger(__name__)
 
 
-def build_testcase_needs(app: Sphinx, env: BuildEnvironment):
+def build_testcase_needs(app: Sphinx, ws_root: Path) -> set[str] | None:
     """
     Parse the test.xml files (xml_parser), add a 'testcase' need for each
     testcase and write the two testcase caches into _build.
     """
-    testlogs_dir = find_test_folder()
+    testlogs_dir = find_test_folder(ws_root)
     if testlogs_dir is None:
-        return
+        return replace_testcase_needs(app, [])
     allowed_dirs = parse_testcase_source_dirs(
         getattr(app.config, "testcase_source_dirs", "")
     )
@@ -65,8 +65,6 @@ def build_testcase_needs(app: Sphinx, env: BuildEnvironment):
     test_case_needs = parse_test_xml_files(
         find_xml_files(testlogs_dir), known_good, allowed_dirs
     )
-    for tc in test_case_needs:
-        construct_and_add_need(app, tc)
     # Saving the test case needs for cache
     logger.info(
         f"Saving {len(test_case_needs)} test case needs to the cache `score_testcaseneeds_cache.json` in _build/."
@@ -83,6 +81,7 @@ def build_testcase_needs(app: Sphinx, env: BuildEnvironment):
         f"Saving {len(output)} parsed testcases to the cache `score_xml_parser_cache.json` in _build/."
     )
     store_test_xml_parsed_json(app.outdir / "score_xml_parser_cache.json", output)
+    return replace_testcase_needs(app, test_case_needs)
 
 
 def short_hash(input_str: str, length: int = 5) -> str:
@@ -96,7 +95,29 @@ def short_hash(input_str: str, length: int = 5) -> str:
     return letters_only[:length].lower()
 
 
-def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
+def replace_testcase_needs(
+    app: Sphinx, testcases: list[DataOfTestCase]
+) -> set[str] | None:
+    """Refresh the Needs generated from JUnit and mark affected pages for writing."""
+    needs_data = SphinxNeedsData(app.env)
+    previous_ids: set[str] = getattr(app.env, "score_testcase_need_ids", set())
+    for need_id in previous_ids:
+        needs_data.remove_need(need_id)
+
+    added_ids: set[str] = set()
+    for testcase in testcases:
+        if (need_id := construct_and_add_need(app, testcase)) is not None:
+            added_ids.add(need_id)
+    app.env.score_testcase_need_ids = added_ids  # pyright: ignore[reportAttributeAccessIssue]
+
+    if added_ids != previous_ids:
+        # Any page can reference a testcase or generate a table from the inventory.
+        # An env-updated handler can request a rewrite even when no source changed.
+        return app.env.found_docs
+    return None
+
+
+def construct_and_add_need(app: Sphinx, tn: DataOfTestCase) -> str | None:
     # We will now allow file to be empty in case of non fully fleshed out testcases
     file = tn.file if tn.file is not None else "<placeholder_file>"
     assert tn.name is not None
@@ -113,14 +134,14 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
         "Remote repository is not defined. Make sure you have a remote set. "
         + "Check this via 'git remote -v'"
     )
-    # IDK if this is ideal or not
-    with contextlib.suppress(BaseException):
+    need_id = f"testcase__{name}_{short_hash(file + name)}"
+    try:
         _ = add_external_need(
             app=app,
             need_type="testcase",
             title=name,
             tags="TEST",
-            id=f"testcase__{name}_{short_hash(file + name)}",
+            id=need_id,
             name=name,
             external_url=external_url,
             fully_verifies=tn.FullyVerifies if tn.FullyVerifies is not None else "",
@@ -134,3 +155,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             result=tn.result,  # We just want the 'failed' or whatever
             result_text=tn.result_text if tn.result_text else "",
         )
+    except InvalidNeedException:
+        # Reports can repeat tests or use a metamodel without a testcase type.
+        return None
+    return need_id

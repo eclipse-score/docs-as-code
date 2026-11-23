@@ -214,8 +214,8 @@ def sphinx_app_setup(
     create_demo_files: None,
     git_repo_setup: Path,
     monkeypatch: pytest.MonkeyPatch,
-) -> Callable[[], SphinxTestApp]:
-    def _create_app():
+) -> Callable[..., SphinxTestApp]:
+    def _create_app(freshenv: bool = True):
         base_dir = sphinx_base_dir
         docs_dir = base_dir / "docs"
 
@@ -223,7 +223,7 @@ def sphinx_app_setup(
         monkeypatch.chdir(base_dir)
 
         return SphinxTestApp(
-            freshenv=True,
+            freshenv=freshenv,
             srcdir=docs_dir,
             confdir=docs_dir,
             outdir=sphinx_base_dir / "out",
@@ -565,6 +565,48 @@ def test_source_link_integration_ok(
         assert "(passed)" in rendered_html
     finally:
         app.cleanup()
+
+
+def test_incremental_import_removes_testcases_from_disappearing_reports(
+    sphinx_app_setup: Callable[..., SphinxTestApp],
+    sphinx_base_dir: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
+    test_name = "TestRequirementsCoverage__test_system_startup_time"
+    app = sphinx_app_setup()
+    try:
+        app.build()
+        needs = SphinxNeedsData(app.env).get_needs_view()
+        testcase_id = next(
+            need["id"] for need in needs.values() if need["title"] == test_name
+        )
+    finally:
+        app.cleanup()
+
+    # Only the JUnit report changes. The second build reuses the Sphinx environment.
+    report = sphinx_base_dir / "bazel-testlogs/src/tests/test.xml"
+    report_contents = report.read_bytes()
+    report.unlink()
+    try:
+        app = sphinx_app_setup(freshenv=False)
+        try:
+            assert SphinxNeedsData(app.env).has_need(testcase_id)
+            app.build()
+            needs = SphinxNeedsData(app.env).get_needs_view()
+            assert testcase_id not in needs
+            assert any(
+                need["title"] == "test_api_response_format" for need in needs.values()
+            )
+            persisted_app = sphinx_app_setup(freshenv=False)
+            try:
+                assert not SphinxNeedsData(persisted_app.env).has_need(testcase_id)
+            finally:
+                persisted_app.cleanup()
+        finally:
+            app.cleanup()
+    finally:
+        report.write_bytes(report_contents)
 
 
 def test_source_link_integration_non_existent_id(
