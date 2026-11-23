@@ -12,7 +12,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_profiles_and_filters_are_validated",
@@ -27,7 +27,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_pinned_profile_rejects_non_immutable_revisions",
@@ -42,7 +42,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_need_and_module_override_use_the_current_template_selector",
@@ -57,7 +57,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_injection_is_reversible",
@@ -72,7 +72,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_missing_graph_is_a_structural_failure",
@@ -87,7 +87,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_component_without_a_feature_link_is_a_structural_failure",
@@ -102,7 +102,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_feature_resolved_only_through_external_needs_is_not_a_failure",
@@ -117,7 +117,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_checkout_clone_refresh_pinned_selection_and_cleanup",
@@ -132,7 +132,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_cached_checkout_rejects_a_remote_mismatch",
@@ -147,7 +147,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_local_fake_downstream_build_populates_gallery_and_assets",
@@ -162,7 +162,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_local_fake_downstream_runs_the_real_docs_target",
@@ -177,7 +177,7 @@
     "result_text": "a real workspace checkout is required for the nested Bazel smoke",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_main_is_partial_but_pinned_is_strict_on_build_failure",
@@ -192,7 +192,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "module_verification_reports_test__test_pinned_golden_comparison_is_byte_for_byte",
@@ -207,7 +207,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_merges_all_needs_and_ignores_version_keys",
@@ -222,7 +222,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_identical_duplicate_need_is_ignored",
@@ -237,7 +237,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_conflicting_need_returns_error_without_writing_output",
@@ -252,7 +252,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_json_comparison_distinguishes_booleans_from_numbers[True-1]",
@@ -267,7 +267,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_json_comparison_distinguishes_booleans_from_numbers[False-0]",
@@ -282,7 +282,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_ignores_version_metadata_and_recalculates_needs_amount",
@@ -297,7 +297,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_rejects_invalid_schema[payload0-field 'versions' must be an object]",
@@ -312,7 +312,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_rejects_invalid_schema[payload1-field 'versions' must contain exactly one entry, got 0]",
@@ -327,7 +327,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_rejects_invalid_schema[payload2-field 'versions' must contain exactly one entry, got 2]",
@@ -342,7 +342,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_rejects_invalid_schema[payload3-version '1.0' must contain object 'needs']",
@@ -357,7 +357,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_rejects_invalid_schema[payload4-Need 'REQ-1' in version '1.0' must be an object]",
@@ -372,7 +372,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_rejects_invalid_json",
@@ -387,7 +387,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_rejects_non_canonical_json[{\"versions\": {\"v\": {\"needs\": {}}}, \"versions\": {\"other\": {\"needs\": {}}}}-duplicate object key 'versions']",
@@ -402,7 +402,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_rejects_non_canonical_json[{\"versions\": {\"v\": {\"needs\": {\"REQ-1\": {\"score\": NaN}}}}}-non-standard JSON constant 'NaN' is not allowed]",
@@ -417,7 +417,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_needs_json_tests__test_failed_output_serialization_keeps_existing_file",
@@ -432,7 +432,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "traceability_gate_test__test_gate_passes_when_thresholds_met",
@@ -447,7 +447,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "traceability_gate_test__test_gate_fails_when_threshold_not_met",
@@ -462,7 +462,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "traceability_gate_test__test_gate_require_all_links_fails",
@@ -477,7 +477,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "traceability_gate_test__test_gate_fail_on_broken_test_refs",
@@ -492,7 +492,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "traceability_gate_test__test_gate_specific_need_type_only",
@@ -507,7 +507,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "traceability_gate_test__test_gate_unknown_need_type_fails",
@@ -522,7 +522,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "traceability_gate_test__test_gate_unsupported_schema_version",
@@ -537,7 +537,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "traceability_gate_test__test_gate_missing_file_returns_error",
@@ -552,7 +552,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "traceability_gate_test__test_gate_missing_metrics_by_type_returns_error",
@@ -567,7 +567,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "traceability_gate_test__test_gate_missing_tests_section_returns_error",
@@ -582,7 +582,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_sourcelinks_test__test_merge_sourcelinks_basic",
@@ -597,7 +597,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_sourcelinks_test__test_merge_sourcelinks_deduplicates_identical_references",
@@ -612,7 +612,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_sourcelinks_test__test_merge_sourcelinks_with_one_empty_file",
@@ -627,7 +627,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_sourcelinks_test__test_merge_sourcelinks_wrong_schema",
@@ -642,7 +642,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_sourcelinks_test__test_merge_sourcelinks_with_known_good",
@@ -657,7 +657,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_sourcelinks_test__test_merge_sourcelinks_without_known_good_preserves_external_metadata",
@@ -672,7 +672,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_sourcelinks_test__test_merge_sourcelinks_skips_file_with_legacy_header",
@@ -687,7 +687,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "merge_sourcelinks_test__test_merge_sourcelinks_resolves_each_repository_in_one_file",
@@ -702,7 +702,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_basic",
@@ -717,7 +717,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_parses_cpp_traceability_tag",
@@ -732,7 +732,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_parse_external_module",
@@ -747,7 +747,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_records_the_repository_of_each_file",
@@ -762,7 +762,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_file_not_exists",
@@ -777,7 +777,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "plantuml_regression_test__test_direct_launcher_renders_svg_without_bazel_args[directory]",
@@ -792,7 +792,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "plantuml_regression_test__test_direct_launcher_renders_svg_without_bazel_args[inferred]",
@@ -807,7 +807,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "plantuml_regression_test__test_direct_launcher_renders_svg_without_bazel_args[standalone]",
@@ -822,7 +822,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "plantuml_regression_test__test_direct_launcher_renders_svg_without_bazel_args[manifest]",
@@ -837,7 +837,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "plantuml_regression_test__test_direct_launcher_renders_svg_without_bazel_args[adjacent_manifest]",
@@ -852,7 +852,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_summary_is_rendered_only_inside_the_matching_need[False-3-67-2-lines 67%]",
@@ -867,7 +867,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_summary_is_rendered_only_inside_the_matching_need[False-1-0-2-lines 0%]",
@@ -882,7 +882,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_summary_is_rendered_only_inside_the_matching_need[False-0-None-2-lines not instrumented]",
@@ -897,7 +897,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_summary_is_rendered_only_inside_the_matching_need[False-None-None-0-lines no data]",
@@ -912,7 +912,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_summary_is_rendered_only_inside_the_matching_need[True-3-67-2-lines 67%]",
@@ -927,7 +927,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_summary_is_rendered_only_inside_the_matching_need[True-1-0-2-lines 0%]",
@@ -942,7 +942,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_summary_is_rendered_only_inside_the_matching_need[True-0-None-2-lines not instrumented]",
@@ -957,7 +957,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_summary_is_rendered_only_inside_the_matching_need[True-None-None-0-lines no data]",
@@ -972,7 +972,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_unconfigured_coverage_leaves_needs_unchanged",
@@ -987,7 +987,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_content_only_layout_keeps_coverage_out_of_the_content",
@@ -1002,7 +1002,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_summary_changes_invalidate_consumers_without_bundle_file_dependencies",
@@ -1017,7 +1017,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_documentation_checks_ignore_summary_changes[needs]",
@@ -1032,7 +1032,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "score_coverage_test__test_documentation_checks_ignore_summary_changes[linkcheck]",
@@ -1047,7 +1047,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_compatibility__test_reporter_records_external_owner_and_writes_report",
@@ -1062,7 +1062,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_compatibility__test_setup_skips_version_precheck_when_version_compatibility_is_disabled",
@@ -1077,7 +1077,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_compatibility__test_setup_registers_version_precheck_when_version_compatibility_is_enabled",
@@ -1092,7 +1092,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_compatibility__test_setup_registers_reporting_hooks_for_non_version_compatibility",
@@ -1107,7 +1107,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_compatibility__test_reporter_requires_each_category_to_be_enabled",
@@ -1122,7 +1122,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_compatibility__test_reporter_recognizes_an_external_bundle_mounted_at_the_root",
@@ -1137,7 +1137,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_compatibility__test_cross_module_version_condition_is_reported_and_neutralized",
@@ -1152,7 +1152,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_compatibility__test_local_version_condition_remains_strict",
@@ -1167,7 +1167,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_compatibility__test_external_version_condition_remains_strict_by_default",
@@ -1182,7 +1182,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_mounts__test_materialize_mounts_serializes_structured_entries",
@@ -1197,7 +1197,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_mounts__test_materialize_mounts_omits_default_fields",
@@ -1212,7 +1212,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_mounts__test_materialize_mounts_maps_external_runfiles_path_to_bazel_bin",
@@ -1227,7 +1227,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_mounts__test_materialize_mounts_preserves_explicit_source_files",
@@ -1242,7 +1242,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_mounts__test_setup_skips_toml_sync_without_git_worktree",
@@ -1257,7 +1257,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_need",
@@ -1272,7 +1272,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
@@ -1287,7 +1287,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_mitigated_by.rst]",
@@ -1302,7 +1302,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_saf_attrs_mitigated_by[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
@@ -1317,7 +1317,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_saf_attr_dfa_failure_id[version==2], tool_req__docs_saf_attr_fmea_fault_id[version==2], tool_req__docs_saf_attrs_sufficient[version==1], tool_req__docs_saf_attrs_content[version==2]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_types.rst]",
@@ -1332,7 +1332,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_saf_types[version==2], tool_req__docs_saf_attrs_mandatory[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_optional_attrs.rst]",
@@ -1347,7 +1347,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_saf_attrs_mitigation_issue[version==1], tool_req__docs_saf_attrs_safety_relevant[version==1], tool_req__docs_saf_attrs_root_cause[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_violates.rst]",
@@ -1362,7 +1362,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_saf_attrs_violates[version==2]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_bundle_lifecycle__test_multiple_bundle_targets_keep_declaration_order_in_json",
@@ -1377,7 +1377,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_bundle_lifecycle__test_explicit_primary_need_is_updated_in_place_and_returns_affected_document",
@@ -1392,7 +1392,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_bundle_lifecycle__test_external_bundle_updates_local_need_like_internal_bundle",
@@ -1407,7 +1407,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_bundle_lifecycle__test_needs_follow_their_document_bundle",
@@ -1422,7 +1422,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_bundle_lifecycle__test_unchanged_bundle_metadata_does_not_rewrite_the_document",
@@ -1437,7 +1437,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_bundle_lifecycle__test_bundle_metadata_is_cleared_when_primary_need_is_missing",
@@ -1452,7 +1452,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_bundle_lifecycle__test_current_bundle_metadata_replaces_old_values",
@@ -1467,7 +1467,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_check_needs_extends__test_id_shorthand_warns_for_a_need_in_another_document",
@@ -1482,7 +1482,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_check_needs_extends__test_both_passes_use_the_document_index",
@@ -1497,7 +1497,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_check_needs_extends__test_local_needextend_can_match_fields_set_by_an_earlier_directive",
@@ -1512,7 +1512,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestCheckOptions__test_unknown_directive",
@@ -1527,7 +1527,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt",
@@ -1542,7 +1542,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_check_options__test_milestone_parsing",
@@ -1557,7 +1557,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_extend_needs_json_exporter_uses_configured_value",
@@ -1572,7 +1572,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_extend_needs_json_exporter_can_override_export_metadata",
@@ -1587,7 +1587,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_external_needs_runfiles_path_is_environment_independent[source0-suffix0-expected0]",
@@ -1602,7 +1602,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_parse_bazel_external_need_marks_same_repository_labels_local",
@@ -1617,7 +1617,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_parse_external_needs_labels_filters_ordinary_data_labels",
@@ -1632,7 +1632,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_external_needs_source_path_selects_target_layout[source0-expected0]",
@@ -1647,7 +1647,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_external_needs_source_path_selects_target_layout[source1-expected1]",
@@ -1662,7 +1662,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_configured_runfiles_dir_is_used_for_external_sources",
@@ -1677,7 +1677,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_external_needs_source_config_parses_labels",
@@ -1692,7 +1692,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_external_needs_source_rejects_descriptors",
@@ -1707,7 +1707,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_add_external_needs_json_appends_entry",
@@ -1722,7 +1722,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_add_external_needs_json_appends_entry_local",
@@ -1737,7 +1737,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_add_needs_json_file_appends_entry",
@@ -1752,7 +1752,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_add_external_needs_json_missing_file_keeps_list_empty",
@@ -1767,7 +1767,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_duplicate_external_need_ids_with_same_base_url_are_reported",
@@ -1782,7 +1782,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_duplicate_external_need_ids_with_different_base_urls_do_not_warn",
@@ -1797,7 +1797,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_external_needs__test_same_base_url_without_duplicate_ids_does_not_warn",
@@ -1812,7 +1812,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_need",
@@ -1827,7 +1827,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_eval_need_check_invalid_check_parts_raises_value_error",
@@ -1842,7 +1842,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_eval_need_check_unknown_operator_raises_value_error",
@@ -1857,7 +1857,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_eval_need_check_missing_attribute_logs_and_returns_false",
@@ -1872,7 +1872,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_link_conditions_compare_against_an_empty_list[empty-equals]",
@@ -1887,7 +1887,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_link_conditions_compare_against_an_empty_list[empty-differs]",
@@ -1902,7 +1902,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_link_conditions_compare_against_an_empty_list[linked-equals]",
@@ -1917,7 +1917,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_link_conditions_compare_against_an_empty_list[linked-differs]",
@@ -1932,7 +1932,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_eval_need_condition_invalid_type_raises_value_error",
@@ -1947,7 +1947,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_eval_need_condition_not_with_wrong_operand_count_raises_value_error",
@@ -1962,7 +1962,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_eval_need_condition_and_or_xor_branches",
@@ -1977,7 +1977,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_filter_needs_by_criteria_invalid",
@@ -1992,7 +1992,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_filter_needs_by_criteria_unknown_type_logs_warning",
@@ -2007,7 +2007,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_invalid_check_keys_raise_value_error[missing]",
@@ -2022,7 +2022,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_invalid_check_keys_raise_value_error[old_check_key]",
@@ -2037,7 +2037,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_invalid_check_keys_raise_value_error[both]",
@@ -2052,7 +2052,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_check_all_warns_once_per_failing_parent",
@@ -2067,7 +2067,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_check_one[one_fulfills]",
@@ -2082,7 +2082,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_check_one[none_fulfill]",
@@ -2097,7 +2097,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_check_one[no_parents]",
@@ -2112,7 +2112,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_check_one[unknown_parent]",
@@ -2127,7 +2127,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_info_only[all_default]",
@@ -2142,7 +2142,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_info_only[all_false]",
@@ -2157,7 +2157,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_info_only[all_true]",
@@ -2172,7 +2172,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_info_only[one_default]",
@@ -2187,7 +2187,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_info_only[one_true]",
@@ -2202,7 +2202,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_graph_checks__test_info_only_keeps_message",
@@ -2217,7 +2217,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_log__test_location_uses_given_prefix[docs-docs/docname.rst:42]",
@@ -2232,7 +2232,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_log__test_location_uses_given_prefix[-docname.rst:42]",
@@ -2247,7 +2247,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_log__test_location_without_source_info_is_none",
@@ -2262,7 +2262,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_log__test_location_prefix_is_empty_in_bazel_runfiles[RUNFILES_DIR]",
@@ -2277,7 +2277,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_log__test_location_prefix_is_empty_in_bazel_runfiles[RUNFILES_MANIFEST_FILE]",
@@ -2292,7 +2292,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_log__test_location_prefix_is_relative_to_workspace",
@@ -2307,7 +2307,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_log__test_location_prefix_is_relative_to_cwd",
@@ -2322,7 +2322,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel__init____test_returns_empty_list_when_filter_is_empty",
@@ -2337,7 +2337,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel__init____test_returns_valid_checks",
@@ -2352,7 +2352,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel__init____test_strips_whitespace",
@@ -2367,7 +2367,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel__init____test_raises_assertion_for_invalid_check",
@@ -2382,7 +2382,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestNeedHelper__test_default_values",
@@ -2397,7 +2397,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestNeedHelper__test_custom_values_override_defaults",
@@ -2412,7 +2412,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestNeedHelper__test_link_fields_extracted",
@@ -2427,7 +2427,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestNeedHelper__test_extra_fields_in_extras",
@@ -2442,7 +2442,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestNeedHelper__test_empty_links_not_in_kwargs",
@@ -2457,7 +2457,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestNeedHelper__test_combined_core_links_and_extras",
@@ -2472,7 +2472,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel_load__test_load_metamodel_data_explicit_path",
@@ -2487,7 +2487,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel_load__test_load_metamodel_data",
@@ -2502,7 +2502,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel_load__test_declared_link_is_accepted",
@@ -2517,7 +2517,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel_load__test_undeclared_link_is_rejected[mandatory_links]",
@@ -2532,7 +2532,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel_load__test_undeclared_link_is_rejected[optional_links]",
@@ -2547,7 +2547,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel_load__test_sphinx_needs_builtin_links_are_accepted",
@@ -2562,7 +2562,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel_load__test_all_undeclared_links_are_reported_at_once",
@@ -2577,7 +2577,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "potential_tool_malfunction__docs_as_code__m1",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel_load__test_shipped_metamodel_declares_every_link_it_uses",
@@ -2592,7 +2592,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "potential_tool_malfunction__docs_as_code__m1",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_metamodel_load__test_tool_qualification_types_model_nested_traceability",
@@ -2607,7 +2607,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "potential_tool_malfunction__docs_as_code__m1",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_my_pie_linked_standard_requirements",
@@ -2622,7 +2622,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_my_pie_linked_standard_workproducts",
@@ -2637,7 +2637,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_my_pie_workproducts_contained_in_exactly_one_workflow",
@@ -2652,7 +2652,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_get_standards_needs",
@@ -2667,7 +2667,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_get_standards_workproducts",
@@ -2682,7 +2682,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_get_compliance_req_needs",
@@ -2697,7 +2697,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_get_compliance_wp_needs",
@@ -2712,7 +2712,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_get_workflows",
@@ -2727,7 +2727,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_get_workproducts",
@@ -2742,7 +2742,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_positive_case_mixed_linked_and_unlinked",
@@ -2757,7 +2757,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_negative_case_no_needs_with_tag",
@@ -2772,7 +2772,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "TestStandards__test_assert_multiple_kwargs",
@@ -2787,7 +2787,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_required_metadata_must_be_nonempty[test_type-None]",
@@ -2802,7 +2802,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_required_metadata_must_be_nonempty[test_type-]",
@@ -2817,7 +2817,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_required_metadata_must_be_nonempty[test_type-   ]",
@@ -2832,7 +2832,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_required_metadata_must_be_nonempty[derivation_technique-None]",
@@ -2847,7 +2847,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_required_metadata_must_be_nonempty[derivation_technique-]",
@@ -2862,7 +2862,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_required_metadata_must_be_nonempty[derivation_technique-   ]",
@@ -2877,7 +2877,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_external_testcase_with_wrong_link_level_is_checked",
@@ -2892,7 +2892,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_valid_external_testcase_metadata_passes",
@@ -2907,7 +2907,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_non_testcase_needs_are_ignored",
@@ -2922,7 +2922,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_verification_links_must_match_test_level[Feature Integration Test-comp_req__sample-feat_req__]",
@@ -2937,7 +2937,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_verification_links_must_match_test_level[Component Integration Test-feat_req__sample-comp_req__]",
@@ -2952,7 +2952,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_verification_links_must_match_test_level[Unit Test-feat_req__sample-comp_req__]",
@@ -2967,7 +2967,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_valid_verification_link_level_passes[fully_verifies]",
@@ -2982,7 +2982,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_valid_verification_link_level_passes[partially_verifies]",
@@ -2997,7 +2997,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase__test_unmapped_test_type_has_no_link_level_constraint",
@@ -3012,7 +3012,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_safety_malfunction_requires_conditional_evaluation_data[YES-None-None-safety-relevant malfunctions]",
@@ -3027,7 +3027,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_safety_malfunction_requires_conditional_evaluation_data[YES-YES--non-empty `safety_measures`]",
@@ -3042,7 +3042,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_positive_detection_with_measure_is_valid",
@@ -3057,7 +3057,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_safety_malfunction_with_insufficient_detection_needs_no_measure",
@@ -3072,7 +3072,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_non_safety_malfunction_does_not_need_detection",
@@ -3087,7 +3087,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_non_safety_malfunction_rejects_meaningless_detection",
@@ -3102,7 +3102,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_low_malfunction_with_tool_requirement_is_valid",
@@ -3117,7 +3117,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_report_summary_is_derived_when_summary_fields_are_omitted",
@@ -3132,7 +3132,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_report_without_usecase_is_left_unchanged",
@@ -3147,7 +3147,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_low_malfunction_with_only_upstream_requirement_is_invalid",
@@ -3162,7 +3162,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_mixed_use_cases_derive_low_from_one_low_malfunction",
@@ -3177,7 +3177,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_qualified_low_report_requires_successful_full_evidence",
@@ -3192,7 +3192,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_qualified_low_report_with_passed_full_evidence_is_valid",
@@ -3207,7 +3207,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_qualified_low_report_requires_evidence_for_each_requirement",
@@ -3222,7 +3222,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_partial_evidence_alone_does_not_complete_low_qualification",
@@ -3237,7 +3237,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_released_low_report_also_requires_successful_full_evidence",
@@ -3252,7 +3252,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_high_report_does_not_require_qualification",
@@ -3267,7 +3267,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_tool_qualification__test_qualification_does_not_reclassify_detection_or_tcl",
@@ -3282,7 +3282,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_validate_mandatory_regexes__test_no_issues_for_strict_regexes",
@@ -3297,7 +3297,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_validate_mandatory_regexes__test_flags_wildcard_star",
@@ -3312,7 +3312,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_validate_mandatory_regexes__test_flags_bare_wildcard",
@@ -3327,7 +3327,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_validate_mandatory_regexes__test_flags_zero_or_more_quantifier",
@@ -3342,7 +3342,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_validate_mandatory_regexes__test_flags_empty_string_only_regex",
@@ -3357,7 +3357,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_validate_mandatory_regexes__test_flags_multiple_issues_in_one_type",
@@ -3372,7 +3372,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_validate_mandatory_regexes__test_flags_across_multiple_types",
@@ -3387,7 +3387,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_validate_mandatory_regexes__test_optional_options_not_checked",
@@ -3402,7 +3402,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_validate_mandatory_regexes__test_accepts_dict_input",
@@ -3417,7 +3417,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_need",
@@ -3432,7 +3432,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
@@ -3447,7 +3447,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_std_types.rst]",
@@ -3462,7 +3462,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_stdreq_types[version==1], tool_req__docs_stdwp_types[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_validity.rst]",
@@ -3477,7 +3477,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_req_attr_validity_correctness, tool_req__docs_req_attr_validity_consistency",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]",
@@ -3492,7 +3492,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_req_types",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_common_attr_version.rst]",
@@ -3507,7 +3507,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_common_attr_version",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]",
@@ -3522,7 +3522,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_common_attr_title[version==1], tool_req__docs_common_attr_desc_wording[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_id_scheme.rst]",
@@ -3537,7 +3537,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_common_attr_id_scheme",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_common_attr_safety.rst]",
@@ -3552,7 +3552,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_common_attr_safety",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_need",
@@ -3567,7 +3567,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
@@ -3582,7 +3582,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[security/test_security_types.rst]",
@@ -3597,7 +3597,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_sec_attrs_optional[version==1]",
     "FullyVerifies": "tool_req__docs_sec_types[version==2], tool_req__docs_sec_attrs_mandatory[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[security/test_sec_attr_stride_threat_id.rst]",
@@ -3612,7 +3612,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_sec_attr_stride_threat_id[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_need",
@@ -3627,7 +3627,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
@@ -3642,7 +3642,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[architecture/architecture_tests.rst]",
@@ -3657,7 +3657,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_arch_types",
     "FullyVerifies": "potential_tool_malfunction__docs_as_code__m4",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[architecture/test_arch_linkage_safety.rst]",
@@ -3672,7 +3672,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__arch_linkage_safety[version==3]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[architecture/test_arch_link_fulfils_aou.rst]",
@@ -3687,7 +3687,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_arch_link_fulfils_aou[version==3]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[architecture/test_arch_link_fulfils.rst]",
@@ -3702,7 +3702,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_arch_link_fulfils[version==3]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[architecture/test_arch_consistency_interf.rst]",
@@ -3717,7 +3717,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__arch_consistency_interf[version==1]",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_need",
@@ -3732,7 +3732,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
@@ -3747,7 +3747,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_invalid_skipped.rst]",
@@ -3762,7 +3762,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_common_attr_status_invalid[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_security.rst]",
@@ -3777,7 +3777,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_common_attr_security[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
@@ -3792,7 +3792,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_doc_types.rst]",
@@ -3807,7 +3807,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_doc_types",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_dec_rec.rst]",
@@ -3822,7 +3822,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_dec_rec_type",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
@@ -3837,7 +3837,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_status.rst]",
@@ -3852,7 +3852,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_common_attr_status[version==3]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_doc_tool_attrs.rst]",
@@ -3867,7 +3867,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_tvr_version",
     "FullyVerifies": "tool_req__docs_doc_generic_mandatory, tool_req__docs_doc_generic_optional, tool_req__docs_tvr_safety, tool_req__docs_tvr_security, tool_req__docs_tvr_status, tool_req__docs_tvr_confidence_level",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
@@ -3882,7 +3882,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_restrict_needextend",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
@@ -3897,7 +3897,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]",
@@ -3912,7 +3912,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_verification_report_need",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
@@ -3927,7 +3927,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_req_attr_rationale.rst]",
@@ -3942,7 +3942,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_req_attr_rationale",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_req_attr_reqtype.rst]",
@@ -3957,7 +3957,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_req_attr_reqtype",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/wp_comp.rst]",
@@ -3972,7 +3972,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_stdwp_types[version==1], tool_req__docs_wp_types[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_need",
@@ -3987,7 +3987,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
@@ -4002,7 +4002,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_allocation_safety.rst]",
@@ -4017,7 +4017,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_arch_link_safety_to_req[version==4], tool_req__docs_arch_link_qm_to_safety_req[version==3]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_safety.rst]",
@@ -4032,7 +4032,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_req_arch_link_safety_to_arch[version==2]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]",
@@ -4047,7 +4047,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_common_attr_safety_link_check[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_workproduct_aspice_40.rst]",
@@ -4062,7 +4062,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_stdwp_types",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_req_link_covers_aou.rst]",
@@ -4077,7 +4077,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_req_link_covers_aou[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_req_link_satisfies.rst]",
@@ -4092,7 +4092,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_req_link_satisfies_allowed[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_security.rst]",
@@ -4107,7 +4107,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_arch_link_security[version==1]",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_tool_qualification.rst]",
@@ -4122,7 +4122,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_data_mounts__test_root_bundle_srcs_are_a_positive_allowlist",
@@ -4137,7 +4137,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_data_mounts__test_data_mount_documents_do_not_get_a_bundle",
@@ -4152,7 +4152,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_data_mounts__test_mounted_documents_get_their_declaring_bundle",
@@ -4167,7 +4167,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_data_mounts__test_root_bundle_source_is_not_a_runtime_mount_but_child_source_is",
@@ -4182,7 +4182,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_data_mounts__test_mount_entry_uses_canonical_directory_for_symlinked_bundle",
@@ -4197,7 +4197,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_data_mounts__test_canonical_mount_dir_in_tree_sandbox_bundle",
@@ -4212,7 +4212,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_data_mounts__test_canonical_mount_dir_empty_bundle_fallback",
@@ -4227,7 +4227,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_excludes__test_nested_mount_pattern_only_matches_descendants",
@@ -4242,7 +4242,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_excludes__test_mount_exclusions_calculate_primary_and_nested_boundaries",
@@ -4257,7 +4257,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_excludes__test_mount_entry_serializes_child_exclusions",
@@ -4272,7 +4272,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_load_single_entry",
@@ -4287,7 +4287,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_load_entry_with_attach_to_and_entry_doc",
@@ -4302,7 +4302,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_load_bundle_metadata_and_direct_targets",
@@ -4317,7 +4317,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_load_entry_with_toctree_index",
@@ -4332,7 +4332,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_load_entry_without_toctree_index_defaults_to_zero",
@@ -4347,7 +4347,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_external_mount_keeps_execroot_and_runfiles_locations",
@@ -4362,7 +4362,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_external_mount_uses_execroot_path_in_sandbox",
@@ -4377,7 +4377,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_external_mount_uses_runfiles_root_under_bazel_run",
@@ -4392,7 +4392,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_generated_source_mount_uses_bazel_bin_under_bazel_run",
@@ -4407,7 +4407,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_generated_root_source_mount_uses_bazel_bin_under_bazel_run",
@@ -4422,7 +4422,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_explicit_source_files_resolve_below_original_root",
@@ -4437,7 +4437,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_resolver__test_generated_source_mount_uses_execroot_in_sandbox",
@@ -4452,7 +4452,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_backlinks_merge_indexed_and_new_outgoing_links",
@@ -4467,7 +4467,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_get_available_needs_works_before_and_after_freeze[False]",
@@ -4482,7 +4482,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_get_available_needs_works_before_and_after_freeze[True]",
@@ -4497,7 +4497,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_parse_version_pads_missing_patch",
@@ -4512,7 +4512,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_req_in_report_version_unscoped_report_version_always_true",
@@ -4527,7 +4527,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_req_in_report_version_direct_valid_from_boundary",
@@ -4542,7 +4542,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_req_in_report_version_malformed_valid_from_is_excluded",
@@ -4557,7 +4557,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_req_in_report_version_missing_valid_from_without_derived_from_is_excluded",
@@ -4572,7 +4572,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_req_in_report_version_comp_req_inherits_via_derived_from",
@@ -4587,7 +4587,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_any_req_in_report_version_unscoped_true_even_for_empty_list",
@@ -4602,7 +4602,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_any_req_in_report_version_scoped_empty_list_is_excluded",
@@ -4617,7 +4617,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_any_req_in_report_version_true_if_at_least_one_requirement_matches",
@@ -4632,7 +4632,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_any_req_in_report_version_false_if_no_requirement_matches",
@@ -4647,7 +4647,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_safety_chart_row_qm_counts_inspected_as_valid",
@@ -4662,7 +4662,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_safety_chart_row_empty_class_renders_one_slim_placeholder",
@@ -4677,7 +4677,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_safety_chart_row_reference_bar_only_on_request",
@@ -4692,7 +4692,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_chart_legend_is_one_raw_line_with_reference_on_request",
@@ -4707,7 +4707,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_chart_legend_explains_every_colour_without_a_tooltip",
@@ -4722,7 +4722,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_safety_chart_row_indent_nests_every_line",
@@ -4737,7 +4737,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_id_filter_list_renders_quoted_literal",
@@ -4752,7 +4752,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_workproduct_rows_filter_by_owner_then_slug",
@@ -4767,7 +4767,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_workproduct_rows_filter_prefers_belongs_to_over_id",
@@ -4782,7 +4782,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_tool_qualification_matrix_groups_shared_requirements",
@@ -4797,7 +4797,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_needs_templates__test_platform_report_gap_table_is_report_version_scoped",
@@ -4812,7 +4812,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_draw_report_bars_sizes_segment_numbers_by_width[sizes0-expected0]",
@@ -4827,7 +4827,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_draw_report_bars_sizes_segment_numbers_by_width[sizes1-expected1]",
@@ -4842,7 +4842,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_draw_report_bars_sizes_segment_numbers_by_width[sizes2-expected2]",
@@ -4857,7 +4857,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_segment_text_meets_wcag_contrast_on_every_report_colour[#37a12d]",
@@ -4872,7 +4872,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_segment_text_meets_wcag_contrast_on_every_report_colour[#f5c518]",
@@ -4887,7 +4887,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_segment_text_meets_wcag_contrast_on_every_report_colour[#f0a500]",
@@ -4902,7 +4902,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_segment_text_meets_wcag_contrast_on_every_report_colour[#ca2828]",
@@ -4917,7 +4917,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_draw_report_bars_puts_all_rows_on_one_shared_axis",
@@ -4932,7 +4932,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_report_bars_count_filters_and_leave_needpie_untouched",
@@ -4947,7 +4947,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_report_bar_counts_through_filter_func",
@@ -4962,7 +4962,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_coverage_bar_labels_never_invent_hit_counts[0]",
@@ -4977,7 +4977,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_coverage_bar_labels_never_invent_hit_counts[1]",
@@ -4992,7 +4992,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_coverage_bar_labels_never_invent_hit_counts[67]",
@@ -5007,7 +5007,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_coverage_bar_labels_never_invent_hit_counts[99]",
@@ -5022,7 +5022,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_coverage_bar_labels_never_invent_hit_counts[100]",
@@ -5037,7 +5037,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_coverage_report_preserves_availability_and_independent_dimensions[None-No coverage data available for this component.-None]",
@@ -5052,7 +5052,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_coverage_report_preserves_availability_and_independent_dimensions[summary1-No source files selected for this component.-None]",
@@ -5067,7 +5067,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_coverage_report_preserves_availability_and_independent_dimensions[summary2-Line coverage: no data.-None]",
@@ -5082,7 +5082,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_coverage_report_preserves_availability_and_independent_dimensions[summary3-Line coverage: not instrumented.-Branch Coverage: covered 100%, not covered 0%]",
@@ -5097,7 +5097,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_coverage_report_preserves_availability_and_independent_dimensions[summary4-Coverage measurements available for 2/6 selected source files.-Line Coverage: covered 0%, not covered 100%; Branch Coverage: covered 100%, not covered 0%]",
@@ -5112,7 +5112,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_report_charts__test_coverage_chart_urls_follow_displayed_values",
@@ -5127,7 +5127,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_need",
@@ -5142,7 +5142,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_get_cache_filename",
@@ -5157,7 +5157,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_find_need_direct_match",
@@ -5172,7 +5172,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_find_need_not_found",
@@ -5187,7 +5187,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_inject_links_matches_versioned_need_across_modules",
@@ -5202,7 +5202,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_inject_links_renders_each_test_link_with_its_repository",
@@ -5217,7 +5217,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_group_by_need",
@@ -5232,7 +5232,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_group_by_need_empty_list",
@@ -5247,7 +5247,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_cache_file_operations",
@@ -5262,7 +5262,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_combining_without_source_links_continues_with_empty_code_links",
@@ -5277,7 +5277,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_load_link_inputs_reads_code_and_test_links",
@@ -5292,7 +5292,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_combining_with_missing_source_links_reports_configured_path",
@@ -5307,7 +5307,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_cache_file_with_encoded_comments",
@@ -5322,7 +5322,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_group_by_need_and_find_need_integration",
@@ -5337,7 +5337,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_source_linker_end_to_end_with_real_files",
@@ -5352,7 +5352,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_multiple_commits_hash_consistency",
@@ -5367,7 +5367,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_repo_info_is_flat_dict_missing_keys",
@@ -5382,7 +5382,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_needlink_to_dict_full",
@@ -5397,7 +5397,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_needlink_encoder_includes_metadata",
@@ -5412,7 +5412,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_needlink_decoder_with_all_fields",
@@ -5427,7 +5427,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_needlink_decoder_non_needlink_dict",
@@ -5442,7 +5442,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_load_validates_list_type",
@@ -5457,7 +5457,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_load_validates_all_items_are_needlinks",
@@ -5472,7 +5472,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_load_resolves_relative_path_with_env_var",
@@ -5487,7 +5487,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_roundtrip_standard_format",
@@ -5502,7 +5502,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_roundtrip_empty_lists",
@@ -5517,7 +5517,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_needlink_equality_same_values",
@@ -5532,7 +5532,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_codelink__test_needlink_inequality_different_values",
@@ -5547,7 +5547,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_split_external_path[input_path0-score_docs_as_code-expected_path0]",
@@ -5562,7 +5562,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_split_external_path[input_path1-local_repo-expected_path1]",
@@ -5577,7 +5577,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_split_external_path[input_path2-local_repo-expected_path2]",
@@ -5592,7 +5592,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_split_external_path[input_path3-repo-expected_path3]",
@@ -5607,7 +5607,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_split_external_path[input_path4-local_repo-expected_path4]",
@@ -5622,7 +5622,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_split_external_path[input_path5-score_x-expected_path5]",
@@ -5637,7 +5637,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_parse_repo_name_from_external_path",
@@ -5652,7 +5652,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_parse_repo_name_from_external_path_2",
@@ -5667,7 +5667,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_parse_repo_name_from_local_path",
@@ -5682,7 +5682,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_parse_repo_name_from_empty_path",
@@ -5697,7 +5697,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_parse_repo_name_without_plus_suffix",
@@ -5712,7 +5712,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_parse_info_from_known_good_happy_path",
@@ -5727,7 +5727,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_parse_info_from_known_good_different_category",
@@ -5742,7 +5742,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_parse_info_from_known_good_repo_not_found",
@@ -5757,7 +5757,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_load_known_good_empty_json",
@@ -5772,7 +5772,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_load_known_good_no_modules_key",
@@ -5787,7 +5787,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_load_known_good_empty_modules",
@@ -5802,7 +5802,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_parse_info_from_known_good_with_version",
@@ -5817,7 +5817,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_parse_info_from_known_good_with_version_different_category",
@@ -5832,7 +5832,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_parse_info_from_known_good_neither_hash_nor_version",
@@ -5847,7 +5847,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_resolve_repo_fills_hash_and_url",
@@ -5862,7 +5862,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_resolve_repo_nothing_to_look_up[local_repo-known_good0]",
@@ -5877,7 +5877,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_resolve_repo_nothing_to_look_up[-known_good1]",
@@ -5892,7 +5892,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_resolve_repo_nothing_to_look_up[score_docs_as_code-None]",
@@ -5907,7 +5907,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_resolve_repo_unknown_repo_raises",
@@ -5922,7 +5922,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_get_github_link_with_hash",
@@ -5937,7 +5937,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_get_github_link_with_line_zero",
@@ -5952,7 +5952,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_get_github_link_plain_links_gives_placeholder",
@@ -5967,7 +5967,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_get_github_link_no_repo_gives_placeholder_with_defaults",
@@ -5982,7 +5982,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_get_github_link_git_without_remote_gives_none",
@@ -5997,7 +5997,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_git_lookup_is_cached_until_cleared",
@@ -6012,7 +6012,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_get_github_link_with_real_repo",
@@ -6027,7 +6027,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helpers__test_complete_workflow",
@@ -6042,7 +6042,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_need_source_links__test_encoder_outputs_serializable_dict",
@@ -6057,7 +6057,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_need_source_links__test_decoder_reconstructs_object",
@@ -6072,7 +6072,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_need_source_links__test_store_and_load_json",
@@ -6087,7 +6087,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_need_source_links__test_load_invalid_json_type",
@@ -6102,7 +6102,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_need_source_links__test_load_invalid_json_items",
@@ -6117,7 +6117,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[reports]",
@@ -6132,7 +6132,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "potential_tool_malfunction__docs_as_code__m8, potential_tool_malfunction__docs_as_code__m9",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[cache]",
@@ -6147,12 +6147,27 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "potential_tool_malfunction__docs_as_code__m8, potential_tool_malfunction__docs_as_code__m9",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
+  },
+  {
+    "name": "test_source_code_link_integration__test_source_link_integration_ok[old_cache]",
+    "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
+    "line": "539",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements-based",
+    "DerivationTechnique": "requirements-analysis",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m8, potential_tool_malfunction__docs_as_code__m9",
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_source_code_link_integration__test_source_link_integration_non_existent_id",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": "638",
+    "line": "640",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6162,7 +6177,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase_annotations__test_annotates_external_github_testlink",
@@ -6177,7 +6192,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix",
@@ -6192,7 +6207,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase_annotations__test_does_not_annotate_link_without_result_suffix",
@@ -6207,7 +6222,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testcase_annotations__test_does_not_annotate_same_reference_twice",
@@ -6222,10 +6237,10 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
-    "name": "test_testcase_needs__test_construct_and_add_need_encodes_id_and_uses_fallback_url",
+    "name": "test_testcase_needs__test_construct_and_add_need_encodes_id_and_uses_fallback_url[False]",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_needs.py",
     "line": "26",
     "result": "passed",
@@ -6237,7 +6252,22 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
+  },
+  {
+    "name": "test_testcase_needs__test_construct_and_add_need_encodes_id_and_uses_fallback_url[True]",
+    "file": "src/extensions/score_source_code_linker/tests/test_testcase_needs.py",
+    "line": "26",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements-based",
+    "DerivationTechnique": "requirements-analysis",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_test_link_testcase",
+    "FullyVerifies": null,
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_testlink_serialization_roundtrip",
@@ -6252,7 +6282,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_testlink_encoder_handles_path",
@@ -6267,7 +6297,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_decoder_ignores_irrelevant_dicts",
@@ -6282,7 +6312,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_clean_text_removes_ansi_and_html_unescapes",
@@ -6297,7 +6327,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_testcaseneed_to_dict_multiple_links",
@@ -6312,7 +6342,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": "potential_tool_malfunction__docs_as_code__m5, potential_tool_malfunction__docs_as_code__m6",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_store_and_load_testlinks_roundtrip",
@@ -6327,7 +6357,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_datafortestlink_to_dict_full",
@@ -6342,7 +6372,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_datafortestlink_equality_with_non_testlink",
@@ -6357,7 +6387,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_dataoftestcase_check_verifies_fields_missing_both",
@@ -6372,7 +6402,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_dataoftestcase_is_valid_fails_on_none_field",
@@ -6387,7 +6417,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_dataoftestcase_get_test_links_returns_empty_when_invalid",
@@ -6402,7 +6432,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_dataoftestcase_decoder_valid_dict",
@@ -6417,7 +6447,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_dataoftestcase_decoder_non_testcase_dict",
@@ -6432,7 +6462,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_store_and_load_data_of_test_case_roundtrip",
@@ -6447,7 +6477,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_load_data_of_test_case_validates_list",
@@ -6462,7 +6492,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_load_data_of_test_case_validates_items",
@@ -6477,7 +6507,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_dataoftestcase_encoder_fallback",
@@ -6492,7 +6522,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_datafortestlink_encoder_fallback",
@@ -6507,7 +6537,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_testlink__test_datafortestlink_decoder_non_testlink_dict",
@@ -6522,7 +6552,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_find_xml_files",
@@ -6537,7 +6567,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_find_xml_folder",
@@ -6552,7 +6582,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_find_xml_folder_test_reports",
@@ -6567,7 +6597,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_find_xml_files_test_reports",
@@ -6582,7 +6612,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_early_return",
@@ -6597,7 +6627,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_parse_testcase_result",
@@ -6612,7 +6642,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_parse_properties",
@@ -6627,7 +6657,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_read_test_xml_file",
@@ -6642,12 +6672,12 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": "potential_tool_malfunction__docs_as_code__m5, potential_tool_malfunction__docs_as_code__m6",
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_parse_test_xml_files_without_sphinx",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "351",
+    "line": "352",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6657,12 +6687,12 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "370",
+    "line": "371",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -6672,12 +6702,12 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_positive_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "382",
+    "line": "383",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -6687,12 +6717,12 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "395",
+    "line": "396",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -6702,12 +6732,12 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "405",
+    "line": "406",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -6717,12 +6747,12 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "415",
+    "line": "416",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -6732,12 +6762,12 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "432",
+    "line": "433",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -6747,12 +6777,12 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs_non_list_raises",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "444",
+    "line": "445",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -6762,12 +6792,12 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_clean_test_file_name_local_path",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "458",
+    "line": "459",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6777,12 +6807,12 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_clean_test_file_name_combo_path",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "468",
+    "line": "469",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6792,12 +6822,12 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_clean_test_file_name_tests_report_path",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "478",
+    "line": "479",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6807,12 +6837,12 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_clean_test_file_name_nested_bazel_testlogs",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "484",
+    "line": "485",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6822,12 +6852,12 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_clean_test_file_name_invalid_path_raises_error",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "490",
+    "line": "491",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6837,12 +6867,12 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_clean_test_file_name_empty_path_raises_error",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "498",
+    "line": "499",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6852,12 +6882,12 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_get_metadata_from_test_path_local",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "537",
+    "line": "538",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6867,12 +6897,12 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_get_metadata_from_test_path_combo_with_hash",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "548",
+    "line": "549",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6882,12 +6912,12 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_xml_parser__test_get_metadata_from_test_path_combo_with_version",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "556",
+    "line": "557",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6897,7 +6927,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_mounted_source_controls__test_default_logo_assets_are_available",
@@ -6912,7 +6942,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_mounted_source_controls__test_local_page_keeps_all_source_controls",
@@ -6927,7 +6957,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_mounted_source_controls__test_mounted_page_keeps_page_toc",
@@ -6942,7 +6972,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_generic_pie_linked_items_matches_source_by_id_prefix",
@@ -6957,7 +6987,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_generic_pie_items_by_tag_matches_source_by_id_prefix",
@@ -6972,7 +7002,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_get_key_values_raises_key_error_when_global_is_empty",
@@ -6987,7 +7017,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_get_key_values_appends_values_when_metrics_loaded",
@@ -7002,7 +7032,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_get_metrics_with_overall_total_considered_when_metrics_loaded",
@@ -7017,7 +7047,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_with_total_suffix",
@@ -7032,7 +7062,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_without_total_suffix",
@@ -7047,7 +7077,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_get_just_metrics_appends_values_when_metrics_loaded",
@@ -7062,7 +7092,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_empty_kwargs_raises_index_error",
@@ -7077,7 +7107,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_component_metrics_accept_quoted_arguments",
@@ -7092,7 +7122,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_component_metrics_split_by_safety_class",
@@ -7107,7 +7137,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_component_metrics_version_scopes_requirements_only",
@@ -7122,7 +7152,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_filter_func_arguments_must_not_contain_a_dot",
@@ -7137,7 +7167,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_sphinx_filters__test_safety_chart_row_filter_funcs_match_inline_filters",
@@ -7152,7 +7182,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_need",
@@ -7167,7 +7197,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only",
@@ -7182,7 +7212,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match",
@@ -7197,7 +7227,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]",
@@ -7212,7 +7242,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]",
@@ -7227,7 +7257,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]",
@@ -7242,7 +7272,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]",
@@ -7257,7 +7287,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]",
@@ -7272,7 +7302,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]",
@@ -7287,7 +7317,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]",
@@ -7302,7 +7332,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_safe_percent_zero[3-0-100.0]",
@@ -7317,7 +7347,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_safe_percent_zero[1-4-25.0]",
@@ -7332,7 +7362,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
@@ -7347,7 +7377,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics, potential_tool_malfunction__docs_as_code__m3",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked",
@@ -7362,7 +7392,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2",
@@ -7377,7 +7407,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
@@ -7392,7 +7422,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics, potential_tool_malfunction__docs_as_code__m3",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[False-None-1-1]",
@@ -7407,7 +7437,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[True-None-6-2]",
@@ -7422,7 +7452,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[True-feature_ids2-6-2]",
@@ -7437,7 +7467,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[False-feature_ids3-1-1]",
@@ -7452,7 +7482,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[True-feature_ids4-4-1]",
@@ -7467,7 +7497,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[True-feature_ids5-5-1]",
@@ -7482,7 +7512,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[True-feature_ids6-1-1]",
@@ -7497,7 +7527,7 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[incremental-html]",
@@ -7512,7 +7542,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[check-needs]",
@@ -7527,7 +7557,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[linkcheck-linkcheck]",
@@ -7542,7 +7572,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[build_needs_json-needs]",
@@ -7557,7 +7587,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_docs_build_dir_overrides_interactive_output_dir[None-/workspace/component/_build]",
@@ -7572,7 +7602,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_docs_build_dir_overrides_interactive_output_dir[-/workspace/component/_build]",
@@ -7587,7 +7617,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_docs_build_dir_overrides_interactive_output_dir[docs_build_tmp-/workspace/component/docs_build_tmp]",
@@ -7602,7 +7632,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_docs_build_dir_overrides_interactive_output_dir[/tmp/docs_out-/tmp/docs_out]",
@@ -7617,7 +7647,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_docs_build_dir_rejects_paths_that_cleanup_could_destroy[.]",
@@ -7632,7 +7662,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_docs_build_dir_rejects_paths_that_cleanup_could_destroy[..]",
@@ -7647,7 +7677,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_docs_build_dir_rejects_paths_that_cleanup_could_destroy[/]",
@@ -7662,7 +7692,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_docs_build_dir_rejects_paths_that_cleanup_could_destroy[/workspace]",
@@ -7677,7 +7707,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_docs_build_dir_rejects_paths_that_cleanup_could_destroy[docs]",
@@ -7692,7 +7722,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_failed_build_returns_exit_code_and_forces_next_build_clean",
@@ -7707,7 +7737,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_live_preview_uses_port_and_bundle_watches",
@@ -7722,7 +7752,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_path",
@@ -7737,7 +7767,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_configuration_free_build_forwards_structured_sphinx_options",
@@ -7752,7 +7782,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_bazel_build_resolves_mount_manifest_from_execroot",
@@ -7767,7 +7797,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_bazel_needs_action_uses_external_needs_labels_channel",
@@ -7782,7 +7812,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "main_test__test_direct_invocation_resolves_paths_relative_to_cwd",
@@ -7797,7 +7827,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_repeated_records_union_line_and_branch_identities",
@@ -7812,7 +7842,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_aggregate_before_rounding_and_round_halves_up",
@@ -7827,7 +7857,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_missing_uninstrumented_and_measured_zero_are_distinct",
@@ -7842,7 +7872,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_partial_result_counts_absent_records_without_inventing_instrumented_lines",
@@ -7857,7 +7887,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_exact_file_membership_excludes_siblings_and_retains_explicit_shared_files",
@@ -7872,7 +7902,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_canonical_bazel_paths_preserve_repository_identity",
@@ -7887,7 +7917,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_paths_do_not_fall_back_to_suffix_matching[/other/execroot/src/a]",
@@ -7902,7 +7932,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_paths_do_not_fall_back_to_suffix_matching[../repo/../../a]",
@@ -7917,7 +7947,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_paths_do_not_fall_back_to_suffix_matching[a/../b]",
@@ -7932,7 +7962,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_paths_do_not_fall_back_to_suffix_matching[]",
@@ -7947,7 +7977,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_paths_do_not_fall_back_to_suffix_matching[C:/build/a]",
@@ -7962,7 +7992,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_paths_do_not_fall_back_to_suffix_matching[pkg/_virtual_includes/api/a.h]",
@@ -7977,7 +8007,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_source_items_determine_metric_even_when_llvm_summary_differs",
@@ -7992,7 +8022,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_or_invalid_measurements_are_diagnosed[SF:a\\nLF:2\\nLH:1\\n]",
@@ -8007,7 +8037,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_or_invalid_measurements_are_diagnosed[SF:a\\nBRF:1\\n]",
@@ -8022,7 +8052,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_or_invalid_measurements_are_diagnosed[SF:a\\nDA:1,-1\\n]",
@@ -8037,7 +8067,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_or_invalid_measurements_are_diagnosed[SF:a\\nBRDA:1,0,1,invalid\\n]",
@@ -8052,7 +8082,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_or_invalid_measurements_are_diagnosed[DA:1,0\\n]",
@@ -8067,7 +8097,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_or_invalid_measurements_are_diagnosed[SF:a\\nDA:0,1\\n]",
@@ -8082,7 +8112,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_unsupported_or_invalid_measurements_are_diagnosed[SF:a\\nBRDA:1,U0,0,0\\n]",
@@ -8097,7 +8127,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_equivalent_rounded_summaries_preserve_bytes_and_modification_time",
@@ -8112,7 +8142,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_changed_totals_and_availability_update_output_even_at_same_percentage",
@@ -8127,7 +8157,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_code_file_lists_validate_and_deduplicate_file_membership",
@@ -8142,7 +8172,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_coverage_tool_golden_excerpts_preserve_backend_item_counts[llvm-9-89]",
@@ -8157,7 +8187,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_coverage_tool_golden_excerpts_preserve_backend_item_counts[gcov-6-83]",
@@ -8172,7 +8202,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_record_and_code_file_list_order_do_not_change_output",
@@ -8187,7 +8217,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_branch_expressions_with_commas_retain_identity_across_records",
@@ -8202,7 +8232,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_canonical_external_path_forms_merge_before_aggregation",
@@ -8217,7 +8247,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_explicit_repository_keeps_an_external_named_source_directory",
@@ -8232,7 +8262,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_exported_source_paths_must_stay_inside_their_repository[../dep+/a]",
@@ -8247,7 +8277,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_exported_source_paths_must_stay_inside_their_repository[/tmp/a]",
@@ -8262,7 +8292,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "lcov_summary_test__test_exported_source_paths_must_stay_inside_their_repository[C:/build/a]",
@@ -8277,7 +8307,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_clean_removes_build_dir_when_previous_build_had_warnings",
@@ -8292,7 +8322,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_clean_keeps_build_dir_when_warnings_txt_is_empty",
@@ -8307,7 +8337,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_clean_is_noop_when_warnings_txt_is_absent",
@@ -8322,7 +8352,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_clean_is_noop_when_build_dir_is_absent",
@@ -8337,7 +8367,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_module_changed_removes_build_dir_when_one_sentinel_file_changed",
@@ -8352,7 +8382,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_module_changed_keeps_build_dir_when_all_sentinel_files_unchanged",
@@ -8367,7 +8397,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_module_change_after_successful_build_forces_clean",
@@ -8382,7 +8412,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_missing_hash_file_triggers_clean",
@@ -8397,7 +8427,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_successful_build_reuses_output_until_module_changes[incremental-html]",
@@ -8412,7 +8442,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_successful_build_reuses_output_until_module_changes[check-needs]",
@@ -8427,7 +8457,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_successful_build_reuses_output_until_module_changes[linkcheck-linkcheck]",
@@ -8442,7 +8472,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_mounted_watch_dirs_match_sphinx_mount_paths",
@@ -8457,7 +8487,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_mounted_watch_dirs_use_data_directories_for_pure_data_bundles",
@@ -8472,7 +8502,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_coverage_summary_is_a_sentinel_preserved_during_output_cleanup",
@@ -8487,7 +8517,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_cleanup_preserves_generated_sentinels_and_removes_stale_outputs",
@@ -8502,7 +8532,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_checks_ignore_coverage_even_with_a_configured_file_list[check]",
@@ -8517,7 +8547,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "dirty_build_test__test_checks_ignore_coverage_even_with_a_configured_file_list[linkcheck]",
@@ -8532,7 +8562,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_config_setdefault_sets_when_not_in_raw_config",
@@ -8547,7 +8577,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_config_setdefault_does_not_overwrite_user_value",
@@ -8562,7 +8592,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_find_git_root_ignores_bazel_sandbox_ancestor_git_repo",
@@ -8577,7 +8607,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_git_operations_with_no_commits",
@@ -8592,7 +8622,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_git_repo_with_no_remotes",
@@ -8607,7 +8637,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_parse_git_output_ssh_format",
@@ -8622,7 +8652,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_parse_git_output_https_format",
@@ -8637,7 +8667,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_parse_git_output_ssh_format_without_git_suffix",
@@ -8652,7 +8682,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_parse_git_output_invalid_format",
@@ -8667,7 +8697,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_parse_git_output_empty_string",
@@ -8682,7 +8712,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_get_github_repo_info_ssh_remote",
@@ -8697,7 +8727,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_get_github_repo_info_https_remote",
@@ -8712,7 +8742,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_get_github_repo_info_multiple_remotes",
@@ -8727,7 +8757,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_get_current_git_hash",
@@ -8742,7 +8772,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_get_current_git_hash_invalid_repo",
@@ -8757,7 +8787,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_runfiles_dir_found",
@@ -8772,7 +8802,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_runfiles_dir_missing_triggers_exit",
@@ -8787,7 +8817,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_git_root_search_success",
@@ -8802,7 +8832,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "test_helper_lib__test_git_root_search_not_found",
@@ -8817,7 +8847,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "bzl/tests/basics_tests_test_1.sh",
@@ -8832,7 +8862,7 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   },
   {
     "name": "bzl/tests/basics_tests_test_0.sh",
@@ -8847,6 +8877,6 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null,
-    "source_module": ""
+    "source_module": "score_docs_as_code"
   }
 ]
