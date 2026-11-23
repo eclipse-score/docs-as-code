@@ -47,6 +47,9 @@ needextend may only add values to unset options of Needs in its own document.
 .. needextend:: c.this_doc() and id == 'test_req__needextend_replace_set'
    :status: draft
 
+.. needextend:: c.this_doc() and id == 'test_req__needextend_replace_unset' and not safety
+   :safety: QM
+
 .. needextend:: c.this_doc() and id == 'test_req__needextend_replace_unset' and not tags
    :tags: extended
 

@@ -39,7 +39,8 @@ def stderr() -> str:
 
 @pytest.mark.bazel_slow
 def test_metamodel_violation_fails_build(stderr: str):
-    assert "is missing required attribute" in stderr
+    # Match the need ID: test_req__needextend_delete also loses its status.
+    assert "test_req__demo_missing: is missing required attribute: `status`." in stderr
 
 
 @pytest.mark.bazel_slow
@@ -52,7 +53,8 @@ def test_needextend_violations_are_reported(stderr: str):
     """needextend may only add values to unset options in its own document.
 
     Replace, delete and append actions, filters without c.this_doc() and
-    unknown IDs are reported. Setting an unset option is allowed.
+    unknown IDs are reported. Setting an unset string or list option is
+    allowed.
     """
     for expected in [
         "Error when extending need: test_req__needextend_replace_set. "
