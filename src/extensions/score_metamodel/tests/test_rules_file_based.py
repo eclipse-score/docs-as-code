@@ -278,12 +278,24 @@ def _check_need_messages(
     messages: list[str],
     *,
     info: bool = False,
+    error: bool = False,
 ) -> None:
-    """Check location-scoped expectations in the warning or info stream."""
-    level = "" if info else "WARNING"
-    label = "info" if info else "warning"
-    expected_option = "expect_info" if info else "expect"
-    unexpected_option = "expect_info_not" if info else "expect_not"
+    """Check location-scoped expectations in the warning, info or error stream."""
+    if error:
+        level = "ERROR"
+        label = "error"
+        expected_option = "expect_error"
+        unexpected_option = "expect_error_not"
+    elif info:
+        level = ""
+        label = "info"
+        expected_option = "expect_info"
+        unexpected_option = "expect_info_not"
+    else:
+        level = "WARNING"
+        label = "warning"
+        expected_option = "expect"
+        unexpected_option = "expect_not"
     # On a NeedItem, "modifications" counts how many times the Need was extended.
     # Check the expectations at the location of the needextend directive, where
     # its diagnostics are reported. On that directive, "modifications" holds
@@ -376,3 +388,4 @@ def test_rst_files(
     for need in all_needs:
         _check_need_messages(rst_data, need, warnings)
         _check_need_messages(rst_data, need, infos, info=True)
+        _check_need_messages(rst_data, need, warnings, error=True)

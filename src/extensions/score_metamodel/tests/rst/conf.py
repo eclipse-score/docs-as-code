@@ -61,6 +61,8 @@ def setup(app: Sphinx):
         "expect_not": "Forbidden substrings in warning diagnostics",
         "expect_info": "Expected substrings in informational diagnostics",
         "expect_info_not": "Forbidden substrings in informational diagnostics",
+        "expect_error": "Expected substrings in error diagnostics",
+        "expect_error_not": "Forbidden substrings in error diagnostics",
         "fully_verifies_list": "Requirements that this RST test fully verifies",
         "partially_verifies_list": "Requirements that this RST test partially verifies",
     }.items():
@@ -74,6 +76,8 @@ def setup(app: Sphinx):
         "expect_not": "^.*$",
         "expect_info": "^.*$",
         "expect_info_not": "^.*$",
+        "expect_error": "^.*$",
+        "expect_error_not": "^.*$",
     }
     add_options_test_metadata = {
         "derivation_technique": "^.*$",

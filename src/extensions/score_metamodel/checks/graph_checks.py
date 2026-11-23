@@ -269,6 +269,7 @@ def check_parent_relation(
     all_needs: NeedsView,
     log: CheckLogger,
     info_only: bool,
+    error_actually: bool,
 ) -> None:
     """Check the needs linked via `parent_relation` and warn about violations."""
     if parent_relation not in need:
@@ -295,7 +296,7 @@ def check_parent_relation(
             )
         else:
             msg = f"No linked need in `{parent_relation}`. Explanation: {explanation}"
-        log.warning_for_need(need, msg, is_new_check=info_only)
+        log.warning_for_need(need, msg, is_new_check=info_only, is_error=error_actually)
     else:
         for need_id in failed_needs:
             msg = (
@@ -303,7 +304,9 @@ def check_parent_relation(
                 f"condition `{condition}`."
                 f" Explanation: {explanation}"
             )
-            log.warning_for_need(need, msg, is_new_check=info_only)
+            log.warning_for_need(
+                need, msg, is_new_check=info_only, is_error=error_actually
+            )
 
 
 @graph_check
@@ -321,6 +324,13 @@ def check_metamodel_graph(
         check_type, check_to_perform = get_check(check_name, check_config)
         explanation = check_config.get("explanation", "")
         info_only = check_config.get("info_only", False) is True
+        error_actually = check_config.get("error_actually", False) is True
+        if info_only and error_actually:
+            logger.error(
+                f"Graph check `{check_name}` must not set both `info_only` "
+                "and `error_actually`; they are mutually exclusive."
+            )
+            continue
         assert explanation != "", (
             f"Explanation for graph check {check_name} is missing. "
             "Explanations are mandatory for graph checks."
@@ -347,6 +357,7 @@ def check_metamodel_graph(
                     all_needs,
                     log,
                     info_only,
+                    error_actually,
                 )
 
 

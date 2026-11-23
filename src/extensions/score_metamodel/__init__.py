@@ -180,6 +180,14 @@ def _run_checks(app: Sphinx) -> None:
             "Please fix them as soon as possible.\n"
         )
 
+    if log.errors:
+        logger.error(
+            f"{log.errors} needs have issues reported as errors."
+        )
+        # `logger.error` alone does not fail the build in Sphinx,
+        # so mark the build as failed explicitly.
+        app.statuscode = 1
+
 
 def _resolve_linkable_types(
     link_name: str,

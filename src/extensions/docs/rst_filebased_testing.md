@@ -137,6 +137,14 @@ informational allocation-completeness diagnostics.
        :expect_info: must have at least one safety requirement allocated via satisfied_by.
        :expect_not: must have at least one safety requirement allocated via satisfied_by.
 
+### Error diagnostics
+
+Checks marked `error_actually` report to the Sphinx error stream. Use
+`:expect_error:` and `:expect_error_not:` to assert these diagnostics at the
+need's own location. Error and warning diagnostics stay distinct,
+so a fixture can tell which severity a check currently reports.
+This supports migrating checks to errors piece by piece.
+
 ### Setup needs
 
 Prerequisite needs (link targets, shared fixtures) carry no `:expect:` /

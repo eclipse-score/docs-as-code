@@ -114,6 +114,7 @@ These checks follow the same structure:
   check_all: # or check_one
     <link attribute to check>: <condition to be checked in each need inside the link attribute>
   info_only: true # OPTIONAL, defaults to false
+  error_actually: true # OPTIONAL, defaults to false
   explanation: <A short sentence that explains what is required to be adhered to. This will be
               < part of the error message if the check fails>
 ```
@@ -130,6 +131,9 @@ This applies to every link attribute inside `check_all` / `check_one`.
 
 With `info_only: true` violations are reported as info instead of warning, so they do not break the build.
 Use this to introduce a new check before it is enforced.
+
+With `error_actually: true` violations are reported as error instead of warning, so they always break the build.
+Use this for established checks.
 
 A condition may reference an attribute of the need the check is applied to via `self.<attribute>`.
 This compares each linked need against the need it is linked from,
