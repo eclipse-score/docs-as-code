@@ -34,6 +34,7 @@ class CheckLogger:
         self._log = log
         self._info_count = 0
         self._warning_count = 0
+        self._error_count = 0
         self._prefix = prefix
         self._new_checks: list[NewCheck] = []
         self._compatibility = compatibility
@@ -55,11 +56,16 @@ class CheckLogger:
         return None
 
     def warning_for_option(
-        self, need: NeedItem, option: str, msg: str, is_new_check: bool = False
+        self,
+        need: NeedItem,
+        option: str,
+        msg: str,
+        is_new_check: bool = False,
+        is_error: bool = False,
     ):
         full_msg = f"{need['id']}.{option} ({need.get(option, None)}): {msg}"
         location = CheckLogger._location(need, self._prefix)
-        self._log_message(full_msg, location, is_new_check, need)
+        self._log_message(full_msg, location, is_new_check, need, is_error=is_error)
 
     def warning_for_link(
         self,
@@ -69,6 +75,7 @@ class CheckLogger:
         allowed_values: list[str],
         allowed_regex: str,
         is_new_check: bool = False,
+        is_error: bool = False,
     ):
         msg = (
             f"references '{problematic_value}' as '{option}', "
@@ -79,7 +86,9 @@ class CheckLogger:
         # if allowed_regex:
         #     msg += f" (allowed pattern: `{allowed_regex}`)"
 
-        self.warning_for_need(need, msg, is_new_check=is_new_check, category="link")
+        self.warning_for_need(
+            need, msg, is_new_check=is_new_check, category="link", is_error=is_error
+        )
 
     def warning_for_need(
         self,
@@ -87,10 +96,11 @@ class CheckLogger:
         msg: str,
         is_new_check: bool = False,
         category: str = "need",
+        is_error: bool = False,
     ):
         full_msg = f"{need['id']}: {msg}"
         location = CheckLogger._location(need, self._prefix)
-        self._log_message(full_msg, location, is_new_check, need, category)
+        self._log_message(full_msg, location, is_new_check, need, category, is_error)
 
     def _log_message(
         self,
@@ -99,6 +109,7 @@ class CheckLogger:
         is_new_check: bool = False,
         need: NeedItem | None = None,
         category: str = "metamodel",
+        is_error: bool = False,
     ):
         # req-Id: tool_req__docs_common_attr_status_invalid
         # Needs with status `invalid` are exempt from all checks. They stay part
@@ -114,6 +125,8 @@ class CheckLogger:
         if is_new_check:
             self._new_checks.append((msg, location))
             self._info_count += 1
+        elif is_error:
+            self.error(msg, location)
         else:
             self.warning(msg, location)
 
@@ -132,6 +145,14 @@ class CheckLogger:
         self._log.warning(msg, type="score_metamodel", location=location)
         self._warning_count += 1
 
+    def error(
+        self,
+        msg: str,
+        location: Location,
+    ):
+        self._log.error(msg, type="score_metamodel", location=location)
+        self._error_count += 1
+
     @property
     def warnings(self):
         return self._warning_count
@@ -139,6 +160,10 @@ class CheckLogger:
     @property
     def infos(self):
         return self._info_count
+
+    @property
+    def errors(self):
+        return self._error_count
 
     def flush_new_checks(self):
         """Log all new-check messages together at once."""

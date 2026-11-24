@@ -1224,6 +1224,8 @@ needs_extra_links:
 #     - `self.<attribute>` refers to an attribute of the need the check is applied to,
 #       e.g. `safety == self.safety` compares the linked need with its origin
 # - info_only [OPTIONAL]: if `true`, violations are reported as info instead of warning
+# - error_actually [OPTIONAL]: if `true`, violations are reported as error instead of warning;
+#                              they fail the build even without `-W`
 ##############################################################
 
 graph_checks:

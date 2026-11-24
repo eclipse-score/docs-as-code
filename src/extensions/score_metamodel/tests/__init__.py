@@ -36,6 +36,7 @@ def fake_check_logger():
             self._mock_logger = MagicMock(spec=SphinxLoggerAdapter)
             self._mock_logger.warning = MagicMock()
             self._mock_logger.info = MagicMock()
+            self._mock_logger.error = MagicMock()
             super().__init__(self._mock_logger, "docs")
 
         def assert_no_warnings(self):
@@ -52,25 +53,27 @@ def fake_check_logger():
                 )
                 pytest.fail(f"Expected no infos, but got:\n{infos}")
 
-        def assert_warning(
+        def _assert_level_message(
             self,
+            mock_name: str,
             expected_substring: str,
-            expect_location: bool = True,
-            location: str = EXPECTED_LOCATION,
+            expect_location: bool,
+            location: str,
         ):
             """
-            Assert that the logger warning was called exactly once with a message
-            containing a specific substring.
+            Assert that the logger was called exactly once at the given level
+            with a message containing a specific substring.
 
             This also verifies that the defaults from need() are used correctly.
             So you must use need() to create the need object that is passed
             to the checks. Pass `location` when the finding belongs to a need
             with a non-default docname or lineno.
             """
-            self._mock_logger.warning.assert_called_once()
+            mock = getattr(self._mock_logger, mock_name)
+            mock.assert_called_once()
 
             # Retrieve the call arguments
-            args, kwargs = self._mock_logger.warning.call_args
+            args, kwargs = mock.call_args
             log_message = args[0]
 
             assert expected_substring in log_message, (
@@ -81,9 +84,18 @@ def fake_check_logger():
 
             # All our checks shall report themselves as score_metamodel checks
             assert kwargs["type"] == "score_metamodel"
+            assert not expect_location or kwargs["location"] == location, kwargs
 
-            if expect_location:
-                assert kwargs["location"] == location, kwargs
+        def assert_warning(
+            self,
+            expected_substring: str,
+            expect_location: bool = True,
+            location: str = EXPECTED_LOCATION,
+        ):
+            """Assert that the logger warning was called exactly once."""
+            self._assert_level_message(
+                "warning", expected_substring, expect_location, location
+            )
 
         def assert_info(
             self,
@@ -91,32 +103,21 @@ def fake_check_logger():
             expect_location: bool = True,
             location: str = EXPECTED_LOCATION,
         ):
-            """
-            Assert that the logger info was called exactly once with a message
-            containing a specific substring.
-
-            This also verifies that the defaults from need() are used correctly.
-            So you must use need() to create the need object that is passed
-            to the checks. Pass `location` when the finding belongs to a need
-            with a non-default docname or lineno.
-            """
-            self._mock_logger.info.assert_called_once()
-
-            # Retrieve the call arguments
-            args, kwargs = self._mock_logger.info.call_args
-            log_message = args[0]
-
-            assert expected_substring in log_message, (
-                "Expected substring "
-                f"'{expected_substring}' "
-                f"not found in log message: '{log_message}'"
+            """Assert that the logger info was called exactly once."""
+            self._assert_level_message(
+                "info", expected_substring, expect_location, location
             )
 
-            # All our checks shall report themselves as score_metamodel checks
-            assert kwargs["type"] == "score_metamodel"
-
-            if expect_location:
-                assert kwargs["location"] == location, kwargs
+        def assert_error(
+            self,
+            expected_substring: str,
+            expect_location: bool = True,
+            location: str = EXPECTED_LOCATION,
+        ):
+            """Assert that the logger error was called exactly once."""
+            self._assert_level_message(
+                "error", expected_substring, expect_location, location
+            )
 
     return FakeCheckLogger()
 
