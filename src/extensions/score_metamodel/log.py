@@ -52,6 +52,8 @@ class CheckLogger:
                 matching_file = f"{prefix}/{matching_file}"
 
             return f"{matching_file}:{need['lineno']}"
+        if get("file") and get("line"):
+            return f"{get('file')}:{get('line')}"
         return None
 
     def warning_for_option(
@@ -88,8 +90,13 @@ class CheckLogger:
         is_new_check: bool = False,
         category: str = "need",
     ):
-        full_msg = f"{need['id']}: {msg}"
         location = CheckLogger._location(need, self._prefix)
+        if location and not need.get("docname"):
+            full_msg = msg
+        else:
+            # External needs without a resolvable source have no location, so
+            # the id is all we can show.
+            full_msg = f"{need['id']}: {msg}"
         self._log_message(full_msg, location, is_new_check, need, category)
 
     def _log_message(
