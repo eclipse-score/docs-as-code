@@ -16,3 +16,11 @@ Basic Test
 ==========
 
 .. literalinclude:: ../supporting-example.txt
+
+.. plantuml::
+
+   @startuml
+   class Source
+   class Destination
+   Source --> Destination : sends data
+   @enduml

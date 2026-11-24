@@ -20,6 +20,7 @@ import pytest
 from src.tests.docs_bzl.helpers import (
     assert_no_compatibility_findings,
     load_needs_json,
+    run_package,
     run_scenario,
 )
 
@@ -62,6 +63,45 @@ def test_root_data_file_is_available_to_literalinclude(build_dir: Path):
     text = re.sub(r"<[^>]+>", "", html)
 
     assert "The root bundle owns this supporting file." in text
+
+
+@pytest.mark.bazel_slow
+@pytest.mark.parametrize(
+    "dot_present", [True, False], ids=["dot-present", "dot-missing"]
+)
+def test_plantuml_class_diagram_uses_smetana(tmp_path: Path, dot_present: bool):
+    """The HTML build embeds a rendered diagram regardless of dot availability."""
+    output = tmp_path / "html"
+    dot = tmp_path / "dot"
+    if dot_present:
+        # Advertise a working Graphviz version and record any use of dot.
+        dot.write_text(
+            "#!/bin/sh\n"
+            ': > "$0.called"\n'
+            "printf '%s\\n' 'dot - graphviz version 2.43.0 (0)' >&2\n",
+            encoding="utf-8",
+        )
+        dot.chmod(0o755)
+    run_package(
+        "run",
+        f"scenarios/{SCENARIO}",
+        ":docs",
+        env={
+            "DOCS_BUILD_DIR": str(output),
+            "GRAPHVIZ_DOT": str(dot),
+        },
+    )
+
+    html = (output / "index.html").read_text(encoding="utf-8")
+    diagram = re.search(r'data="(_images/plantuml-[^"]+\.svg)"', html)
+    assert diagram is not None, "the page should embed a PlantUML SVG"
+    svg = (output / diagram[1]).read_text(encoding="utf-8")
+
+    assert "<svg" in svg
+    assert ">Source</text>" in svg
+    assert ">Destination</text>" in svg
+    assert ">sends data</text>" in svg
+    assert not (tmp_path / "dot.called").exists(), "unexpected dot call"
 
 
 @pytest.mark.bazel_slow

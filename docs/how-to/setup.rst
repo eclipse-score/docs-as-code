@@ -40,8 +40,9 @@ Bazel downloads a native `PlantUML <https://www.plantuml.com>`_ distribution
 for the platform running Sphinx. PlantUML does not require a separate Java
 installation. Supported platforms are Linux x86-64, Linux ARM64 and macOS ARM64.
 
-Install `Graphviz <https://graphviz.org/download/>`_ and make its ``dot``
-executable available on ``PATH`` for diagrams that require Graphviz layout.
+The documentation build selects PlantUML's built-in
+`Smetana layout engine <https://plantuml.com/smetana02>`_, regardless of whether
+Graphviz is installed.
 
 3. BUILD file
 -------------
