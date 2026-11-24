@@ -136,6 +136,7 @@ Component 1
 
 .. mod:: Feature Test Module 1
    :id: mod__test_feature_1_module_1
+   :maturity: preview
    :security: YES
    :safety: ASIL_B
    :status: valid

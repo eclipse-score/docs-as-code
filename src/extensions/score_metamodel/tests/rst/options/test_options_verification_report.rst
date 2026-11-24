@@ -47,6 +47,7 @@
 
 .. mod:: Verification Module
    :id: mod__verification_module
+   :maturity: preview
    :security: YES
    :safety: ASIL_B
    :status: valid

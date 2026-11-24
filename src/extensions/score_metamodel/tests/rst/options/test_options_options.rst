@@ -78,7 +78,13 @@
 
 
 
-.. Test if the optional `maturity` option for `mod` follows the pattern `^(preview|experimental|release)$`
+.. Test if the mandatory `maturity` option for `mod` follows the pattern `^(preview|experimental|release)$`
+
+.. mod:: Test Module Maturity Missing
+   :id: mod__test_options__maturity_missing
+   :expect: mod__test_options__maturity_missing: is missing required attribute: `maturity`.
+
+
 
 .. mod:: Test Module Maturity Bad
    :id: mod__test_options__maturity_bad
