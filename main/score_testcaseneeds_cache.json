@@ -1276,7 +1276,7 @@
   {
     "name": "test_bundle_lifecycle__test_multiple_bundle_targets_keep_declaration_order_in_json",
     "file": "src/extensions/score_metamodel/tests/test_bundle_lifecycle.py",
-    "line": "81",
+    "line": "83",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -1290,7 +1290,7 @@
   {
     "name": "test_bundle_lifecycle__test_explicit_primary_need_is_updated_in_place_and_returns_affected_document",
     "file": "src/extensions/score_metamodel/tests/test_bundle_lifecycle.py",
-    "line": "107",
+    "line": "109",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -1304,7 +1304,21 @@
   {
     "name": "test_bundle_lifecycle__test_external_bundle_updates_local_need_like_internal_bundle",
     "file": "src/extensions/score_metamodel/tests/test_bundle_lifecycle.py",
-    "line": "148",
+    "line": "150",
+    "result": "passed",
+    "repo_name": "score_docs_as_code",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_bundle_lifecycle__test_needs_follow_their_document_bundle",
+    "file": "src/extensions/score_metamodel/tests/test_bundle_lifecycle.py",
+    "line": "192",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -1318,7 +1332,7 @@
   {
     "name": "test_bundle_lifecycle__test_unchanged_bundle_metadata_does_not_rewrite_the_document",
     "file": "src/extensions/score_metamodel/tests/test_bundle_lifecycle.py",
-    "line": "187",
+    "line": "245",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -1332,7 +1346,7 @@
   {
     "name": "test_bundle_lifecycle__test_bundle_metadata_is_cleared_when_primary_need_is_missing",
     "file": "src/extensions/score_metamodel/tests/test_bundle_lifecycle.py",
-    "line": "223",
+    "line": "281",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -1346,7 +1360,7 @@
   {
     "name": "test_bundle_lifecycle__test_current_bundle_metadata_replaces_old_values",
     "file": "src/extensions/score_metamodel/tests/test_bundle_lifecycle.py",
-    "line": "265",
+    "line": "323",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5630,7 +5644,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[reports]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": "553",
+    "line": "554",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5644,7 +5658,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[cache]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": "553",
+    "line": "554",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5658,7 +5672,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_non_existent_id",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": "658",
+    "line": "661",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5728,7 +5742,7 @@
   {
     "name": "test_testcase_needs__test_short_hash_consistency_and_format",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_needs.py",
-    "line": "26",
+    "line": "27",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5742,7 +5756,7 @@
   {
     "name": "test_testcase_needs__test_construct_and_add_need_uses_source_url_or_placeholder[missing-repo]",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_needs.py",
-    "line": "40",
+    "line": "41",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5756,7 +5770,7 @@
   {
     "name": "test_testcase_needs__test_construct_and_add_need_uses_source_url_or_placeholder[unpinned-repo]",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_needs.py",
-    "line": "40",
+    "line": "41",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5770,7 +5784,7 @@
   {
     "name": "test_testcase_needs__test_construct_and_add_need_uses_source_url_or_placeholder[pinned-repo-without-line]",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_needs.py",
-    "line": "40",
+    "line": "41",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",

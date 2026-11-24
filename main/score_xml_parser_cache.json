@@ -866,7 +866,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[reports]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 553,
+    "line": 554,
     "need": "potential_tool_malfunction__docs_as_code__m8",
     "verify_type": "fully",
     "result": "passed",
@@ -878,7 +878,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[reports]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 553,
+    "line": 554,
     "need": "potential_tool_malfunction__docs_as_code__m9",
     "verify_type": "fully",
     "result": "passed",
@@ -890,7 +890,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[cache]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 553,
+    "line": 554,
     "need": "potential_tool_malfunction__docs_as_code__m8",
     "verify_type": "fully",
     "result": "passed",
@@ -902,7 +902,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[cache]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 553,
+    "line": 554,
     "need": "potential_tool_malfunction__docs_as_code__m9",
     "verify_type": "fully",
     "result": "passed",
@@ -962,7 +962,7 @@
   {
     "name": "test_testcase_needs__test_short_hash_consistency_and_format",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_needs.py",
-    "line": 26,
+    "line": 27,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
