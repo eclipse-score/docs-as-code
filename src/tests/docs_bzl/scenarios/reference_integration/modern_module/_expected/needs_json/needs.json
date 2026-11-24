@@ -10,6 +10,7 @@
       },
       "needs": {
         "comp__modern_component": {
+          "bazel_module": "score_docs_as_code",
           "bazel_target": "[\"@@//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component:component_sources\",\"@@//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component:implementation\"]",
           "bazel_type": "[\"filegroup\",\"cc_library\"]",
           "belongs_to": [
@@ -38,6 +39,7 @@
           "version": 1
         },
         "comp_req__modern_component__platform_feature": {
+          "bazel_module": "score_docs_as_code",
           "content": "The modern component requires the platform feature made available by its\nparent module.",
           "derived_from": [
             "feat_req__platform__feature"
@@ -66,6 +68,7 @@
           "version": 1
         },
         "feat__modern_component": {
+          "bazel_module": "score_docs_as_code",
           "belongs_to_back": [
             "comp__modern_component"
           ],
@@ -86,6 +89,7 @@
           "version": 1
         },
         "gd_req__modern_unlinked_self_contained": {
+          "bazel_module": "score_docs_as_code",
           "content": "A component that has no dependency on a requirement owned by another\nbundle must build both independently and through its parent module.",
           "docname": "components/unlinked_component/index",
           "external_css": "external_link",
@@ -107,6 +111,7 @@
           "version": 1
         },
         "mod__modern_module": {
+          "bazel_module": "score_docs_as_code",
           "belongs_to_back": [
             "mod_vrep__docs_as_code__modern_module"
           ],
@@ -127,6 +132,7 @@
           "version": 1
         },
         "mod_vrep__docs_as_code__modern_module": {
+          "bazel_module": "score_docs_as_code",
           "belongs_to": [
             "mod__modern_module"
           ],
@@ -153,6 +159,7 @@
           "approved_by_back": [
             "wf__modern_workflow"
           ],
+          "bazel_module": "score_docs_as_code",
           "docname": "components/unlinked_component/index",
           "external_css": "external_link",
           "id": "rl__modern_workflow",
@@ -170,6 +177,7 @@
           "version": 1
         },
         "tool_req__modern_component": {
+          "bazel_module": "score_docs_as_code",
           "content": "The modern component implementation is covered by the component source\ncode-link scan. The linked component requirement above depends on the\nplatform feature requirement. The integration test checks that the\ncomponent can be built through its module, where that requirement is\navailable, but not as a standalone bundle.",
           "docname": "components/component/index",
           "external_css": "external_link",
@@ -189,6 +197,7 @@
           "version": 1
         },
         "tool_req__modern_unlinked_component": {
+          "bazel_module": "score_docs_as_code",
           "content": "This requirement is intentionally not linked to the platform feature\nrequirement. It verifies the independent-component control case.",
           "docname": "components/unlinked_component/index",
           "external_css": "external_link",
@@ -210,6 +219,7 @@
           "approved_by": [
             "rl__modern_workflow"
           ],
+          "bazel_module": "score_docs_as_code",
           "docname": "components/unlinked_component/index",
           "external_css": "external_link",
           "id": "wf__modern_workflow",
@@ -237,6 +247,7 @@
           "version": 1
         },
         "wp__modern_workproduct": {
+          "bazel_module": "score_docs_as_code",
           "docname": "components/unlinked_component/index",
           "external_css": "external_link",
           "id": "wp__modern_workproduct",
@@ -347,6 +358,15 @@
           "avatar": {
             "default": null,
             "description": "Added by service github-issues",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_module": {
+            "default": "",
+            "description": "Added by needs_fields config",
             "field_type": "extra",
             "type": [
               "string",

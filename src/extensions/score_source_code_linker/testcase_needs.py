@@ -125,6 +125,12 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase, *, local_module: str
         # An unpinned dependency or a checkout without a remote has no source URL.
         # Sphinx-Needs still requires a URL for the external testcase Need.
         external_url = get_placeholder_github_link(tn.file, tn.line)
+    bazel_module = tn.repo.name if tn.repo else ""
+    module_option = {}
+    # A project-supplied metamodel can define testcases without this field.
+    if bazel_module and "bazel_module" in app.config.needs_fields:
+        module_option["bazel_module"] = bazel_module
+
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
         _ = add_external_need(
@@ -145,4 +151,5 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase, *, local_module: str
             line=tn.line,
             result=tn.result,  # We just want the 'failed' or whatever
             result_text=tn.result_text if tn.result_text else "",
+            **module_option,
         )
