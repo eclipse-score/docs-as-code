@@ -10,6 +10,7 @@
       },
       "needs": {
         "feat__platform_feature": {
+          "bazel_module": "score_docs_as_code",
           "docname": "platform/feature",
           "external_css": "external_link",
           "id": "feat__platform_feature",
@@ -30,6 +31,7 @@
           "version": 1
         },
         "feat_req__platform__feature": {
+          "bazel_module": "score_docs_as_code",
           "content": "The platform provides the feature required by integrated modules.",
           "docname": "platform/feature",
           "external_css": "external_link",
@@ -142,6 +144,15 @@
           "avatar": {
             "default": null,
             "description": "Added by service github-issues",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_module": {
+            "default": "",
+            "description": "Added by needs_fields config",
             "field_type": "extra",
             "type": [
               "string",

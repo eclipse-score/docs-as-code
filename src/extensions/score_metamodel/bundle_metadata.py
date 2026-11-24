@@ -10,12 +10,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Copy Bazel target information from documentation bundles to local Needs.
+"""Copy Bazel module and target information from bundles to Needs.
 
 Each documentation bundle can own one or more Sphinx documents and can expose
 the Bazel targets that produced its source files.  This module adds those
 targets to the explicitly configured primary Need of the bundle and removes
 the values from local Needs that no longer have a current bundle association.
+Each Need declared in a bundle's documents also receives that bundle's module.
 """
 
 from __future__ import annotations
@@ -247,6 +248,41 @@ def _clear_unassociated_bundle_metadata(
     return changed_docnames
 
 
+def _update_document_modules(
+    owners: dict[str, BundleMetadata], needs: dict[str, NeedItem]
+) -> set[str]:
+    """Set ``bazel_module`` on Needs declared in Sphinx documents.
+
+    For each Need declared in a document, look up the bundle that supplied
+    that document in ``owners``. This includes mounted documents and works
+    for every Need type that has a ``bazel_module`` field. Clear stale
+    values when the document has no owner.
+
+    A Need loaded with ``needimport`` keeps its inventory's module even when
+    it appears in a local document. External Needs such as JUnit testcases
+    keep the module set by their producer.
+
+    Return the names of documents Sphinx needs to rewrite.
+    """
+    changed_docnames: set[str] = set()
+    for need in needs.values():
+        if (
+            need.get("is_external")
+            or need.get("is_import")
+            or "bazel_module" not in need
+        ):
+            continue
+        docname = need.get("docname")
+        if not isinstance(docname, str):
+            continue
+        owner = owners.get(docname)
+        module = owner.bazel_module if owner else ""
+        if (need.get("bazel_module") or "") != module:
+            need["bazel_module"] = module
+            changed_docnames.add(docname)
+    return changed_docnames
+
+
 def apply_bundle_metadata(app: Sphinx, _: object) -> list[str]:
     """Update local Needs after Sphinx has collected the current documents.
 
@@ -254,7 +290,8 @@ def apply_bundle_metadata(app: Sphinx, _: object) -> list[str]:
     extensions have finished updating the environment. It gets the current
     bundle ownership map, resolves each configured primary Need, updates the
     generated Bazel fields, then removes stale values from local Needs without
-    a current association. It returns the affected documents because Sphinx
+    a current association. It also assigns each document Need its module from
+    the same ownership map. It returns the affected documents because Sphinx
     uses callback return values to decide which documents need to be written
     again.
     """
@@ -269,4 +306,5 @@ def apply_bundle_metadata(app: Sphinx, _: object) -> list[str]:
     update.changed_docnames.update(
         _clear_unassociated_bundle_metadata(needs, update.matched_need_ids)
     )
+    update.changed_docnames.update(_update_document_modules(owners, needs))
     return sorted(update.changed_docnames)

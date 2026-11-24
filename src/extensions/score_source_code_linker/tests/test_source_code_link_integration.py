@@ -331,6 +331,7 @@ needs_extra_options = [
     "result",
     "result_text",
 ]
+needs_fields = {"bazel_module": {"schema": {"type": "string"}}}
 needs_extra_links =  [{
       "option": "partially_verifies",
       "incoming": "paritally_verified_by",
@@ -598,6 +599,8 @@ def test_source_link_integration_ok(
         needs_data = {x["id"]: x for x in Needs_Data.get_needs_view().values()}
         local_test = needs_data["testcase__test_api_response_format_vlyyo"]
         other_test = needs_data["testcase__test_dependency_api_response_wtrqv"]
+        assert local_test["bazel_module"] == HOST_REPO.name
+        assert other_test["bazel_module"] == "other_module"
         assert local_test["external_url"] == get_github_link(
             HOST_REPO,
             "src/testfile_1.py",

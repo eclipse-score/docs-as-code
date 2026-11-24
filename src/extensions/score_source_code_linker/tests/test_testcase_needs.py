@@ -13,6 +13,7 @@
 
 """Tests for testcase_needs.py: turning parsed testcases into Sphinx needs."""
 
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
@@ -91,7 +92,7 @@ def test_construct_and_add_need_uses_source_url_or_placeholder(
         repo=repo,
     )
 
-    app_stub: Any = object()
+    app_stub: Any = SimpleNamespace(config=SimpleNamespace(needs_fields={}))
     testcase_needs.construct_and_add_need(
         app=app_stub,
         tn=testcase,
@@ -99,3 +100,4 @@ def test_construct_and_add_need_uses_source_url_or_placeholder(
 
     assert len(calls) == 1
     assert calls[0]["external_url"] == expected_url
+    assert "bazel_module" not in calls[0]

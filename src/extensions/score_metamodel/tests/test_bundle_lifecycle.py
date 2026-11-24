@@ -23,6 +23,8 @@ from sphinx_needs.need_item import NeedItem, NeedItemSourceUnknown, NeedsContent
 import src.extensions.score_metamodel.bundle_metadata as bundle_metadata
 from src.extensions.score_mounts._resolver import BazelTarget, BundleMetadata
 
+from . import need as make_need
+
 
 def _need(
     *,
@@ -182,6 +184,62 @@ def test_external_bundle_updates_local_need_like_internal_bundle(
     assert changed == ["index"]
     assert need["bazel_target"] == "//:memory_core"
     assert need["bazel_type"] == "cc_library"
+
+
+# TODO: Check root and mounted Need ownership in the needs.json produced
+# by the planned docs_bzl scenario with two Bazel modules.
+# Check stale module values in an incremental scenario when one is available.
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_needs_follow_their_document_bundle(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Document Needs use their bundle's module and imports keep their own."""
+    local = make_need(id="LOCAL", type="comp", docname="index", bazel_module="")
+    mounted = make_need(
+        id="MOUNTED", type="comp_req", docname="mount/reqs", bazel_module=""
+    )
+    testcase = make_need(
+        id="TEST", type="testcase", is_external=True, bazel_module="test_owner"
+    )
+    imported = make_need(
+        id="IMPORTED",
+        type="tool_req",
+        docname="index",
+        is_import=True,
+        bazel_module="import_owner",
+    )
+    owners = {
+        "index": BundleMetadata(label="@@//:docs", bazel_module="host"),
+        "mount/reqs": BundleMetadata(label="@@tool+//:docs", bazel_module="tool"),
+    }
+
+    class FakeNeedsData:
+        def __init__(self, _env: object) -> None:
+            self.needs = {
+                need["id"]: need for need in (local, mounted, testcase, imported)
+            }
+
+        def get_needs_mutable(self):
+            return self.needs
+
+    monkeypatch.setattr(bundle_metadata, "SphinxNeedsData", FakeNeedsData)
+    monkeypatch.setattr(bundle_metadata, "get_document_bundles", lambda _app: owners)
+    app = cast(Sphinx, SimpleNamespace(env=SimpleNamespace()))
+
+    assert bundle_metadata.apply_bundle_metadata(app, None) == ["index", "mount/reqs"]
+    assert local["bazel_module"] == "host"
+    assert mounted["bazel_module"] == "tool"
+    assert testcase["bazel_module"] == "test_owner"
+    assert imported["bazel_module"] == "import_owner"
+    assert bundle_metadata.apply_bundle_metadata(app, None) == []
+
+    del owners["mount/reqs"]
+    assert bundle_metadata.apply_bundle_metadata(app, None) == ["mount/reqs"]
+    assert mounted["bazel_module"] == ""
 
 
 @add_test_properties(
