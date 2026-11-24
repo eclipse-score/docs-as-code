@@ -18,7 +18,9 @@ LCOV summary uses, and classified into the categories required by
 """
 
 import json
+import re
 from collections import Counter
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 from urllib.parse import unquote
@@ -36,8 +38,9 @@ TOP_RULES = 10
 
 _LEVELS = {"error": "high", "warning": "medium", "note": "low", "none": "low"}
 _MISRA_OBLIGATIONS = {"mandatory": "high", "required": "medium", "advisory": "low"}
-# Preliminary mapping for tools such as clang-tidy that report no level at all.
-_RULE_FAMILIES = {
+# Preliminary mappings; rules_lint reports every clang-tidy check as warning and every
+# ruff rule as error, so the level alone says nothing for these tools.
+_CLANG_TIDY_FAMILIES = {
     "bugprone": "high",
     "cert": "high",
     "clang-analyzer": "high",
@@ -52,6 +55,23 @@ _RULE_FAMILIES = {
     "portability": "low",
     "readability": "low",
 }
+_RUFF_PREFIXES = {
+    "S": "high",
+    "B": "high",
+    "F": "medium",
+    "PL": "medium",
+    "E": "low",
+    "W": "low",
+    "I": "low",
+    "N": "low",
+    "D": "low",
+    "UP": "low",
+    "SIM": "low",
+    "RUF": "low",
+}
+# rules_lint's SARIF has no ruleId for these tools, only the linter's message line.
+_CLANG_TIDY_CHECK = re.compile(r"\[([\w.-]+)(?:,[\w.,-]*)?\]\s*$")
+_RUFF_CODE = re.compile(r"^([A-Z]+\d+)\b")
 
 
 def _security_class(score: float) -> str:
@@ -64,7 +84,19 @@ def _security_class(score: float) -> str:
     return "low"
 
 
-def classify(result: dict[str, Any], rule: dict[str, Any]) -> str:
+def _tool_kind(tool_name: str) -> str:
+    """Normalize tool names: rules_lint's "ClangTidy" is "clang-tidy" elsewhere."""
+    return re.sub(r"[^a-z]", "", tool_name.lower())
+
+
+def _longest_prefix(value: str, mapping: dict[str, str], separator: str) -> str | None:
+    for prefix in sorted(mapping, key=len, reverse=True):
+        if value.startswith(prefix + separator):
+            return mapping[prefix]
+    return None
+
+
+def classify(result: dict[str, Any], rule: dict[str, Any], tool_name: str = "") -> str:
     """Map a SARIF result to critical/high/medium/low, most specific source first."""
     properties = rule.get("properties", {})
     if "security-severity" in properties:
@@ -74,13 +106,21 @@ def classify(result: dict[str, Any], rule: dict[str, Any]) -> str:
             obligation = tag.rsplit("/", 1)[-1]
             if obligation in _MISRA_OBLIGATIONS:
                 return _MISRA_OBLIGATIONS[obligation]
+    kind = _tool_kind(tool_name)
+    rule_id = _rule_id(result, rule, tool_name)
+    if kind == "clangtidy":
+        family = _longest_prefix(rule_id, _CLANG_TIDY_FAMILIES, "-")
+        if family:
+            return family
+    elif kind == "ruff":
+        letters = re.match(r"[A-Z]*", rule_id)
+        return (
+            _longest_prefix(letters.group() if letters else "", _RUFF_PREFIXES, "")
+            or "medium"
+        )
     level = result.get("level") or rule.get("defaultConfiguration", {}).get("level")
     if level in _LEVELS:
         return _LEVELS[level]
-    rule_id = _rule_id(result, rule)
-    for family in sorted(_RULE_FAMILIES, key=len, reverse=True):
-        if rule_id.startswith(family + "-"):
-            return _RULE_FAMILIES[family]
     # SARIF's default level is "warning".
     return "medium"
 
@@ -99,29 +139,46 @@ def _rule(run: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
     return next((rule for rule in rules if rule.get("id") == rule_id), {})
 
 
-def _rule_id(result: dict[str, Any], rule: dict[str, Any]) -> str:
-    return str(
-        result.get("ruleId")
-        or result.get("rule", {}).get("id")
-        or rule.get("id")
-        or "unknown"
+def _rule_id(result: dict[str, Any], rule: dict[str, Any], tool_name: str = "") -> str:
+    explicit = (
+        result.get("ruleId") or result.get("rule", {}).get("id") or rule.get("id")
     )
+    if explicit:
+        return str(explicit)
+    text = str(result.get("message", {}).get("text", ""))
+    pattern = {"clangtidy": _CLANG_TIDY_CHECK, "ruff": _RUFF_CODE}.get(
+        _tool_kind(tool_name)
+    )
+    match = pattern.search(text) if pattern else None
+    return match.group(1) if match else "unknown"
 
 
-def _file(run: dict[str, Any], result: dict[str, Any]) -> FileIdentity | None:
-    """Return the repository-relative file of the primary location, if any."""
+def _location(
+    run: dict[str, Any], result: dict[str, Any]
+) -> tuple[str, int | None, int | None]:
+    """Return the URI, start line and start column of the primary location."""
     locations: list[dict[str, Any]] = result.get("locations") or []
     if not locations:
-        return None
-    artifact: dict[str, Any] = (
-        locations[0].get("physicalLocation", {}).get("artifactLocation", {})
-    )
+        return "", None, None
+    physical: dict[str, Any] = locations[0].get("physicalLocation", {})
+    artifact: dict[str, Any] = physical.get("artifactLocation", {})
     artifacts: list[dict[str, Any]] = run.get("artifacts", [])
     index = artifact.get("index")
     if "uri" not in artifact and isinstance(index, int) and 0 <= index < len(artifacts):
         artifact = artifacts[index].get("location", {})
     uri: str = artifact.get("uri", "")
-    uri = unquote(uri.removeprefix("file://"))
+    region: dict[str, Any] = physical.get("region", {})
+    return (
+        unquote(uri.removeprefix("file://")),
+        region.get("startLine"),
+        region.get("startColumn"),
+    )
+
+
+def _file(uri: str) -> FileIdentity | None:
+    """Return the repository-relative file of a location URI, if any."""
+    if not uri:
+        return None
     try:
         return file_identity(uri)
     except CoverageError:
@@ -134,6 +191,35 @@ def _suppressed(result: dict[str, Any]) -> bool:
         suppression.get("status", "accepted") == "accepted"
         for suppression in result.get("suppressions", [])
     )
+
+
+def _unique_results(
+    reports: list[Path], tools: Counter[tuple[str, str | None]]
+) -> Iterator[tuple[str, dict[str, Any], dict[str, Any], str, str]]:
+    """Yield (tool, result, rule, rule id, URI) once per distinct open or closed finding."""
+    seen: set[tuple[object, ...]] = set()
+    for report in reports:
+        sarif = json.loads(report.read_text(encoding="utf-8"))
+        for run in sarif.get("runs", []):
+            driver = run.get("tool", {}).get("driver", {})
+            tool_name = str(driver.get("name", "unknown"))
+            tool = (tool_name, driver.get("semanticVersion") or driver.get("version"))
+            tools.setdefault(tool, 0)
+            for result in run.get("results", []):
+                # Successful or inapplicable checks are not findings.
+                if result.get("kind", "fail") in ("pass", "notApplicable"):
+                    continue
+                rule = _rule(run, result)
+                rule_id = _rule_id(result, rule, tool_name)
+                uri, line, column = _location(run, result)
+                message = result.get("message", {}).get("text")
+                key = (tool_name, rule_id, uri, line, column, message)
+                # Linters run per target, e.g. report a header once per including target.
+                if key in seen:
+                    continue
+                seen.add(key)
+                tools[tool] += 1
+                yield tool_name, result, rule, rule_id, uri
 
 
 def summarize(code_file_lists_path: Path, reports: list[Path]) -> dict[str, Any]:
@@ -151,41 +237,22 @@ def summarize(code_file_lists_path: Path, reports: list[Path]) -> dict[str, Any]
     rules = {
         c.primary_need_id: Counter[tuple[str, str, str]]() for c in code_file_lists
     }
-    tools: list[dict[str, Any]] = []
+    tools = Counter[tuple[str, str | None]]()
     unassigned = 0
 
-    for report in reports:
-        sarif = json.loads(report.read_text(encoding="utf-8"))
-        for run in sarif.get("runs", []):
-            driver = run.get("tool", {}).get("driver", {})
-            tool_name = str(driver.get("name", "unknown"))
-            results = run.get("results", [])
-            tools.append(
-                {
-                    "name": tool_name,
-                    "version": driver.get("semanticVersion") or driver.get("version"),
-                    "results": len(results),
-                }
-            )
-            for result in results:
-                # Successful or inapplicable checks are not findings.
-                if result.get("kind", "fail") in ("pass", "notApplicable"):
-                    continue
-                file = _file(run, result)
-                if file is None or not owners.get(file):
-                    unassigned += 1
-                    continue
-                need_ids = owners[file]
-                rule = _rule(run, result)
-                classification = classify(result, rule)
-                rule_id = _rule_id(result, rule)
-                for need_id in need_ids:
-                    if _suppressed(result):
-                        suppressed[need_id] += 1
-                        continue
-                    findings[need_id][classification] += 1
-                    files_with_findings[need_id].add(file)
-                    rules[need_id][(tool_name, rule_id, classification)] += 1
+    for tool_name, result, rule, rule_id, uri in _unique_results(reports, tools):
+        file = _file(uri)
+        if file is None or not owners.get(file):
+            unassigned += 1
+            continue
+        classification = classify(result, rule, tool_name)
+        for need_id in owners[file]:
+            if _suppressed(result):
+                suppressed[need_id] += 1
+                continue
+            findings[need_id][classification] += 1
+            files_with_findings[need_id].add(file)
+            rules[need_id][(tool_name, rule_id, classification)] += 1
 
     summaries: list[dict[str, Any]] = [
         {
@@ -208,7 +275,12 @@ def summarize(code_file_lists_path: Path, reports: list[Path]) -> dict[str, Any]
     ]
     return {
         "version": 1,
-        "tools": tools,
+        "tools": [
+            {"name": name, "version": version, "results": count}
+            for (name, version), count in sorted(
+                tools.items(), key=lambda item: (item[0][0], str(item[0][1]))
+            )
+        ],
         "unassigned": unassigned,
         "static_analysis_summaries": summaries,
     }

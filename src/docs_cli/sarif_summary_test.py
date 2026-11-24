@@ -108,6 +108,12 @@ def test_indexed_artifacts_rules_and_result_kinds(tmp_path: Path) -> None:
     reports = tmp_path / "static-analysis-report"
     reports.mkdir()
     location = {"physicalLocation": {"artifactLocation": {"index": 0}}}
+    second = {
+        "physicalLocation": {
+            "artifactLocation": {"index": 0},
+            "region": {"startLine": 2},
+        }
+    }
     (reports / "lint.sarif").write_text(
         json.dumps(
             {
@@ -125,7 +131,7 @@ def test_indexed_artifacts_rules_and_result_kinds(tmp_path: Path) -> None:
                             {"ruleIndex": 0, "locations": [location]},
                             {
                                 "ruleIndex": 0,
-                                "locations": [location],
+                                "locations": [second],
                                 "suppressions": [{"status": "underReview"}],
                             },
                             {"ruleIndex": 0, "kind": "pass", "locations": [location]},
@@ -151,3 +157,67 @@ def test_indexed_artifacts_rules_and_result_kinds(tmp_path: Path) -> None:
             "count": 2,
         }
     ]
+
+
+def test_rules_lint_reports(tmp_path: Path) -> None:
+    """rules_lint writes one SARIF run per target, without rule ids for clang-tidy and ruff."""
+    lists = tmp_path / "lists.json"
+    lists.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "code_file_lists": [
+                    {
+                        "primary_need_id": "comp__a",
+                        "files": [
+                            {"repository": "_main", "path": "src/a.h"},
+                            {"repository": "_main", "path": "tools/x.py"},
+                        ],
+                    }
+                ],
+            }
+        )
+    )
+    reports = tmp_path / "static-analysis-report"
+    reports.mkdir()
+
+    def finding(path: str, line: int, text: str, level: str) -> dict[str, object]:
+        region = {"startLine": line, "startColumn": 1}
+        location: dict[str, object] = {
+            "physicalLocation": {"artifactLocation": {"uri": path}, "region": region}
+        }
+        return {"level": level, "message": {"text": text}, "locations": [location]}
+
+    header = finding("src/a.h", 3, "bad [bugprone-macro-parentheses]", "warning")
+    style = finding(
+        "src/a.h", 4, "x [readability-braces,-warnings-as-errors]", "warning"
+    )
+    runs: list[dict[str, object]] = [
+        {"tool": {"driver": {"name": "ClangTidy"}}, "results": [header, style]},
+        {"tool": {"driver": {"name": "ClangTidy"}}, "results": [header]},
+        {"tool": {"driver": {"name": "ClangTidy"}}, "results": []},
+        {
+            "tool": {"driver": {"name": "Ruff"}},
+            "results": [
+                finding("tools/x.py", 1, "F401 [*] `os` imported but unused", "error"),
+                finding("tools/x.py", 9, "E501 Line too long (130 > 120)", "error"),
+            ],
+        },
+    ]
+    (reports / "lint.sarif").write_text(json.dumps({"version": "2.1.0", "runs": runs}))
+
+    output = generate_summary(lists, reports, tmp_path / "summary.json")
+
+    data = json.loads(output.read_text())
+    assert data["tools"] == [
+        {"name": "ClangTidy", "version": None, "results": 2},
+        {"name": "Ruff", "version": None, "results": 2},
+    ]
+    (summary,) = data["static_analysis_summaries"]
+    assert summary["findings"] == {"critical": 0, "high": 1, "medium": 1, "low": 2}
+    assert {(r["rule"], r["classification"]) for r in summary["top_rules"]} == {
+        ("bugprone-macro-parentheses", "high"),
+        ("readability-braces", "low"),
+        ("F401", "medium"),
+        ("E501", "low"),
+    }
