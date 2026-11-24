@@ -7000,6 +7000,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "sarif_summary_test__test_rules_lint_reports",
+    "file": "src/docs_cli/sarif_summary_test.py",
+    "line": "162",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "main_test__test_build_action_selects_sphinx_builder[incremental-html]",
     "file": "src/docs_cli/main_test.py",
     "line": "65",
