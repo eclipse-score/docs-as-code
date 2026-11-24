@@ -66,6 +66,7 @@ class BundleMetadata:
     label: str = ""
     # The name passed to ``docs_bundle(name = ...)``, for example ``docs``.
     name: str = ""
+    bazel_module: str = ""
     # Targets declared directly by this bundle, for example
     # ``(BazelTarget("@@//score/components/memory:implementation", "cc_library"),)``.
     # Targets inherited from dependencies or nested bundles do not belong here.
@@ -83,6 +84,7 @@ class BundleMetadata:
         return cls(
             label=cast("str", bundle["label"]),
             name=cast("str", bundle["name"]),
+            bazel_module=cast("str", bundle.get("bazel_module", "")),
             # Older manifests do not carry an explicit primary Need. Treat
             # the field as absent so those manifests remain readable while
             # avoiding any name-based fallback.

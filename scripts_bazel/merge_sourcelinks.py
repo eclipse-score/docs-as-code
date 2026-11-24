@@ -42,6 +42,7 @@ def _reference_key(reference: dict[str, object]) -> str:
 def _merge_sourcelinks_file(
     json_file: Path,
     known_good: dict[str, Any] | None,
+    local_module: str,
     merged: list[dict[str, object]],
     seen: set[str],
 ) -> None:
@@ -65,7 +66,9 @@ def _merge_sourcelinks_file(
         # A known-good file is optional for standalone builds that include
         # documentation from external modules.  In that case, keep the link as
         # it was generated.
-        if repo := resolve_repo(cast(str, reference["repo_name"]), known_good):
+        if repo := resolve_repo(
+            cast(str, reference["repo_name"]), known_good, local_module=local_module
+        ):
             reference.update(repo.to_flat_dict())
         key = _reference_key(reference)
         if key not in seen:
@@ -86,7 +89,12 @@ def main(argv: list[str] | None = None) -> int:
     _ = parser.add_argument(
         "--known_good",
         type=Path,
-        help="Path to a required 'known good' JSON file (provided by Bazel).",
+        help="Path to a 'known good' JSON file (provided by Bazel).",
+    )
+    _ = parser.add_argument(
+        "--local-module",
+        required=True,
+        help="Root Bazel module that uses the current Git checkout",
     )
     _ = parser.add_argument(
         "files",
@@ -102,7 +110,9 @@ def main(argv: list[str] | None = None) -> int:
     known_good = load_known_good(args.known_good) if args.known_good else None
     for json_file in args.files:
         if "known_good.json" not in str(json_file):
-            _merge_sourcelinks_file(json_file, known_good, merged, seen)
+            _merge_sourcelinks_file(
+                json_file, known_good, args.local_module, merged, seen
+            )
 
     with open(args.output, "w", encoding="utf-8") as file:
         json.dump(merged, file, indent=2, ensure_ascii=False)

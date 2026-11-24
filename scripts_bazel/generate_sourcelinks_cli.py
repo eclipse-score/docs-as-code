@@ -41,6 +41,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Output JSON file path",
     )
     _ = parser.add_argument(
+        "--local-module",
+        required=True,
+        help="Bazel module for paths in the local repository",
+    )
+    _ = parser.add_argument(
         "files",
         nargs="*",
         type=Path,
@@ -52,7 +57,9 @@ def main(argv: list[str] | None = None) -> int:
     all_need_references: list[NeedLink] = []
     for file_path in args.files:
         # Combo build: `external/<repo>+/<path>` => (<repo>, <path>)
-        repo_name, clean_path = split_external_path(file_path)
+        repo_name, clean_path = split_external_path(
+            file_path, local_module=args.local_module
+        )
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
         references = extract_references_from_file(

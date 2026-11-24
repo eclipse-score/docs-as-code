@@ -32,6 +32,7 @@ from sphinx_needs.data import NeedsMutable, SphinxNeedsData
 from sphinx_needs.logging import get_logger
 from sphinx_needs.need_item import NeedItem
 
+from src.extensions.score_mounts import get_root_bazel_module
 from src.extensions.score_source_code_linker.need_source_links import (
     SourceCodeLinks,
     group_by_need,
@@ -167,8 +168,9 @@ def register_test_code_linker(app: Sphinx):
     app.connect("env-updated", setup_test_code_linker, priority=505)
 
 
-def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
+def setup_test_code_linker(app: Sphinx, _env: BuildEnvironment):
     # TODO instead of implementing our own caching here, we should rely on Bazel
+    local_module = get_root_bazel_module(app)
     tl_cache_json = get_cache_filename(app.outdir, "score_xml_parser_cache.json")
     if (
         not tl_cache_json.exists()
@@ -197,7 +199,7 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
             LOGGER.info(f"{'=' * 80}", type="score_source_code_linker")
             return
 
-        build_testcase_needs(app, env)
+        build_testcase_needs(app, local_module=local_module)
         return
     tcn_cache = get_cache_filename(app.outdir, "score_testcaseneeds_cache.json")
     assert tcn_cache.exists(), (
@@ -206,7 +208,7 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
     # TODO: Make this more efficent, idk how though.
     test_case_needs = load_data_of_test_case_json(tcn_cache)
     for tcn in test_case_needs:
-        construct_and_add_need(app, tcn)
+        construct_and_add_need(app, tcn, local_module=local_module)
 
 
 def _clear_git_cache(_app: Sphinx, _env: BuildEnvironment) -> None:
@@ -335,12 +337,18 @@ def _log_existing_links(needs: NeedsMutable) -> None:
             )
 
 
-def _render_code_link(plain_links: bool, link: NeedLink) -> str:
+def _render_code_link(plain_links: bool, link: NeedLink, local_module: str) -> str:
     location = f"{link.file}:{link.line}"
-    base = get_github_link(link.repo, link.file, link.line, plain_links=plain_links)
+    base = get_github_link(
+        link.repo,
+        link.file,
+        link.line,
+        plain_links=plain_links,
+        local_module=local_module,
+    )
     if base is None:
         LOGGER.info(
-            "Falling back to local code-link format (no git remote available): "
+            "Falling back to local code-link format (no git URL available): "
             f"{link.file}:{link.line}",
             type="score_source_code_linker",
         )
@@ -351,14 +359,14 @@ def _render_code_link(plain_links: bool, link: NeedLink) -> str:
 def _render_test_link(
     plain_links: bool,
     link: DataForTestLink,
+    local_module: str,
 ) -> str:
     if plain_links:
         return str(link.name)
-    base = get_github_link(link.repo, link.file, link.line)
+    base = get_github_link(link.repo, link.file, link.line, local_module=local_module)
     if base is None:
         LOGGER.info(
-            "Falling back to local test-link format (no git remote available): "
-            f"{link.name}",
+            f"Falling back to local test-link format (no git URL available): {link.name}",
             type="score_source_code_linker",
         )
         return str(link.name)
@@ -417,11 +425,17 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     plain_links = bool(
         getattr(app.config, "score_source_code_linker_plain_links", False)
     )
-    apply_links_to_needs(env, links_by_need, plain_links)
+    apply_links_to_needs(
+        env, links_by_need, plain_links, local_module=get_root_bazel_module(app)
+    )
 
 
 def apply_links_to_needs(
-    env: BuildEnvironment, links_by_need: list[SourceCodeLinks], plain_links: bool
+    env: BuildEnvironment,
+    links_by_need: list[SourceCodeLinks],
+    plain_links: bool,
+    *,
+    local_module: str = "",
 ) -> None:
     """Write source_code_link and testlink into the matching Needs."""
     needs_data = SphinxNeedsData(env)
@@ -438,11 +452,11 @@ def apply_links_to_needs(
 
         code_links, test_links = rendered_links_by_need.setdefault(need["id"], ([], []))
         code_links.extend(
-            _render_code_link(plain_links, link)
+            _render_code_link(plain_links, link, local_module)
             for link in source_code_links.links.CodeLinks
         )
         test_links.extend(
-            _render_test_link(plain_links, link)
+            _render_test_link(plain_links, link, local_module)
             for link in source_code_links.links.TestLinks
         )
 

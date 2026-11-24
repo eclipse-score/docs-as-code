@@ -417,6 +417,21 @@ def get_document_bundles(app: Sphinx) -> dict[str, BundleMetadata]:
     return dict(getattr(app.env, "_score_document_bundles", {}))
 
 
+def get_root_bazel_module(app: Sphinx) -> str:
+    """Return the declaring module of the composition's root bundle.
+
+    Return an empty string when the manifest, root mount, or module field is
+    absent.
+    """
+    manifest: MountsManifest | None = getattr(app, "_score_mounts_manifest", None)
+    if not manifest:
+        return ""
+    return next(
+        (spec.bundle.bazel_module for spec in manifest.mounts if spec.root_bundle),
+        "",
+    )
+
+
 def _on_config_inited(app: Sphinx, config: Config) -> None:
     """Translate the Bazel manifest into ``sphinx_mounts`` runtime config.
 

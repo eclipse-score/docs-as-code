@@ -63,7 +63,7 @@ Example of requirement tags:
   - Tag + full line
   - Associated need ID
   - Repository Metadata:
-    - repo_name (parsed from filepath) (local_repo if non combo build)
+    - repo_name (the local Bazel module, or the dependency module from the file path)
     - hash (at this stage always blank)
     - url (at this stage always blank)
 
@@ -77,7 +77,7 @@ Example of requirement tags:
     "tag": "#--req-Id:",
     "need": "tool_req__docs_dd_link_source_code_link",
     "full_line": "#--req-Id: tool_req__docs_dd_link_source_code_link",
-    "repo_name": "local_repo",
+    "repo_name": "score_docs_as_code",
     "hash": "",
     "url": ""
   }
@@ -102,24 +102,26 @@ This step also fills in url & hash of each link from the entry of its repository
 
 Here are some basic rules regarding the repo information (`RepoInfo` in `src/helper_lib/repo_info.py`)
 
-In a combo build, a known_good_json **must** be provided.
-If known_good_json is found then the hash & url will be filled for each need by the script.
+In a combo build, provide `known_good.json` to resolve external source URLs.
 The lookup lives in one function, `resolve_repo`, used by both `merge_sourcelinks.py` and the XML parser.
 `known_good.json` is read once per run.
+Without a Git pin, external links keep their module name and leave the hash and URL empty.
+The documentation shows the source location or test name as text when there is no Git URL.
 
-Combo build:
+**External repository**
 
 - `repo_name`: repository name (parsed from filepath in step 1)
 - `hash`: revision/commit hash (as provided by the known_good_json)
 - `url`: repository remote URL (as provided by the known_good_json)
 
-Local build:
+**Local repository**
 
-- `repo_name`: 'local_repo'
+- `repo_name`: the root Bazel module. Bazel supplies it to the source scanner,
+  and the JUnit parser reads it from the mount manifest.
 - `hash`: stays empty
 - `url`: stays empty
 
-With an empty hash, the link URL is built from the local git checkout (remote URL + `HEAD`).
+For the root module, the link URL is built from the local git checkout (remote URL + `HEAD`).
 Git is asked once per build, not once per link.
 
 ---
@@ -146,7 +148,8 @@ TestLink scans test result XMLs from Bazel (bazel-testlogs) or from the folder '
 This depends on the `attribute_plugin` in our tooling repository, find it [here](https://github.com/eclipse-score/tooling/tree/main/python_basics/score_pytest)
 
 :::attention
-If TestLinks should be generated in a combo build please ensure that you have the known_good_json added to the docs macro.
+To render GitHub links for external tests in a combo build, supply
+`known_good` to the `docs()` macro.
 :::
 
 #### Test Tagging Options
@@ -211,10 +214,10 @@ The DataOfTestCase depicts the information gathered about one testcase.
     "DerivationTechnique": "boundary-values",
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_common_attr_title, tool_req__docs_common_attr_description",
-    "FullyVerifies": null
-    "repo_name": "local_repo",
+    "FullyVerifies": null,
+    "repo_name": "score_docs_as_code",
     "hash": "",
-    "url": "",
+    "url": ""
   }
 ]
 ```
@@ -247,7 +250,7 @@ the build never reads it back.
           "tag": "#--req-Id:",# added `--` to avoid detection
           "need": "tool_req__docs_common_attr_title",
           "full_line": "#--req-Id: tool_req__docs_common_attr_title", # added `--` to avoid detection
-          "repo_name": "local_repo",
+          "repo_name": "score_docs_as_code",
           "hash": "",
           "url": "",
 
@@ -262,7 +265,7 @@ the build never reads it back.
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
-          "repo_name": "local_repo",
+          "repo_name": "score_docs_as_code",
           "hash": "",
           "url": "",
         }
@@ -292,7 +295,8 @@ During the Sphinx build process, the extension applies the computed links to nee
 
 ### General
 
-- In combo builds, known_good_json is required.
+- For GitHub links to dependencies in a combo build, pass `known_good = "//:known_good.json"` to `docs()`.
+  The file supplies the repository URL and revision for each dependency.
 - inefficiencies in creating the links
 - Not compatible with **Esbonio**
 - Live preview: Bazel regenerates the sourcelinks JSON when the preview starts, but unchanged pages can still show old links if Sphinx reuses its previous build.

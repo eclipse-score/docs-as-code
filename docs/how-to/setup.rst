@@ -22,9 +22,11 @@ It contains utilities and extensions that improve documentation in S-CORE.
 1. MODULE.bazel file
 --------------------
 
-Add the module to the ``MODULE.bazel`` file::
+Name your project's Bazel module and add the docs-as-code dependency in ``MODULE.bazel``::
 
-    bazel_dep(name = "score_docs_as_code", version = "7.0.0")
+    module(name = "my_project")
+
+    bazel_dep(name = "score_docs_as_code", version = "9.1.1")
 
 Add the S-CORE Bazel registry to the ``.bazelrc`` file::
 

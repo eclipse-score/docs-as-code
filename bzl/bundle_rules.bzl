@@ -28,7 +28,7 @@
 # its entries are consumed by the mounts manifest action. Keeping both consumers
 # on this provider ensures that source ownership and runtime placement agree.
 
-load("@score_docs_as_code//:bzl/basics.bzl", "join_path")
+load("@score_docs_as_code//:bzl/basics.bzl", "join_path", "require_bazel_module_name")
 
 # Internal data passed between bundle targets and eventually consumed by an
 # adapter such as the Sphinx mounts manifest. Users configure bundles through
@@ -406,6 +406,7 @@ def _rebase_bundle_entry(entry, mount_at, attach_to, toctree_index):
         # the composition graph.
         bundle_label = entry.bundle_label,
         bundle_name = entry.bundle_name,
+        bazel_module = entry.bazel_module,
         primary_need_id = entry.primary_need_id,
         code_targets = entry.code_targets,
         code_files = entry.code_files,
@@ -510,6 +511,7 @@ def _docs_bundle_impl(ctx):
             data = own_data,
             bundle_label = own_bundle_label,
             bundle_name = own_bundle_name,
+            bazel_module = ctx.attr.bazel_module,
             primary_need_id = own_primary_need_id,
             # This direct entry belongs to the current composition's root
             # bundle. _rebase_bundle_entry changes this to false if a parent
@@ -555,6 +557,7 @@ def _docs_bundle_impl(ctx):
             data = own_data,
             bundle_label = own_bundle_label,
             bundle_name = own_bundle_name,
+            bazel_module = ctx.attr.bazel_module,
             primary_need_id = own_primary_need_id,
             # This direct entry belongs to the current composition's root
             # bundle. _rebase_bundle_entry changes this to false if a parent
@@ -589,6 +592,7 @@ def _docs_bundle_impl(ctx):
             data = own_data,
             bundle_label = own_bundle_label,
             bundle_name = own_bundle_name,
+            bazel_module = ctx.attr.bazel_module,
             primary_need_id = own_primary_need_id,
             # This direct entry belongs to the current composition's root
             # bundle. _rebase_bundle_entry changes this to false if a parent
@@ -699,6 +703,10 @@ _docs_bundle = rule(
         # those cases do not call _source_dir_runtime_path().
         "source_dir": attr.string(default = ""),
         "entry_doc": attr.string(default = "index"),
+        # The canonical label uses an empty repository for the root module.
+        # Carry the module name explicitly so mounting a bundle elsewhere
+        # does not change the name attached to its documentation.
+        "bazel_module": attr.string(mandatory = True),
         # Optional explicit association with the Need representing this
         # bundle. The value is a Sphinx-Needs ID, not a Bazel label.
         "primary_need_id": attr.string(default = ""),
@@ -771,6 +779,7 @@ def create_bundle(
         sourcelinks_json = sourcelinks_json,
         source_dir = source_dir if source_dir != None else "",
         entry_doc = entry_doc,
+        bazel_module = require_bazel_module_name(),
         primary_need_id = normalized_primary_need_id,
         bundles = [bundle.bundle for bundle in parsed_bundles],
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
@@ -842,6 +851,10 @@ def _merge_bundle_sourcelinks_impl(ctx):
     out = ctx.actions.declare_file(ctx.label.name + ".json")
     args = ctx.actions.args()
     args.add("--output", out.path)
+
+    # Repo names identify modules. The merge needs the root module name to
+    # leave its links on the current checkout when a known-good file is used.
+    args.add("--local-module", ctx.attr.bazel_module)
     if ctx.file.known_good:
         args.add("--known_good", ctx.file.known_good.path)
     args.add_all(sourcelinks)
@@ -861,6 +874,7 @@ _merge_bundle_sourcelinks = rule(
     implementation = _merge_bundle_sourcelinks_impl,
     attrs = {
         "bundle": attr.label(providers = [DocsBundleInfo]),
+        "bazel_module": attr.string(mandatory = True),
         "known_good": attr.label(allow_single_file = True),
         "_merge_sourcelinks": attr.label(
             default = Label("//scripts_bazel:merge_sourcelinks"),
@@ -875,6 +889,7 @@ def merge_bundle_sourcelinks(name, bundle, known_good = None, visibility = None)
     _merge_bundle_sourcelinks(
         name = name,
         bundle = bundle,
+        bazel_module = require_bazel_module_name(),
         known_good = known_good,
         visibility = visibility,
     )
@@ -888,6 +903,10 @@ def _code_targets_sourcelinks_impl(ctx):
     output = ctx.actions.declare_file(ctx.label.name + ".json")
     arguments = ctx.actions.args()
     arguments.add("--output", output.path)
+
+    # Paths in the root repository have no external/ prefix to identify them.
+    # The scanner can still identify those files from the declaring module.
+    arguments.add("--local-module", ctx.attr.bazel_module)
     arguments.add_all(source_files)
     ctx.actions.run(
         executable = ctx.executable._generate_sourcelinks,
@@ -902,6 +921,7 @@ _code_targets_sourcelinks = rule(
     implementation = _code_targets_sourcelinks_impl,
     attrs = {
         "code_files": attr.label(mandatory = True),
+        "bazel_module": attr.string(mandatory = True),
         "_generate_sourcelinks": attr.label(
             default = Label("//scripts_bazel:generate_sourcelinks"),
             cfg = "exec",
@@ -916,6 +936,7 @@ def generate_code_target_sourcelinks(name, code_files, visibility = None):
     _code_targets_sourcelinks(
         name = name,
         code_files = code_files,
+        bazel_module = require_bazel_module_name(),
         visibility = visibility,
     )
     return ":" + name

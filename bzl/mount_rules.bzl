@@ -48,6 +48,9 @@ def _composition_manifest_impl(ctx):
             "bundle": {
                 "label": entry.bundle_label,
                 "name": entry.bundle_name,
+                # The declaring module is independent of the mount path and
+                # uses the same module name in standalone and composed builds.
+                "bazel_module": entry.bazel_module,
                 # This explicit ID identifies the primary Need represented by
                 # the bundle. It is intentionally independent of the Bazel
                 # target name and of any other Need IDs in the bundle.

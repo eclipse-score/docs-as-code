@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import json
+import shutil
 import subprocess
 from collections import Counter
 from collections.abc import Callable
@@ -27,14 +28,13 @@ from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataForTestLink_JSON_Decoder,
 )
-from src.extensions.score_source_code_linker.tests.load_expected_files import (
-    copy_golden_file,
-)
 from src.extensions.score_source_code_linker.tests.test_need_source_links import (
     SourceCodeLinks_TEST_JSON_Decoder,
 )
 from src.helper_lib.needlinks import NeedLink
-from src.helper_lib.repo_info import DefaultRepoInfo, get_github_link
+from src.helper_lib.repo_info import DefaultRepoInfo, RepoInfo, get_github_link
+
+HOST_REPO = RepoInfo(name="local_module", hash="", url="")
 
 
 @pytest.fixture(scope="module")
@@ -82,6 +82,34 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
     (docs_dir / "index.rst").write_text(basic_needs())
     (docs_dir / "conf.py").write_text(basic_conf())
 
+    (repo_path / "mounts.json").write_text(
+        json.dumps(
+            {
+                "mounts": [
+                    {
+                        "src_root": "docs",
+                        "runtime_path": "docs",
+                        "mount_at": "",
+                        "attach_to": "",
+                        "toctree_index": 0,
+                        "entry_doc": "index",
+                        "external": False,
+                        "repository": "",
+                        "generated": False,
+                        "data": [],
+                        "root_bundle": True,
+                        "bundle": {
+                            "label": "@@//:docs_bundle",
+                            "name": "docs_bundle",
+                            "bazel_module": HOST_REPO.name,
+                            "code_targets": [],
+                        },
+                    }
+                ]
+            }
+        )
+    )
+
     # Create test.xml files
     bazel_testdir1 = repo_path / "bazel-testlogs"
     bazel_testdir1.mkdir()
@@ -93,17 +121,38 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
     testsdir.mkdir()
     (testsdir / "test.xml").write_text(make_test_xml_2())
 
-    curr_dir = Path(__file__).absolute().parent
-    # print("CURR_dir", curr_dir)
-    copy_golden_file(
-        curr_dir / "expected_codelink.json", repo_path / ".expected_codelink.json"
+    external_tests = bazel_testdir1 / "external" / "other_module+" / "tests"
+    external_tests.mkdir(parents=True)
+    (external_tests / "test.xml").write_text(
+        '<testsuites><testsuite><testcase name="test_dependency_api_response"'
+        ' file="src/testfile_1.py" line="10"/></testsuite></testsuites>'
     )
-    copy_golden_file(
-        curr_dir / "expected_testlink.json", repo_path / ".expected_testlink.json"
+    (repo_path / "known_good.json").write_text(
+        json.dumps(
+            {
+                "modules": {
+                    "tooling": {
+                        HOST_REPO.name: {
+                            "repo": "https://github.com/testorg/pinned-local",
+                            "hash": "old-local-revision",
+                        },
+                        "other_module": {
+                            "repo": "https://github.com/testorg/other",
+                            "hash": "other-revision",
+                        },
+                    }
+                }
+            }
+        )
     )
-    copy_golden_file(
-        curr_dir / "expected_grouped.json", repo_path / ".expected_grouped.json"
-    )
+
+    fixture_dir = Path(__file__).parent
+    for filename in (
+        "expected_codelink.json",
+        "expected_testlink.json",
+        "expected_grouped.json",
+    ):
+        shutil.copyfile(fixture_dir / filename, repo_path / f".{filename}")
 
     # Add files to git and commit
     subprocess.run(["git", "add", "."], cwd=repo_path, check=True)
@@ -214,8 +263,9 @@ def sphinx_app_setup(
     create_demo_files: None,
     git_repo_setup: Path,
     monkeypatch: pytest.MonkeyPatch,
-) -> Callable[[], SphinxTestApp]:
-    def _create_app():
+    tmp_path: Path,
+) -> Callable[..., SphinxTestApp]:
+    def _create_app(*, reuse_testcase_cache: bool = False):
         base_dir = sphinx_base_dir
         docs_dir = base_dir / "docs"
 
@@ -225,8 +275,7 @@ def sphinx_app_setup(
         return SphinxTestApp(
             freshenv=True,
             srcdir=docs_dir,
-            confdir=docs_dir,
-            outdir=sphinx_base_dir / "out",
+            builddir=tmp_path / "out",
             buildername="html",
             warningiserror=True,
             # Writes the debug dumps (score_*grouped*_cache.json) read below
@@ -238,6 +287,9 @@ def sphinx_app_setup(
                 "score_sourcelinks_json": str(
                     sphinx_base_dir / ".expected_codelink.json"
                 ),
+                "mounts_manifest": str(base_dir / "mounts.json"),
+                "KNOWN_GOOD_JSON": str(base_dir / "known_good.json"),
+                "skip_rescanning_via_source_code_linker": reuse_testcase_cache,
             },
         )
 
@@ -248,6 +300,8 @@ def basic_conf():
     return """
 extensions = [
     "sphinx_needs",
+    "sphinx_mounts",
+    "score_mounts",
     "score_source_code_linker",
 ]
 needs_types = [
@@ -496,6 +550,7 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
         )
 
 
+@pytest.mark.parametrize("import_mode", ["reports", "cache"])
 @add_test_properties(
     fully_verifies=[
         "potential_tool_malfunction__docs_as_code__m8",
@@ -505,21 +560,54 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
     derivation_technique="requirements-analysis",
 )
 def test_source_link_integration_ok(
-    sphinx_app_setup: Callable[[], SphinxTestApp],
+    sphinx_app_setup: Callable[..., SphinxTestApp],
     example_source_link_text_all_ok: dict[str, list[NeedLink]],
     example_test_link_text_all_ok: dict[str, list[DataForTestLink]],
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
     monkeypatch: pytest.MonkeyPatch,
+    import_mode: str,
 ):
-    """This is a test description"""
+    """Resolve JUnit provenance and source links from both reports and the cache."""
     monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
-    app = sphinx_app_setup()
+    if import_mode == "cache":
+        app = sphinx_app_setup()
+        try:
+            app.build()
+        finally:
+            app.cleanup()
+    app = sphinx_app_setup(reuse_testcase_cache=import_mode == "cache")
     try:
         app.build()
+        cached_testcases = json.loads(
+            (app.outdir / "score_testcaseneeds_cache.json").read_text(encoding="utf-8")
+        )
+        # Both modules use the same relative path. The external case has no JUnit properties.
+        assert Counter(
+            (case["name"], case["repo_name"]) for case in cached_testcases
+        ) == {
+            ("test_api_response_format", HOST_REPO.name): 1,
+            ("test_dependency_api_response", "other_module"): 1,
+            ("test_error_handling", HOST_REPO.name): 1,
+            ("test_error_handling_skipped", HOST_REPO.name): 1,
+            ("TestRequirementsCoverage__test_system_startup_time", HOST_REPO.name): 1,
+        }
+
         Needs_Data = SphinxNeedsData(app.env)
         needs_data = {x["id"]: x for x in Needs_Data.get_needs_view().values()}
+        local_test = needs_data["testcase__test_api_response_format_vlyyo"]
+        other_test = needs_data["testcase__test_dependency_api_response_wtrqv"]
+        assert local_test["external_url"] == get_github_link(
+            HOST_REPO,
+            "src/testfile_1.py",
+            10,
+            git_root=git_repo_setup,
+            local_module=HOST_REPO.name,
+        )
+        assert other_test["external_url"] == (
+            "https://github.com/testorg/other/blob/other-revision/src/testfile_1.py#L10"
+        )
         compare_json_files(
             app.outdir / "score_xml_parser_cache.json",
             sphinx_base_dir / ".expected_testlink.json",

@@ -22,7 +22,6 @@ import itertools
 from pathlib import Path
 
 from sphinx.application import Sphinx
-from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
 from sphinx_needs.api import add_external_need
 
@@ -37,12 +36,16 @@ from src.extensions.score_source_code_linker.xml_parser import (
     parse_test_xml_files,
     parse_testcase_source_dirs,
 )
-from src.helper_lib.repo_info import get_github_link, load_known_good
+from src.helper_lib.repo_info import (
+    get_github_link,
+    get_placeholder_github_link,
+    load_known_good,
+)
 
 logger = logging.get_logger(__name__)
 
 
-def build_testcase_needs(app: Sphinx, env: BuildEnvironment):
+def build_testcase_needs(app: Sphinx, *, local_module: str) -> None:
     """
     Parse the test.xml files (xml_parser), add a 'testcase' need for each
     testcase and write the two testcase caches into _build.
@@ -63,10 +66,13 @@ def build_testcase_needs(app: Sphinx, env: BuildEnvironment):
         load_known_good(Path(known_good_json_str)) if known_good_json_str else None
     )
     test_case_needs = parse_test_xml_files(
-        find_xml_files(testlogs_dir), known_good, allowed_dirs
+        find_xml_files(testlogs_dir),
+        known_good,
+        allowed_dirs,
+        local_module=local_module,
     )
     for tc in test_case_needs:
-        construct_and_add_need(app, tc)
+        construct_and_add_need(app, tc, local_module=local_module)
     # Saving the test case needs for cache
     logger.info(
         f"Saving {len(test_case_needs)} test case needs to the cache `score_testcaseneeds_cache.json` in _build/."
@@ -96,7 +102,7 @@ def short_hash(input_str: str, length: int = 5) -> str:
     return letters_only[:length].lower()
 
 
-def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
+def construct_and_add_need(app: Sphinx, tn: DataOfTestCase, *, local_module: str = ""):
     # We will now allow file to be empty in case of non fully fleshed out testcases
     file = tn.file if tn.file is not None else "<placeholder_file>"
     assert tn.name is not None
@@ -108,11 +114,17 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             f"name={name}, file={file}, repo={tn.repo}",
             type="score_source_code_linker",
         )
-    external_url = get_github_link(tn.repo, tn.file, tn.line)
-    assert external_url is not None, (
-        "Remote repository is not defined. Make sure you have a remote set. "
-        + "Check this via 'git remote -v'"
+    external_url = get_github_link(
+        tn.repo,
+        tn.file,
+        tn.line,
+        plain_links=not tn.file,
+        local_module=local_module,
     )
+    if not external_url:
+        # An unpinned dependency or a checkout without a remote has no source URL.
+        # Sphinx-Needs still requires a URL for the external testcase Need.
+        external_url = get_placeholder_github_link(tn.file, tn.line)
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
         _ = add_external_need(
