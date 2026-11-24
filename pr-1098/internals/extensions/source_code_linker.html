@@ -790,7 +790,8 @@ All link URLs are decided in one function, <code class="docutils literal notrans
 <section id="general">
 <h3>General<a class="headerlink" href="#general" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>External GitHub URLs in combo builds require pinned repository metadata.</p></li>
+<li><p>For GitHub links to dependencies in a combo build, pass <code class="docutils literal notranslate"><span class="pre">known_good</span> <span class="pre">=</span> <span class="pre">&quot;//:known_good.json&quot;</span></code> to <code class="docutils literal notranslate"><span class="pre">docs()</span></code>.
+The file supplies the repository URL and revision for each dependency.</p></li>
 <li><p>inefficiencies in creating the links</p></li>
 <li><p>Not compatible with <strong>Esbonio</strong></p></li>
 <li><p>Live preview: Bazel regenerates the sourcelinks JSON when the preview starts, but unchanged pages can still show old links if Sphinx reuses its previous build.

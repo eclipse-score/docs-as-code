@@ -4846,7 +4846,7 @@
   {
     "name": "test_codelink__test_group_by_need",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "421",
+    "line": "422",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -4860,7 +4860,7 @@
   {
     "name": "test_codelink__test_group_by_need_empty_list",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "445",
+    "line": "446",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -4874,7 +4874,7 @@
   {
     "name": "test_codelink__test_cache_file_operations",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "456",
+    "line": "457",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -4888,7 +4888,7 @@
   {
     "name": "test_codelink__test_combining_without_source_links_continues_with_empty_code_links",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "487",
+    "line": "488",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -4902,7 +4902,7 @@
   {
     "name": "test_codelink__test_load_link_inputs_reads_code_and_test_links",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "499",
+    "line": "500",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -4916,7 +4916,7 @@
   {
     "name": "test_codelink__test_combining_with_missing_source_links_reports_configured_path",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "528",
+    "line": "529",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -4930,7 +4930,7 @@
   {
     "name": "test_codelink__test_cache_file_with_encoded_comments",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "549",
+    "line": "550",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -4944,7 +4944,7 @@
   {
     "name": "test_codelink__test_group_by_need_and_find_need_integration",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "584",
+    "line": "585",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -4958,7 +4958,7 @@
   {
     "name": "test_codelink__test_source_linker_end_to_end_with_real_files",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "612",
+    "line": "613",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -4972,7 +4972,7 @@
   {
     "name": "test_codelink__test_multiple_commits_hash_consistency",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "714",
+    "line": "715",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -4986,7 +4986,7 @@
   {
     "name": "test_codelink__test_repo_info_is_flat_dict_missing_keys",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "756",
+    "line": "757",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5000,7 +5000,7 @@
   {
     "name": "test_codelink__test_needlink_to_dict_full",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "770",
+    "line": "771",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5014,7 +5014,7 @@
   {
     "name": "test_codelink__test_needlink_encoder_includes_metadata",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "798",
+    "line": "799",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5028,7 +5028,7 @@
   {
     "name": "test_codelink__test_needlink_decoder_with_all_fields",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "829",
+    "line": "830",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5042,7 +5042,7 @@
   {
     "name": "test_codelink__test_needlink_decoder_non_needlink_dict",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "854",
+    "line": "855",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5056,7 +5056,7 @@
   {
     "name": "test_codelink__test_load_validates_list_type",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "869",
+    "line": "870",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5070,7 +5070,7 @@
   {
     "name": "test_codelink__test_load_validates_all_items_are_needlinks",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "883",
+    "line": "884",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5084,7 +5084,7 @@
   {
     "name": "test_codelink__test_load_resolves_relative_path_with_env_var",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "903",
+    "line": "904",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5098,7 +5098,7 @@
   {
     "name": "test_codelink__test_roundtrip_standard_format",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "940",
+    "line": "941",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5112,7 +5112,7 @@
   {
     "name": "test_codelink__test_roundtrip_empty_lists",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "976",
+    "line": "977",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5126,7 +5126,7 @@
   {
     "name": "test_codelink__test_needlink_equality_same_values",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "996",
+    "line": "997",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -5140,7 +5140,7 @@
   {
     "name": "test_codelink__test_needlink_inequality_different_values",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "1024",
+    "line": "1025",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6050,7 +6050,7 @@
   {
     "name": "test_xml_parser__test_find_xml_files",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "153",
+    "line": "155",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6064,7 +6064,7 @@
   {
     "name": "test_xml_parser__test_find_xml_folder",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "176",
+    "line": "178",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6078,7 +6078,7 @@
   {
     "name": "test_xml_parser__test_find_xml_folder_test_reports",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "187",
+    "line": "189",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6092,7 +6092,7 @@
   {
     "name": "test_xml_parser__test_find_xml_files_test_reports",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "198",
+    "line": "200",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6106,7 +6106,7 @@
   {
     "name": "test_xml_parser__test_early_return",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "217",
+    "line": "219",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6120,7 +6120,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_result",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "228",
+    "line": "230",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6134,7 +6134,7 @@
   {
     "name": "test_xml_parser__test_parse_properties",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "261",
+    "line": "263",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6148,7 +6148,7 @@
   {
     "name": "test_xml_parser__test_read_test_xml_file",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "277",
+    "line": "279",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6162,7 +6162,7 @@
   {
     "name": "test_xml_parser__test_parse_test_xml_files_without_sphinx",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "340",
+    "line": "342",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6176,7 +6176,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "359",
+    "line": "361",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6190,7 +6190,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_positive_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "371",
+    "line": "373",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6204,7 +6204,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "384",
+    "line": "386",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6218,7 +6218,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "394",
+    "line": "396",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6232,7 +6232,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "404",
+    "line": "406",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6246,7 +6246,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "421",
+    "line": "423",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6260,7 +6260,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs_non_list_raises",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "433",
+    "line": "435",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6274,7 +6274,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_local_path",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "447",
+    "line": "449",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6288,7 +6288,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_combo_path",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "457",
+    "line": "459",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6302,7 +6302,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_tests_report_path",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "467",
+    "line": "469",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6316,7 +6316,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_nested_bazel_testlogs",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "473",
+    "line": "475",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6330,7 +6330,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_invalid_path_raises_error",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "479",
+    "line": "481",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6344,7 +6344,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_empty_path_raises_error",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "487",
+    "line": "489",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6358,7 +6358,7 @@
   {
     "name": "test_xml_parser__test_get_metadata_from_test_path_local",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "526",
+    "line": "528",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6372,7 +6372,7 @@
   {
     "name": "test_xml_parser__test_get_metadata_from_test_path_combo_with_hash",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "539",
+    "line": "541",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6386,7 +6386,7 @@
   {
     "name": "test_xml_parser__test_get_metadata_from_test_path_combo_with_version",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "549",
+    "line": "551",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6400,7 +6400,7 @@
   {
     "name": "test_xml_parser__test_get_metadata_from_test_path_external_without_known_good",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "559",
+    "line": "561",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
