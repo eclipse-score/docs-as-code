@@ -35,6 +35,8 @@ import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
 from src.helper_lib.repo_info import RepoInfo
 
+LOCAL_MODULE = "local_module"
+
 
 # Unsure if I should make these last a session or not
 def _write_test_xml(
@@ -293,26 +295,26 @@ def test_read_test_xml_file(
     dir2: Path
     _, dir1, dir2, dir3, dir4 = tmp_xml_dirs()
     needs1, no_props1, missing_props1 = xml_parser.read_test_xml_file(
-        dir1 / "test.xml", None, local_module="score_module"
+        dir1 / "test.xml", None, local_module=LOCAL_MODULE
     )
     # Should parse the properties and create a 'valid' testlink
     assert isinstance(needs1, list) and len(needs1) == 1
     tcneed = needs1[0]
     assert isinstance(tcneed, DataOfTestCase)
     assert tcneed.result == "failed"
-    assert tcneed.repo == RepoInfo(name="score_module", hash="", url="")
+    assert tcneed.repo == RepoInfo(name=LOCAL_MODULE, hash="", url="")
 
     assert no_props1 == []
     assert missing_props1 == []
 
     # No properties at all => Should not be a 'valid' testlink
     needs2, no_props2, missing_props2 = xml_parser.read_test_xml_file(
-        dir2 / "test.xml", None, local_module="score_module"
+        dir2 / "test.xml", None, local_module=LOCAL_MODULE
     )
     assert isinstance(needs2, list) and len(needs2) == 1
     tcneed2 = needs2[0]
     assert isinstance(tcneed2, DataOfTestCase)
-    assert tcneed2.repo == RepoInfo(name="score_module", hash="", url="")
+    assert tcneed2.repo == RepoInfo(name=LOCAL_MODULE, hash="", url="")
     assert no_props2 == ["tc_no_props"]
     assert missing_props2 == []
 

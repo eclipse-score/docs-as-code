@@ -103,7 +103,14 @@ def clean_test_file_name(raw_filepath: Path) -> Path:
 def get_metadata_from_test_path(
     raw_filepath: Path, known_good: dict[str, Any] | None, local_module: str
 ) -> RepoInfo:
-    """Resolve the report's module and any pinned Git metadata."""
+    """Resolve the report's module and any pinned Git metadata.
+
+    For a local report such as `bazel-testlogs/tests/unit/test.xml`, the
+    `local_module` argument supplies the name of the root Bazel module.
+    For `bazel-testlogs/external/example_lib+/tests/unit/test.xml`, the path
+    identifies `example_lib` as the external Bazel module. When available,
+    `known_good.json` supplies its Git revision and repository URL.
+    """
     module, _ = split_external_path(
         clean_test_file_name(raw_filepath), local_module=local_module
     )

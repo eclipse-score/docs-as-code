@@ -295,7 +295,8 @@ During the Sphinx build process, the extension applies the computed links to nee
 
 ### General
 
-- External GitHub URLs in combo builds require pinned repository metadata.
+- For GitHub links to dependencies in a combo build, pass `known_good = "//:known_good.json"` to `docs()`.
+  The file supplies the repository URL and revision for each dependency.
 - inefficiencies in creating the links
 - Not compatible with **Esbonio**
 - Live preview: Bazel regenerates the sourcelinks JSON when the preview starts, but unchanged pages can still show old links if Sphinx reuses its previous build.

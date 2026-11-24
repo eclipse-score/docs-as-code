@@ -22,7 +22,7 @@ from score_pytest.attribute_plugin import add_test_properties
 
 from scripts_bazel.merge_sourcelinks import main as merge_sourcelinks
 
-LOCAL_MODULE = "score_docs_as_code"
+LOCAL_MODULE = "local_module"
 MERGE_ARGS = ["--output", "merged.json", "--local-module", LOCAL_MODULE]
 
 

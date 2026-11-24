@@ -418,7 +418,11 @@ def get_document_bundles(app: Sphinx) -> dict[str, BundleMetadata]:
 
 
 def get_root_bazel_module(app: Sphinx) -> str:
-    """Return the declaring module of the composition's root bundle, if present."""
+    """Return the declaring module of the composition's root bundle.
+
+    Return an empty string when the manifest, root mount, or module field is
+    absent.
+    """
     manifest: MountsManifest | None = getattr(app, "_score_mounts_manifest", None)
     if not manifest:
         return ""

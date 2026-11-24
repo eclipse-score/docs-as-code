@@ -101,7 +101,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
                         "bundle": {
                             "label": "@@//:docs_bundle",
                             "name": "docs_bundle",
-                            "bazel_module": "local_module",
+                            "bazel_module": HOST_REPO.name,
                             "code_targets": [],
                         },
                     }
@@ -132,7 +132,7 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
             {
                 "modules": {
                     "tooling": {
-                        "local_module": {
+                        HOST_REPO.name: {
                             "repo": "https://github.com/testorg/pinned-local",
                             "hash": "old-local-revision",
                         },
@@ -587,11 +587,11 @@ def test_source_link_integration_ok(
         assert Counter(
             (case["name"], case["repo_name"]) for case in cached_testcases
         ) == {
-            ("test_api_response_format", "local_module"): 1,
+            ("test_api_response_format", HOST_REPO.name): 1,
             ("test_dependency_api_response", "other_module"): 1,
-            ("test_error_handling", "local_module"): 1,
-            ("test_error_handling_skipped", "local_module"): 1,
-            ("TestRequirementsCoverage__test_system_startup_time", "local_module"): 1,
+            ("test_error_handling", HOST_REPO.name): 1,
+            ("test_error_handling_skipped", HOST_REPO.name): 1,
+            ("TestRequirementsCoverage__test_system_startup_time", HOST_REPO.name): 1,
         }
 
         Needs_Data = SphinxNeedsData(app.env)

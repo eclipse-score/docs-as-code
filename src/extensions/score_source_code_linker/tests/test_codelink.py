@@ -396,6 +396,7 @@ def test_inject_links_renders_each_test_link_with_its_repository() -> None:
             name="second", hash="def456", url="https://github.com/example/second"
         ),
     )
+    # Keep the test name visible when the dependency has no Git URL.
     unpinned_module_test = replace(
         first_module_test,
         name="test_unpinned",

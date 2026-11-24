@@ -47,7 +47,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "//src/extensions/score_mounts",
-        "@score_docs_as_code//src/helper_lib",
+        "//src/helper_lib",
     ],
 )
 

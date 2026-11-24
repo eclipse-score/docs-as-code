@@ -22,7 +22,7 @@ from score_pytest.attribute_plugin import add_test_properties
 
 from scripts_bazel.generate_sourcelinks_cli import main as generate_sourcelinks_cli
 
-LOCAL_MODULE = "score_docs_as_code"
+LOCAL_MODULE = "local_module"
 SCAN_ARGS = ["--output", "links.json", "--local-module", LOCAL_MODULE]
 
 
