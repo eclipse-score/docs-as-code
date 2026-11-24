@@ -684,18 +684,6 @@
     "url": ""
   },
   {
-    "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_need_extends.rst",
-    "line": 15,
-    "need": "tool_req__docs_restrict_needextend",
-    "verify_type": "partially",
-    "result": "passed",
-    "result_text": "",
-    "repo_name": "score_docs_as_code",
-    "hash": "",
-    "url": ""
-  },
-  {
     "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst",
     "line": 16,
@@ -878,7 +866,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[reports]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 561,
+    "line": 554,
     "need": "potential_tool_malfunction__docs_as_code__m8",
     "verify_type": "fully",
     "result": "passed",
@@ -890,7 +878,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[reports]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 561,
+    "line": 554,
     "need": "potential_tool_malfunction__docs_as_code__m9",
     "verify_type": "fully",
     "result": "passed",
@@ -902,7 +890,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[cache]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 561,
+    "line": 554,
     "need": "potential_tool_malfunction__docs_as_code__m8",
     "verify_type": "fully",
     "result": "passed",
@@ -914,31 +902,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok[cache]",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 561,
-    "need": "potential_tool_malfunction__docs_as_code__m9",
-    "verify_type": "fully",
-    "result": "passed",
-    "result_text": "",
-    "repo_name": "score_docs_as_code",
-    "hash": "",
-    "url": ""
-  },
-  {
-    "name": "test_source_code_link_integration__test_source_link_integration_ok[old_cache]",
-    "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 561,
-    "need": "potential_tool_malfunction__docs_as_code__m8",
-    "verify_type": "fully",
-    "result": "passed",
-    "result_text": "",
-    "repo_name": "score_docs_as_code",
-    "hash": "",
-    "url": ""
-  },
-  {
-    "name": "test_source_code_link_integration__test_source_link_integration_ok[old_cache]",
-    "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": 561,
+    "line": 554,
     "need": "potential_tool_malfunction__docs_as_code__m9",
     "verify_type": "fully",
     "result": "passed",
@@ -1094,7 +1058,7 @@
   {
     "name": "test_xml_parser__test_find_xml_files",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 153,
+    "line": 155,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1106,7 +1070,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_result",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 228,
+    "line": 230,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1118,7 +1082,7 @@
   {
     "name": "test_xml_parser__test_parse_properties",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 261,
+    "line": 263,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1130,7 +1094,7 @@
   {
     "name": "test_xml_parser__test_read_test_xml_file",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 277,
+    "line": 279,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1142,7 +1106,7 @@
   {
     "name": "test_xml_parser__test_read_test_xml_file",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 277,
+    "line": 279,
     "need": "potential_tool_malfunction__docs_as_code__m5",
     "verify_type": "fully",
     "result": "passed",
@@ -1154,7 +1118,7 @@
   {
     "name": "test_xml_parser__test_read_test_xml_file",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 277,
+    "line": 279,
     "need": "potential_tool_malfunction__docs_as_code__m6",
     "verify_type": "fully",
     "result": "passed",
@@ -1166,7 +1130,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 359,
+    "line": 361,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1178,7 +1142,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_positive_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 371,
+    "line": 373,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1190,7 +1154,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 384,
+    "line": 386,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1202,7 +1166,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 394,
+    "line": 396,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1214,7 +1178,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 404,
+    "line": 406,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1226,7 +1190,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 421,
+    "line": 423,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1238,7 +1202,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs_non_list_raises",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 433,
+    "line": 435,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",

@@ -545,7 +545,7 @@ A bundle can contain source files of several repositories, so each needlink reco
 <li><p>Associated need ID</p></li>
 <li><p>Repository Metadata:</p>
 <ul>
-<li><p>repo_name (parsed from filepath) (local_repo if non combo build)</p></li>
+<li><p>repo_name (the local Bazel module, or the dependency module from the file path)</p></li>
 <li><p>hash (at this stage always blank)</p></li>
 <li><p>url (at this stage always blank)</p></li>
 </ul>
@@ -562,7 +562,7 @@ A bundle can contain source files of several repositories, so each needlink reco
 <span class="w">    </span><span class="nt">"tag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#--req-Id:"</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">"need"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tool_req__docs_dd_link_source_code_link"</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">"full_line"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#--req-Id: tool_req__docs_dd_link_source_code_link"</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">"repo_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"local_repo"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"repo_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"score_docs_as_code"</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">"hash"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span>
 <span class="w">  </span><span class="p">}</span>
@@ -588,9 +588,10 @@ A bundle can contain source files of several repositories, so each needlink reco
 <span id="id1"></span><h4>Repo metadata rules<a class="headerlink" href="#repo-metadata-rules" title="Link to this heading">#</a></h4>
 <p>Here are some basic rules regarding the repo information (<code class="docutils literal notranslate"><span class="pre">RepoInfo</span></code> in <code class="docutils literal notranslate"><span class="pre">src/helper_lib/repo_info.py</span></code>)</p>
 <p>In a combo build, provide <code class="docutils literal notranslate"><span class="pre">known_good.json</span></code> to resolve external source URLs.
-The source-link merger and JUnit parser each load this file once and use it to
-look up external repositories. External JUnit reports keep their module when
-no file is configured and use placeholder source URLs.</p>
+The lookup lives in one function, <code class="docutils literal notranslate"><span class="pre">resolve_repo</span></code>, used by both <code class="docutils literal notranslate"><span class="pre">merge_sourcelinks.py</span></code> and the XML parser.
+<code class="docutils literal notranslate"><span class="pre">known_good.json</span></code> is read once per run.
+Without a Git pin, external links keep their module name and leave the hash and URL empty.
+The documentation shows the source location or test name as text when there is no Git URL.</p>
 <p><strong>External repository</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">repo_name</span></code>: repository name (parsed from filepath in step 1)</p></li>
@@ -599,13 +600,12 @@ no file is configured and use placeholder source URLs.</p>
 </ul>
 <p><strong>Local repository</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">repo_name</span></code>: <code class="docutils literal notranslate"><span class="pre">local_repo</span></code> for implementation links. For JUnit, the root Bazel
-module from the mount manifest identifies the testcase in the cache and in
-Sphinx.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">repo_name</span></code>: the root Bazel module. Bazel supplies it to the source scanner,
+and the JUnit parser reads it from the mount manifest.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">hash</span></code>: stays empty</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">url</span></code>: stays empty</p></li>
 </ul>
-<p>With an empty hash, the link URL is built from the local git checkout (remote URL + <code class="docutils literal notranslate"><span class="pre">HEAD</span></code>).
+<p>For the root module, the link URL is built from the local git checkout (remote URL + <code class="docutils literal notranslate"><span class="pre">HEAD</span></code>).
 Git is asked once per build, not once per link.</p>
 </section>
 </section>
@@ -631,7 +631,8 @@ anymore inside of the source_code_linker extension.</p>
 <p>TestLink scans test result XMLs from Bazel (bazel-testlogs) or from the folder ‘tests-report’ and converts each test case with metadata into Sphinx external needs, allowing links from tests to requirements.
 This depends on the <code class="docutils literal notranslate"><span class="pre">attribute_plugin</span></code> in our tooling repository, find it <a class="reference external" href="https://github.com/eclipse-score/tooling/tree/main/python_basics/score_pytest">here</a></p>
 <div class="attention docutils">
-<p>If TestLinks should be generated in a combo build please ensure that you have the known_good_json added to the docs macro.</p>
+<p>To render GitHub links for external tests in a combo build, supply
+<code class="docutils literal notranslate"><span class="pre">known_good</span></code> to the <code class="docutils literal notranslate"><span class="pre">docs()</span></code> macro.</p>
 </div>
 </section>
 <section id="test-tagging-options">
@@ -743,7 +744,7 @@ the build never reads it back.</p>
           <span class="s2">"tag"</span><span class="p">:</span> <span class="s2">"#--req-Id:"</span><span class="p">,</span><span class="c1"># added `--` to avoid detection</span>
           <span class="s2">"need"</span><span class="p">:</span> <span class="s2">"tool_req__docs_common_attr_title"</span><span class="p">,</span>
           <span class="s2">"full_line"</span><span class="p">:</span> <span class="s2">"#--req-Id: tool_req__docs_common_attr_title"</span><span class="p">,</span> <span class="c1"># added `--` to avoid detection</span>
-          <span class="s2">"repo_name"</span><span class="p">:</span> <span class="s2">"local_repo"</span><span class="p">,</span>
+          <span class="s2">"repo_name"</span><span class="p">:</span> <span class="s2">"score_docs_as_code"</span><span class="p">,</span>
           <span class="s2">"hash"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
           <span class="s2">"url"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
 
@@ -789,7 +790,8 @@ All link URLs are decided in one function, <code class="docutils literal notrans
 <section id="general">
 <h3>General<a class="headerlink" href="#general" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>In combo builds, known_good_json is required.</p></li>
+<li><p>For GitHub links to dependencies in a combo build, pass <code class="docutils literal notranslate"><span class="pre">known_good</span> <span class="pre">=</span> <span class="pre">&quot;//:known_good.json&quot;</span></code> to <code class="docutils literal notranslate"><span class="pre">docs()</span></code>.
+The file supplies the repository URL and revision for each dependency.</p></li>
 <li><p>inefficiencies in creating the links</p></li>
 <li><p>Not compatible with <strong>Esbonio</strong></p></li>
 <li><p>Live preview: Bazel regenerates the sourcelinks JSON when the preview starts, but unchanged pages can still show old links if Sphinx reuses its previous build.
