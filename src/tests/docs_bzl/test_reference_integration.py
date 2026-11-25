@@ -17,13 +17,13 @@ import json
 
 import pytest
 
-from src.tests.docs_bzl.helpers import built_output, load_needs, run_bazel, run_scenario
+from src.tests.docs_bzl.helpers import built_output, load_needs, run_bazel, run_once
 
 
 @pytest.mark.bazel_slow
 def test_nested_component_package_is_mounted_by_its_module():
     """Mounted component pages retain navigation and filter source controls."""
-    result = run_scenario("run", "reference_integration/modern_module", ":docs")
+    result = run_once("run", "scenarios/reference_integration/modern_module", ":docs")
 
     # The parent module owns the surrounding ``components`` tree, while each
     # child bundle supplies its own page below the corresponding mount point.
@@ -56,9 +56,9 @@ def test_linked_component_requires_parent_context():
     # standalone build must therefore fail while resolving its derived_from
     # link to the platform feature requirement.
     with pytest.raises(RuntimeError) as exc_info:
-        run_scenario(
+        run_once(
             "build",
-            "reference_integration/modern_module/docs/components/component",
+            "scenarios/reference_integration/modern_module/docs/components/component",
             ":docs_bundle.__internal__.needs_local",
         )
     assert "feat_req__platform__feature" in str(exc_info.value)
@@ -67,7 +67,7 @@ def test_linked_component_requires_parent_context():
 @pytest.mark.bazel_slow
 def test_reference_integration_builds_with_platform_requirements():
     """Mount modules and render nested component source-code links."""
-    result = run_scenario("run", "reference_integration", ":docs")
+    result = run_once("run", "scenarios/reference_integration", ":docs")
 
     # The top-level site imports the platform's public ``docs`` target, so its
     # feature link is rendered before the module mounts are traversed.
@@ -109,7 +109,7 @@ def test_bundle_metadata_is_added_to_the_explicit_primary_need():
     explicitly selects ``comp__modern_component``. This proves that the
     association is independent of the bundle name.
     """
-    result = run_scenario("build", "reference_integration", ":needs_json")
+    result = run_once("build", "scenarios/reference_integration", ":needs_json")
     assert result.artifacts is not None
 
     needs = load_needs(result.artifacts["needs.json"])
@@ -191,7 +191,11 @@ def test_component_files_and_sourcelinks_share_the_component_boundary(
         components_prefix + path for path in expected_files
     )
 
-    run_scenario("build", scenario, f":{bundle_name}.__internal__.sourcelinks_json")
+    run_once(
+        "build",
+        f"scenarios/{scenario}",
+        f":{bundle_name}.__internal__.sourcelinks_json",
+    )
     cache = built_output(
         f"scenarios/{scenario}", f"{bundle_name}.__internal__.sourcelinks_json.json"
     )

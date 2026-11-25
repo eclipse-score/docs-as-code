@@ -14,13 +14,13 @@
 
 import pytest
 
-from src.tests.docs_bzl.helpers import run_package
+from src.tests.docs_bzl.helpers import run_once
 
 
 @pytest.mark.bazel_slow
 def test_public_docs_bundle_and_needs_json_file_inputs_resolve_needs():
     """The consumer resolves Needs from docs(), docs_bundle(), and a JSON file."""
-    result = run_package("run", "scenarios/external_needs_inputs", ":docs")
+    result = run_once("run", "scenarios/external_needs_inputs", ":docs")
     html = (result.build_dir / "index.html").read_text(encoding="utf-8")
 
     assert "#feat_req__platform__feature" in html

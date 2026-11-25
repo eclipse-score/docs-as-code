@@ -20,7 +20,7 @@ from src.tests.docs_bzl.helpers import (
     load_needs,
     load_needs_json,
     run_bazel,
-    run_package,
+    run_once,
 )
 
 PRODUCER = "//src/tests/docs_bzl/scenarios/subdirectory_bundle/producer"
@@ -79,7 +79,7 @@ def _needs_export(
     package: str,
 ) -> tuple[dict[str, object], dict[str, dict[str, object]]]:
     """Build a package's needs_json and return its metadata and Needs."""
-    result = run_package("build", package, ":needs_json")
+    result = run_once("build", package, ":needs_json")
     assert result.artifacts is not None
     needs_json = result.artifacts["needs.json"]
     needs = cast("dict[str, dict[str, object]]", load_needs(needs_json))
@@ -200,18 +200,14 @@ def test_consumer_resolves_links_of_mounted_needs_as_local_needs():
 @pytest.mark.bazel_slow
 def test_consumer_can_render_and_run_documentation_checks():
     """Runtime rendering and documentation checks work across package boundaries."""
-    producer_result = run_package(
-        "run", "scenarios/subdirectory_bundle/producer", ":docs"
-    )
+    producer_result = run_once("run", "scenarios/subdirectory_bundle/producer", ":docs")
     assert (producer_result.build_dir / "embedded" / "index.html").is_file()
 
-    consumer_result = run_package(
-        "run", "scenarios/subdirectory_bundle/consumer", ":docs"
-    )
+    consumer_result = run_once("run", "scenarios/subdirectory_bundle/consumer", ":docs")
     assert (consumer_result.build_dir / "producer" / "index.html").is_file()
     assert (
         consumer_result.build_dir / "producer" / "embedded" / "index.html"
     ).is_file()
 
-    run_package("run", "scenarios/subdirectory_bundle/consumer", ":docs_check")
-    run_package("run", "scenarios/subdirectory_bundle/consumer", ":docs_link_check")
+    run_once("run", "scenarios/subdirectory_bundle/consumer", ":docs_check")
+    run_once("run", "scenarios/subdirectory_bundle/consumer", ":docs_link_check")

@@ -19,14 +19,13 @@ from typing import cast
 import pytest
 
 from src.tests.docs_bzl.helpers import (
-    GITHUB_ENV,
     TEST_ROOT,
     assert_no_compatibility_findings,
     built_output,
     edit_link,
     load_needs,
     repo_root,
-    run_scenario,
+    run_once,
     toctree_links,
     toctrees,
 )
@@ -40,7 +39,7 @@ CHILD_MOUNT = f"{PARENT_MOUNT}/child"
 
 def _manifest_mounts(target: str) -> list[dict[str, object]]:
     """Build a composition manifest target and return its mount entries."""
-    run_scenario("build", SCENARIO, f":{target}")
+    run_once("build", PACKAGE, f":{target}")
     manifest = json.loads(
         built_output(PACKAGE, f"{target}.json").read_text(encoding="utf-8")
     )
@@ -49,13 +48,13 @@ def _manifest_mounts(target: str) -> list[dict[str, object]]:
 
 @pytest.fixture(scope="module")
 def build_dir() -> Path:
-    # GITHUB_ENV makes the "Edit on GitHub" links render, as they do in CI.
-    return run_scenario("run", SCENARIO, ":docs", env=GITHUB_ENV).build_dir
+    # run_once renders with GITHUB_ENV, so "Edit on GitHub" links exist.
+    return run_once("run", PACKAGE, ":docs").build_dir
 
 
 @pytest.fixture(scope="module")
 def needs() -> dict[str, dict[str, object]]:
-    result = run_scenario("build", SCENARIO, ":needs_json")
+    result = run_once("build", PACKAGE, ":needs_json")
     assert result.artifacts is not None
     return cast(
         "dict[str, dict[str, object]]", load_needs(result.artifacts["needs.json"])

@@ -18,7 +18,6 @@ from pathlib import Path
 import pytest
 
 from src.tests.docs_bzl.helpers import (
-    GITHUB_ENV,
     TEST_ROOT,
     built_output,
     edit_link,
@@ -26,7 +25,7 @@ from src.tests.docs_bzl.helpers import (
     load_needs_json,
     repo_root,
     run_bazel,
-    run_scenario,
+    run_once,
     toctree_links,
 )
 
@@ -44,8 +43,8 @@ def _title(page: Path) -> str:
 
 @pytest.fixture(scope="module")
 def build_dir() -> Path:
-    # GITHUB_ENV makes the "Edit on GitHub" links render, as they do in CI.
-    return run_scenario("run", SCENARIO, ":docs", env=GITHUB_ENV).build_dir
+    # run_once renders with GITHUB_ENV, so "Edit on GitHub" links exist.
+    return run_once("run", PACKAGE, ":docs").build_dir
 
 
 @pytest.mark.bazel_slow
@@ -103,7 +102,7 @@ def test_generated_page_has_no_edit_link(build_dir: Path):
 
 @pytest.mark.bazel_cached
 def test_needs_export_uses_the_host_project_name():
-    result = run_scenario("build", SCENARIO, ":needs_json")
+    result = run_once("build", PACKAGE, ":needs_json")
     assert result.artifacts is not None
 
     data = load_needs_json(result.artifacts["needs.json"])

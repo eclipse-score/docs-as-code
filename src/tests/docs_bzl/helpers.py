@@ -12,15 +12,18 @@
 # *******************************************************************************
 """Helpers for public docs.bzl integration tests driven through Bazel."""
 
+import atexit
 import json
 import os
 import re
 import shutil
 import subprocess
+import tempfile
 import time
 from collections.abc import Iterator, Mapping
-from contextlib import contextmanager
-from dataclasses import dataclass
+from contextlib import contextmanager, nullcontext
+from dataclasses import dataclass, replace
+from functools import cache
 from pathlib import Path
 from typing import cast
 
@@ -178,10 +181,63 @@ def run_scenario(
     scenario: str,
     target: str,
     expect_error: bool = False,
-    env: Mapping[str, str] | None = None,
 ) -> RunResult:
     """Run one general docs() scenario."""
-    return run_package(bazel_cmd, f"scenarios/{scenario}", target, expect_error, env)
+    return run_package(bazel_cmd, f"scenarios/{scenario}", target, expect_error)
+
+
+# Results of run_once(), keyed by everything that selects one execution.
+_RUN_ONCE_RESULTS: dict[tuple[str, str, str, bool], RunResult] = {}
+
+
+def run_once(
+    bazel_cmd: str,
+    package: str,
+    target: str,
+    expect_error: bool = False,
+) -> RunResult:
+    """Execute one package target at most once per pytest session.
+
+    Tests that only read a target's outputs share one execution instead of
+    running Bazel again. Tests that change inputs between executions, such as
+    the coverage report tests, must call ``run_package`` instead.
+    """
+    key = (bazel_cmd, package, target, expect_error)
+    if key not in _RUN_ONCE_RESULTS:
+        _RUN_ONCE_RESULTS[key] = _execute_shared(*key)
+    return _RUN_ONCE_RESULTS[key]
+
+
+def _execute_shared(
+    bazel_cmd: str, package: str, target: str, expect_error: bool
+) -> RunResult:
+    """Execute a target with the one set of inputs that all its readers share.
+
+    ``bazel run`` gets ``GITHUB_ENV``, as in CI, and the package's own
+    ``coverage.info`` as the workflow coverage report, if it has one. The
+    rendered ``_build`` is copied to a session directory: a later run of the
+    same package, such as a coverage test, replaces ``_build`` in place.
+    """
+    if bazel_cmd != "run":
+        return run_package(bazel_cmd, package, target, expect_error)
+
+    coverage = TEST_ROOT / package / "coverage.info"
+    with staged_coverage_report(coverage) if coverage.is_file() else nullcontext():
+        result = run_package("run", package, target, expect_error, env=GITHUB_ENV)
+    if not result.build_dir.is_dir():
+        return result
+
+    snapshot = _snapshot_root() / package / target[1:] / "_build"
+    shutil.copytree(result.build_dir, snapshot, symlinks=True)
+    return replace(result, build_dir=snapshot)
+
+
+@cache
+def _snapshot_root() -> Path:
+    """Return a directory for rendered outputs, removed when pytest exits."""
+    root = Path(tempfile.mkdtemp(prefix="docs_bzl_runs_"))
+    atexit.register(shutil.rmtree, root, ignore_errors=True)
+    return root
 
 
 def built_output(package: str, filename: str) -> Path:

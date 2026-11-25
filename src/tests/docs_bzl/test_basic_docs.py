@@ -21,22 +21,23 @@ from src.tests.docs_bzl.helpers import (
     assert_no_compatibility_findings,
     load_needs,
     load_needs_json,
-    run_scenario,
+    run_once,
 )
 
 SCENARIO = "basic_docs"
+PACKAGE = f"scenarios/{SCENARIO}"
 
 
 @pytest.fixture(scope="module")
 def needs_dir() -> Path:
-    result = run_scenario("build", SCENARIO, ":needs_json")
+    result = run_once("build", PACKAGE, ":needs_json")
     assert result.artifacts is not None
     return result.artifacts["needs.json"].parent
 
 
 @pytest.fixture(scope="module")
 def build_dir() -> Path:
-    return run_scenario("run", SCENARIO, ":docs").build_dir
+    return run_once("run", PACKAGE, ":docs").build_dir
 
 
 @pytest.mark.bazel_cached

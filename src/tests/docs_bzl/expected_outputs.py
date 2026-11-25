@@ -39,8 +39,7 @@ from src.tests.docs_bzl.helpers import (
     TEST_ROOT_BAZEL,
     built_output,
     run_bazel,
-    run_package,
-    staged_coverage_report,
+    run_once,
 )
 
 EXPECTED_GITHUB_ACTION_ENV = f"--action_env=GITHUB_REPOSITORY={GITHUB_REPOSITORY}"
@@ -206,7 +205,9 @@ def _full_label(scenario: str, target: ExpectedTarget) -> str:
 def _actual_path(scenario: str, target: ExpectedTarget) -> Path:
     package = f"scenarios/{scenario}"
     if target.command == "run":
-        return _scenario_dir(scenario) / target.output_path
+        # The shared execution's copy of the package's rendered outputs.
+        build_dir = run_once("run", package, target.label).build_dir
+        return build_dir.parent / target.output_path
     return built_output(package, target.output_path)
 
 
@@ -340,20 +341,9 @@ def _run_expected_target(scenario: str, expected: ExpectedOutput) -> None:
             env=GITHUB_ENV,
         )
     elif expected.target.command == "run":
-        # A checked-in coverage.info supplies deterministic measurements for
-        # the scenario's HTML golden. Other scenarios retain their usual inputs.
-        coverage = _scenario_dir(scenario) / "coverage.info"
-        with (
-            staged_coverage_report(coverage)
-            if coverage.is_file()
-            else contextlib.nullcontext()
-        ):
-            run_package(
-                "run",
-                f"scenarios/{scenario}",
-                expected.target.label,
-                env=GITHUB_ENV,
-            )
+        # Shared with the scenario's other tests; run_once also stages a
+        # checked-in coverage.info for deterministic coverage measurements.
+        run_once("run", f"scenarios/{scenario}", expected.target.label)
     else:
         raise ValueError(f"unknown expected target command: {expected.target.command}")
 

@@ -26,14 +26,14 @@
 import pytest
 from score_pytest.attribute_plugin import add_test_properties
 
-from src.tests.docs_bzl.helpers import run_scenario
+from src.tests.docs_bzl.helpers import run_once
 
 
 @pytest.fixture(scope="module")
 def stderr() -> str:
     """Build once; the build fails, and -W --keep-going reports every warning."""
-    return run_scenario(
-        "build", "metamodel_violation", ":needs_json", expect_error=True
+    return run_once(
+        "build", "scenarios/metamodel_violation", ":needs_json", expect_error=True
     ).stderr
 
 

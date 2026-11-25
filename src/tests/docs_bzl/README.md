@@ -30,6 +30,20 @@ Build-only expected outputs are marked `bazel_cached`; outputs that execute
 Sphinx through `bazel run`, as well as expected-failure tests, are marked
 `bazel_slow`.
 
+## One execution per target
+
+Tests get scenario outputs from `helpers.run_once()`. It executes each target
+at most once per pytest session and shares the result with every test that
+reads it, including the expected-output checks. Every `bazel run` uses the same
+inputs: `GITHUB_REPOSITORY` as in CI, and the package's own `coverage.info` as
+the workflow coverage report, if it has one. Rendered `_build` directories are
+copied to a session directory, so a later render of the same package cannot
+change what other tests read.
+
+Only tests that change inputs between executions call `run_scenario()` or
+`run_package()` directly: the coverage report tests, and the negative tests
+that install a temporary `BUILD` file.
+
 ## Expected outputs
 
 Positive scenarios may check in files below a fixture's `_expected/` directory:
