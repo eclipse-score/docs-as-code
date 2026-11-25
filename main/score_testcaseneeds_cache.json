@@ -6440,9 +6440,23 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_mounted_source_controls__test_version_switcher_is_not_fetched_at_build_time",
+    "file": "src/extensions/score_layout/tests/test_mounted_source_controls.py",
+    "line": "48",
+    "result": "passed",
+    "repo_name": "score_docs_as_code",
+    "hash": "",
+    "url": "",
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_mounted_source_controls__test_local_page_keeps_all_source_controls",
     "file": "src/extensions/score_layout/tests/test_mounted_source_controls.py",
-    "line": "67",
+    "line": "88",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -6456,7 +6470,7 @@
   {
     "name": "test_mounted_source_controls__test_mounted_page_keeps_page_toc",
     "file": "src/extensions/score_layout/tests/test_mounted_source_controls.py",
-    "line": "83",
+    "line": "104",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
