@@ -108,7 +108,7 @@ class DataOfTestCase:
     file: str | None = None
     line: str | None = None
     result: str | None = None  # passed | falied | skipped | disabled
-    # None if repo_name, hash or url was missing (e.g. testcase without properties)
+    # RepoInfo.name holds the declaring Bazel module for JUnit testcases.
     repo: RepoInfo | None = None
     # Intentionally not snakecase to make dict parsing simple
     TestType: str | None = None
@@ -188,7 +188,6 @@ class DataOfTestCase:
         #         and self.DerivationTechnique is not None
         # ):
         # Hash & URL are explictily allowed to be empty but not none.
-        # repo_name has to be always filled or something went wrong
         fields = [
             x
             for x in self.__dataclass_fields__
@@ -274,17 +273,7 @@ def DataOfTestCase_JSON_Decoder(d: dict[str, Any]) -> DataOfTestCase | dict[str,
         "PartiallyVerifies",
         "FullyVerifies",
     } <= d.keys():
-        return DataOfTestCase(
-            name=d["name"],
-            file=d["file"],
-            line=d["line"],
-            result=d["result"],
-            TestType=d["TestType"],
-            DerivationTechnique=d["DerivationTechnique"],
-            result_text=d["result_text"],
-            PartiallyVerifies=d["PartiallyVerifies"],
-            FullyVerifies=d["FullyVerifies"],
-        )
+        return DataOfTestCase.from_dict(d)
     # It's something else, pass it on to other decoders
     return d
 

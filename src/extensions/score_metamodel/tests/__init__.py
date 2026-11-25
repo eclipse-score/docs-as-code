@@ -190,6 +190,8 @@ def need(**kwargs: Any) -> NeedItem:
         docname=kwargs.get("docname", "docname"),
         lineno=kwargs.get("lineno", 42),
         lineno_content=kwargs.get("lineno_content"),
+        is_import=kwargs.get("is_import", False),
+        is_external=kwargs.get("is_external", False),
     )
 
     # Create content

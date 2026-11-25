@@ -33,8 +33,8 @@ from src.extensions.score_source_code_linker.testlink import (
 from src.helper_lib import find_ws_root
 from src.helper_lib.repo_info import (
     RepoInfo,
-    parse_repo_name_from_path,
     resolve_repo,
+    split_external_path,
 )
 
 logger = logging.get_logger(__name__)
@@ -101,42 +101,21 @@ def clean_test_file_name(raw_filepath: Path) -> Path:
 
 
 def get_metadata_from_test_path(
-    raw_filepath: Path, known_good: dict[str, Any] | None
+    raw_filepath: Path, known_good: dict[str, Any] | None, local_module: str
 ) -> RepoInfo:
+    """Resolve the report's module and any pinned Git metadata.
+
+    For a local report such as `bazel-testlogs/tests/unit/test.xml`, the
+    `local_module` argument supplies the name of the root Bazel module.
+    For `bazel-testlogs/external/example_lib+/tests/unit/test.xml`, the path
+    identifies `example_lib` as the external Bazel module. When available,
+    `known_good.json` supplies its Git revision and repository URL.
     """
-    Will parse out the metadata from the testpath.
-    If test is local then the metadata will be:
-
-        "repo_name": LOCAL_REPO (whatever the vars value is),
-        "hash": "",
-        "url": "",
-
-    Else it will parse the repo_name e.g. `score_docs_as_code`
-    match this in the known_good_json and grab the accompanying
-    hash, url as well and return metadata like so for example:
-
-          "repo_name": "score_docs_as_code",
-          "hash": "c1207676afe6cafd25c35d420e73279a799515d8",
-          "url": "https://github.com/eclipse-score/docs-as-code"
-
-    The file name passed into here is:
-
-    For combo builds: something like:
-    <root path>/bazel-testlogs/external/score_docs_as_code+/
-    src/extensions/score_any_folder/score_any_folder_tests/test.xml
-
-    For local builds:
-    <root path>/bazel-testlogs/src/ext/score_.../score_any_folder_tests/test.xml
-
-    Therefore will we 'clean' it before passing it to the parse_module func.
-    Removing everything up to and including 'bazel-testlogs' or 'tests-report'
-    """
-    # print("THIs IS FILEPATH IN GET MD FROm TestPATH: ", raw_filepath)
-    clean_filepath = clean_test_file_name(raw_filepath)
-    # print(f"This is the cleaned filepath: {clean_filepath}")
-    repo_name = parse_repo_name_from_path(clean_filepath)
-    return resolve_repo(repo_name, known_good) or RepoInfo(
-        name=repo_name, hash="", url=""
+    module, _ = split_external_path(
+        clean_test_file_name(raw_filepath), local_module=local_module
+    )
+    return resolve_repo(module, known_good, local_module=local_module) or RepoInfo(
+        name=module, hash="", url=""
     )
 
 
@@ -192,6 +171,8 @@ def read_test_xml_file(
     file: Path,
     known_good: dict[str, Any] | None,
     allowed_dirs: list[str] | None = None,
+    *,
+    local_module: str = "",
 ) -> tuple[list[DataOfTestCase], list[str], list[str]]:
     """
     Reading & parsing the test.xml files into TestCaseNeeds
@@ -207,7 +188,9 @@ def read_test_xml_file(
     missing_prop_tests: list[str] = []
     tree = ET.parse(file)
     root = tree.getroot()
-    md = get_metadata_from_test_path(file, known_good)
+    repo_fields = get_metadata_from_test_path(
+        file, known_good, local_module
+    ).to_flat_dict()
     for testsuite in root.findall("testsuite"):
         for testcase in testsuite.findall("testcase"):
             test_file = testcase.get("file")
@@ -277,14 +260,15 @@ def read_test_xml_file(
             # I just can't think of it right now, leaving this for future me
             if properties_element is not None:
                 case_properties = parse_properties(case_properties, properties_element)
-                case_properties.update(md.to_flat_dict())
 
-                test_case = DataOfTestCase.from_dict(case_properties)
-                if not test_case.is_valid():
-                    missing_prop_tests.append(testname)
-            else:
+            # Report metadata applies even when the testcase has no JUnit
+            # properties or source location.
+            case_properties.update(repo_fields)
+            test_case = DataOfTestCase.from_dict(case_properties)
+            if properties_element is None:
                 non_prop_tests.append(testname)
-                test_case = DataOfTestCase.from_dict(case_properties)
+            elif not test_case.is_valid():
+                missing_prop_tests.append(testname)
             test_case_needs.append(test_case)
     return test_case_needs, non_prop_tests, missing_prop_tests
 
@@ -332,10 +316,25 @@ def find_test_folder(base_path: Path | None = None) -> Path | None:
     return None
 
 
+_MAX_SUMMARY_ITEMS = 5
+
+
+def _format_test_summary(tests: list[str]) -> str:
+    """Render a deduped, sorted test list, capped for readability."""
+    unique = sorted(dict.fromkeys(tests))
+    shown = ", ".join(unique[:_MAX_SUMMARY_ITEMS])
+    remaining = len(unique) - _MAX_SUMMARY_ITEMS
+    if remaining > 0:
+        shown += f" [and {remaining} more]"
+    return shown
+
+
 def parse_test_xml_files(
     xml_paths: list[Path],
     known_good: dict[str, Any] | None,
     allowed_dirs: list[str] | None = None,
+    *,
+    local_module: str = "",
 ) -> list[DataOfTestCase]:
     """
     Parse all test.xml files into testcases. No Sphinx needed: adding them
@@ -345,16 +344,25 @@ def parse_test_xml_files(
     of those repo-relative directories are returned (see read_test_xml_file).
     """
     tcns: list[DataOfTestCase] = []
+    all_tests_missing_all_props: list[str] = []
+    all_tests_missing_some_props: list[str] = []
     for file in xml_paths:
         # Last value can be ignored. The 'is_valid' function already prints infos
         test_cases, tests_missing_all_props, tests_missing_some_props = (
-            read_test_xml_file(file, known_good, allowed_dirs)
+            read_test_xml_file(
+                file, known_good, allowed_dirs, local_module=local_module
+            )
         )
-        non_prop_tests = ", ".join(n for n in tests_missing_all_props)
-        if non_prop_tests:
-            logger.info(f"Tests missing all properties: {non_prop_tests}")
-        missing_prop_tests = ", ".join(n for n in tests_missing_some_props)
-        if missing_prop_tests:
-            logger.info(f"Tests missing some properties: {missing_prop_tests}")
+        all_tests_missing_all_props.extend(tests_missing_all_props)
+        all_tests_missing_some_props.extend(tests_missing_some_props)
         tcns.extend(test_cases)
+
+    # Same test appears in many xml files (one per test target), so dedupe.
+    # Sort for a deterministic, diffable summary.
+    non_prop_tests = _format_test_summary(all_tests_missing_all_props)
+    if non_prop_tests:
+        logger.info(f"Tests missing all properties: {non_prop_tests}")
+    missing_prop_tests = _format_test_summary(all_tests_missing_some_props)
+    if missing_prop_tests:
+        logger.info(f"Tests missing some properties: {missing_prop_tests}")
     return tcns

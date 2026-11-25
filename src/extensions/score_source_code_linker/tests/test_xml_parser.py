@@ -25,7 +25,6 @@ import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
-from unittest.mock import patch
 
 import pytest
 
@@ -34,7 +33,9 @@ from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
 
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
-from src.helper_lib.repo_info import LOCAL_REPO
+from src.helper_lib.repo_info import RepoInfo
+
+LOCAL_MODULE = "local_module"
 
 
 # Unsure if I should make these last a session or not
@@ -284,46 +285,36 @@ def test_parse_properties():
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-# ADAPTED: Added patching for metadata functions
-@patch("src.extensions.score_source_code_linker.xml_parser.parse_repo_name_from_path")
 def test_read_test_xml_file(
-    mock_parse_module: Any,
     tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
 ):
     """Ensure a whole pre-defined xml file is parsed correctly"""
-    # ADAPTED: Mock return value to ensure metadata is populated.
-    # LOCAL_REPO triggers the path where hash/url are empty strings,
-    # which is valid but avoids the need to mock resolve_repo.
-    mock_parse_module.return_value = LOCAL_REPO
 
     _: Path
     dir1: Path
     dir2: Path
     _, dir1, dir2, dir3, dir4 = tmp_xml_dirs()
     needs1, no_props1, missing_props1 = xml_parser.read_test_xml_file(
-        dir1 / "test.xml", None
+        dir1 / "test.xml", None, local_module=LOCAL_MODULE
     )
     # Should parse the properties and create a 'valid' testlink
     assert isinstance(needs1, list) and len(needs1) == 1
     tcneed = needs1[0]
     assert isinstance(tcneed, DataOfTestCase)
     assert tcneed.result == "failed"
-    # ADAPTED: Verify metadata fields were populated
-    assert tcneed.repo is not None
-    assert tcneed.repo.name == LOCAL_REPO
-    assert tcneed.repo.hash == ""
-    assert tcneed.repo.url == ""
+    assert tcneed.repo == RepoInfo(name=LOCAL_MODULE, hash="", url="")
 
     assert no_props1 == []
     assert missing_props1 == []
 
     # No properties at all => Should not be a 'valid' testlink
     needs2, no_props2, missing_props2 = xml_parser.read_test_xml_file(
-        dir2 / "test.xml", None
+        dir2 / "test.xml", None, local_module=LOCAL_MODULE
     )
     assert isinstance(needs2, list) and len(needs2) == 1
     tcneed2 = needs2[0]
     assert isinstance(tcneed2, DataOfTestCase)
+    assert tcneed2.repo == RepoInfo(name=LOCAL_MODULE, hash="", url="")
     assert no_props2 == ["tc_no_props"]
     assert missing_props2 == []
 
@@ -535,19 +526,23 @@ _COMBO_TEST_PATH = Path(
 
 
 def test_get_metadata_from_test_path_local():
-    """Local builds produce empty hash/url without reading known_good.json."""
+    """The local report ignores a known-good pin for its own module."""
     local_path = Path(
         "/home/root/docs-as-code/bazel-testlogs/src/extensions/foo/test.xml"
     )
-    md = xml_parser.get_metadata_from_test_path(local_path, None)
-    assert md.name == LOCAL_REPO
+    md = xml_parser.get_metadata_from_test_path(
+        local_path, _KNOWN_GOOD_WITH_HASH, "score_docs_as_code"
+    )
+    assert md.name == "score_docs_as_code"
     assert md.hash == ""
     assert md.url == ""
 
 
 def test_get_metadata_from_test_path_combo_with_hash():
     """Combo builds with 'hash' in known_good.json populate metadata correctly."""
-    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, _KNOWN_GOOD_WITH_HASH)
+    md = xml_parser.get_metadata_from_test_path(
+        _COMBO_TEST_PATH, _KNOWN_GOOD_WITH_HASH, "host_module"
+    )
     assert md.name == "score_docs_as_code"
     assert md.hash == "abc123hashvalue"
     assert md.url == "https://github.com/eclipse-score/docs-as-code"
@@ -556,8 +551,19 @@ def test_get_metadata_from_test_path_combo_with_hash():
 def test_get_metadata_from_test_path_combo_with_version():
     """Combo builds with 'version' in known_good.json populate metadata correctly."""
     md = xml_parser.get_metadata_from_test_path(
-        _COMBO_TEST_PATH, _KNOWN_GOOD_WITH_VERSION
+        _COMBO_TEST_PATH, _KNOWN_GOOD_WITH_VERSION, "host_module"
     )
     assert md.name == "score_docs_as_code"
     assert md.hash == "v2.1.0"
     assert md.url == "https://github.com/eclipse-score/docs-as-code"
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_get_metadata_from_test_path_external_without_known_good():
+    """Keep the external module when Git metadata is unavailable."""
+    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, None, "host_module")
+    assert md == RepoInfo(name="score_docs_as_code", hash="", url="")

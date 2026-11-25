@@ -21,7 +21,9 @@ from pyfakefs.fake_filesystem import FakeFilesystem as FFS
 from score_pytest.attribute_plugin import add_test_properties
 
 from scripts_bazel.merge_sourcelinks import main as merge_sourcelinks
-from src.helper_lib.repo_info import LOCAL_REPO
+
+LOCAL_MODULE = "local_module"
+MERGE_ARGS = ["--output", "merged.json", "--local-module", LOCAL_MODULE]
 
 
 def link(file: str) -> dict[str, str | int]:
@@ -54,14 +56,14 @@ def read_json(path: str) -> object:
 )
 def test_merge_sourcelinks_basic(fs: FFS):
     """The output has the same format as the inputs."""
-    write_json(fs, "a.json", [link("a.py") | repo(LOCAL_REPO)])
-    write_json(fs, "b.json", [link("b.py") | repo(LOCAL_REPO)])
+    write_json(fs, "a.json", [link("a.py") | repo(LOCAL_MODULE)])
+    write_json(fs, "b.json", [link("b.py") | repo(LOCAL_MODULE)])
 
-    merge_sourcelinks(["--output", "merged.json", "a.json", "b.json"])
+    merge_sourcelinks([*MERGE_ARGS, "a.json", "b.json"])
 
     assert read_json("merged.json") == [
-        link("a.py") | repo(LOCAL_REPO),
-        link("b.py") | repo(LOCAL_REPO),
+        link("a.py") | repo(LOCAL_MODULE),
+        link("b.py") | repo(LOCAL_MODULE),
     ]
 
 
@@ -72,11 +74,11 @@ def test_merge_sourcelinks_basic(fs: FFS):
 )
 def test_merge_sourcelinks_deduplicates_identical_references(fs: FFS):
     """The same link from two inputs appears once in the output."""
-    write_json(fs, "a.json", [link("a.py") | repo(LOCAL_REPO)])
+    write_json(fs, "a.json", [link("a.py") | repo(LOCAL_MODULE)])
 
-    merge_sourcelinks(["--output", "merged.json", "a.json", "a.json"])
+    merge_sourcelinks([*MERGE_ARGS, "a.json", "a.json"])
 
-    assert read_json("merged.json") == [link("a.py") | repo(LOCAL_REPO)]
+    assert read_json("merged.json") == [link("a.py") | repo(LOCAL_MODULE)]
 
 
 @add_test_properties(
@@ -86,12 +88,12 @@ def test_merge_sourcelinks_deduplicates_identical_references(fs: FFS):
 )
 def test_merge_sourcelinks_with_one_empty_file(fs: FFS):
     """An input without any entry is a no-op."""
-    write_json(fs, "a.json", [link("a.py") | repo(LOCAL_REPO)])
+    write_json(fs, "a.json", [link("a.py") | repo(LOCAL_MODULE)])
     write_json(fs, "empty.json", [])
 
-    merge_sourcelinks(["--output", "merged.json", "a.json", "empty.json"])
+    merge_sourcelinks([*MERGE_ARGS, "a.json", "empty.json"])
 
-    assert read_json("merged.json") == [link("a.py") | repo(LOCAL_REPO)]
+    assert read_json("merged.json") == [link("a.py") | repo(LOCAL_MODULE)]
 
 
 @add_test_properties(
@@ -103,7 +105,7 @@ def test_merge_sourcelinks_wrong_schema(fs: FFS, caplog: pytest.LogCaptureFixtur
     """An input is only merged if each of its links names a repository."""
     write_json(fs, "a.json", [link("a.py")])
 
-    merge_sourcelinks(["--output", "merged.json", "a.json"])
+    merge_sourcelinks([*MERGE_ARGS, "a.json"])
 
     assert read_json("merged.json") == []
     assert (
@@ -125,7 +127,7 @@ def test_merge_sourcelinks_with_known_good(fs: FFS):
         url="https://github.com/eclipse-score/baselibs.git",
     )
     write_json(fs, "external.json", [link("external.py") | baselibs])
-    write_json(fs, "local.json", [link("local.py") | repo(LOCAL_REPO)])
+    write_json(fs, "local.json", [link("local.py") | repo(LOCAL_MODULE)])
     write_json(
         fs,
         "known_good.json",
@@ -143,8 +145,7 @@ def test_merge_sourcelinks_with_known_good(fs: FFS):
 
     merge_sourcelinks(
         [
-            "--output",
-            "merged.json",
+            *MERGE_ARGS,
             "--known_good",
             "known_good.json",
             "external.json",
@@ -159,7 +160,7 @@ def test_merge_sourcelinks_with_known_good(fs: FFS):
             hash="abc123",
             url="https://github.com/eclipse-score/baselibs",
         ),
-        link("local.py") | repo(LOCAL_REPO),
+        link("local.py") | repo(LOCAL_MODULE),
     ]
 
 
@@ -176,13 +177,13 @@ def test_merge_sourcelinks_without_known_good_preserves_external_metadata(fs: FF
         url="https://github.com/eclipse-score/baselibs.git",
     )
     write_json(fs, "external.json", [link("external.py") | baselibs])
-    write_json(fs, "local.json", [link("local.py") | repo(LOCAL_REPO)])
+    write_json(fs, "local.json", [link("local.py") | repo(LOCAL_MODULE)])
 
-    merge_sourcelinks(["--output", "merged.json", "external.json", "local.json"])
+    merge_sourcelinks([*MERGE_ARGS, "external.json", "local.json"])
 
     assert read_json("merged.json") == [
         link("external.py") | baselibs,
-        link("local.py") | repo(LOCAL_REPO),
+        link("local.py") | repo(LOCAL_MODULE),
     ]
 
 
@@ -195,9 +196,9 @@ def test_merge_sourcelinks_skips_file_with_legacy_header(
     fs: FFS, caplog: pytest.LogCaptureFixture
 ):
     """A cache of an older build starts with a repository header; it is not merged."""
-    write_json(fs, "old.json", [repo(LOCAL_REPO), link("a.py") | repo(LOCAL_REPO)])
+    write_json(fs, "old.json", [repo(LOCAL_MODULE), link("a.py") | repo(LOCAL_MODULE)])
 
-    merge_sourcelinks(["--output", "merged.json", "old.json"])
+    merge_sourcelinks([*MERGE_ARGS, "old.json"])
 
     assert read_json("merged.json") == []
     assert "Unexpected schema in sourcelinks file 'old.json'" in caplog.text
@@ -214,7 +215,7 @@ def test_merge_sourcelinks_resolves_each_repository_in_one_file(fs: FFS):
         fs,
         "mixed.json",
         [
-            link("local.py") | repo(LOCAL_REPO),
+            link("local.py") | repo(LOCAL_MODULE),
             link("baselibs.py") | repo("score_baselibs"),
             link("communication.py") | repo("score_communication"),
         ],
@@ -225,6 +226,10 @@ def test_merge_sourcelinks_resolves_each_repository_in_one_file(fs: FFS):
         {
             "modules": {
                 "target_sw": {
+                    LOCAL_MODULE: {
+                        "repo": "https://github.com/eclipse-score/docs-as-code.git",
+                        "hash": "old-checkout",
+                    },
                     "score_baselibs": {
                         "repo": "https://github.com/eclipse-score/baselibs.git",
                         "hash": "abc123",
@@ -238,12 +243,10 @@ def test_merge_sourcelinks_resolves_each_repository_in_one_file(fs: FFS):
         },
     )
 
-    merge_sourcelinks(
-        ["--output", "merged.json", "--known_good", "known_good.json", "mixed.json"]
-    )
+    merge_sourcelinks([*MERGE_ARGS, "--known_good", "known_good.json", "mixed.json"])
 
     assert read_json("merged.json") == [
-        link("local.py") | repo(LOCAL_REPO),
+        link("local.py") | repo(LOCAL_MODULE),
         link("baselibs.py")
         | repo(
             "score_baselibs",
