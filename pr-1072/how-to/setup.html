@@ -501,8 +501,10 @@ Bazel build system.
 It contains utilities and extensions that improve documentation in S-CORE.</p>
 <section id="module-bazel-file">
 <h2>1. MODULE.bazel file<a class="headerlink" href="#module-bazel-file" title="Link to this heading">#</a></h2>
-<p>Add the module to the <code class="docutils literal notranslate"><span class="pre">MODULE.bazel</span></code> file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"score_docs_as_code"</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">"7.0.0"</span><span class="p">)</span>
+<p>Name your project’s Bazel module and add the docs-as-code dependency in <code class="docutils literal notranslate"><span class="pre">MODULE.bazel</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"my_project"</span><span class="p">)</span>
+
+<span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"score_docs_as_code"</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">"9.1.1"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Add the S-CORE Bazel registry to the <code class="docutils literal notranslate"><span class="pre">.bazelrc</span></code> file:</p>

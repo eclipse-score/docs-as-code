@@ -858,6 +858,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -869,6 +870,7 @@ class assertion {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -880,6 +882,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -891,6 +894,7 @@ class comp_arc_dyn {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -902,6 +906,7 @@ class comp_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -915,6 +920,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -932,6 +938,7 @@ class comp_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -947,6 +954,7 @@ class comp_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -963,6 +971,7 @@ class comp_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -975,6 +984,7 @@ class comp_sec_threat {
   +status
   +threat_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -986,6 +996,7 @@ class dec_rec {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +consequences [optional]*
@@ -997,6 +1008,7 @@ class doc_concept {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1006,6 +1018,7 @@ class doc_getstrt {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1019,6 +1032,7 @@ class doc_tool {
   +version
   +approver [optional]*
   +author [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +reviewer [optional]*
@@ -1035,6 +1049,7 @@ class document {
   +version
   +approver [optional]*
   +author [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +report_version [optional]*
@@ -1048,6 +1063,7 @@ class feat {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1059,6 +1075,7 @@ class feat_arc_dyn {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1070,6 +1087,7 @@ class feat_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1084,6 +1102,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -1100,6 +1119,7 @@ class feat_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -1115,6 +1135,7 @@ class feat_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -1131,6 +1152,7 @@ class feat_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -1143,6 +1165,7 @@ class feat_sec_threat {
   +status
   +threat_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1152,6 +1175,7 @@ class gd_chklst {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1161,6 +1185,7 @@ class gd_guidl {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1170,6 +1195,7 @@ class gd_method {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1179,6 +1205,7 @@ class gd_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1188,6 +1215,7 @@ class gd_temp {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1199,6 +1227,7 @@ class logic_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1210,6 +1239,7 @@ class logic_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1218,6 +1248,7 @@ class logic_arc_int_op {
 class mod {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +maturity [optional]*
@@ -1235,6 +1266,7 @@ class mod_ver_report {
   +verification_method
   +version
   +applies_to_module_version [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +branch_coverage_percent [optional]*
@@ -1246,6 +1278,7 @@ class mod_ver_report {
 class mod_view_dyn {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1254,6 +1287,7 @@ class mod_view_dyn {
 class mod_view_sta {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1267,6 +1301,7 @@ class plat_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -1282,6 +1317,7 @@ class plat_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -1294,6 +1330,7 @@ class plat_sec_threat {
   +status
   +threat_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1303,6 +1340,7 @@ class potential_tool_malfunction {
   +id
   +safety_affected
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +detection_sufficient [optional]*
@@ -1317,6 +1355,7 @@ class real_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1328,6 +1367,7 @@ class real_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1340,6 +1380,7 @@ class review_header {
   +reviewers
   +template
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1348,6 +1389,7 @@ class review_header {
 class role {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1357,6 +1399,7 @@ class std_req {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1366,6 +1409,7 @@ class std_wp {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1380,6 +1424,7 @@ class stkh_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -1392,6 +1437,7 @@ class tenet {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1400,6 +1446,7 @@ class tenet {
 class testcase {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +derivation_technique [optional]*
@@ -1416,6 +1463,7 @@ class tool_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -1432,6 +1480,7 @@ class tool_req {
 class tool_usecase {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1441,6 +1490,7 @@ class tsf {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1450,6 +1500,7 @@ class workflow {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1459,6 +1510,7 @@ class workproduct {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1764,6 +1816,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -1777,6 +1830,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1790,6 +1844,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -1807,6 +1862,7 @@ class comp_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -1822,6 +1878,7 @@ class comp_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -1838,6 +1895,7 @@ class comp_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -1850,6 +1908,7 @@ class feat_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -1864,6 +1923,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -1880,6 +1940,7 @@ class feat_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -1895,6 +1956,7 @@ class feat_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -1911,6 +1973,7 @@ class feat_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -1925,6 +1988,7 @@ class plat_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -1940,6 +2004,7 @@ class plat_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -2025,26 +2090,30 @@ click plat_sec_ana href &quot;#plat-sec-ana&quot; &quot;Open plat_sec_ana detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">hash</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testcovered</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -2068,6 +2137,7 @@ class assertion {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2100,18 +2170,22 @@ click assertion href &quot;#assertion&quot; &quot;Open assertion details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -2155,6 +2229,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -2168,6 +2243,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2179,6 +2255,7 @@ class comp_arc_dyn {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2190,6 +2267,7 @@ class comp_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2203,6 +2281,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -2220,6 +2299,7 @@ class document {
   +version
   +approver [optional]*
   +author [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +report_version [optional]*
@@ -2233,6 +2313,7 @@ class feat {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2244,6 +2325,7 @@ class logic_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2252,6 +2334,7 @@ class logic_arc_int {
 class mod {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +maturity [optional]*
@@ -2264,6 +2347,7 @@ class mod {
 class mod_view_sta {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2275,6 +2359,7 @@ class real_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2347,18 +2432,22 @@ click real_arc_int_op href &quot;#real-arc-int-op&quot; &quot;Open real_arc_int_
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -2416,6 +2505,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2427,6 +2517,7 @@ class comp_arc_dyn {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2440,6 +2531,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -2457,6 +2549,7 @@ class comp_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -2509,18 +2602,22 @@ click comp_saf_fmea href &quot;#comp-saf-fmea&quot; &quot;Open comp_saf_fmea det
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -2566,6 +2663,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2577,6 +2675,7 @@ class comp_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2590,6 +2689,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -2607,6 +2707,7 @@ class comp_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -2622,6 +2723,7 @@ class comp_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -2636,6 +2738,7 @@ class logic_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2647,6 +2750,7 @@ class real_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2705,18 +2809,22 @@ click real_arc_int_op href &quot;#real-arc-int-op&quot; &quot;Open real_arc_int_
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -2768,6 +2876,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -2781,6 +2890,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2792,6 +2902,7 @@ class comp_arc_dyn {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2803,6 +2914,7 @@ class comp_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2816,6 +2928,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -2833,6 +2946,7 @@ class comp_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -2848,6 +2962,7 @@ class comp_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -2864,6 +2979,7 @@ class comp_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -2879,6 +2995,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -2894,6 +3011,7 @@ class real_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -2903,6 +3021,7 @@ class tool_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -2989,34 +3108,38 @@ click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">hash</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testcovered</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">valid_from</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">valid_until</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$</span></code></p></td>
 </tr>
@@ -3068,6 +3191,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -3081,6 +3205,7 @@ class comp_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -3094,6 +3219,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -3111,6 +3237,7 @@ class comp_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -3170,26 +3297,30 @@ click comp_saf_dfa href &quot;#comp-saf-dfa&quot; &quot;Open comp_saf_dfa detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mitigation_issue</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github\.com/[^/]+/[^/]+/issues/\d+$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">safety_relevant</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(yes|no)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -3237,6 +3368,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -3250,6 +3382,7 @@ class comp_arc_dyn {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -3261,6 +3394,7 @@ class comp_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -3274,6 +3408,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -3291,6 +3426,7 @@ class comp_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -3354,30 +3490,34 @@ click comp_saf_fmea href &quot;#comp-saf-fmea&quot; &quot;Open comp_saf_fmea det
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">failure_root_cause</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^[\s\S]+$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mitigation_issue</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github\.com/[^/]+/[^/]+/issues/\d+$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">safety_relevant</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(yes|no)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -3425,6 +3565,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -3440,6 +3581,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -3457,6 +3599,7 @@ class comp_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -3512,22 +3655,26 @@ click comp_sec_ana href &quot;#comp-sec-ana&quot; &quot;Open comp_sec_ana detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mitigation_issue</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github\.com/[^/]+/[^/]+/issues/\d+$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -3569,6 +3716,7 @@ class comp_sec_threat {
   +status
   +threat_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -3609,18 +3757,22 @@ click comp_sec_threat href &quot;#comp-sec-threat&quot; &quot;Open comp_sec_thre
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -3646,6 +3798,7 @@ class dec_rec {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +consequences [optional]*
@@ -3688,26 +3841,30 @@ click dec_rec href &quot;#dec-rec&quot; &quot;Open dec_rec details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">consequences</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">tracking</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github\.com/[^/]+/[^/]+/issues/\d+$</span></code></p></td>
 </tr>
@@ -3747,6 +3904,7 @@ class doc_concept {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -3756,6 +3914,7 @@ class workflow {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -3791,18 +3950,22 @@ click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -3826,6 +3989,7 @@ class doc_getstrt {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -3835,6 +3999,7 @@ class workflow {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -3870,18 +4035,22 @@ click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -3909,6 +4078,7 @@ class doc_tool {
   +version
   +approver [optional]*
   +author [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +reviewer [optional]*
@@ -3920,6 +4090,7 @@ class doc_tool {
 class tool_usecase {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -3929,6 +4100,7 @@ class workproduct {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -3983,30 +4155,34 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">reviewer</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">safety_affected</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">tcl</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(LOW|HIGH)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -4048,6 +4224,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4061,6 +4238,7 @@ class document {
   +version
   +approver [optional]*
   +author [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +report_version [optional]*
@@ -4074,6 +4252,7 @@ class feat {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4082,6 +4261,7 @@ class feat {
 class mod {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +maturity [optional]*
@@ -4095,6 +4275,7 @@ class workproduct {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4155,26 +4336,30 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">report_version</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">reviewer</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -4220,6 +4405,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4233,6 +4419,7 @@ class document {
   +version
   +approver [optional]*
   +author [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +report_version [optional]*
@@ -4246,6 +4433,7 @@ class feat {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4257,6 +4445,7 @@ class feat_arc_dyn {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4268,6 +4457,7 @@ class feat_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4282,6 +4472,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -4296,6 +4487,7 @@ class logic_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4307,6 +4499,7 @@ class logic_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4370,18 +4563,22 @@ click logic_arc_int_op href &quot;#logic-arc-int-op&quot; &quot;Open logic_arc_i
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -4427,6 +4624,7 @@ class feat {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4438,6 +4636,7 @@ class feat_arc_dyn {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4452,6 +4651,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -4468,6 +4668,7 @@ class feat_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -4520,18 +4721,22 @@ click feat_saf_fmea href &quot;#feat-saf-fmea&quot; &quot;Open feat_saf_fmea det
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -4579,6 +4784,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -4592,6 +4798,7 @@ class feat {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4603,6 +4810,7 @@ class feat_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4617,6 +4825,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -4633,6 +4842,7 @@ class feat_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -4648,6 +4858,7 @@ class feat_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -4662,6 +4873,7 @@ class logic_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4673,6 +4885,7 @@ class logic_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4686,6 +4899,7 @@ class plat_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -4752,18 +4966,22 @@ click plat_saf_dfa href &quot;#plat-saf-dfa&quot; &quot;Open plat_saf_dfa detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -4815,6 +5033,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -4830,6 +5049,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -4845,6 +5065,7 @@ class feat {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4856,6 +5077,7 @@ class feat_arc_dyn {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4867,6 +5089,7 @@ class feat_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4881,6 +5104,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -4897,6 +5121,7 @@ class feat_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -4912,6 +5137,7 @@ class feat_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -4928,6 +5154,7 @@ class feat_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -4940,6 +5167,7 @@ class logic_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -4953,6 +5181,7 @@ class plat_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -4968,6 +5197,7 @@ class stkh_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -4980,6 +5210,7 @@ class tool_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -5076,30 +5307,34 @@ click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">hash</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testcovered</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">valid_until</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$</span></code></p></td>
 </tr>
@@ -5151,6 +5386,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -5164,6 +5400,7 @@ class feat_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5178,6 +5415,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -5194,6 +5432,7 @@ class feat_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -5253,26 +5492,30 @@ click feat_saf_dfa href &quot;#feat-saf-dfa&quot; &quot;Open feat_saf_dfa detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mitigation_issue</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github\.com/[^/]+/[^/]+/issues/\d+$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">safety_relevant</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(yes|no)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -5320,6 +5563,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -5333,6 +5577,7 @@ class feat_arc_dyn {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5344,6 +5589,7 @@ class feat_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5358,6 +5604,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -5374,6 +5621,7 @@ class feat_saf_fmea {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +failure_root_cause [optional]*
@@ -5437,30 +5685,34 @@ click feat_saf_fmea href &quot;#feat-saf-fmea&quot; &quot;Open feat_saf_fmea det
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">failure_root_cause</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^[\s\S]+$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mitigation_issue</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github\.com/[^/]+/[^/]+/issues/\d+$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">safety_relevant</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(yes|no)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -5508,6 +5760,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -5524,6 +5777,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -5540,6 +5794,7 @@ class feat_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -5595,22 +5850,26 @@ click feat_sec_ana href &quot;#feat-sec-ana&quot; &quot;Open feat_sec_ana detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mitigation_issue</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github\.com/[^/]+/[^/]+/issues/\d+$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -5652,6 +5911,7 @@ class feat_sec_threat {
   +status
   +threat_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5692,18 +5952,22 @@ click feat_sec_threat href &quot;#feat-sec-threat&quot; &quot;Open feat_sec_thre
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -5727,6 +5991,7 @@ class gd_chklst {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5736,6 +6001,7 @@ class std_req {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5745,6 +6011,7 @@ class workflow {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5783,18 +6050,22 @@ click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -5834,6 +6105,7 @@ class gd_guidl {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5843,6 +6115,7 @@ class std_req {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5852,6 +6125,7 @@ class workflow {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5890,18 +6164,22 @@ click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -5941,6 +6219,7 @@ class gd_method {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5950,6 +6229,7 @@ class std_req {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5959,6 +6239,7 @@ class workflow {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -5997,18 +6278,22 @@ click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -6048,6 +6333,7 @@ class gd_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6057,6 +6343,7 @@ class std_req {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6066,6 +6353,7 @@ class tool_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -6083,6 +6371,7 @@ class workflow {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6125,18 +6414,22 @@ click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -6180,6 +6473,7 @@ class gd_temp {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6189,6 +6483,7 @@ class std_req {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6198,6 +6493,7 @@ class workflow {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6236,18 +6532,22 @@ click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -6289,6 +6589,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6300,6 +6601,7 @@ class comp_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6311,6 +6613,7 @@ class feat {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6322,6 +6625,7 @@ class feat_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6336,6 +6640,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -6350,6 +6655,7 @@ class logic_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6361,6 +6667,7 @@ class logic_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6422,18 +6729,22 @@ click logic_arc_int_op href &quot;#logic-arc-int-op&quot; &quot;Open logic_arc_i
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -6479,6 +6790,7 @@ class feat {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6490,6 +6802,7 @@ class feat_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6501,6 +6814,7 @@ class logic_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6512,6 +6826,7 @@ class logic_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6523,6 +6838,7 @@ class real_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6576,18 +6892,22 @@ click real_arc_int_op href &quot;#real-arc-int-op&quot; &quot;Open real_arc_int_
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -6629,6 +6949,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6642,6 +6963,7 @@ class document {
   +version
   +approver [optional]*
   +author [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +report_version [optional]*
@@ -6652,6 +6974,7 @@ class document {
 class mod {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +maturity [optional]*
@@ -6669,6 +6992,7 @@ class mod_ver_report {
   +verification_method
   +version
   +applies_to_module_version [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +branch_coverage_percent [optional]*
@@ -6680,6 +7004,7 @@ class mod_ver_report {
 class mod_view_dyn {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6688,6 +7013,7 @@ class mod_view_dyn {
 class mod_view_sta {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6729,34 +7055,38 @@ click mod_view_sta href &quot;#mod-view-sta&quot; &quot;Open mod_view_sta detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">maturity</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(preview|experimental|release)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">safety</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(QM|ASIL_B)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">security</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">status</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(valid|invalid|valid_inspected)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -6795,6 +7125,7 @@ classDiagram
 class mod {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +maturity [optional]*
@@ -6812,6 +7143,7 @@ class mod_ver_report {
   +verification_method
   +version
   +applies_to_module_version [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +branch_coverage_percent [optional]*
@@ -6824,6 +7156,7 @@ class workproduct {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6878,30 +7211,34 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">branch_coverage_percent</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(100|[1-9]?[0-9])$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">line_coverage_percent</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(100|[1-9]?[0-9])$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">requirements_tests_completely_passed_percent</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(100|[1-9]?[0-9])$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -6956,6 +7293,7 @@ classDiagram
 class mod {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +maturity [optional]*
@@ -6968,6 +7306,7 @@ class mod {
 class mod_view_dyn {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -6999,18 +7338,22 @@ click mod_view_dyn href &quot;#mod-view-dyn&quot; &quot;Open mod_view_dyn detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -7052,6 +7395,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7060,6 +7404,7 @@ class comp {
 class mod {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +maturity [optional]*
@@ -7072,6 +7417,7 @@ class mod {
 class mod_view_sta {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7106,18 +7452,22 @@ click mod_view_sta href &quot;#mod-view-sta&quot; &quot;Open mod_view_sta detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -7165,6 +7515,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -7178,6 +7529,7 @@ class feat_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7191,6 +7543,7 @@ class plat_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -7207,6 +7560,7 @@ class stkh_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -7267,26 +7621,30 @@ click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mitigation_issue</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github\.com/[^/]+/[^/]+/issues/\d+$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">safety_relevant</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(yes|no)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -7334,6 +7692,7 @@ class aou_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -7350,6 +7709,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -7366,6 +7726,7 @@ class plat_sec_ana {
   +threat_effect
   +threat_scenario_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -7421,22 +7782,26 @@ click plat_sec_ana href &quot;#plat-sec-ana&quot; &quot;Open plat_sec_ana detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mitigation_issue</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github\.com/[^/]+/[^/]+/issues/\d+$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -7478,6 +7843,7 @@ class plat_sec_threat {
   +status
   +threat_id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7518,18 +7884,22 @@ click plat_sec_threat href &quot;#plat-sec-threat&quot; &quot;Open plat_sec_thre
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -7553,6 +7923,7 @@ class potential_tool_malfunction {
   +id
   +safety_affected
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +detection_sufficient [optional]*
@@ -7564,6 +7935,7 @@ class tool_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -7580,6 +7952,7 @@ class tool_req {
 class tool_usecase {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7618,26 +7991,30 @@ click tool_usecase href &quot;#tool-usecase&quot; &quot;Open tool_usecase detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">safety_measures</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.+$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -7685,6 +8062,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -7701,6 +8079,7 @@ class real_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7712,6 +8091,7 @@ class real_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7762,18 +8142,22 @@ click real_arc_int_op href &quot;#real-arc-int-op&quot; &quot;Open real_arc_int_
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -7815,6 +8199,7 @@ class comp {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7826,6 +8211,7 @@ class comp_arc_sta {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7837,6 +8223,7 @@ class logic_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7849,6 +8236,7 @@ class real_arc_int {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7860,6 +8248,7 @@ class real_arc_int_op {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -7913,18 +8302,22 @@ click real_arc_int_op href &quot;#real-arc-int-op&quot; &quot;Open real_arc_int_
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -7971,6 +8364,7 @@ class review_header {
   +reviewers
   +template
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8015,18 +8409,22 @@ click review_header href &quot;#review-header&quot; &quot;Open review_header det
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -8049,6 +8447,7 @@ classDiagram
 class role {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8058,6 +8457,7 @@ class workflow {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8092,18 +8492,22 @@ click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -8143,6 +8547,7 @@ class gd_chklst {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8152,6 +8557,7 @@ class gd_guidl {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8161,6 +8567,7 @@ class gd_method {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8170,6 +8577,7 @@ class gd_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8179,6 +8587,7 @@ class gd_temp {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8188,6 +8597,7 @@ class std_req {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8197,6 +8607,7 @@ class workproduct {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8247,18 +8658,22 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -8298,6 +8713,7 @@ class std_wp {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8307,6 +8723,7 @@ class workproduct {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8342,18 +8759,22 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -8382,6 +8803,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -8398,6 +8820,7 @@ class plat_saf_dfa {
   +status
   +sufficient
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +mitigation_issue [optional]*
@@ -8414,6 +8837,7 @@ class stkh_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -8426,6 +8850,7 @@ class tool_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -8495,30 +8920,34 @@ click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">hash</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testcovered</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">valid_until</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$</span></code></p></td>
 </tr>
@@ -8542,6 +8971,7 @@ class tenet {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8574,18 +9004,22 @@ click tenet href &quot;#tenet&quot; &quot;Open tenet details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -8624,6 +9058,7 @@ classDiagram
 class testcase {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +derivation_technique [optional]*
@@ -8659,46 +9094,50 @@ click testcase href &quot;#testcase&quot; &quot;Open testcase details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">derivation_technique</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">file</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">line</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">result</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">result_text</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">test_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -8746,6 +9185,7 @@ class comp_req {
   +security
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -8764,6 +9204,7 @@ class feat_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -8776,6 +9217,7 @@ class gd_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -8785,6 +9227,7 @@ class potential_tool_malfunction {
   +id
   +safety_affected
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +detection_sufficient [optional]*
@@ -8801,6 +9244,7 @@ class stkh_req {
   +status
   +valid_from
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -8813,6 +9257,7 @@ class tool_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +hash [optional]*
@@ -8868,50 +9313,54 @@ click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">hash</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">implemented</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(YES|PARTIAL|NO)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">parent_covered</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">parent_has_problem</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">safety</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(QM|ASIL_B)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">security</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">tags</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testcovered</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -8955,6 +9404,7 @@ class doc_tool {
   +version
   +approver [optional]*
   +author [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +reviewer [optional]*
@@ -8967,6 +9417,7 @@ class potential_tool_malfunction {
   +id
   +safety_affected
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +detection_sufficient [optional]*
@@ -8977,6 +9428,7 @@ class potential_tool_malfunction {
 class tool_usecase {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9010,18 +9462,22 @@ click tool_usecase href &quot;#tool-usecase&quot; &quot;Open tool_usecase detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -9061,6 +9517,7 @@ class tsf {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9093,18 +9550,22 @@ click tsf href &quot;#tsf&quot; &quot;Open tsf details&quot;
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -9144,6 +9605,7 @@ class doc_concept {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9153,6 +9615,7 @@ class doc_getstrt {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9162,6 +9625,7 @@ class gd_chklst {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9171,6 +9635,7 @@ class gd_guidl {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9180,6 +9645,7 @@ class gd_method {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9189,6 +9655,7 @@ class gd_req {
   +content
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9198,6 +9665,7 @@ class gd_temp {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9206,6 +9674,7 @@ class gd_temp {
 class role {
   +id
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9215,6 +9684,7 @@ class workflow {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9224,6 +9694,7 @@ class workproduct {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9285,18 +9756,22 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -9364,6 +9839,7 @@ class doc_tool {
   +version
   +approver [optional]*
   +author [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +reviewer [optional]*
@@ -9380,6 +9856,7 @@ class document {
   +version
   +approver [optional]*
   +author [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +report_version [optional]*
@@ -9395,6 +9872,7 @@ class mod_ver_report {
   +verification_method
   +version
   +applies_to_module_version [optional]*
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +branch_coverage_percent [optional]*
@@ -9407,6 +9885,7 @@ class std_req {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9416,6 +9895,7 @@ class std_wp {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9425,6 +9905,7 @@ class workflow {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9434,6 +9915,7 @@ class workproduct {
   +id
   +status
   +version
+  +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
   +source_code_link [optional]*
@@ -9482,18 +9964,22 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
