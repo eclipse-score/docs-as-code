@@ -11,12 +11,11 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs")
+load("@score_docs_as_code//:docs.bzl", "docs")
 
 docs(
     data = ["supporting-example.txt"],
     project = "Basic Test",
     project_url = "https://github.com/eclipse-score/docs-as-code",
     source_dir = "docs",
-    test_sources = ["src/tests/docs_bzl/scenarios/basic_docs"],
 )
