@@ -13,11 +13,13 @@
 """external_bundle: a docs() site mounts a bundle from another Bazel module."""
 
 from pathlib import Path
+from typing import cast
 
 import pytest
 
 from src.tests.docs_bzl.helpers import (
     assert_no_compatibility_findings,
+    load_needs,
     run_scenario,
     toctree_links,
 )
@@ -48,9 +50,28 @@ def test_docs_build_reports_no_compatibility_findings(build_dir: Path):
     assert_no_compatibility_findings(build_dir)
 
 
-@pytest.mark.bazel_cached
-def test_needs_build_reports_no_compatibility_findings():
+@pytest.fixture(scope="module")
+def needs_dir() -> Path:
     result = run_scenario("build", SCENARIO, ":needs_json")
     assert result.artifacts is not None
+    return result.artifacts["needs.json"].parent
 
-    assert_no_compatibility_findings(result.artifacts["needs.json"].parent)
+
+@pytest.mark.bazel_cached
+def test_needs_build_exports_the_external_bundle_needs(needs_dir: Path):
+    """The sandboxed :needs_json walks the external bundle instead of silently
+    omitting it. The host has no Needs of its own, so every exported Need
+    comes from the process bundle, below its mount point."""
+    needs = cast("dict[str, dict[str, object]]", load_needs(needs_dir / "needs.json"))
+
+    assert needs, "no Needs from @score_process_description were exported"
+    assert {
+        need_id
+        for need_id, need in needs.items()
+        if not cast("str", need["docname"]).startswith(f"{MOUNT}/")
+    } == set()
+
+
+@pytest.mark.bazel_cached
+def test_needs_build_reports_no_compatibility_findings(needs_dir: Path):
+    assert_no_compatibility_findings(needs_dir)

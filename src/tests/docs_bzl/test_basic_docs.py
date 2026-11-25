@@ -19,6 +19,7 @@ import pytest
 
 from src.tests.docs_bzl.helpers import (
     assert_no_compatibility_findings,
+    load_needs,
     load_needs_json,
     run_scenario,
 )
@@ -47,6 +48,13 @@ def test_project_attributes_replace_a_missing_conf_py(needs_dir: Path):
     assert data["project_url"] == "https://github.com/eclipse-score/docs-as-code"
     # External consumers cannot use a needs.json with an empty current_version.
     assert data["current_version"], "current_version must be non-empty"
+
+
+@pytest.mark.bazel_cached
+def test_consumer_without_needs_exports_no_needs(needs_dir: Path):
+    """The scenario defines no Needs, so nothing (defaults, imported or
+    docs-as-code Needs) may leak into its export."""
+    assert load_needs(needs_dir / "needs.json") == {}
 
 
 @pytest.mark.bazel_cached

@@ -33,6 +33,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from src.tests.docs_bzl.helpers import (
+    GITHUB_ENV,
+    GITHUB_REPOSITORY,
     TEST_ROOT,
     TEST_ROOT_BAZEL,
     built_output,
@@ -41,14 +43,7 @@ from src.tests.docs_bzl.helpers import (
     staged_coverage_report,
 )
 
-# GitHub Actions exposes this variable to the documentation build. Supplying
-# the same repository identity locally makes generated GitHub links and the
-# Sphinx theme configuration match the HTML produced in CI.
-EXPECTED_GITHUB_REPOSITORY = "eclipse-score/docs-as-code"
-EXPECTED_GITHUB_ENV = {"GITHUB_REPOSITORY": EXPECTED_GITHUB_REPOSITORY}
-EXPECTED_GITHUB_ACTION_ENV = (
-    f"--action_env=GITHUB_REPOSITORY={EXPECTED_GITHUB_REPOSITORY}"
-)
+EXPECTED_GITHUB_ACTION_ENV = f"--action_env=GITHUB_REPOSITORY={GITHUB_REPOSITORY}"
 
 
 @dataclass(frozen=True)
@@ -342,7 +337,7 @@ def _run_expected_target(scenario: str, expected: ExpectedOutput) -> None:
     if expected.target.command == "build":
         run_bazel(
             ["build", EXPECTED_GITHUB_ACTION_ENV, full_label],
-            env=EXPECTED_GITHUB_ENV,
+            env=GITHUB_ENV,
         )
     elif expected.target.command == "run":
         # A checked-in coverage.info supplies deterministic measurements for
@@ -357,7 +352,7 @@ def _run_expected_target(scenario: str, expected: ExpectedOutput) -> None:
                 "run",
                 f"scenarios/{scenario}",
                 expected.target.label,
-                env=EXPECTED_GITHUB_ENV,
+                env=GITHUB_ENV,
             )
     else:
         raise ValueError(f"unknown expected target command: {expected.target.command}")

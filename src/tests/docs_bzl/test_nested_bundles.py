@@ -19,9 +19,12 @@ from typing import cast
 import pytest
 
 from src.tests.docs_bzl.helpers import (
+    GITHUB_EDIT_URL,
+    GITHUB_ENV,
     TEST_ROOT,
     assert_no_compatibility_findings,
     built_output,
+    edit_link,
     load_needs,
     repo_root,
     run_scenario,
@@ -47,7 +50,8 @@ def _manifest_mounts(target: str) -> list[dict[str, object]]:
 
 @pytest.fixture(scope="module")
 def build_dir() -> Path:
-    return run_scenario("run", SCENARIO, ":docs").build_dir
+    # GITHUB_ENV makes the "Edit on GitHub" links render, as they do in CI.
+    return run_scenario("run", SCENARIO, ":docs", env=GITHUB_ENV).build_dir
 
 
 @pytest.fixture(scope="module")
@@ -79,6 +83,16 @@ def test_child_is_mounted_below_the_parent_at_its_entry_doc(build_dir: Path):
         "child/landing.html"
     ]
     assert toctree_links(build_dir / CHILD_MOUNT / "landing.html") == ["index.html"]
+
+
+@pytest.mark.bazel_slow
+def test_nested_page_edit_link_points_to_its_real_source(build_dir: Path):
+    """The edit link uses the child's file in the repository, not the path
+    the page gets from the two nested mounts."""
+    link = edit_link(build_dir / CHILD_MOUNT / "landing.html")
+
+    assert link is not None, "nested page has no edit link"
+    assert link == f"{GITHUB_EDIT_URL}/{SCENARIO_PATH}/child/landing.rst"
 
 
 @pytest.mark.bazel_slow
@@ -141,6 +155,23 @@ def test_bundle_data_stays_with_the_mount_that_declares_it():
         PARENT_MOUNT: [f"{SCENARIO_PATH}/generated/generated_output.txt"],
         CHILD_MOUNT: [],
     }
+
+
+@pytest.mark.bazel_cached
+def test_mounts_manifest_places_each_mount_in_order():
+    """Root, parent and child are listed in that order. The parent attaches to
+    the second toctree of concepts/index, the child to the parent's mounted
+    index, entering at its "landing" page."""
+    mounts = _manifest_mounts("_mounts_manifest")
+
+    assert [
+        (m["mount_at"], m["attach_to"], m["entry_doc"], m["toctree_index"])
+        for m in mounts
+    ] == [
+        ("", "", "index", 0),
+        (PARENT_MOUNT, "concepts/index", "index", 1),
+        (CHILD_MOUNT, f"{PARENT_MOUNT}/index", "landing", 0),
+    ]
 
 
 @pytest.mark.bazel_cached
