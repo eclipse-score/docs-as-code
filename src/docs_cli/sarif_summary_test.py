@@ -224,9 +224,9 @@ def test_rules_lint_reports(tmp_path: Path) -> None:
     }
 
 
-def _lists(tmp_path: Path, *paths: str) -> Path:
+def _lists(tmp_path: Path, *paths: str, repository: str = "_main") -> Path:
     lists = tmp_path / "lists.json"
-    files = [{"repository": "_main", "path": path} for path in paths]
+    files = [{"repository": repository, "path": path} for path in paths]
     lists.write_text(
         json.dumps(
             {
@@ -324,3 +324,63 @@ def test_duplicate_stays_open_if_any_copy_is_open(tmp_path: Path) -> None:
     (summary,) = data["static_analysis_summaries"]
     assert sum(summary["findings"].values()) == 0
     assert summary["suppressed"] == 1
+
+
+def test_repository_directories_hold_bazel_paths_of_that_repository(
+    tmp_path: Path,
+) -> None:
+    lists = _lists(
+        tmp_path, "score/a.cc", "score/b.h", "score/lib/c.h", repository="score_mod+"
+    )
+    reports = tmp_path / "static-analysis-report"
+    lint = reports / "score_mod+" / "lint" / "score"
+    lint.mkdir(parents=True)
+
+    def run(tool: str, *uris: str, **extra: Any) -> dict[str, Any]:
+        results: list[dict[str, Any]] = [
+            {
+                "ruleId": "r",
+                "locations": [
+                    {
+                        "physicalLocation": {
+                            "artifactLocation": {"uri": uri, **extra},
+                            "region": {"startLine": line},
+                        }
+                    }
+                ],
+            }
+            for line, uri in enumerate(uris, 1)
+        ]
+        return {"tool": {"driver": {"name": tool}}, "results": results}
+
+    per_target = run(
+        "ClangTidy",
+        "/ob/sandbox/linux-sandbox/7/execroot/_main/score/a.cc",
+        "./score/b.h",
+        "bazel-out/k8-fastbuild/bin/score/lib/_virtual_includes/lib/score/mw/lib/c.h",
+        "../score_dep+/score/x.h",
+        "external/toolchains_llvm++llvm+llvm/include/vector",
+    )
+    (lint / "a.AspectRulesLintClangTidy.report").write_text(
+        json.dumps({"runs": [per_target]})
+    )
+    (lint / "b.AspectRulesLintClangTidy.report").write_text("")
+    (lint / "c.AspectRulesLintRuff.report").write_text("score/x.py:1:1: F401 unused\n")
+    codeql = run("CodeQL", "score/a.cc", uriBaseId="%SRCROOT%")
+    codeql["originalUriBaseIds"] = {
+        "%SRCROOT%": {"uri": "file:///home/runner/work/_module_codeql/score_mod/"}
+    }
+    (reports / "score_mod+" / "codeql.sarif").write_text(json.dumps({"runs": [codeql]}))
+
+    output = generate_summary(
+        lists, reports, tmp_path / "summary.json", source_root=Path("/work")
+    )
+
+    data = json.loads(output.read_text())
+    assert data["unassigned"] == 0
+    assert data["tools"] == [
+        {"name": "ClangTidy", "version": None, "results": 3},
+        {"name": "CodeQL", "version": None, "results": 1},
+    ]
+    (summary,) = data["static_analysis_summaries"]
+    assert summary["files"] == {"total": 3, "with_findings": 3}

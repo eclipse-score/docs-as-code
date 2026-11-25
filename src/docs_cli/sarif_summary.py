@@ -15,6 +15,12 @@
 Findings are assigned to components through the same code-file lists that the
 LCOV summary uses, and classified into the categories required by
 ``gd_req__verification_sca_classification`` (critical, high, medium, low).
+
+SARIF files directly in the report directory describe the workspace. Files in a
+subdirectory named after a repository (e.g. ``score_baselibs+``) describe that
+repository analysed as its own Bazel workspace: their paths are relative to it,
+findings outside it are ignored, and any file there is read (e.g. the per-target
+reports of rules_lint), so tools need not merge their output first.
 """
 
 import json
@@ -22,7 +28,7 @@ import re
 from collections import Counter
 from collections.abc import Iterator
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from urllib.parse import unquote, urljoin, urlparse
 
 from src.docs_cli.lcov_summary import (
@@ -35,6 +41,9 @@ from src.docs_cli.lcov_summary import (
 
 CLASSES = ("critical", "high", "medium", "low")
 TOP_RULES = 10
+# A Bazel action's sandbox path, e.g. linters report /.../sandbox/7/execroot/_main/score/a.cc.
+_EXECROOT = re.compile(r"^/.*?/execroot/[^/]+/")
+_BAZEL_BIN = re.compile(r"^bazel-out/[^/]+/bin/")
 
 _LEVELS = {"error": "high", "warning": "medium", "note": "low", "none": "low"}
 _MISRA_OBLIGATIONS = {"mandatory": "high", "required": "medium", "advisory": "low"}
@@ -197,22 +206,45 @@ def _location(
         artifact.get("uriBaseId"),
         run.get("originalUriBaseIds", {}),
     )
+    path = _source_path(uri, source_root) if uri else ""
+    raw = unquote(str(artifact.get("uri", "")))
+    if Path(path).is_absolute() and raw and not raw.startswith(("file:", "/")):
+        # The base points to another machine, e.g. the workspace of the job that wrote the SARIF.
+        path = raw
     region: dict[str, Any] = physical.get("region", {})
-    return (
-        _source_path(uri, source_root) if uri else "",
-        region.get("startLine"),
-        region.get("startColumn"),
-    )
+    return path, region.get("startLine"), region.get("startColumn")
 
 
-def _file(path: str) -> FileIdentity | None:
-    """Return the repository-relative file of a location path, if any."""
+def _virtual_include_source(path: str, known: set[FileIdentity]) -> str:
+    """The known source file of a ``<package>/_virtual_includes/<library>/<include>`` copy."""
+    package, virtual, include = path.partition("/_virtual_includes/")
+    parts = include.split("/")[1:]  # the first part is the library name
+    for start in range(len(parts) if virtual else 0):
+        candidate = "/".join([package, *parts[start:]])
+        try:
+            if file_identity(candidate) in known:
+                return candidate
+        except CoverageError:
+            continue
+    return path
+
+
+def _file(
+    path: str, repository: str | None, known: set[FileIdentity]
+) -> tuple[FileIdentity | None, bool]:
+    """The file of a location path and whether it lies outside the analysed repository."""
     if not path:
-        return None
+        return None, False
+    path = _BAZEL_BIN.sub("", _EXECROOT.sub("", path).removeprefix("./"))
+    if repository not in (None, "_main") and not path.startswith(
+        ("external/", "../", "/")
+    ):
+        path = f"external/{repository}/{path}"
     try:
-        return file_identity(path)
+        file = file_identity(_virtual_include_source(path, known))
     except CoverageError:
-        return None
+        return None, False
+    return file, repository is not None and file.repository != repository
 
 
 def _suppressed(result: dict[str, Any]) -> bool:
@@ -223,16 +255,29 @@ def _suppressed(result: dict[str, Any]) -> bool:
     )
 
 
+def _load(report: Path) -> dict[str, Any] | None:
+    """The SARIF document of a report, or None for an empty or non-SARIF file."""
+    text = report.read_text(encoding="utf-8", errors="replace").strip()
+    try:
+        document: object = json.loads(text) if text else None
+    except json.JSONDecodeError:
+        return None
+    return cast(dict[str, Any], document) if isinstance(document, dict) else None
+
+
 def _unique_results(
-    reports: list[Path],
+    reports: list[tuple[Path, str | None]],
     tools: Counter[tuple[str, str | None]],
+    known: set[FileIdentity],
     source_root: Path | None = None,
-) -> Iterator[tuple[str, dict[str, Any], dict[str, Any], str, str, bool]]:
-    """Yield (tool, result, rule, rule id, path, suppressed) once per distinct finding."""
+) -> Iterator[
+    tuple[str, dict[str, Any], dict[str, Any], str, FileIdentity | None, bool]
+]:
+    """Yield (tool, result, rule, rule id, file, suppressed) once per distinct finding."""
     findings: dict[tuple[object, ...], list[Any]] = {}
-    for report in reports:
-        sarif = json.loads(report.read_text(encoding="utf-8"))
-        for run in sarif.get("runs", []):
+    for report, repository in reports:
+        sarif = _load(report)
+        for run in (sarif or {}).get("runs", []):
             driver = run.get("tool", {}).get("driver", {})
             tool_name = str(driver.get("name", "unknown"))
             tool = (tool_name, driver.get("semanticVersion") or driver.get("version"))
@@ -241,11 +286,14 @@ def _unique_results(
                 # Successful or inapplicable checks are not findings.
                 if result.get("kind", "fail") in ("pass", "notApplicable"):
                     continue
+                path, line, column = _location(run, result, source_root)
+                file, outside = _file(path, repository, known)
+                if outside:
+                    continue
                 rule = _rule(run, result)
                 rule_id = _rule_id(result, rule, tool_name)
-                path, line, column = _location(run, result, source_root)
                 message = result.get("message", {}).get("text")
-                key = (tool_name, rule_id, path, line, column, message)
+                key = (tool_name, rule_id, file or path, line, column, message)
                 # Linters run per target, e.g. report a header once per including target;
                 # such a finding stays open if any of its copies is open.
                 if key in findings:
@@ -257,15 +305,17 @@ def _unique_results(
                     result,
                     rule,
                     rule_id,
-                    path,
+                    file,
                     _suppressed(result),
                 ]
-    for tool_name, result, rule, rule_id, path, suppressed in findings.values():
-        yield tool_name, result, rule, rule_id, path, suppressed
+    for tool_name, result, rule, rule_id, file, suppressed in findings.values():
+        yield tool_name, result, rule, rule_id, file, suppressed
 
 
 def summarize(
-    code_file_lists_path: Path, reports: list[Path], source_root: Path | None = None
+    code_file_lists_path: Path,
+    reports: list[tuple[Path, str | None]],
+    source_root: Path | None = None,
 ) -> dict[str, Any]:
     code_file_lists = load_code_file_lists(code_file_lists_path)
     owners: dict[FileIdentity, list[str]] = {}
@@ -284,10 +334,9 @@ def summarize(
     tools = Counter[tuple[str, str | None]]()
     unassigned = 0
 
-    for tool_name, result, rule, rule_id, path, is_suppressed in _unique_results(
-        reports, tools, source_root
+    for tool_name, result, rule, rule_id, file, is_suppressed in _unique_results(
+        reports, tools, set(owners), source_root
     ):
-        file = _file(path)
         if file is None or not owners.get(file):
             unassigned += 1
             continue
@@ -332,18 +381,33 @@ def summarize(
     }
 
 
+def _reports(report_dir: Path) -> list[tuple[Path, str | None]]:
+    """Workspace ``*.sarif`` files and every file of the repository subdirectories."""
+    if not report_dir.is_dir():
+        return []
+    reports: list[tuple[Path, str | None]] = []
+    for path in sorted(report_dir.rglob("*")):
+        parts = path.relative_to(report_dir).parts
+        if not path.is_file():
+            continue
+        if len(parts) > 1:
+            reports.append((path, parts[0]))
+        elif path.suffix == ".sarif":
+            reports.append((path, None))
+    return reports
+
+
 def generate_summary(
     code_file_lists: Path,
     report_dir: Path,
     output: Path,
     source_root: Path | None = None,
 ) -> Path:
-    """Write the summary for all ``*.sarif`` files below ``report_dir``.
+    """Write the summary for the SARIF reports in ``report_dir`` (see module docstring).
 
     Absolute file locations below ``source_root`` count as workspace-relative.
     """
-    reports = sorted(report_dir.glob("*.sarif")) if report_dir.is_dir() else []
-    summary = summarize(code_file_lists, reports, source_root)
+    summary = summarize(code_file_lists, _reports(report_dir), source_root)
     content = (json.dumps(summary, sort_keys=True, indent=2) + "\n").encode()
     write_summary(output, content)
     return output
