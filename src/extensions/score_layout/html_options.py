@@ -53,6 +53,11 @@ def return_html_theme_options(app: Sphinx) -> dict[str, Any]:
             ),  # URL to JSON file, hardcoded for now
             "version_match": app.config.release,
         }
+        # The browser loads versions.json when a reader opens the page. The
+        # theme's build-time check only downloads the currently deployed file,
+        # without a timeout, and reports problems as info logs that never fail
+        # the build. A stalled connection then blocks the build for ~2 minutes.
+        theme_options["check_switcher"] = False
         theme_options["navbar_end"] = [
             "theme-switcher",
             "navbar-icon-links",
