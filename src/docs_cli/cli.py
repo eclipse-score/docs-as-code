@@ -341,6 +341,7 @@ def _static_analysis_summary_for_run(config: DocsCliConfig) -> Path | None:
         code_file_lists,
         config.ws_root / "static-analysis-report",
         config.output_dir / "static_analysis_summary.json",
+        source_root=config.ws_root,
     )
 
 
