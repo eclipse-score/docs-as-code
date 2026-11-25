@@ -12,6 +12,7 @@
 # *******************************************************************************
 import json
 from pathlib import Path
+from typing import Any
 
 from src.docs_cli.sarif_summary import generate_summary
 
@@ -221,3 +222,105 @@ def test_rules_lint_reports(tmp_path: Path) -> None:
         ("F401", "medium"),
         ("E501", "low"),
     }
+
+
+def _lists(tmp_path: Path, *paths: str) -> Path:
+    lists = tmp_path / "lists.json"
+    files = [{"repository": "_main", "path": path} for path in paths]
+    lists.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "code_file_lists": [{"primary_need_id": "comp__a", "files": files}],
+            }
+        )
+    )
+    return lists
+
+
+def test_uri_base_ids_and_absolute_paths_resolve_to_the_workspace(
+    tmp_path: Path,
+) -> None:
+    lists = _lists(tmp_path, "src/a.cc", "src/b.cc")
+    reports = tmp_path / "static-analysis-report"
+    reports.mkdir()
+
+    def result(line: int, **location: str) -> dict[str, object]:
+        physical: dict[str, Any] = {
+            "artifactLocation": location,
+            "region": {"startLine": line},
+        }
+        return {"ruleId": "r", "locations": [{"physicalLocation": physical}]}
+
+    run: dict[str, Any] = {
+        "tool": {"driver": {"name": "CodeQL"}},
+        "originalUriBaseIds": {
+            "%SRCROOT%": {"uri": "file:///work/project/"},
+            "SRC": {"uri": "src/", "uriBaseId": "%SRCROOT%"},
+        },
+        "results": [
+            result(1, uri="a.cc", uriBaseId="SRC"),
+            result(2, uri="src/b.cc", uriBaseId="%SRCROOT%"),
+            result(3, uri="file:///work/project/src/a.cc"),
+            result(4, uri="file:///elsewhere/src/a.cc"),
+            result(5, uri="src/b.cc", uriBaseId="UNKNOWN"),
+        ],
+    }
+    (reports / "codeql.sarif").write_text(json.dumps({"runs": [run]}))
+
+    output = generate_summary(
+        lists, reports, tmp_path / "summary.json", source_root=Path("/work/project")
+    )
+
+    data = json.loads(output.read_text())
+    assert data["unassigned"] == 1
+    (summary,) = data["static_analysis_summaries"]
+    assert summary["files"] == {"total": 2, "with_findings": 2}
+    assert sum(summary["findings"].values()) == 4
+
+
+def test_duplicate_stays_open_if_any_copy_is_open(tmp_path: Path) -> None:
+    lists = _lists(tmp_path, "src/a.h")
+    location = {"physicalLocation": {"artifactLocation": {"uri": "src/a.h"}}}
+    open_copy: dict[str, Any] = {"ruleId": "r", "locations": [location]}
+    suppressed_copy: dict[str, Any] = {
+        **open_copy,
+        "suppressions": [{"status": "accepted"}],
+    }
+
+    orders: list[list[dict[str, Any]]] = [
+        [suppressed_copy, open_copy],
+        [open_copy, suppressed_copy],
+    ]
+    for order in orders:
+        reports = tmp_path / f"reports_{len(list(tmp_path.iterdir()))}"
+        reports.mkdir()
+        runs: list[dict[str, Any]] = [
+            {"tool": {"driver": {"name": "ClangTidy"}}, "results": [r]} for r in order
+        ]
+        (reports / "lint.sarif").write_text(json.dumps({"runs": runs}))
+
+        data = json.loads(
+            generate_summary(lists, reports, tmp_path / "summary.json").read_text()
+        )
+        (summary,) = data["static_analysis_summaries"]
+        assert sum(summary["findings"].values()) == 1
+        assert summary["suppressed"] == 0
+
+    both_suppressed: dict[str, Any] = {
+        "runs": [
+            {
+                "tool": {"driver": {"name": "ClangTidy"}},
+                "results": [suppressed_copy, suppressed_copy],
+            }
+        ]
+    }
+    reports = tmp_path / "reports_suppressed"
+    reports.mkdir()
+    (reports / "lint.sarif").write_text(json.dumps(both_suppressed))
+    data = json.loads(
+        generate_summary(lists, reports, tmp_path / "summary.json").read_text()
+    )
+    (summary,) = data["static_analysis_summaries"]
+    assert sum(summary["findings"].values()) == 0
+    assert summary["suppressed"] == 1
