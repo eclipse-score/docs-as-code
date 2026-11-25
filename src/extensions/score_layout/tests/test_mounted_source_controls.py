@@ -18,12 +18,19 @@ from typing import Any, cast
 
 import pytest
 from html_options import return_html_theme_options
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.application import Sphinx
 
 from src.extensions.score_layout import configure_mounted_source_controls
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_default_logo_assets_are_available() -> None:
+    """The default logo assets shipped with the docs theme are reachable."""
     app = cast(
         Sphinx,
         SimpleNamespace(config=SimpleNamespace(html_context={"github_user": "dummy"})),
@@ -57,6 +64,11 @@ def _context() -> dict[str, Any]:
     }
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_local_page_keeps_all_source_controls() -> None:
     """A page with a relative source path is not a mounted page."""
     context = _context()
@@ -68,6 +80,11 @@ def test_local_page_keeps_all_source_controls() -> None:
     assert context == _context()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_mounted_page_keeps_page_toc(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
