@@ -48,16 +48,46 @@ CONSUMER_NEEDS = [
 ]
 
 
-def _needs_export(package: str) -> tuple[dict[str, object], dict[str, str]]:
-    """Build a package's needs_json and return its metadata and Need docnames."""
+# One linked chain per layer (consumer, producer root, embedded):
+# (gd_req, workflow, workproduct, role). The gd_req satisfies the workflow;
+# the workflow uses the workproduct as input/output and the role as
+# approver/responsible. Sphinx-Needs adds the matching *_back links.
+LINKED_NEEDS = [
+    (
+        "gd_req__consumer",
+        "wf__test_workflow",
+        "wp__test_workproduct",
+        "rl__test_workflow",
+    ),
+    (
+        "gd_req__producer_root",
+        "wf__test_producer_root",
+        "wp__test_producer_root",
+        "rl__test_producer_root",
+    ),
+    ("gd_req__embedded", "wf__test_embedded", "wp__test_embedded", "rl__test_embedded"),
+]
+LINK_FIELDS = {
+    "gd_req": ["satisfies"],
+    "workflow": ["approved_by", "input", "output", "responsible", "satisfies_back"],
+    "workproduct": ["input_back", "output_back"],
+    "role": ["approved_by_back", "responsible_back"],
+}
+
+
+def _needs_export(
+    package: str,
+) -> tuple[dict[str, object], dict[str, dict[str, object]]]:
+    """Build a package's needs_json and return its metadata and Needs."""
     result = run_package("build", package, ":needs_json")
     assert result.artifacts is not None
     needs_json = result.artifacts["needs.json"]
-    docnames = {
-        need_id: cast("dict[str, str]", need)["docname"]
-        for need_id, need in load_needs(needs_json).items()
-    }
-    return load_needs_json(needs_json), docnames
+    needs = cast("dict[str, dict[str, object]]", load_needs(needs_json))
+    return load_needs_json(needs_json), needs
+
+
+def _docnames(needs: dict[str, dict[str, object]]) -> dict[str, object]:
+    return {need_id: need["docname"] for need_id, need in needs.items()}
 
 
 @pytest.mark.bazel_cached
@@ -112,10 +142,10 @@ def test_parent_needs_export_does_not_depend_on_mounted_child_bundle():
 @pytest.mark.bazel_cached
 def test_producer_exports_its_own_and_embedded_needs():
     """Needs of the embedded bundle are exported below its mount point."""
-    data, docnames = _needs_export("scenarios/subdirectory_bundle/producer")
+    data, needs = _needs_export("scenarios/subdirectory_bundle/producer")
 
     assert data["project"] == "Subdirectory Bundle Producer"
-    assert docnames == {
+    assert _docnames(needs) == {
         **dict.fromkeys(PRODUCER_ROOT_NEEDS, "index"),
         **dict.fromkeys(EMBEDDED_NEEDS, "embedded/index"),
     }
@@ -125,14 +155,46 @@ def test_producer_exports_its_own_and_embedded_needs():
 def test_consumer_exports_the_mounted_producer_needs_below_its_mount():
     """Mounting the producer moves all its Needs, embedded ones included,
     below "producer/" in the consumer's export, each exactly once."""
-    data, docnames = _needs_export("scenarios/subdirectory_bundle/consumer")
+    data, needs = _needs_export("scenarios/subdirectory_bundle/consumer")
 
     assert data["project"] == "Subdirectory Bundle Consumer"
-    assert docnames == {
+    assert _docnames(needs) == {
         **dict.fromkeys(CONSUMER_NEEDS, "index"),
         **dict.fromkeys(PRODUCER_ROOT_NEEDS, "producer/index"),
         **dict.fromkeys(EMBEDDED_NEEDS, "producer/embedded/index"),
     }
+
+
+@pytest.mark.bazel_cached
+def test_consumer_resolves_links_of_mounted_needs_as_local_needs():
+    """After both mounts, every layer's links and back links still resolve,
+    and the mounted Needs are local Needs, not imported external ones."""
+    _, needs = _needs_export("scenarios/subdirectory_bundle/consumer")
+
+    expected: dict[str, dict[str, list[str]]] = {}
+    for gd_req, workflow, workproduct, role in LINKED_NEEDS:
+        expected[gd_req] = {"satisfies": [workflow]}
+        expected[workflow] = {
+            "approved_by": [role],
+            "input": [workproduct],
+            "output": [workproduct],
+            "responsible": [role],
+            "satisfies_back": [gd_req],
+        }
+        expected[workproduct] = dict.fromkeys(LINK_FIELDS["workproduct"], [workflow])
+        expected[role] = dict.fromkeys(LINK_FIELDS["role"], [workflow])
+
+    assert {
+        need_id: {
+            field: need[field] for field in LINK_FIELDS[cast("str", need["type"])]
+        }
+        for need_id, need in needs.items()
+    } == expected
+    assert [
+        need_id
+        for need_id, need in needs.items()
+        if need.get("is_external") or need.get("external_url")
+    ] == []
 
 
 @pytest.mark.bazel_slow

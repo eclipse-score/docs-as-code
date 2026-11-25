@@ -18,9 +18,13 @@ from pathlib import Path
 import pytest
 
 from src.tests.docs_bzl.helpers import (
+    GITHUB_ENV,
+    TEST_ROOT,
     built_output,
+    edit_link,
     load_needs,
     load_needs_json,
+    repo_root,
     run_bazel,
     run_scenario,
     toctree_links,
@@ -28,6 +32,7 @@ from src.tests.docs_bzl.helpers import (
 
 SCENARIO = "data_files_runfiles"
 PACKAGE = f"scenarios/{SCENARIO}"
+SCENARIO_PATH = (TEST_ROOT / PACKAGE).relative_to(repo_root()).as_posix()
 
 
 def _title(page: Path) -> str:
@@ -39,7 +44,8 @@ def _title(page: Path) -> str:
 
 @pytest.fixture(scope="module")
 def build_dir() -> Path:
-    return run_scenario("run", SCENARIO, ":docs").build_dir
+    # GITHUB_ENV makes the "Edit on GitHub" links render, as they do in CI.
+    return run_scenario("run", SCENARIO, ":docs", env=GITHUB_ENV).build_dir
 
 
 @pytest.mark.bazel_slow
@@ -78,6 +84,21 @@ def test_explicit_source_bundle_renders_only_declared_pages(build_dir: Path):
 
     assert _title(isolated / "index.html") == "Isolated Declared Page"
     assert not (isolated / "undeclared.html").exists()
+
+
+@pytest.mark.bazel_slow
+def test_mounted_page_edit_link_points_to_its_real_source(build_dir: Path):
+    """The edit link uses the file in the repository, not the mount path."""
+    link = edit_link(build_dir / "isolated_test" / "index.html")
+
+    assert link is not None, "mounted page has no edit link"
+    assert link.endswith(f"/{SCENARIO_PATH}/isolated/index.rst"), link
+
+
+@pytest.mark.bazel_slow
+def test_generated_page_has_no_edit_link(build_dir: Path):
+    """A page generated below bazel-out has no file in the repository to edit."""
+    assert edit_link(build_dir / "data_test" / "index.html") is None
 
 
 @pytest.mark.bazel_cached
