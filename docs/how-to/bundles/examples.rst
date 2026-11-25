@@ -103,7 +103,6 @@ like this:
 
    docs(
        source_dir = "host_docs",
-       test_sources = ["src/tests/docs_bzl/scenarios/external_bundle"],
        bundles = [{
            "bundle": "@score_process_description//:docs_bundle",
            "mount_at": "process",
@@ -111,7 +110,7 @@ like this:
    )
 
 See the `complete external-bundle fixture on GitHub
-<https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/external_bundle>`_.
+<https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/consumer/external_bundle>`_.
 
 The external bundle's entry page is rendered at ``process/index.html`` and is
 added to the consuming project's index by ``attach_to``. Mounted sources also

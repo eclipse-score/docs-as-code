@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs")
+load("@score_docs_as_code//:docs.bzl", "docs")
 
 # This fixture exercises the public Bzlmod contract. In particular, the
 # sandboxed :needs_json target must be able to walk an external bundle rather
@@ -23,6 +23,5 @@ docs(
         "mount_at": "process",
     }],
     source_dir = "host_docs",
-    test_sources = ["src/tests/docs_bzl/scenarios/external_bundle"],
 )
 # END docs-bundle-howto: external-bundle

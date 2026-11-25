@@ -35,6 +35,8 @@ python.toolchain(
     python_version = ADDITIONAL_PYTHON_VERSION,
 )
 
+# Mounted by the external_bundle scenario. Same version as docs-as-code uses.
+bazel_dep(name = "score_process_description", version = "2.2.5")
 bazel_dep(name = "score_docs_as_code", version = "0.0.0")
 local_path_override(
     module_name = "score_docs_as_code",
