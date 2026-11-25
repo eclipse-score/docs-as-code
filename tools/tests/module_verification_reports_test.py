@@ -541,7 +541,6 @@ needs_extra_links:
 
 .. mod:: Lifecycle Module
    :id: mod__lifecycle
-   :maturity: preview
    :security: YES
    :safety: ASIL_B
    :status: valid
