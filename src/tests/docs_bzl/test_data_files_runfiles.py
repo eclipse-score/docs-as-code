@@ -18,6 +18,7 @@ from pathlib import Path
 import pytest
 
 from src.tests.docs_bzl.helpers import (
+    GITHUB_EDIT_URL,
     GITHUB_ENV,
     TEST_ROOT,
     built_output,
@@ -92,7 +93,7 @@ def test_mounted_page_edit_link_points_to_its_real_source(build_dir: Path):
     link = edit_link(build_dir / "isolated_test" / "index.html")
 
     assert link is not None, "mounted page has no edit link"
-    assert link.endswith(f"/{SCENARIO_PATH}/isolated/index.rst"), link
+    assert link == f"{GITHUB_EDIT_URL}/{SCENARIO_PATH}/isolated/index.rst"
 
 
 @pytest.mark.bazel_slow

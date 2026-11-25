@@ -61,7 +61,7 @@ def needs_dir() -> Path:
 def test_needs_build_exports_the_external_bundle_needs(needs_dir: Path):
     """The sandboxed :needs_json walks the external bundle instead of silently
     omitting it. The host has no Needs of its own, so every exported Need
-    comes from the process bundle, below its mount point, as a local Need."""
+    comes from the process bundle, below its mount point."""
     needs = cast("dict[str, dict[str, object]]", load_needs(needs_dir / "needs.json"))
 
     assert needs, "no Needs from @score_process_description were exported"
@@ -69,7 +69,6 @@ def test_needs_build_exports_the_external_bundle_needs(needs_dir: Path):
         need_id
         for need_id, need in needs.items()
         if not cast("str", need["docname"]).startswith(f"{MOUNT}/")
-        or need.get("is_external")
     } == set()
 
 

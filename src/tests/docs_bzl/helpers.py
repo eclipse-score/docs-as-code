@@ -36,6 +36,8 @@ TEST_ROOT_BAZEL = "//" + str(TEST_ROOT.relative_to(GIT_ROOT))
 # "Edit on GitHub") and the Sphinx theme configuration match CI.
 GITHUB_REPOSITORY = "eclipse-score/docs-as-code"
 GITHUB_ENV = {"GITHUB_REPOSITORY": GITHUB_REPOSITORY}
+# Edit links of a build run with ``GITHUB_ENV``; docs_cli pins the branch to main.
+GITHUB_EDIT_URL = f"https://github.com/{GITHUB_REPOSITORY}/edit/main"
 
 
 def repo_root() -> Path:

@@ -19,6 +19,7 @@ from typing import cast
 import pytest
 
 from src.tests.docs_bzl.helpers import (
+    GITHUB_EDIT_URL,
     GITHUB_ENV,
     TEST_ROOT,
     assert_no_compatibility_findings,
@@ -91,7 +92,7 @@ def test_nested_page_edit_link_points_to_its_real_source(build_dir: Path):
     link = edit_link(build_dir / CHILD_MOUNT / "landing.html")
 
     assert link is not None, "nested page has no edit link"
-    assert link.endswith(f"/{SCENARIO_PATH}/child/landing.rst"), link
+    assert link == f"{GITHUB_EDIT_URL}/{SCENARIO_PATH}/child/landing.rst"
 
 
 @pytest.mark.bazel_slow
