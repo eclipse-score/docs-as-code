@@ -45,6 +45,27 @@ def test_default_logo_assets_are_available() -> None:
     assert logo["alt_text"] == "Eclipse S-CORE documentation - Home"
 
 
+def test_version_switcher_is_not_fetched_at_build_time() -> None:
+    """The switcher is rendered, but the build never downloads versions.json."""
+    app = cast(
+        Sphinx,
+        SimpleNamespace(
+            config=SimpleNamespace(
+                html_context={"github_user": "eclipse-score", "github_repo": "repo"},
+                release="1.0.0",
+            )
+        ),
+    )
+
+    options = return_html_theme_options(app)
+
+    assert options["switcher"]["json_url"] == (
+        "https://eclipse-score.github.io/repo/versions.json"
+    )
+    assert "version-switcher" in options["navbar_end"]
+    assert options["check_switcher"] is False
+
+
 def _app(source_path: str) -> Sphinx:
     """Create the minimal Sphinx stub used by the page-context handler."""
     env = SimpleNamespace(doc2path=lambda _pagename, base: Path(source_path))
