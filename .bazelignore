@@ -7,3 +7,7 @@
 # here, including a self-referencing overlay of this repo, which Bazel's
 # package discovery cannot traverse.
 .cache
+
+# A separate Bazel module (the docs_bzl test consumer). It is built from its
+# own directory, never as packages of docs-as-code.
+src/tests/docs_bzl/consumer

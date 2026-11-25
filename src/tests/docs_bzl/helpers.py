@@ -21,6 +21,7 @@ import time
 from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass
+from functools import cache
 from pathlib import Path
 from typing import cast
 
@@ -30,6 +31,9 @@ TEST_ROOT = Path(__file__).parent
 GIT_ROOT = find_git_root()
 assert GIT_ROOT
 TEST_ROOT_BAZEL = "//" + str(TEST_ROOT.relative_to(GIT_ROOT))
+# A separate Bazel module that uses docs-as-code like a real consumer does.
+# Its packages are not part of docs-as-code; Bazel runs inside this directory.
+CONSUMER_ROOT = TEST_ROOT / "consumer"
 
 # GitHub Actions exposes this variable to the documentation build. Supplying
 # the same repository identity locally makes generated GitHub links (such as
@@ -69,15 +73,17 @@ def run_bazel(
     args: list[str],
     expect_error: bool = False,
     env: Mapping[str, str] | None = None,
+    cwd: Path | None = None,
 ):
-    """Run Bazel, optionally overriding the environment of the subprocess."""
+    """Run Bazel in ``cwd`` (default: the repo root), optionally overriding
+    the environment of the subprocess."""
     start_time = time.time()
     cmd = ["bazel", *args]
     cmd_str = " ".join(cmd)
 
     p = subprocess.run(
         cmd,
-        cwd=repo_root(),
+        cwd=cwd or repo_root(),
         capture_output=True,
         text=True,
         env=None if env is None else {**os.environ, **env},
@@ -100,6 +106,38 @@ def run_bazel(
         )
 
     return p
+
+
+@dataclass(frozen=True)
+class _BazelPackage:
+    """Where Bazel runs for a test package, its label and its output directory."""
+
+    cwd: Path
+    label: str
+    bin_dir: Path
+
+
+def _bazel_package(package: str) -> _BazelPackage:
+    """Locate a test package (a path relative to ``TEST_ROOT``)."""
+    package_dir = TEST_ROOT / package
+    if package_dir.is_relative_to(CONSUMER_ROOT):
+        relative = package_dir.relative_to(CONSUMER_ROOT)
+        return _BazelPackage(
+            CONSUMER_ROOT, f"//{relative.as_posix()}", _consumer_bazel_bin() / relative
+        )
+    root = repo_root()
+    return _BazelPackage(
+        root,
+        f"{TEST_ROOT_BAZEL}/{package}",
+        root / "bazel-bin" / TEST_ROOT.relative_to(root) / package,
+    )
+
+
+@cache
+def _consumer_bazel_bin() -> Path:
+    """The consumer module's bazel-bin. The module creates no bazel-* symlinks."""
+    p = run_bazel(["info", "bazel-bin"], cwd=CONSUMER_ROOT)
+    return Path(p.stdout.strip())
 
 
 @dataclass
@@ -128,7 +166,8 @@ def run_package(
     # Split logs by bazel commands visually without adding any fancy formatting dependency
     print("")
 
-    full_target = TEST_ROOT_BAZEL + "/" + package + target
+    location = _bazel_package(package)
+    full_target = location.label + target
 
     # aspect_rules_py creates the runtime venv inside the target's runfiles
     # tree. It cannot reliably replace an already-populated tree on a second
@@ -138,7 +177,9 @@ def run_package(
         runfiles_venv = built_output(package, f"{target[1:]}.runfiles/.docs.venv")
         shutil.rmtree(runfiles_venv, ignore_errors=True)
 
-    p1 = run_bazel([bazel_cmd, full_target], expect_error=expect_error, env=env)
+    p1 = run_bazel(
+        [bazel_cmd, full_target], expect_error=expect_error, env=env, cwd=location.cwd
+    )
 
     if bazel_cmd == "build" and target == ":needs_json":
         # Generic solution needs to use cquery.
@@ -146,19 +187,11 @@ def run_package(
         # but considering how slow bazel is anyway...
         RUN_CQUERY = False
         if RUN_CQUERY:
-            p2 = run_bazel(["cquery", "--output=files", full_target])
+            p2 = run_bazel(["cquery", "--output=files", full_target], cwd=location.cwd)
             artifacts_dir = Path(p2.stdout.strip().splitlines()[0])
         else:
-            assert GIT_ROOT
-            # e.g. bazel-out/k8-fastbuild/bin/src/tests/docs_bzl/scenarios/reference_integration/score_platform/needs_json/_build/needs
-            artifacts_dir = (
-                GIT_ROOT
-                / "bazel-out/k8-fastbuild/bin/"
-                / TEST_ROOT.relative_to(GIT_ROOT)
-                / package
-                / target[1:]
-                / "_build/needs"
-            )
+            # e.g. bazel-bin/src/tests/docs_bzl/scenarios/reference_integration/score_platform/needs_json/_build/needs
+            artifacts_dir = built_output(package, f"{target[1:]}/_build/needs")
 
         assert artifacts_dir.is_dir(), (
             f"expected output artifacts to be a directory, got {artifacts_dir}"
@@ -182,14 +215,15 @@ def run_scenario(
     expect_error: bool = False,
     env: Mapping[str, str] | None = None,
 ) -> RunResult:
-    """Run one general docs() scenario."""
-    return run_package(bazel_cmd, f"scenarios/{scenario}", target, expect_error, env)
+    """Run one general docs() scenario, in the consumer module if it lives there."""
+    in_consumer = (CONSUMER_ROOT / scenario).is_dir()
+    package = f"consumer/{scenario}" if in_consumer else f"scenarios/{scenario}"
+    return run_package(bazel_cmd, package, target, expect_error, env)
 
 
 def built_output(package: str, filename: str) -> Path:
     """Return a declared output from a package built in the current configuration."""
-    root = repo_root()
-    return root / "bazel-bin" / TEST_ROOT.relative_to(root) / package / filename
+    return _bazel_package(package).bin_dir / filename
 
 
 def load_needs_json(needs_json: Path) -> dict[str, object]:

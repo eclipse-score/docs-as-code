@@ -1,0 +1,9 @@
+# Same registries and flags as docs-as-code itself.
+import %workspace%/../../../../.bazelrc
+
+# Keep bazel-* symlinks out of the source tree.
+common --symlink_prefix=/
+
+# Dependencies come from the docs-as-code checkout, so a lockfile would only
+# churn whenever docs-as-code changes its own dependencies.
+common --lockfile_mode=off
