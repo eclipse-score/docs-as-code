@@ -25,7 +25,7 @@
 
 import pytest
 
-from src.tests.docs_bzl.helpers import repo_root, run_scenario
+from src.tests.docs_bzl.helpers import TEST_ROOT, run_scenario, scenario_package
 
 
 @pytest.mark.bazel_slow
@@ -38,9 +38,7 @@ def test_invalid_bundle_placements_are_rejected_during_analysis():
 
 @pytest.mark.bazel_slow
 def test_source_dir_and_srcs_are_rejected_during_loading():
-    scenario_dir = (
-        repo_root() / "src/tests/docs_bzl/scenarios/invalid_source_combination"
-    )
+    scenario_dir = TEST_ROOT / scenario_package("invalid_source_combination")
     build_file = scenario_dir / "BUILD"
     fixture = scenario_dir / "BUILD.negative"
     # Keep this load-time failure fixture hidden from recursive Bazel targets.

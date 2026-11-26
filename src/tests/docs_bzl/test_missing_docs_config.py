@@ -10,12 +10,12 @@
 
 import pytest
 
-from src.tests.docs_bzl.helpers import repo_root, run_scenario
+from src.tests.docs_bzl.helpers import TEST_ROOT, run_scenario, scenario_package
 
 
 @pytest.mark.bazel_slow
 def test_missing_conf_and_macro_values_fails_analysis():
-    scenario_dir = repo_root() / "src/tests/docs_bzl/scenarios/missing_docs_config"
+    scenario_dir = TEST_ROOT / scenario_package("missing_docs_config")
     build_file = scenario_dir / "BUILD"
     fixture = scenario_dir / "BUILD.negative"
     assert not build_file.exists(), (

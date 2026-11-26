@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs_bundle")
+load("@score_docs_as_code//:docs.bzl", "docs_bundle")
 
 # This BUILD fixture intentionally fails while the docs_bundle() macro is
 # evaluated; the test copies it to BUILD only for the expected-error check.
