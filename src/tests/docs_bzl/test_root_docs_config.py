@@ -28,17 +28,16 @@ def test_child_bundle_uses_root_docs_config_without_a_child_conf_py():
     run_scenario("build", "root_docs_config", ":component.__internal__.needs_local")
 
     needs_json = built_output(
-        "scenarios/root_docs_config",
+        "consumer/root_docs_config",
         "component.__internal__.needs_local/needs.json",
     )
     needs = load_needs(needs_json)
     metadata = load_needs_json(needs_json)
 
-    assert "test_req__docs_as_code__temperature" in needs
+    assert "test_req__consumer__temperature" in needs
     assert metadata["project"] == "Root docs configuration fixture"
     assert metadata["project_url"] == (
-        "https://example.invalid/root-docs-config/"
-        "src/tests/docs_bzl/scenarios/root_docs_config"
+        "https://example.invalid/root-docs-config/root_docs_config"
     )
 
 

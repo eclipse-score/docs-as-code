@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs", "docs_bundle")
+load("@score_docs_as_code//:docs.bzl", "docs", "docs_bundle")
 
 # The root documentation target owns the structured configuration. Its legacy
 # conf.py deliberately contains a value that must not cross the root-docs
@@ -32,7 +32,7 @@ docs(
 # through the independent internal config target.
 docs_bundle(
     name = "component",
-    root_docs = "//src/tests/docs_bzl/scenarios/root_docs_config:docs",
+    root_docs = "//root_docs_config:docs",
     source_dir = "component",
 )
 
@@ -41,6 +41,6 @@ docs_bundle(
 # root-docs configuration interface.
 docs_bundle(
     name = "conf_sensitive_child",
-    root_docs = "//src/tests/docs_bzl/scenarios/root_docs_config:docs",
+    root_docs = "//root_docs_config:docs",
     source_dir = "conf_sensitive_child",
 )

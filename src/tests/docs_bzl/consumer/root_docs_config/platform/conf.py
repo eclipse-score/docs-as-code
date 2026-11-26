@@ -14,4 +14,4 @@
 project = "Legacy platform configuration"
 project_url = "https://example.invalid/legacy-platform"
 extensions = ["score_sphinx_bundle"]
-required_in_id = ["legacy_parent", "docs_as_code"]
+required_in_id = ["legacy_parent", "consumer"]

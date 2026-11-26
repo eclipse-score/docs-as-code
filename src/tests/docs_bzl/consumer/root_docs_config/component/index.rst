@@ -16,7 +16,7 @@ Component
 =========
 
 .. test_req:: Component requirement
-   :id: test_req__docs_as_code__temperature
+   :id: test_req__consumer__temperature
    :status: valid
 
 The component uses a Need type supplied by the root docs configuration's
