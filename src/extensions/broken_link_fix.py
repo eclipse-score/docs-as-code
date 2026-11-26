@@ -35,6 +35,23 @@ class _Status(StrEnum):
 
 IGNORED_HTTP_CODES: frozenset[int] = frozenset({401, 402, 403, 407, 418, 429, 451, 511})
 
+# When requests.raise_for_status()/HTTPError reports a failure, Sphinx sets
+# CheckResult.code to 0 and the HTTP status only appears in the message
+# (e.g. "403 Client Error: Forbidden for url: ..."). requests phrases 4xx
+# as "Client Error" and 5xx as "Server Error".
+_HTTP_ERROR_RE = re.compile(r"\b(4\d\d|5\d\d) (?:Client|Server) Error\b")
+
+
+def _ignored_http_error(result: CheckResult) -> bool:
+    """Return whether result reports an HTTP error that should be ignored."""
+    # For status="broken", Sphinx always reports CheckResult.code = 0.
+    # The HTTP status only appears in the message, so parse it from there
+    # and apply the curated ignore list.
+    match = _HTTP_ERROR_RE.search(str(result.message))
+    if match is None:
+        return False
+    return int(match.group(1)) in IGNORED_HTTP_CODES
+
 
 def process_result(self: CheckExternalLinksBuilder, result: CheckResult) -> None:
     """hook a custom process_result function.
@@ -49,7 +66,7 @@ def process_result(self: CheckExternalLinksBuilder, result: CheckResult) -> None
     match result.status:
         case _Status.BROKEN:
             # Ignore selected HTTP errors that can be caused by access restrictions or rate limits.
-            if result.code in IGNORED_HTTP_CODES:
+            if _ignored_http_error(result):
                 logger.info(darkgray("-ignored- ") + result.uri)
                 self.write_entry(
                     "ignored",
