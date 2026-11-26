@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs")
+load("@score_docs_as_code//:docs.bzl", "docs")
 
 # FIXME:
 # The custom metamodel is supplied via score_metamodel_yaml in docs/conf.py
