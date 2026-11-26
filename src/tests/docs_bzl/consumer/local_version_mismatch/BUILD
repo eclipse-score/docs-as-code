@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs")
+load("@score_docs_as_code//:docs.bzl", "docs")
 
 docs(
     source_dir = "docs",
