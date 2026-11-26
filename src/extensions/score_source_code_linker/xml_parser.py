@@ -316,6 +316,19 @@ def find_test_folder(base_path: Path | None = None) -> Path | None:
     return None
 
 
+_MAX_SUMMARY_ITEMS = 5
+
+
+def _format_test_summary(tests: list[str]) -> str:
+    """Render a deduped, sorted test list, capped for readability."""
+    unique = sorted(dict.fromkeys(tests))
+    shown = ", ".join(unique[:_MAX_SUMMARY_ITEMS])
+    remaining = len(unique) - _MAX_SUMMARY_ITEMS
+    if remaining > 0:
+        shown += f" [and {remaining} more]"
+    return shown
+
+
 def parse_test_xml_files(
     xml_paths: list[Path],
     known_good: dict[str, Any] | None,
@@ -331,6 +344,8 @@ def parse_test_xml_files(
     of those repo-relative directories are returned (see read_test_xml_file).
     """
     tcns: list[DataOfTestCase] = []
+    all_tests_missing_all_props: list[str] = []
+    all_tests_missing_some_props: list[str] = []
     for file in xml_paths:
         # Last value can be ignored. The 'is_valid' function already prints infos
         test_cases, tests_missing_all_props, tests_missing_some_props = (
@@ -338,11 +353,16 @@ def parse_test_xml_files(
                 file, known_good, allowed_dirs, local_module=local_module
             )
         )
-        non_prop_tests = ", ".join(n for n in tests_missing_all_props)
-        if non_prop_tests:
-            logger.info(f"Tests missing all properties: {non_prop_tests}")
-        missing_prop_tests = ", ".join(n for n in tests_missing_some_props)
-        if missing_prop_tests:
-            logger.info(f"Tests missing some properties: {missing_prop_tests}")
+        all_tests_missing_all_props.extend(tests_missing_all_props)
+        all_tests_missing_some_props.extend(tests_missing_some_props)
         tcns.extend(test_cases)
+
+    # Same test appears in many xml files (one per test target), so dedupe.
+    # Sort for a deterministic, diffable summary.
+    non_prop_tests = _format_test_summary(all_tests_missing_all_props)
+    if non_prop_tests:
+        logger.info(f"Tests missing all properties: {non_prop_tests}")
+    missing_prop_tests = _format_test_summary(all_tests_missing_some_props)
+    if missing_prop_tests:
+        logger.info(f"Tests missing some properties: {missing_prop_tests}")
     return tcns

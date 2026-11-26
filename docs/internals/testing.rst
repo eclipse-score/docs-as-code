@@ -84,15 +84,23 @@ or one of its checks.
 How to write such a test file is described in
 :doc:`extensions/rst_filebased_testing`.
 
-End-to-end docs.bzl tests (docs_bzl)
-------------------------------------
+End-to-end docs.bzl tests (end_to_end)
+--------------------------------------
 
 The end-to-end tests exercise the public ``docs()`` and ``docs_bundle()``
 macros through real Bazel builds and ``bazel run`` invocations,
 exactly like a consumer would use them.
-They live under ``src/tests/docs_bzl`` and cover composition,
+They live under ``src/tests/end_to_end`` and cover composition,
 invalid configurations, external Bzlmod bundles,
 and golden HTML/JSON output comparison.
+
+The scenarios are packages of a separate Bazel module,
+``src/tests/end_to_end/scenarios`` (``score_scenarios``).
+It uses docs-as-code through ``@score_docs_as_code``
+and its own module name, like a real project does,
+and is listed in ``.bazelignore``,
+so docs-as-code's own Bazel targets never see it.
+Add new scenarios to this module.
 
 They are not Bazel test targets,
 but plain pytest tests that issue Bazel underneath
@@ -100,7 +108,7 @@ because these tests also verify our Bazel/Starlark code.
 
 .. code-block:: bash
 
-   .venv_docs/bin/python -m pytest -vv src/tests/docs_bzl
+   .venv_docs/bin/python -m pytest -vv src/tests/end_to_end
 
 The suite must be run sequentially.
 CI splits it with custom markers:
@@ -110,7 +118,7 @@ CI splits it with custom markers:
 Use this layer for changes to the Bazel macros,
 the bundle composition,
 or the generated output format.
-It is the "docs-bzl scope" in the diagram above.
+It is the "end_to_end scope" in the diagram above.
 
 Downstream compatibility tests
 ------------------------------
@@ -151,7 +159,7 @@ The later tests are slower.
    * - Metamodel or its checks
      - File-based RST rule checks
    * - Bazel macros, bundles, or output format
-     - End-to-end docs_bzl tests
+     - End-to-end tests (``end_to_end``)
    * - Public API, layouts, or version requirements
      - Downstream compatibility tests
    * - Links or external references in the docs

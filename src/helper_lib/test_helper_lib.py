@@ -25,6 +25,7 @@ from src.helper_lib import (
     get_github_repo_info,
     get_runfiles_dir,
     parse_remote_git_output,
+    ws_root_in_git_root,
 )
 
 
@@ -331,3 +332,24 @@ def test_git_root_search_not_found(tmp_path: Path, monkeypatch: pytest.MonkeyPat
         get_runfiles_dir()
     assert "Could not find git root" in str(excinfo.value)
     os.environ.pop("RUNFILES_DIR", None)
+
+
+@pytest.mark.parametrize(
+    ("workspace", "expected"),
+    [("", "."), ("src/tests/consumer", "src/tests/consumer")],
+    ids=["workspace_is_git_root", "workspace_below_git_root"],
+)
+def test_ws_root_in_git_root(tmp_path: Path, workspace: str, expected: str):
+    """GitHub paths need the workspace's path inside the Git repository."""
+    (tmp_path / ".git").mkdir()
+    ws_root = tmp_path / workspace
+    ws_root.mkdir(parents=True, exist_ok=True)
+
+    assert ws_root_in_git_root(ws_root) == Path(expected)
+
+
+def test_ws_root_in_git_root_without_workspace(monkeypatch: pytest.MonkeyPatch):
+    """Outside of 'bazel run' the workspace is unknown, so there is no prefix."""
+    monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY", raising=False)
+
+    assert ws_root_in_git_root() == Path(".")

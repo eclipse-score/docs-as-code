@@ -438,3 +438,18 @@ def test_complete_workflow(known_good_json: Path):
         result
         == "https://github.com/eclipse-score/docs-as-code/blob/c1207676afe6cafd25c35d420e73279a799515d8/src/helper_lib/test_helper_lib.py#L75"
     )
+
+
+def test_get_github_link_prefixes_a_workspace_below_the_git_root(
+    git_repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Bazel paths are relative to the workspace, GitHub paths to the Git root."""
+    workspace = git_repo / "tests" / "consumer"
+    workspace.mkdir(parents=True)
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(workspace))
+    clear_git_cache()
+
+    link = get_github_link(DefaultRepoInfo(), "pkg/a.py", 3, git_root=git_repo)
+
+    assert link is not None
+    assert link.endswith("/tests/consumer/pkg/a.py#L3")

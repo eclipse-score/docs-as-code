@@ -18,6 +18,7 @@ from typing import Any, cast
 from unittest.mock import MagicMock
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
 
@@ -67,6 +68,11 @@ def _testcase(**fields: Any) -> NeedItem:
         for value in (None, "", "   ")
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_required_metadata_must_be_nonempty(attribute: str, value: str | None) -> None:
     """Report missing and blank metadata values."""
     log = _run(_testcase(**{attribute: value}))
@@ -76,6 +82,11 @@ def test_required_metadata_must_be_nonempty(attribute: str, value: str | None) -
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_external_testcase_with_wrong_link_level_is_checked() -> None:
     """Apply level checks to imported needs as well as parsed XML needs."""
     testcase = _testcase(
@@ -95,6 +106,11 @@ def test_external_testcase_with_wrong_link_level_is_checked() -> None:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_valid_external_testcase_metadata_passes() -> None:
     """External testcase needs are checked by the same function as local needs."""
     testcase = _testcase(is_external=True, is_import=True)
@@ -102,6 +118,11 @@ def test_valid_external_testcase_metadata_passes() -> None:
     log.assert_no_warnings()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_non_testcase_needs_are_ignored() -> None:
     """Validation is limited to testcase needs."""
     log = _run(need(id="feat_req__sample", type="feat_req"))
@@ -115,6 +136,11 @@ def test_non_testcase_needs_are_ignored() -> None:
         ("Component Integration Test", "feat_req__sample", "comp_req__"),
         ("Unit Test", "feat_req__sample", "comp_req__"),
     ],
+)
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_verification_links_must_match_test_level(
     test_type: str, target_id: str, expected_prefix: str
@@ -135,6 +161,11 @@ def test_verification_links_must_match_test_level(
 
 
 @pytest.mark.parametrize("relation", ["fully_verifies", "partially_verifies"])
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_valid_verification_link_level_passes(relation: str) -> None:
     """Allow both verification relations to the required level."""
     testcase = _testcase(
@@ -146,6 +177,11 @@ def test_valid_verification_link_level_passes(relation: str) -> None:
     log.assert_no_warnings()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_unmapped_test_type_has_no_link_level_constraint() -> None:
     """Do not infer link policy for test types without a defined mapping."""
     testcase = _testcase(
