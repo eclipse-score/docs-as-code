@@ -121,5 +121,12 @@ http_file(
 
 bazel_dep(name = "score_process_description", version = "2.2.5")
 
+# gd_req__saf_linkage_check v3 (process_description #894); replace with the next release
+git_override(
+    module_name = "score_process_description",
+    commit = "b7ca9b9079c98f067d76d7d8d9c1c8c522327a30",
+    remote = "https://github.com/eclipse-score/process_description",
+)
+
 # Provide the tools from the devcontainer to Bazel
 bazel_dep(name = "score_devcontainer", version = "1.14.0", dev_dependency = True)
