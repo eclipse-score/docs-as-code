@@ -20,7 +20,7 @@ import html_options
 import sphinx_options
 from sphinx.application import Sphinx
 
-from src.helper_lib import Environment, config_setdefault
+from src.helper_lib import Environment, config_setdefault, ws_root_in_git_root
 
 logger = logging.getLogger(__name__)
 env = Environment()
@@ -182,7 +182,11 @@ def _configure_workspace_edit_url(
         return False
 
     github_user, github_repo, github_version = cast(tuple[str, str, str], github_values)
-    relative_path = quote(source_path.relative_to(workspace_root).as_posix(), safe="/")
+    # GitHub paths are relative to the Git root, which can be above the workspace.
+    repo_path = ws_root_in_git_root(workspace_root) / source_path.relative_to(
+        workspace_root
+    )
+    relative_path = quote(repo_path.as_posix(), safe="/")
     github_url = str(context.get("github_url", "https://github.com")).rstrip("/")
     edit_url = (
         f"{github_url}/{quote(github_user, safe='')}/{quote(github_repo, safe='')}"

@@ -17,7 +17,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from src.helper_lib import find_git_root, get_current_git_hash, get_github_base_url
+from src.helper_lib import (
+    find_git_root,
+    get_current_git_hash,
+    get_github_base_url,
+    ws_root_in_git_root,
+)
 
 # Keys of the 'flat' form, in the order they appear in the JSON files.
 REPO_FLAT_KEYS = ("repo_name", "hash", "url")
@@ -213,12 +218,13 @@ def get_github_link(
         # repository if it used the local checkout.
         return None
 
-    # Local path (//:docs)
+    # Local path (//:docs). The file is relative to the Bazel workspace, which
+    # can sit below the Git root.
     try:
         blob_url = _git_blob_url(git_root or find_git_root() or Path())
     except AssertionError:
         return None
-    return f"{blob_url}/{file_location}"
+    return f"{blob_url}/{(ws_root_in_git_root() / file_location).as_posix()}"
 
 
 @functools.cache

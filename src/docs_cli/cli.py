@@ -31,7 +31,7 @@ from sphinx_autobuild.__main__ import (
 
 from src.docs_cli.lcov_summary import generate_summary
 from src.extensions.score_mounts._resolver import load_mounts_manifest, resolve_walk_dir
-from src.helper_lib import Environment, get_runfiles_dir
+from src.helper_lib import Environment, get_runfiles_dir, ws_root_in_git_root
 from src.helper_lib.config import DocsCliConfig
 
 logger = logging.getLogger(__name__)
@@ -261,8 +261,11 @@ def sphinx_arguments(
         base_arguments.append(f"-A=github_repo={github_repo}")
         base_arguments.append("-A=github_version=main")
         # doc_path must be repo-relative so the edit URL does not contain the
-        # absolute runner filesystem path (e.g. /home/runner/work/…/docs).
-        relative_doc_path = config.source_dir_relative_to_ws
+        # absolute runner filesystem path (e.g. /home/runner/work/…/docs). The
+        # workspace can sit below the Git root, so prefix its path in the repo.
+        relative_doc_path = (
+            ws_root_in_git_root(config.ws_root) / config.source_dir_relative_to_ws
+        )
         base_arguments.append(f"-A=doc_path={relative_doc_path}")
 
     if known_good_json := env.optional_path("KNOWN_GOOD_JSON"):
