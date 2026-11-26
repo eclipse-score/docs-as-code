@@ -13,7 +13,7 @@
 from typing import Any
 
 from docutils.nodes import Node
-from score_cross_module_compatibility import CompatibilityReporter
+from score_cross_module_compatibility import MISSING_GRAPH_LINK, CompatibilityReporter
 from sphinx_needs import logging
 from sphinx_needs.logging import SphinxLoggerAdapter
 from sphinx_needs.need_item import NeedItem
@@ -99,6 +99,19 @@ class CheckLogger:
             full_msg = f"{need['id']}: {msg}"
         self._log_message(full_msg, location, is_new_check, need, category)
 
+    def warning_for_missing_graph_link(
+        self, need: NeedItem, msg: str, *, rule_id: str, relation: str
+    ) -> None:
+        full_msg = f"{need['id']}: {msg} (graph rule `{rule_id}`)"
+        self._log_message(
+            full_msg,
+            CheckLogger._location(need, self._prefix),
+            need=need,
+            category=MISSING_GRAPH_LINK,
+            rule_id=rule_id,
+            relation=relation,
+        )
+
     def _log_message(
         self,
         msg: str,
@@ -106,6 +119,9 @@ class CheckLogger:
         is_new_check: bool = False,
         need: NeedItem | None = None,
         category: str = "metamodel",
+        *,
+        rule_id: str = "",
+        relation: str = "",
     ):
         # req-Id: tool_req__docs_common_attr_status_invalid
         # Needs with status `invalid` are exempt from all checks. They stay part
@@ -116,7 +132,9 @@ class CheckLogger:
             source = (
                 location if isinstance(location, str) else str(need.get("docname", ""))
             )
-            if self._compatibility.record(need, category, msg, source):
+            if self._compatibility.record(
+                need, category, msg, source, rule_id=rule_id, relation=relation
+            ):
                 return
         if is_new_check:
             self._new_checks.append((msg, location))

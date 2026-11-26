@@ -14,6 +14,7 @@ from typing import Any, cast
 from unittest.mock import MagicMock
 
 import pytest
+from score_cross_module_compatibility import CompatibilityReporter
 from sphinx.util.logging import SphinxLoggerAdapter
 from sphinx_needs.data import NeedsInfoType
 from sphinx_needs.need_item import (
@@ -28,7 +29,7 @@ from src.extensions.score_metamodel import CheckLogger
 EXPECTED_LOCATION = "docs/docname.rst:42"
 
 
-def fake_check_logger():
+def fake_check_logger(compatibility: CompatibilityReporter | None = None):
     """Creates a CheckLogger with a mocked backend."""
 
     class FakeCheckLogger(CheckLogger):
@@ -36,7 +37,7 @@ def fake_check_logger():
             self._mock_logger = MagicMock(spec=SphinxLoggerAdapter)
             self._mock_logger.warning = MagicMock()
             self._mock_logger.info = MagicMock()
-            super().__init__(self._mock_logger, "docs")
+            super().__init__(self._mock_logger, "docs", compatibility)
 
         def assert_no_warnings(self):
             if self.warnings:

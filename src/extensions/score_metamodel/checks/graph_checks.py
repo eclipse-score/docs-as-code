@@ -269,6 +269,8 @@ def check_parent_relation(
     all_needs: NeedsView,
     log: CheckLogger,
     info_only: bool,
+    *,
+    rule_id: str,
 ) -> None:
     """Check the needs linked via `parent_relation` and warn about violations."""
     if parent_relation not in need:
@@ -295,7 +297,13 @@ def check_parent_relation(
             )
         else:
             msg = f"No linked need in `{parent_relation}`. Explanation: {explanation}"
-        log.warning_for_need(need, msg, is_new_check=info_only)
+        # An unresolved target still represents a declared link.
+        if not parent_ids and not info_only:
+            log.warning_for_missing_graph_link(
+                need, msg, rule_id=rule_id, relation=parent_relation
+            )
+        else:
+            log.warning_for_need(need, msg, is_new_check=info_only)
     else:
         for need_id in failed_needs:
             msg = (
@@ -347,6 +355,7 @@ def check_metamodel_graph(
                     all_needs,
                     log,
                     info_only,
+                    rule_id=check_name,
                 )
 
 
