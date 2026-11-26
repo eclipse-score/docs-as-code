@@ -16,12 +16,11 @@
 # output must reach the runfiles of ``:docs`` (via _external_docs_runfiles)
 # and be resolved by ``score_mounts`` at ``bazel run`` time.  See PR #686.
 
-load("//:docs.bzl", "docs", "docs_bundle")
+load("@score_docs_as_code//:docs.bzl", "docs", "docs_bundle")
 
 # Emit into a ``generated/`` subdirectory (as the real metamodel bundle does)
 # so the resolved mount directory contains only the genrule output and not the
 # sibling ``docs.runfiles/`` tree.
-# BEGIN docs-bundle-howto: generated-data
 genrule(
     name = "generated_page",
     srcs = [],
@@ -80,11 +79,4 @@ docs(
         },
     ],
     source_dir = "docs",
-    # Keep this fixture's test-source scope local. The default imports every
-    # test report in the repository, including unrelated external-link
-    # warnings that would make this focused runtime scenario fail as an
-    # accidental side effect of the global test corpus.
-    test_sources = ["src/tests/docs_bzl/in_tree_scenarios/data_files_runfiles"],
 )
-
-# END docs-bundle-howto: generated-data

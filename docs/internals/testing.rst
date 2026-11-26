@@ -94,6 +94,14 @@ They live under ``src/tests/docs_bzl`` and cover composition,
 invalid configurations, external Bzlmod bundles,
 and golden HTML/JSON output comparison.
 
+The scenarios are packages of a separate Bazel module,
+``src/tests/docs_bzl/scenarios`` (``score_scenarios``).
+It uses docs-as-code through ``@score_docs_as_code``
+and its own module name, like a real project does,
+and is listed in ``.bazelignore``,
+so docs-as-code's own Bazel targets never see it.
+Add new scenarios to this module.
+
 They are not Bazel test targets,
 but plain pytest tests that issue Bazel underneath
 because these tests also verify our Bazel/Starlark code.

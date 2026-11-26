@@ -12,8 +12,8 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
-load("//:bzl/mount_rules.bzl", "create_composition_manifest")
-load("//:docs.bzl", "docs", "docs_bundle")
+load("@score_docs_as_code//:bzl/mount_rules.bzl", "create_composition_manifest")
+load("@score_docs_as_code//:docs.bzl", "docs", "docs_bundle")
 
 docs_bundle(
     name = "child",
@@ -64,7 +64,6 @@ cc_binary(
 
 # The child is nested below the parent bundle before the parent itself is
 # mounted into the synthetic host tree below.
-# BEGIN docs-bundle-howto: parent-composition
 docs_bundle(
     name = "parent",
     bundles = [{
@@ -75,7 +74,6 @@ docs_bundle(
     source_dir = "parent",
     visibility = ["//visibility:public"],
 )
-# END docs-bundle-howto: parent-composition
 
 # An aggregator deliberately has no source_dir. It only propagates its child
 # and must preserve the declaration order in the generated manifest.
@@ -114,5 +112,4 @@ docs(
     }],
     code_targets = [":example_binary"],
     source_dir = "host_docs",
-    test_sources = ["src/tests/docs_bzl/in_tree_scenarios/nested_bundles"],
 )

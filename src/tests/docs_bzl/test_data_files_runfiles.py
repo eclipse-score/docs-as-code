@@ -21,6 +21,7 @@ from src.tests.docs_bzl.helpers import (
     GITHUB_EDIT_URL,
     GITHUB_ENV,
     TEST_ROOT,
+    bazel_package,
     built_output,
     edit_link,
     load_needs,
@@ -121,8 +122,10 @@ def test_bundle_needs_exports_build_for_generated_and_declared_sources():
     """
     bundles = ["data_bundle", "isolated_source_bundle"]
     targets = [f"{bundle}.__internal__.needs_local" for bundle in bundles]
+    package = bazel_package(PACKAGE)
     run_bazel(
-        ["build", *[f"//src/tests/docs_bzl/{PACKAGE}:{target}" for target in targets]]
+        ["build", *[f"{package.label}:{target}" for target in targets]],
+        cwd=package.cwd,
     )
 
     for bundle, target in zip(bundles, targets, strict=True):

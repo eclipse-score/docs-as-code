@@ -31,9 +31,6 @@ TEST_ROOT = Path(__file__).parent
 # project does. Its packages are not part of docs-as-code; Bazel runs inside
 # this directory.
 SCENARIOS_ROOT = TEST_ROOT / "scenarios"
-# Scenarios that docs-as-code's own BUILD mounts into its documentation. They
-# must stay packages of docs-as-code.
-IN_TREE_SCENARIOS_ROOT = TEST_ROOT / "in_tree_scenarios"
 
 # GitHub Actions exposes this variable to the documentation build. Supplying
 # the same repository identity locally makes generated GitHub links (such as
@@ -215,9 +212,7 @@ def run_scenario(
 
 def scenario_package(scenario: str) -> str:
     """The test package (relative to ``TEST_ROOT``) where a scenario lives."""
-    in_tree = (IN_TREE_SCENARIOS_ROOT / scenario).is_dir()
-    root = IN_TREE_SCENARIOS_ROOT if in_tree else SCENARIOS_ROOT
-    return f"{root.relative_to(TEST_ROOT).as_posix()}/{scenario}"
+    return f"{SCENARIOS_ROOT.relative_to(TEST_ROOT).as_posix()}/{scenario}"
 
 
 def built_output(package: str, filename: str) -> Path:

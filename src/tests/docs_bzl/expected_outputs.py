@@ -35,7 +35,6 @@ from pathlib import Path
 from src.tests.docs_bzl.helpers import (
     GITHUB_ENV,
     GITHUB_REPOSITORY,
-    IN_TREE_SCENARIOS_ROOT,
     SCENARIOS_ROOT,
     TEST_ROOT,
     bazel_package,
@@ -145,9 +144,8 @@ def _scenario_dir(scenario: str) -> Path:
 def discover_expected_scenarios() -> list[str]:
     """Find scenario packages that opt into golden-output verification."""
     return sorted(
-        str(expected_root.parent.relative_to(scenarios_root))
-        for scenarios_root in (IN_TREE_SCENARIOS_ROOT, SCENARIOS_ROOT)
-        for expected_root in scenarios_root.rglob("_expected")
+        str(expected_root.parent.relative_to(SCENARIOS_ROOT))
+        for expected_root in SCENARIOS_ROOT.rglob("_expected")
         if expected_root.is_dir()
     )
 

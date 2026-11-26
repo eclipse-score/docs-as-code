@@ -23,6 +23,7 @@ from src.tests.docs_bzl.helpers import (
     GITHUB_ENV,
     TEST_ROOT,
     assert_no_compatibility_findings,
+    bazel_package,
     built_output,
     edit_link,
     load_needs,
@@ -35,7 +36,10 @@ from src.tests.docs_bzl.helpers import (
 
 SCENARIO = "nested_bundles"
 PACKAGE = scenario_package(SCENARIO)
+# Edit links are relative to the git root, Bazel paths (source link locations,
+# bundle data) to the scenarios module.
 SCENARIO_PATH = (TEST_ROOT / PACKAGE).relative_to(repo_root()).as_posix()
+MODULE_PATH = bazel_package(PACKAGE).label.removeprefix("//")
 PARENT_MOUNT = "concepts/example_bundle"
 CHILD_MOUNT = f"{PARENT_MOUNT}/child"
 
@@ -133,9 +137,9 @@ def test_code_target_sources_are_collected_transitively_and_once(
     links = cast("str", needs["tool_req__docs_bzl_nested_bundle"]["source_code_link"])
 
     assert sorted(link.split("<>")[1] for link in links.split(", ")) == [
-        f"{SCENARIO_PATH}/child/example.cc:1",
-        f"{SCENARIO_PATH}/child/example.py:14",
-        f"{SCENARIO_PATH}/child/filegroup_source.py:14",
+        f"{MODULE_PATH}/child/example.cc:1",
+        f"{MODULE_PATH}/child/example.py:14",
+        f"{MODULE_PATH}/child/filegroup_source.py:14",
     ]
 
 
@@ -153,7 +157,7 @@ def test_bundle_data_stays_with_the_mount_that_declares_it():
 
     assert data == {
         "": [],
-        PARENT_MOUNT: [f"{SCENARIO_PATH}/generated/generated_output.txt"],
+        PARENT_MOUNT: [f"{MODULE_PATH}/generated/generated_output.txt"],
         CHILD_MOUNT: [],
     }
 

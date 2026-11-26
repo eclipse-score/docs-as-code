@@ -16,7 +16,6 @@ load("@score_docs_as_code//:docs.bzl", "docs")
 # This fixture exercises the public Bzlmod contract. In particular, the
 # sandboxed :needs_json target must be able to walk an external bundle rather
 # than silently omitting it.
-# BEGIN docs-bundle-howto: external-bundle
 docs(
     bundles = [{
         "bundle": "@score_process_description//:docs_bundle",
@@ -24,4 +23,3 @@ docs(
     }],
     source_dir = "host_docs",
 )
-# END docs-bundle-howto: external-bundle

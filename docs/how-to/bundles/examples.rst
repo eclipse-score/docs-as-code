@@ -43,7 +43,7 @@ The tested parent bundle composes the child like this:
    )
 
 See the `complete nested-bundles fixture on GitHub
-<https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/in_tree_scenarios/nested_bundles>`_.
+<https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/nested_bundles>`_.
 
 If the parent is mounted at ``guides/example``, its page is rendered at
 ``guides/example/index.html`` and the child landing page at
@@ -86,7 +86,7 @@ and mount a page like this:
    )
 
 See the `complete generated-data fixture on GitHub
-<https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/in_tree_scenarios/data_files_runfiles>`_.
+<https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/data_files_runfiles>`_.
 
 The generated page is rendered at ``data_test/index.html`` and is added to the
 consuming project's index page's toctree. A generated source bundle is mounted
