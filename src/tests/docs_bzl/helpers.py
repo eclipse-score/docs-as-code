@@ -31,6 +31,14 @@ GIT_ROOT = find_git_root()
 assert GIT_ROOT
 TEST_ROOT_BAZEL = "//" + str(TEST_ROOT.relative_to(GIT_ROOT))
 
+# GitHub Actions exposes this variable to the documentation build. Supplying
+# the same repository identity locally makes generated GitHub links (such as
+# "Edit on GitHub") and the Sphinx theme configuration match CI.
+GITHUB_REPOSITORY = "eclipse-score/docs-as-code"
+GITHUB_ENV = {"GITHUB_REPOSITORY": GITHUB_REPOSITORY}
+# Edit links of a build run with ``GITHUB_ENV``; docs_cli pins the branch to main.
+GITHUB_EDIT_URL = f"https://github.com/{GITHUB_REPOSITORY}/edit/main"
+
 
 def repo_root() -> Path:
     root = find_git_root()
@@ -172,9 +180,10 @@ def run_scenario(
     scenario: str,
     target: str,
     expect_error: bool = False,
+    env: Mapping[str, str] | None = None,
 ) -> RunResult:
     """Run one general docs() scenario."""
-    return run_package(bazel_cmd, f"scenarios/{scenario}", target, expect_error)
+    return run_package(bazel_cmd, f"scenarios/{scenario}", target, expect_error, env)
 
 
 def built_output(package: str, filename: str) -> Path:
@@ -217,6 +226,19 @@ def toctrees(page: Path) -> list[list[str]]:
     """
     wrappers = _article(page).split('<div class="toctree-wrapper')[1:]
     return [_TOCTREE_LINK.findall(wrapper) for wrapper in wrappers]
+
+
+_EDIT_LINK = re.compile(r'<div class="tocsection editthispage">\s*<a href="([^"]*)"')
+
+
+def edit_link(page: Path) -> str | None:
+    """Return a rendered page's "Edit on GitHub" URL, or ``None`` if it has none.
+
+    The link only renders when the build knows the GitHub repository, so the
+    page must come from a build run with ``GITHUB_ENV``.
+    """
+    match = _EDIT_LINK.search(page.read_text(encoding="utf-8"))
+    return match[1] if match else None
 
 
 def assert_no_compatibility_findings(output_dir: Path) -> None:
