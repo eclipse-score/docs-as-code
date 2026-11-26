@@ -188,6 +188,14 @@ added to the matching primary Need's metadata area, for example
 ``coverage: lines 67% · branches 100% · files 2/6``. ``needs_json``,
 ``docs_check`` and ``docs_link_check`` retain their existing inputs.
 
+Static analysis input
+~~~~~~~~~~~~~~~~~~~~~
+
+The same CLI reads SARIF files below ``static-analysis-report/`` relative to the
+workspace root and writes ``<build-output>/static_analysis_summary.json``. See
+:ref:`docs_static_analysis_report` for the input layout and how findings are
+classified.
+
 .. _docs_bundle_macro:
 
 Bazel macro: ``docs_bundle``
