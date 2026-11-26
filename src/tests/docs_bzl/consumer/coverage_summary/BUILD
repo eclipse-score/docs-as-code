@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs_bundle")
+load("@score_docs_as_code//:docs.bzl", "docs_bundle")
 
 filegroup(
     name = "files",

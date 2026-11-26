@@ -10,7 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-SF:src/tests/docs_bzl/scenarios/coverage_summary/a.cc
+SF:coverage_summary/a.cc
 DA:1,1
 end_of_record
 SF:external/bazel_tools/tools/cpp/runfiles/runfiles.h

@@ -24,10 +24,12 @@ from src.docs_cli.lcov_summary import (
     summarize,
 )
 from src.tests.docs_bzl.helpers import (
+    TEST_ROOT,
     built_output,
     repo_root,
     run_bazel,
     run_scenario,
+    scenario_package,
     staged_coverage_report,
 )
 
@@ -99,11 +101,10 @@ def test_coverage_summary_uses_existing_bounded_implementation_files(
 def test_primary_need_types_empty_files_and_explicit_external_targets():
     """A module primary Need and a component primary Need both retain code ownership."""
     scenario = "coverage_summary"
+    package = scenario_package(scenario)
     run_scenario("build", scenario, ":aggregate.__internal__.code_file_lists")
     manifest = json.loads(
-        built_output(
-            f"scenarios/{scenario}", "aggregate.__internal__.code_file_lists.json"
-        ).read_text()
+        built_output(package, "aggregate.__internal__.code_file_lists.json").read_text()
     )
     assert [entry["primary_need_id"] for entry in manifest["code_file_lists"]] == [
         "comp__files",
@@ -119,16 +120,10 @@ def test_primary_need_types_empty_files_and_explicit_external_targets():
     result = {
         "coverage_summaries": summarize(
             load_code_file_lists(
-                built_output(
-                    f"scenarios/{scenario}",
-                    "aggregate.__internal__.code_file_lists.json",
-                )
+                built_output(package, "aggregate.__internal__.code_file_lists.json")
             ),
             parse_lcov(
-                (
-                    repo_root()
-                    / f"src/tests/docs_bzl/scenarios/{scenario}/coverage.info"
-                ).read_text(encoding="utf-8")
+                (TEST_ROOT / package / "coverage.info").read_text(encoding="utf-8")
             ),
         )
     }
@@ -142,11 +137,10 @@ def test_primary_need_types_empty_files_and_explicit_external_targets():
 
 @pytest.mark.bazel_slow
 def test_conflicting_primary_need_ids_fail_instead_of_overwriting_membership():
-    result = run_bazel(
-        [
-            "build",
-            "//src/tests/docs_bzl/scenarios/coverage_summary:conflict.__internal__.code_file_lists",
-        ],
+    result = run_scenario(
+        "build",
+        "coverage_summary",
+        ":conflict.__internal__.code_file_lists",
         expect_error=True,
     )
     assert "belongs to multiple bundles" in result.stderr

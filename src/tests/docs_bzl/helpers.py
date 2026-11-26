@@ -216,9 +216,13 @@ def run_scenario(
     env: Mapping[str, str] | None = None,
 ) -> RunResult:
     """Run one general docs() scenario, in the consumer module if it lives there."""
+    return run_package(bazel_cmd, scenario_package(scenario), target, expect_error, env)
+
+
+def scenario_package(scenario: str) -> str:
+    """The test package (relative to ``TEST_ROOT``) where a scenario lives."""
     in_consumer = (CONSUMER_ROOT / scenario).is_dir()
-    package = f"consumer/{scenario}" if in_consumer else f"scenarios/{scenario}"
-    return run_package(bazel_cmd, package, target, expect_error, env)
+    return f"consumer/{scenario}" if in_consumer else f"scenarios/{scenario}"
 
 
 def built_output(package: str, filename: str) -> Path:
