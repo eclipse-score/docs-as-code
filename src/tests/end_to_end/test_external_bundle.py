@@ -17,7 +17,7 @@ from typing import cast
 
 import pytest
 
-from src.tests.docs_bzl.helpers import (
+from src.tests.end_to_end.helpers import (
     assert_no_compatibility_findings,
     load_needs,
     run_scenario,

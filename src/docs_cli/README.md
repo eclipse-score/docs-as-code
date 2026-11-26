@@ -99,6 +99,6 @@ bazel test //src/docs_cli:dirty_build_test //src/docs_cli:main_test
 To exercise the entry script and its runfiles with an actual Sphinx build:
 
 ```sh
-cd src/tests/docs_bzl/scenarios
+cd src/tests/end_to_end/scenarios
 bazel run //basic_docs:docs
 ```

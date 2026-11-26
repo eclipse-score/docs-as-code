@@ -19,14 +19,14 @@ Bazel inside that directory. Tests refer to a scenario by its name;
 ## Run
 
 ```sh
-.venv_docs/bin/python -m pytest -vv src/tests/docs_bzl
+.venv_docs/bin/python -m pytest -vv src/tests/end_to_end
 ```
 
 The suite runs Bazel and should be run sequentially. CI splits it into:
 
 ```sh
-.venv_docs/bin/python -m pytest -vv -m bazel_cached src/tests/docs_bzl
-.venv_docs/bin/python -m pytest -vv -m bazel_slow src/tests/docs_bzl
+.venv_docs/bin/python -m pytest -vv -m bazel_cached src/tests/end_to_end
+.venv_docs/bin/python -m pytest -vv -m bazel_slow src/tests/end_to_end
 ```
 
 Build-only expected outputs are marked `bazel_cached`; outputs that execute

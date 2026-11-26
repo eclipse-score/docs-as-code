@@ -14,7 +14,7 @@
 
 import pytest
 
-from src.tests.docs_bzl.helpers import run_scenario
+from src.tests.end_to_end.helpers import run_scenario
 
 
 @pytest.mark.bazel_slow

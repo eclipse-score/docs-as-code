@@ -23,7 +23,7 @@ from src.docs_cli.lcov_summary import (
     parse_lcov,
     summarize,
 )
-from src.tests.docs_bzl.helpers import (
+from src.tests.end_to_end.helpers import (
     TEST_ROOT,
     bazel_package,
     built_output,

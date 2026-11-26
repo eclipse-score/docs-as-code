@@ -12,14 +12,14 @@ from pathlib import Path
 
 import pytest
 
-from src.tests.docs_bzl.helpers import repo_root, run_scenario
+from src.tests.end_to_end.helpers import repo_root, run_scenario
 
 
 def _write_cross_module_consumer(
     workspace: Path, compatibility_config: str = ""
 ) -> None:
     source_root = repo_root()
-    fixture = source_root / "src/tests/docs_bzl/cross_module_fixture"
+    fixture = source_root / "src/tests/end_to_end/cross_module_fixture"
     shutil.copyfile(source_root / ".bazelversion", workspace / ".bazelversion")
     subprocess.run(["git", "init", "--quiet", str(workspace)], check=True)
     workspace.joinpath("MODULE.bazel").write_text(

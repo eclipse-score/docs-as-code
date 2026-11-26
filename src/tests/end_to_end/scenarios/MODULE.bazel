@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-# A consumer of docs-as-code, used by the docs_bzl scenario tests. Its
+# A consumer of docs-as-code, used by the end_to_end scenario tests. Its
 # scenarios see docs-as-code the way a real project does: through
 # @score_docs_as_code and under their own module name.
 module(name = "score_scenarios")

@@ -26,7 +26,7 @@
 import pytest
 from score_pytest.attribute_plugin import add_test_properties
 
-from src.tests.docs_bzl.helpers import run_scenario
+from src.tests.end_to_end.helpers import run_scenario
 
 
 @pytest.fixture(scope="module")

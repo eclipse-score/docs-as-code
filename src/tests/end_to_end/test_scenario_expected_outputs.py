@@ -14,7 +14,7 @@
 
 import pytest
 
-from src.tests.docs_bzl.expected_outputs import (
+from src.tests.end_to_end.expected_outputs import (
     ExpectedOutput,
     discover_expected_outputs,
     discover_expected_scenarios,
@@ -49,8 +49,6 @@ def _expected_output_test_cases() -> list[object]:
 
 
 @pytest.mark.parametrize(("scenario", "expected_output"), _expected_output_test_cases())
-def test_docs_bzl_scenario_expected_output(
-    scenario: str, expected_output: ExpectedOutput
-):
+def test_scenario_expected_output(scenario: str, expected_output: ExpectedOutput):
     """Check one generated public-scenario output against its checked-in contract."""
     update_expected_output(scenario, expected_output)

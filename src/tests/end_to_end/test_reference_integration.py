@@ -17,7 +17,7 @@ import json
 
 import pytest
 
-from src.tests.docs_bzl.helpers import (
+from src.tests.end_to_end.helpers import (
     bazel_package,
     built_output,
     load_needs,

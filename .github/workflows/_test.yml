@@ -67,7 +67,7 @@ jobs:
         run: >-
           .venv_docs/bin/python -m pytest -vv
           -m "${{ matrix.marker }}"
-          src/tests/docs_bzl
+          src/tests/end_to_end
           --junitxml=tests-report/docs_bzl_${{ matrix.python-version }}_${{ matrix.suite }}.xml
 
       - name: Upload docs.bzl test report

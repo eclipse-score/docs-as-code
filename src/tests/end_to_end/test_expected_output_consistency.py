@@ -16,8 +16,8 @@ from pathlib import Path
 
 import pytest
 
-import src.tests.docs_bzl.expected_outputs as expected_outputs
-from src.tests.docs_bzl.expected_outputs import (
+import src.tests.end_to_end.expected_outputs as expected_outputs
+from src.tests.end_to_end.expected_outputs import (
     ExpectedOutput,
     ExpectedTarget,
     update_expected_output,
@@ -142,7 +142,7 @@ def test_html_source_links_ignore_checkout_metadata_but_preserve_link_targets(
     expected_path = tmp_path / "expected.html"
     actual_path = tmp_path / "actual.html"
     prefix = "https://github.com/owner/repo/blob/" + "a" * 40 + "/"
-    source = "src/tests/docs_bzl/scenarios/example/code.cc#L17"
+    source = "src/tests/end_to_end/scenarios/example/code.cc#L17"
     dependency = "external/dep/code.cc#L3"
     html = (
         '<span class="needs_source_code_link"><span class="needs_data">'

@@ -102,7 +102,7 @@ create_composition_manifest(
 )
 
 # A complete docs() invocation is the synthetic host project driven by the
-# pytest integration test in //src/tests/docs_bzl.
+# pytest integration test in //src/tests/end_to_end.
 docs(
     bundles = [{
         "bundle": ":parent",

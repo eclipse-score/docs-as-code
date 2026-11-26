@@ -181,7 +181,7 @@ def run_package(
             p2 = run_bazel(["cquery", "--output=files", full_target], cwd=location.cwd)
             artifacts_dir = Path(p2.stdout.strip().splitlines()[0])
         else:
-            # e.g. bazel-bin/src/tests/docs_bzl/scenarios/reference_integration/score_platform/needs_json/_build/needs
+            # e.g. bazel-bin/src/tests/end_to_end/scenarios/reference_integration/score_platform/needs_json/_build/needs
             artifacts_dir = built_output(package, f"{target[1:]}/_build/needs")
 
         assert artifacts_dir.is_dir(), (

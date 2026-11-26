@@ -8,6 +8,6 @@
 # package discovery cannot traverse.
 .cache
 
-# The docs_bzl scenarios are a separate Bazel module. It is built from its own
+# The end_to_end scenarios are a separate Bazel module. It is built from its own
 # directory, never as packages of docs-as-code.
-src/tests/docs_bzl/scenarios
+src/tests/end_to_end/scenarios

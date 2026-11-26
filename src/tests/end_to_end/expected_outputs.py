@@ -32,7 +32,7 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from src.tests.docs_bzl.helpers import (
+from src.tests.end_to_end.helpers import (
     GITHUB_ENV,
     GITHUB_REPOSITORY,
     SCENARIOS_ROOT,
@@ -255,7 +255,7 @@ def _comparison_bytes(path: Path) -> bytes:
         return re.sub(
             rb'<span class="needs_source_code_link">.*?</div>',
             lambda metadata: re.sub(
-                rb'https://github\.com/[^/"<>]+/[^/"<>]+/blob/[0-9a-f]{40}/(?=src/tests/docs_bzl/)',
+                rb'https://github\.com/[^/"<>]+/[^/"<>]+/blob/[0-9a-f]{40}/(?=src/tests/end_to_end/)',
                 b"https://github.com/OWNER/REPO/blob/REVISION/",
                 metadata[0],
             ),

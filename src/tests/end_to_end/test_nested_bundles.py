@@ -18,7 +18,7 @@ from typing import cast
 
 import pytest
 
-from src.tests.docs_bzl.helpers import (
+from src.tests.end_to_end.helpers import (
     GITHUB_EDIT_URL,
     GITHUB_ENV,
     TEST_ROOT,
