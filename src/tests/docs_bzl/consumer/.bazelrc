@@ -1,5 +1,2 @@
 # Same registries and flags as docs-as-code itself.
 import %workspace%/../../../../.bazelrc
-
-# Keep bazel-* symlinks out of the source tree.
-common --symlink_prefix=/

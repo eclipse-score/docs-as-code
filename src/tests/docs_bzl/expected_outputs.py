@@ -33,13 +33,15 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from src.tests.docs_bzl.helpers import (
+    CONSUMER_ROOT,
     GITHUB_ENV,
     GITHUB_REPOSITORY,
     TEST_ROOT,
-    TEST_ROOT_BAZEL,
+    bazel_package,
     built_output,
     run_bazel,
     run_package,
+    scenario_package,
     staged_coverage_report,
 )
 
@@ -133,7 +135,7 @@ class ExpectedOutput:
 
 
 def _scenario_dir(scenario: str) -> Path:
-    path = TEST_ROOT / "scenarios" / scenario
+    path = TEST_ROOT / scenario_package(scenario)
     if not path.is_dir():
         raise ValueError(f"docs.bzl scenario does not exist: {scenario}")
     return path
@@ -141,9 +143,9 @@ def _scenario_dir(scenario: str) -> Path:
 
 def discover_expected_scenarios() -> list[str]:
     """Find scenario packages that opt into golden-output verification."""
-    scenarios_root = TEST_ROOT / "scenarios"
     return sorted(
         str(expected_root.parent.relative_to(scenarios_root))
+        for scenarios_root in (TEST_ROOT / "scenarios", CONSUMER_ROOT)
         for expected_root in scenarios_root.rglob("_expected")
         if expected_root.is_dir()
     )
@@ -199,12 +201,8 @@ def discover_expected_outputs(scenario: str) -> list[ExpectedOutput]:
     return discovered
 
 
-def _full_label(scenario: str, target: ExpectedTarget) -> str:
-    return f"{TEST_ROOT_BAZEL}/scenarios/{scenario}{target.label}"
-
-
 def _actual_path(scenario: str, target: ExpectedTarget) -> Path:
-    package = f"scenarios/{scenario}"
+    package = scenario_package(scenario)
     if target.command == "run":
         return _scenario_dir(scenario) / target.output_path
     return built_output(package, target.output_path)
@@ -258,7 +256,7 @@ def _comparison_bytes(path: Path) -> bytes:
         return re.sub(
             rb'<span class="needs_source_code_link">.*?</div>',
             lambda metadata: re.sub(
-                rb'https://github\.com/[^/"<>]+/[^/"<>]+/blob/[0-9a-f]{40}/(?=src/tests/docs_bzl/scenarios/)',
+                rb'https://github\.com/[^/"<>]+/[^/"<>]+/blob/[0-9a-f]{40}/(?=src/tests/docs_bzl/)',
                 b"https://github.com/OWNER/REPO/blob/REVISION/",
                 metadata[0],
             ),
@@ -333,11 +331,16 @@ def _write_expected_file(path: Path, content: bytes) -> None:
 
 def _run_expected_target(scenario: str, expected: ExpectedOutput) -> None:
     """Build or run one target whose output is checked by a test case."""
-    full_label = _full_label(scenario, expected.target)
+    package = bazel_package(scenario_package(scenario))
     if expected.target.command == "build":
         run_bazel(
-            ["build", EXPECTED_GITHUB_ACTION_ENV, full_label],
+            [
+                "build",
+                EXPECTED_GITHUB_ACTION_ENV,
+                package.label + expected.target.label,
+            ],
             env=GITHUB_ENV,
+            cwd=package.cwd,
         )
     elif expected.target.command == "run":
         # A checked-in coverage.info supplies deterministic measurements for
@@ -350,7 +353,7 @@ def _run_expected_target(scenario: str, expected: ExpectedOutput) -> None:
         ):
             run_package(
                 "run",
-                f"scenarios/{scenario}",
+                scenario_package(scenario),
                 expected.target.label,
                 env=GITHUB_ENV,
             )

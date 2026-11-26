@@ -13,7 +13,4 @@
 
 project = "Mount contract fixture"
 project_url = "https://example.invalid/mount-contract"
-# external_needs_inputs loads this site's needs.json, which
-# needs a non-empty current_version.
-version = "1.0.0"
 extensions = ["score_sphinx_bundle"]

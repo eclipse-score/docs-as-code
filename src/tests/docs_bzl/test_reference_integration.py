@@ -17,7 +17,14 @@ import json
 
 import pytest
 
-from src.tests.docs_bzl.helpers import built_output, load_needs, run_bazel, run_scenario
+from src.tests.docs_bzl.helpers import (
+    bazel_package,
+    built_output,
+    load_needs,
+    run_bazel,
+    run_scenario,
+    scenario_package,
+)
 
 
 @pytest.mark.bazel_slow
@@ -116,9 +123,12 @@ def test_bundle_metadata_is_added_to_the_explicit_primary_need():
     # The Need is selected by the bundle's explicit ``primary_need_id``.
     component_need = needs["comp__modern_component"]
     assert isinstance(component_need, dict)
-    component_package = (
-        "@@//src/tests/docs_bzl/scenarios/reference_integration/modern_module/"
-        "docs/components/component"
+    component_package = "@@" + (
+        bazel_package(
+            scenario_package(
+                "reference_integration/modern_module/docs/components/component"
+            )
+        ).label
     )
     assert json.loads(str(component_need["bazel_target"])) == [
         f"{component_package}:component_sources",
@@ -175,7 +185,8 @@ def test_component_files_and_sourcelinks_share_the_component_boundary(
     marker must also survive despite its out-of-package label.
     """
     scenario = "reference_integration/modern_module/docs/components/component"
-    package = f"//src/tests/docs_bzl/scenarios/{scenario}"
+    location = bazel_package(scenario_package(scenario))
+    package = location.label
     components_prefix = package[2:].rsplit("/", 1)[0] + "/"
     # Other scenario builds may leave this target cached in multiple Bazel
     # configurations. Inspect only the current top-level configuration.
@@ -185,7 +196,8 @@ def test_component_files_and_sourcelinks_share_the_component_boundary(
             f"config({package}:{bundle_name}.__internal__.files, target)",
             "--output=starlark",
             '--starlark:expr="\\n".join([f.short_path for f in target.files.to_list()])',
-        ]
+        ],
+        cwd=location.cwd,
     )
     assert sorted(result.stdout.splitlines()) == sorted(
         components_prefix + path for path in expected_files
@@ -193,7 +205,7 @@ def test_component_files_and_sourcelinks_share_the_component_boundary(
 
     run_scenario("build", scenario, f":{bundle_name}.__internal__.sourcelinks_json")
     cache = built_output(
-        f"scenarios/{scenario}", f"{bundle_name}.__internal__.sourcelinks_json.json"
+        scenario_package(scenario), f"{bundle_name}.__internal__.sourcelinks_json.json"
     )
     links = json.loads(cache.read_text(encoding="utf-8"))
     # Repository metadata entries have no file; compare the actual code links.

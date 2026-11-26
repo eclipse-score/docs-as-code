@@ -18,7 +18,12 @@ from pathlib import Path
 
 import pytest
 
-from src.tests.docs_bzl.helpers import repo_root, run_scenario, staged_coverage_report
+from src.tests.docs_bzl.helpers import (
+    TEST_ROOT,
+    run_scenario,
+    scenario_package,
+    staged_coverage_report,
+)
 
 
 class _CoverageCharts(HTMLParser):
@@ -47,8 +52,9 @@ class _CoverageCharts(HTMLParser):
 def report_builds() -> Iterator[dict[str, _CoverageCharts]]:
     """Build each coverage state once and share snapshots between the assertions."""
     fixture = (
-        repo_root()
-        / "src/tests/docs_bzl/scenarios/reference_integration/modern_module/coverage.info"
+        TEST_ROOT
+        / scenario_package("reference_integration/modern_module")
+        / "coverage.info"
     )
     with staged_coverage_report(fixture) as report:
         original = report.read_bytes()

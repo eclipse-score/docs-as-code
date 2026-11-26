@@ -25,8 +25,8 @@ from src.docs_cli.lcov_summary import (
 )
 from src.tests.docs_bzl.helpers import (
     TEST_ROOT,
+    bazel_package,
     built_output,
-    repo_root,
     run_bazel,
     run_scenario,
     scenario_package,
@@ -38,8 +38,9 @@ from src.tests.docs_bzl.helpers import (
 def workflow_coverage() -> Iterator[Path]:
     """Stage the workflow artifact at its conventional path, preserving local data."""
     fixture = (
-        repo_root()
-        / "src/tests/docs_bzl/scenarios/reference_integration/modern_module/coverage.info"
+        TEST_ROOT
+        / scenario_package("reference_integration/modern_module")
+        / "coverage.info"
     )
     with staged_coverage_report(fixture) as report:
         yield report
@@ -51,7 +52,7 @@ def test_coverage_summary_uses_existing_bounded_implementation_files(
 ):
     scenario = "reference_integration/modern_module"
     run_scenario("build", scenario, ":docs_bundle.__internal__.code_file_lists")
-    folder = f"scenarios/{scenario}"
+    folder = scenario_package(scenario)
     manifest = json.loads(
         built_output(
             folder, "docs_bundle.__internal__.code_file_lists.json"
@@ -60,7 +61,7 @@ def test_coverage_summary_uses_existing_bounded_implementation_files(
     assert len(manifest["code_file_lists"]) == 1
     code_file_list = manifest["code_file_lists"][0]
     assert code_file_list["primary_need_id"] == "comp__modern_component"
-    prefix = f"src/tests/docs_bzl/{folder}/docs/components/"
+    prefix = bazel_package(folder).label[2:] + "/docs/components/"
     # These are exactly the existing private collection's files: selected
     # sibling headers and local leaves behind excluded dependencies survive,
     # while sibling implementation files and external malloc sources do not.
@@ -152,7 +153,7 @@ def test_docs_use_summary_and_reuse_cache_for_equivalent_measurements(
 ):
     """An ordinary docs() consumer needs only its completed coverage report."""
     scenario = "reference_integration/modern_module"
-    package = repo_root() / "src/tests/docs_bzl/scenarios" / scenario
+    package = TEST_ROOT / scenario_package(scenario)
     report = workflow_coverage
     original = report.read_bytes()
     output = package / "_build"
@@ -198,12 +199,13 @@ def test_docs_use_summary_and_reuse_cache_for_equivalent_measurements(
 @pytest.mark.parametrize("target", ["needs_json", "docs_check", "docs_link_check"])
 def test_documentation_checks_do_not_consume_coverage_file_lists(target: str):
     """Coverage metadata is used only by the rendering CLI, outside the Needs graph."""
-    package = "//src/tests/docs_bzl/scenarios/reference_integration/modern_module"
+    package = bazel_package(scenario_package("reference_integration/modern_module"))
     result = run_bazel(
         [
             "aquery",
-            f"inputs('.*code_file_lists[.]json', deps({package}:{target}))",
-        ]
+            f"inputs('.*code_file_lists[.]json', deps({package.label}:{target}))",
+        ],
+        cwd=package.cwd,
     )
     assert not result.stdout.strip()
 

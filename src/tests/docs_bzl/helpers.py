@@ -21,16 +21,12 @@ import time
 from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass
-from functools import cache
 from pathlib import Path
 from typing import cast
 
 from src.helper_lib import find_git_root
 
 TEST_ROOT = Path(__file__).parent
-GIT_ROOT = find_git_root()
-assert GIT_ROOT
-TEST_ROOT_BAZEL = "//" + str(TEST_ROOT.relative_to(GIT_ROOT))
 # A separate Bazel module that uses docs-as-code like a real consumer does.
 # Its packages are not part of docs-as-code; Bazel runs inside this directory.
 CONSUMER_ROOT = TEST_ROOT / "consumer"
@@ -50,10 +46,19 @@ def repo_root() -> Path:
     return root
 
 
+def workspace_root(path: Path) -> Path:
+    """The root of the Bazel workspace that ``path`` belongs to."""
+    return CONSUMER_ROOT if path.is_relative_to(CONSUMER_ROOT) else repo_root()
+
+
 @contextmanager
 def staged_coverage_report(source: Path) -> Iterator[Path]:
-    """Stage a fixture at the workflow input path and restore any local report."""
-    report = repo_root() / "coverage-report/coverage_report.dat"
+    """Stage a fixture at the workflow input path and restore any local report.
+
+    The docs CLI reads the report from the root of the workspace it runs in,
+    so the fixture is staged in the workspace it belongs to.
+    """
+    report = workspace_root(source) / "coverage-report/coverage_report.dat"
     saved = report.read_bytes() if report.exists() else None
     directory_existed = report.parent.exists()
     report.parent.mkdir(exist_ok=True)
@@ -109,7 +114,7 @@ def run_bazel(
 
 
 @dataclass(frozen=True)
-class _BazelPackage:
+class BazelPackage:
     """Where Bazel runs for a test package, its label and its output directory."""
 
     cwd: Path
@@ -117,27 +122,12 @@ class _BazelPackage:
     bin_dir: Path
 
 
-def _bazel_package(package: str) -> _BazelPackage:
+def bazel_package(package: str) -> BazelPackage:
     """Locate a test package (a path relative to ``TEST_ROOT``)."""
     package_dir = TEST_ROOT / package
-    if package_dir.is_relative_to(CONSUMER_ROOT):
-        relative = package_dir.relative_to(CONSUMER_ROOT)
-        return _BazelPackage(
-            CONSUMER_ROOT, f"//{relative.as_posix()}", _consumer_bazel_bin() / relative
-        )
-    root = repo_root()
-    return _BazelPackage(
-        root,
-        f"{TEST_ROOT_BAZEL}/{package}",
-        root / "bazel-bin" / TEST_ROOT.relative_to(root) / package,
-    )
-
-
-@cache
-def _consumer_bazel_bin() -> Path:
-    """The consumer module's bazel-bin. The module creates no bazel-* symlinks."""
-    p = run_bazel(["info", "bazel-bin"], cwd=CONSUMER_ROOT)
-    return Path(p.stdout.strip())
+    root = workspace_root(package_dir)
+    relative = package_dir.relative_to(root).as_posix()
+    return BazelPackage(root, f"//{relative}", root / "bazel-bin" / relative)
 
 
 @dataclass
@@ -166,7 +156,7 @@ def run_package(
     # Split logs by bazel commands visually without adding any fancy formatting dependency
     print("")
 
-    location = _bazel_package(package)
+    location = bazel_package(package)
     full_target = location.label + target
 
     # aspect_rules_py creates the runtime venv inside the target's runfiles
@@ -227,7 +217,7 @@ def scenario_package(scenario: str) -> str:
 
 def built_output(package: str, filename: str) -> Path:
     """Return a declared output from a package built in the current configuration."""
-    return _bazel_package(package).bin_dir / filename
+    return bazel_package(package).bin_dir / filename
 
 
 def load_needs_json(needs_json: Path) -> dict[str, object]:
