@@ -39,9 +39,9 @@ from src.helper_lib.repo_info import RepoInfo
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
 )
 def test_testlink_serialization_roundtrip():
     """Ensure that Encode/Decode is reversible"""
@@ -78,9 +78,9 @@ def test_testlink_encoder_handles_path():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
 )
 def test_decoder_ignores_irrelevant_dicts():
     """Ensure Decoder ignores data it doesn't understand"""
@@ -90,9 +90,9 @@ def test_decoder_ignores_irrelevant_dicts():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_clean_text_removes_ansi_and_html_unescapes():
     """
@@ -105,7 +105,7 @@ def test_clean_text_removes_ansi_and_html_unescapes():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
+    partially_verifies=[],
     fully_verifies=[
         "potential_tool_malfunction__docs_as_code__m5",
         "potential_tool_malfunction__docs_as_code__m6",
@@ -149,9 +149,9 @@ def test_testcaseneed_to_dict_multiple_links():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
 )
 def test_store_and_load_testlinks_roundtrip(tmp_path: Path):
     """Ensure that Encode/Decode is reversible"""

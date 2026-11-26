@@ -25,9 +25,9 @@ from src.helper_lib.repo_info import RepoInfo
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_short_hash_consistency_and_format():
     """Ensure shorthash has the intended format"""

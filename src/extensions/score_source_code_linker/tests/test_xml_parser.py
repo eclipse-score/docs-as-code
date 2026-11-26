@@ -153,9 +153,9 @@ def tmp_xml_dirs(
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_find_xml_files(
     tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
@@ -249,9 +249,9 @@ def test_early_return(tmp_path: Path):
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
 )
 def test_parse_testcase_result():
     """Ensure Testcase results are parsed as intended"""
@@ -282,9 +282,9 @@ def test_parse_testcase_result():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
 )
 def test_parse_properties():
     """Ensure properties of testcases are parsed as intended"""
@@ -298,7 +298,7 @@ def test_parse_properties():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
+    partially_verifies=[],
     fully_verifies=[
         "potential_tool_malfunction__docs_as_code__m5",
         "potential_tool_malfunction__docs_as_code__m6",
@@ -385,9 +385,9 @@ def test_parse_test_xml_files_without_sphinx(
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_is_testcase_in_scope_empty_allow_list_is_unfiltered():
     """An empty allow-list disables filtering: everything is in scope."""
@@ -397,9 +397,9 @@ def test_is_testcase_in_scope_empty_allow_list_is_unfiltered():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_is_testcase_in_scope_positive_match():
     """A file located under an allowed dir is in scope (positive match)."""
@@ -410,9 +410,9 @@ def test_is_testcase_in_scope_positive_match():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_is_testcase_in_scope_not_under_any_allowed_dir():
     """A file outside every allowed dir is out of scope."""
@@ -420,9 +420,9 @@ def test_is_testcase_in_scope_not_under_any_allowed_dir():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
 )
 def test_is_testcase_in_scope_none_file_with_allow_list():
     """With a non-empty allow-list a testcase without a `file` is out of scope."""
@@ -430,9 +430,9 @@ def test_is_testcase_in_scope_none_file_with_allow_list():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_is_testcase_in_scope_no_string_prefix_match():
     """Matching is component-wise, not a raw string-prefix match."""
@@ -447,9 +447,9 @@ def test_is_testcase_in_scope_no_string_prefix_match():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
 )
 def test_parse_testcase_source_dirs():
     """`str(list)` config values are parsed into a list of paths."""
@@ -459,9 +459,9 @@ def test_parse_testcase_source_dirs():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
 )
 def test_parse_testcase_source_dirs_non_list_raises():
     """A malformed (non-list) config value fails loudly instead of downstream."""

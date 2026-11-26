@@ -47,9 +47,9 @@ def _doctree_with_reference(
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_annotates_external_github_testlink():
     """Color the result already present in an external testcase link."""
@@ -67,9 +67,9 @@ def test_annotates_external_github_testlink():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
 )
 def test_does_not_annotate_reference_without_result_suffix():
     """Leave references without a rendered result suffix unchanged."""
@@ -81,9 +81,9 @@ def test_does_not_annotate_reference_without_result_suffix():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
 )
 def test_does_not_annotate_link_without_result_suffix():
     """Leave links unchanged when they have no result suffix."""
@@ -95,9 +95,9 @@ def test_does_not_annotate_link_without_result_suffix():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
 )
 def test_does_not_annotate_same_reference_twice():
     """Keep repeated handler invocations from duplicating an annotation."""
