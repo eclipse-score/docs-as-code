@@ -16,4 +16,4 @@ External Needs input forms
 
 The ``docs()`` target supplies :need:`feat_req__platform__feature`.
 The public ``docs_bundle`` target supplies :need:`gd_req__external_bundle`.
-The direct inventory file supplies :need:`gd_req__producer_root`.
+The direct inventory file supplies :need:`gd_req__docs_bzl_nested_bundle`.

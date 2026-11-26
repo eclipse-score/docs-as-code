@@ -23,7 +23,7 @@ docs(
         # A docs_bundle() label resolves to its local Needs inventory.
         "//src/tests/docs_bzl/scenarios/external_needs_inputs/bundle:docs_bundle",
         # A direct inventory file label remains supported for non-bundle inputs.
-        "//src/tests/docs_bzl/scenarios/subdirectory_bundle/producer:needs_json_file",
+        "//src/tests/docs_bzl/scenarios/nested_bundles:needs_json_file",
     ],
     project = "External Needs Inputs",
     project_url = "https://example.invalid/external-needs-inputs",

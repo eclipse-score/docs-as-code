@@ -25,4 +25,4 @@ def test_public_docs_bundle_and_needs_json_file_inputs_resolve_needs():
 
     assert "#feat_req__platform__feature" in html
     assert "#gd_req__external_bundle" in html
-    assert "#gd_req__producer_root" in html
+    assert "#gd_req__docs_bzl_nested_bundle" in html
