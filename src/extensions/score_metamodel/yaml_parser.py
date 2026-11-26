@@ -96,6 +96,20 @@ def _parse_need_type(
                 f"Directive '{directive_name}': {a_name} and {b_name} overlap: {overlap}."
             )
 
+    all_options = mandatory_options | optional_options | global_opts
+    option_defaults: dict[str, str] = yaml_data.get("option_defaults", {})
+    for option, value in option_defaults.items():
+        if option not in all_options:
+            errors.append(
+                f"Directive '{directive_name}': option_defaults sets '{option}', "
+                "which is not an option of the type."
+            )
+        elif not re.match(all_options[option], value):
+            errors.append(
+                f"Directive '{directive_name}': option_defaults value '{value}' of "
+                f"'{option}' does not follow pattern `{all_options[option]}`."
+            )
+
     t: ScoreNeedType = {
         "directive": directive_name,
         "title": yaml_data["title"],
@@ -119,6 +133,8 @@ def _parse_need_type(
         t["color"] = yaml_data["color"]
     if "style" in yaml_data:
         t["style"] = yaml_data["style"]
+    if option_defaults:
+        t["option_defaults"] = option_defaults
 
     return t, errors
 
@@ -244,10 +260,26 @@ def _collect_all_custom_options(
     params_str: dict[str, object] = {"schema": {"type": "string"}, "default": ""}
     params_int: dict[str, Any] = {"schema": {"type": "integer"}, "default": 0}
 
-    return {
+    fields: dict[str, dict[str, Any]] = {
         name: params_str if name != "version" else params_int
         for name in sorted(all_options - defaults)
     }
+
+    # option_defaults become sphinx-needs predicates: the value of the field
+    # for the needs of that type which do not set it.
+    for directive, need_type in sorted(needs_types.items()):
+        for option, value in need_type.get("option_defaults", {}).items():
+            if option not in fields:
+                raise SystemExit(
+                    f"ERROR: Directive '{directive}': option_defaults is not supported "
+                    f"for the sphinx-needs core field '{option}'."
+                )
+            field = fields[option] = dict(fields[option])
+            field["predicates"] = [
+                *field.get("predicates", []),
+                (f"type == '{directive}'", value),
+            ]
+    return fields
 
 
 def load_metamodel_data(yaml_path: Path | None = None) -> MetaModelData:

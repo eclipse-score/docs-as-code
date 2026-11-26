@@ -26,7 +26,6 @@ integration.
 
 .. mod:: Modern module
    :id: mod__modern_module
-   :maturity: preview
    :version: 1
    :includes: comp__modern_component
 

@@ -286,3 +286,68 @@ def test_tool_qualification_types_model_nested_traceability():
         "incoming": "contains",
         "outgoing": "contained by",
     }
+
+
+_MATURITY = "    optional_options:\n      maturity: ^(preview|release)$\n"
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_option_defaults_become_predicates(tmp_path: Path):
+    """An option default applies to the needs of that type which do not set it."""
+    model = _write_model(
+        tmp_path,
+        _MATURITY + "    option_defaults:\n      maturity: preview\n",
+        _DECLARED_KNOWN,
+    )
+
+    result = load_metamodel_data(yaml_path=model)
+
+    assert result.needs_fields["maturity"] == {
+        "schema": {"type": "string"},
+        "default": "",
+        "predicates": [("type == 'type1'", "preview")],
+    }
+
+
+@pytest.mark.parametrize(
+    ("defaults", "error"),
+    [
+        ("      maturity: stable\n", "does not follow pattern"),
+        ("      ghost: preview\n", "not an option of the type"),
+    ],
+)
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_invalid_option_defaults_are_rejected(
+    tmp_path: Path, defaults: str, error: str
+):
+    """A default must be an option of the type and follow its pattern."""
+    model = _write_model(
+        tmp_path, _MATURITY + "    option_defaults:\n" + defaults, _DECLARED_KNOWN
+    )
+
+    with pytest.raises(SystemExit) as excinfo:
+        load_metamodel_data(yaml_path=model)
+
+    assert error in str(excinfo.value)
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_module_maturity_defaults_to_preview():
+    """A mod need without maturity is a preview module in the generated documentation."""
+    result = load_metamodel_data()
+
+    assert result.needs_fields["maturity"]["predicates"] == [
+        ("type == 'mod'", "preview")
+    ]

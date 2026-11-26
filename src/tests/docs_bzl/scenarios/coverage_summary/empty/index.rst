@@ -16,4 +16,3 @@ Empty bundle
 
 .. mod:: Empty subject
    :id: mod__empty
-   :maturity: preview

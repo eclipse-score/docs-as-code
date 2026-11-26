@@ -53,7 +53,6 @@
 
 .. mod:: Document Owner Module
    :id: mod__doc_owner
-   :maturity: preview
    :includes: comp__doc_owner
 
 .. document:: Generic Document With All Mandatory Attributes
