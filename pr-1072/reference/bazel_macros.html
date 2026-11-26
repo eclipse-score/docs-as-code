@@ -72,7 +72,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Metamodel" href="metamodel/index.html" />
+    <link rel="next" title="Static analysis report" href="static_analysis_report.html" />
     <link rel="prev" title="Commands" href="commands.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
@@ -414,6 +414,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="static_analysis_report.html">Static analysis report</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metamodel/index.html">Metamodel</a></li>
 </ul>
 </div>
@@ -632,6 +633,13 @@ added to the matching primary Need’s metadata area, for example
 <code class="docutils literal notranslate"><span class="pre">coverage:</span> <span class="pre">lines</span> <span class="pre">67%</span> <span class="pre">·</span> <span class="pre">branches</span> <span class="pre">100%</span> <span class="pre">·</span> <span class="pre">files</span> <span class="pre">2/6</span></code>. <code class="docutils literal notranslate"><span class="pre">needs_json</span></code>,
 <code class="docutils literal notranslate"><span class="pre">docs_check</span></code> and <code class="docutils literal notranslate"><span class="pre">docs_link_check</span></code> retain their existing inputs.</p>
 </section>
+<section id="static-analysis-input">
+<h3>Static analysis input<a class="headerlink" href="#static-analysis-input" title="Link to this heading">#</a></h3>
+<p>The same CLI reads SARIF files below <code class="docutils literal notranslate"><span class="pre">static-analysis-report/</span></code> relative to the
+workspace root and writes <code class="docutils literal notranslate"><span class="pre">&lt;build-output&gt;/static_analysis_summary.json</span></code>. See
+<a class="reference internal" href="static_analysis_report.html#docs-static-analysis-report"><span class="std std-ref">Static analysis report</span></a> for the input layout and how findings are
+classified.</p>
+</section>
 </section>
 <section id="bazel-macro-docs-bundle">
 <span id="docs-bundle-macro"></span><h2>Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code><a class="headerlink" href="#bazel-macro-docs-bundle" title="Link to this heading">#</a></h2>
@@ -776,11 +784,11 @@ appending its workspace-relative Bazel package path.</p>
       </div>
     </a>
     <a class="right-next"
-       href="metamodel/index.html"
+       href="static_analysis_report.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Metamodel</p>
+        <p class="prev-next-title">Static analysis report</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -806,6 +814,7 @@ appending its workspace-relative Bazel package path.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bundle-content-and-supporting-files">Bundle content and supporting files</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-example-root-build">Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coverage-input">Coverage input</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#static-analysis-input">Static analysis input</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bazel-macro-docs-bundle">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code></a></li>
