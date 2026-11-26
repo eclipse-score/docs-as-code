@@ -1247,11 +1247,11 @@ class logic_arc_int_op {
 }
 class mod {
   +id
-  +maturity
   +version
   +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -2333,11 +2333,11 @@ class logic_arc_int {
 }
 class mod {
   +id
-  +maturity
   +version
   +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -4260,11 +4260,11 @@ class feat {
 }
 class mod {
   +id
-  +maturity
   +version
   +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -6973,11 +6973,11 @@ class document {
 }
 class mod {
   +id
-  +maturity
   +version
   +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -7051,24 +7051,24 @@ click mod_view_sta href &quot;#mod-view-sta&quot; &quot;Open mod_view_sta detail
 <td><p><code class="docutils literal notranslate"><span class="pre">^mod__[0-9a-z_]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Mandatory</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">maturity</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">^(preview|experimental|release)$</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>Mandatory</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">version</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_module</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^[a-zA-Z0-9_.+~-]+$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Optional</p></td>
+<tr class="row-odd"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_target</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bazel_type</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">maturity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^(preview|experimental|release)$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">safety</span></code></p></td>
@@ -7124,11 +7124,11 @@ classDiagram
   direction BT
 class mod {
   +id
-  +maturity
   +version
   +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -7292,11 +7292,11 @@ classDiagram
   direction BT
 class mod {
   +id
-  +maturity
   +version
   +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -7403,11 +7403,11 @@ class comp {
 }
 class mod {
   +id
-  +maturity
   +version
   +bazel_module [optional]*
   +bazel_target [optional]*
   +bazel_type [optional]*
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*

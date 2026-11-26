@@ -533,18 +533,25 @@ or one of its checks.
 How to write such a test file is described in
 <a class="reference internal" href="extensions/rst_filebased_testing.html"><span class="doc">File based rule checks</span></a>.</p>
 </section>
-<section id="end-to-end-docs-bzl-tests-docs-bzl">
-<h2>End-to-end docs.bzl tests (docs_bzl)<a class="headerlink" href="#end-to-end-docs-bzl-tests-docs-bzl" title="Link to this heading">#</a></h2>
+<section id="end-to-end-docs-bzl-tests-end-to-end">
+<h2>End-to-end docs.bzl tests (end_to_end)<a class="headerlink" href="#end-to-end-docs-bzl-tests-end-to-end" title="Link to this heading">#</a></h2>
 <p>The end-to-end tests exercise the public <code class="docutils literal notranslate"><span class="pre">docs()</span></code> and <code class="docutils literal notranslate"><span class="pre">docs_bundle()</span></code>
 macros through real Bazel builds and <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span></code> invocations,
 exactly like a consumer would use them.
-They live under <code class="docutils literal notranslate"><span class="pre">src/tests/docs_bzl</span></code> and cover composition,
+They live under <code class="docutils literal notranslate"><span class="pre">src/tests/end_to_end</span></code> and cover composition,
 invalid configurations, external Bzlmod bundles,
 and golden HTML/JSON output comparison.</p>
+<p>The scenarios are packages of a separate Bazel module,
+<code class="docutils literal notranslate"><span class="pre">src/tests/end_to_end/scenarios</span></code> (<code class="docutils literal notranslate"><span class="pre">score_scenarios</span></code>).
+It uses docs-as-code through <code class="docutils literal notranslate"><span class="pre">&#64;score_docs_as_code</span></code>
+and its own module name, like a real project does,
+and is listed in <code class="docutils literal notranslate"><span class="pre">.bazelignore</span></code>,
+so docs-as-code’s own Bazel targets never see it.
+Add new scenarios to this module.</p>
 <p>They are not Bazel test targets,
 but plain pytest tests that issue Bazel underneath
 because these tests also verify our Bazel/Starlark code.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.venv_docs/bin/python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-vv<span class="w"> </span>src/tests/docs_bzl
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.venv_docs/bin/python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-vv<span class="w"> </span>src/tests/end_to_end
 </pre></div>
 </div>
 <p>The suite must be run sequentially.
@@ -554,7 +561,7 @@ CI splits it with custom markers:
 <p>Use this layer for changes to the Bazel macros,
 the bundle composition,
 or the generated output format.
-It is the “docs-bzl scope” in the diagram above.</p>
+It is the “end_to_end scope” in the diagram above.</p>
 </section>
 <section id="downstream-compatibility-tests">
 <h2>Downstream compatibility tests<a class="headerlink" href="#downstream-compatibility-tests" title="Link to this heading">#</a></h2>
@@ -596,7 +603,7 @@ The later tests are slower.</p>
 <td><p>File-based RST rule checks</p></td>
 </tr>
 <tr class="row-odd"><td><p>Bazel macros, bundles, or output format</p></td>
-<td><p>End-to-end docs_bzl tests</p></td>
+<td><p>End-to-end tests (<code class="docutils literal notranslate"><span class="pre">end_to_end</span></code>)</p></td>
 </tr>
 <tr class="row-even"><td><p>Public API, layouts, or version requirements</p></td>
 <td><p>Downstream compatibility tests</p></td>
@@ -660,7 +667,7 @@ The later tests are slower.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#development-checks-pre-commit">Development checks (pre-commit)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-unit-tests-score-pytest">Python unit tests (score_pytest)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#file-based-rst-rule-checks-metamodel">File-based RST rule checks (metamodel)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#end-to-end-docs-bzl-tests-docs-bzl">End-to-end docs.bzl tests (docs_bzl)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#end-to-end-docs-bzl-tests-end-to-end">End-to-end docs.bzl tests (end_to_end)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#downstream-compatibility-tests">Downstream compatibility tests</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-test-for-what">Which test for what</a></li>
 </ul>
