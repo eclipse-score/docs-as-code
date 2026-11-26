@@ -14,18 +14,21 @@
 
 .. test_metadata::
    :id: test_metadata__saf_violates
-   :fully_verifies_list: tool_req__docs_saf_attrs_violates[version==2]
+   :fully_verifies_list: tool_req__docs_saf_attrs_violates[version==3]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
    Tests that SAF needs link `violates` to correct diagram types per the table:
 
-   * plat_saf_dfa -> feat_arc_sta
+   * plat_saf_dfa -> feat
    * feat_saf_dfa -> feat_arc_sta
    * comp_saf_dfa -> comp_arc_sta
    * feat_saf_fmea -> feat_arc_dyn, feat_arc_sta
    * comp_saf_fmea -> comp_arc_dyn, comp_arc_sta
 
+
+.. feat:: Stub Feature
+   :id: feat__001
 
 .. feat_arc_sta:: Stub Feature Static Architecture
    :id: feat_arc_sta__001
@@ -58,14 +61,24 @@
    :violates: feat_arc_sta__001
 
 
-.. plat_saf_dfa:: plat DFA violates feat arc sta
+.. plat_saf_dfa:: plat DFA violates feat
    :id: plat_saf_dfa__viol__001
    :failure_id: df_003
    :failure_effect: shared resource exhausted
    :sufficient: no
    :status: valid
-   :violates: feat_arc_sta__001
+   :violates: feat__001
    :expect_not: as 'violates'
+
+
+.. plat_saf_dfa:: plat DFA violates feat arc sta
+   :id: plat_saf_dfa__viol__bad_002
+   :failure_id: df_bad_004
+   :failure_effect: wrong link target
+   :sufficient: no
+   :status: valid
+   :violates: feat_arc_sta__bad_001
+   :expect: must reference Feature (feat)
 
 
 .. plat_saf_dfa:: plat DFA violates comp arc sta
@@ -75,7 +88,7 @@
    :sufficient: no
    :status: valid
    :violates: comp_arc_sta__bad_001
-   :expect: must reference Feature & Feature Package Diagram
+   :expect: must reference Feature (feat)
 
 
 .. plat_saf_dfa:: Missing violates link
