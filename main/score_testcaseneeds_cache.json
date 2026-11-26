@@ -5572,6 +5572,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_helpers__test_get_github_link_prefixes_a_workspace_below_the_git_root",
+    "file": "src/extensions/score_source_code_linker/tests/test_helpers.py",
+    "line": "443",
+    "result": "passed",
+    "repo_name": "score_docs_as_code",
+    "hash": "",
+    "url": "",
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_need_source_links__test_encoder_outputs_serializable_dict",
     "file": "src/extensions/score_source_code_linker/tests/test_need_source_links.py",
     "line": "108",
@@ -7968,7 +7982,7 @@
   {
     "name": "test_helper_lib__test_config_setdefault_sets_when_not_in_raw_config",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "38",
+    "line": "39",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -7982,7 +7996,7 @@
   {
     "name": "test_helper_lib__test_config_setdefault_does_not_overwrite_user_value",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "44",
+    "line": "45",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -7996,7 +8010,7 @@
   {
     "name": "test_helper_lib__test_find_git_root_ignores_bazel_sandbox_ancestor_git_repo",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "86",
+    "line": "87",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8010,7 +8024,7 @@
   {
     "name": "test_helper_lib__test_git_operations_with_no_commits",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "171",
+    "line": "172",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8024,7 +8038,7 @@
   {
     "name": "test_helper_lib__test_git_repo_with_no_remotes",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "190",
+    "line": "191",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8038,7 +8052,7 @@
   {
     "name": "test_helper_lib__test_parse_git_output_ssh_format",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "214",
+    "line": "215",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8052,7 +8066,7 @@
   {
     "name": "test_helper_lib__test_parse_git_output_https_format",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "221",
+    "line": "222",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8066,7 +8080,7 @@
   {
     "name": "test_helper_lib__test_parse_git_output_ssh_format_without_git_suffix",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "228",
+    "line": "229",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8080,7 +8094,7 @@
   {
     "name": "test_helper_lib__test_parse_git_output_invalid_format",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "235",
+    "line": "236",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8094,7 +8108,7 @@
   {
     "name": "test_helper_lib__test_parse_git_output_empty_string",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "242",
+    "line": "243",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8108,7 +8122,7 @@
   {
     "name": "test_helper_lib__test_get_github_repo_info_ssh_remote",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "249",
+    "line": "250",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8122,7 +8136,7 @@
   {
     "name": "test_helper_lib__test_get_github_repo_info_https_remote",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "255",
+    "line": "256",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8136,7 +8150,7 @@
   {
     "name": "test_helper_lib__test_get_github_repo_info_multiple_remotes",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "261",
+    "line": "262",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8150,7 +8164,7 @@
   {
     "name": "test_helper_lib__test_get_current_git_hash",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "267",
+    "line": "268",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8164,7 +8178,7 @@
   {
     "name": "test_helper_lib__test_get_current_git_hash_invalid_repo",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "276",
+    "line": "277",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8178,7 +8192,7 @@
   {
     "name": "test_helper_lib__test_runfiles_dir_found",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "282",
+    "line": "283",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8192,7 +8206,7 @@
   {
     "name": "test_helper_lib__test_runfiles_dir_missing_triggers_exit",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "292",
+    "line": "293",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8206,7 +8220,7 @@
   {
     "name": "test_helper_lib__test_git_root_search_success",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "304",
+    "line": "305",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
@@ -8220,7 +8234,49 @@
   {
     "name": "test_helper_lib__test_git_root_search_not_found",
     "file": "src/helper_lib/test_helper_lib.py",
-    "line": "320",
+    "line": "321",
+    "result": "passed",
+    "repo_name": "score_docs_as_code",
+    "hash": "",
+    "url": "",
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_helper_lib__test_ws_root_in_git_root[workspace_is_git_root]",
+    "file": "src/helper_lib/test_helper_lib.py",
+    "line": "337",
+    "result": "passed",
+    "repo_name": "score_docs_as_code",
+    "hash": "",
+    "url": "",
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_helper_lib__test_ws_root_in_git_root[workspace_below_git_root]",
+    "file": "src/helper_lib/test_helper_lib.py",
+    "line": "337",
+    "result": "passed",
+    "repo_name": "score_docs_as_code",
+    "hash": "",
+    "url": "",
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_helper_lib__test_ws_root_in_git_root_without_workspace",
+    "file": "src/helper_lib/test_helper_lib.py",
+    "line": "351",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
