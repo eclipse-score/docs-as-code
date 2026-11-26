@@ -187,7 +187,7 @@ def test_external_bundle_updates_local_need_like_internal_bundle(
 
 
 # TODO: Check root and mounted Need ownership in the needs.json produced
-# by the planned docs_bzl scenario with two Bazel modules.
+# by the planned end_to_end scenario with two Bazel modules.
 # Check stale module values in an incremental scenario when one is available.
 @add_test_properties(
     partially_verifies=[],

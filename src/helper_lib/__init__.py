@@ -84,12 +84,35 @@ def find_git_root() -> Path | None:
         case ExecutionEnvironment.DIRECT:
             start_path = Path.cwd()
 
+    return _git_root_above(start_path)
+
+
+def _git_root_above(start_path: Path) -> Path | None:
+    """Return the closest directory at or above ``start_path`` with a ``.git``."""
     git_root = start_path.resolve()
     while not (git_root / ".git").exists():
         git_root = git_root.parent
         if git_root == git_root.parent:
             return None
     return git_root
+
+
+def ws_root_in_git_root(ws_root: Path | None = None) -> Path:
+    """
+    Return the Bazel workspace's path inside its Git repository.
+
+    Bazel paths are relative to the workspace, GitHub URLs to the Git root. The
+    two differ when a module lives below the Git root, for example a test
+    module in a subdirectory. Returns ``Path(".")`` when they are the same or
+    when either root is unknown (sandboxed build).
+    """
+    ws_root = ws_root or find_ws_root()
+    if ws_root is None:
+        return Path(".")
+    git_root = _git_root_above(ws_root)
+    if git_root is None:
+        return Path(".")
+    return ws_root.resolve().relative_to(git_root)
 
 
 def parse_remote_git_output(str_line: str) -> str:
