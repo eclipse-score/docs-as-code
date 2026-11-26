@@ -28,11 +28,12 @@ from src.tests.docs_bzl.helpers import (
     repo_root,
     run_bazel,
     run_scenario,
+    scenario_package,
     toctree_links,
 )
 
 SCENARIO = "data_files_runfiles"
-PACKAGE = f"scenarios/{SCENARIO}"
+PACKAGE = scenario_package(SCENARIO)
 SCENARIO_PATH = (TEST_ROOT / PACKAGE).relative_to(repo_root()).as_posix()
 
 

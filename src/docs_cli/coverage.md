@@ -79,8 +79,8 @@ to one documentation project, shared by the cache check and the renderer.
 their existing inputs. Report parsing belongs to HTML rendering and live preview.
 
 The generated file-list targets and JSON formats are internal interfaces. For a
-concrete example, the [reference fixture](../tests/docs_bzl/consumer/reference_integration/modern_module/BUILD)
-provides the following. It lives in the test module `src/tests/docs_bzl/consumer`,
+concrete example, the [reference fixture](../tests/docs_bzl/scenarios/reference_integration/modern_module/BUILD)
+provides the following. It lives in the test module `src/tests/docs_bzl/scenarios`,
 so its labels and `bazel-bin` are relative to that directory:
 
 ```text
@@ -246,11 +246,11 @@ example and restores any previous report:
 ```
 
 Inspect the generated page at
-`src/tests/docs_bzl/consumer/reference_integration/modern_module/_build/components/component/index.html`.
+`src/tests/docs_bzl/scenarios/reference_integration/modern_module/_build/components/component/index.html`.
 The test starts with 67% line coverage and 100% branch coverage, then changes the
 report to 33% line coverage to check that the displayed result updates. The
 baseline HTML is checked in at
-`src/tests/docs_bzl/consumer/reference_integration/modern_module/_expected/docs/components/component/index.html`.
+`src/tests/docs_bzl/scenarios/reference_integration/modern_module/_expected/docs/components/component/index.html`.
 The expected-output harness stages the scenario's `coverage.info` automatically.
 The neighboring component has no summary and receives no coverage attribute.
 

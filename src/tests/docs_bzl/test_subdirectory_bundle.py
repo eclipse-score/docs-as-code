@@ -17,7 +17,7 @@ from typing import cast
 import pytest
 
 from src.tests.docs_bzl.helpers import (
-    CONSUMER_ROOT,
+    SCENARIOS_ROOT,
     load_needs,
     load_needs_json,
     run_bazel,
@@ -115,7 +115,7 @@ def test_docs_targets_build_with_a_bundle_in_a_subdirectory():
                 for target in targets
             ],
         ],
-        cwd=CONSUMER_ROOT,
+        cwd=SCENARIOS_ROOT,
     )
 
 
@@ -134,7 +134,7 @@ def test_parent_needs_export_does_not_depend_on_mounted_child_bundle():
             f"deps({PRODUCER}:docs.__internal__.needs_local)",
             "--output=label",
         ],
-        cwd=CONSUMER_ROOT,
+        cwd=SCENARIOS_ROOT,
     )
 
     dependencies = set(result.stdout.splitlines())
@@ -145,7 +145,7 @@ def test_parent_needs_export_does_not_depend_on_mounted_child_bundle():
 @pytest.mark.bazel_cached
 def test_producer_exports_its_own_and_embedded_needs():
     """Needs of the embedded bundle are exported below its mount point."""
-    data, needs = _needs_export("consumer/subdirectory_bundle/producer")
+    data, needs = _needs_export("scenarios/subdirectory_bundle/producer")
 
     assert data["project"] == "Subdirectory Bundle Producer"
     assert _docnames(needs) == {
@@ -158,7 +158,7 @@ def test_producer_exports_its_own_and_embedded_needs():
 def test_consumer_exports_the_mounted_producer_needs_below_its_mount():
     """Mounting the producer moves all its Needs, embedded ones included,
     below "producer/" in the consumer's export, each exactly once."""
-    data, needs = _needs_export("consumer/subdirectory_bundle/consumer")
+    data, needs = _needs_export("scenarios/subdirectory_bundle/consumer")
 
     assert data["project"] == "Subdirectory Bundle Consumer"
     assert _docnames(needs) == {
@@ -171,7 +171,7 @@ def test_consumer_exports_the_mounted_producer_needs_below_its_mount():
 @pytest.mark.bazel_cached
 def test_consumer_resolves_links_of_mounted_needs():
     """After both mounts, every layer's links and back links still resolve."""
-    _, needs = _needs_export("consumer/subdirectory_bundle/consumer")
+    _, needs = _needs_export("scenarios/subdirectory_bundle/consumer")
 
     expected: dict[str, dict[str, list[str]]] = {}
     for gd_req, workflow, workproduct, role in LINKED_NEEDS:
@@ -200,17 +200,17 @@ def test_consumer_resolves_links_of_mounted_needs():
 def test_consumer_can_render_and_run_documentation_checks():
     """Runtime rendering and documentation checks work across package boundaries."""
     producer_result = run_package(
-        "run", "consumer/subdirectory_bundle/producer", ":docs"
+        "run", "scenarios/subdirectory_bundle/producer", ":docs"
     )
     assert (producer_result.build_dir / "embedded" / "index.html").is_file()
 
     consumer_result = run_package(
-        "run", "consumer/subdirectory_bundle/consumer", ":docs"
+        "run", "scenarios/subdirectory_bundle/consumer", ":docs"
     )
     assert (consumer_result.build_dir / "producer" / "index.html").is_file()
     assert (
         consumer_result.build_dir / "producer" / "embedded" / "index.html"
     ).is_file()
 
-    run_package("run", "consumer/subdirectory_bundle/consumer", ":docs_check")
-    run_package("run", "consumer/subdirectory_bundle/consumer", ":docs_link_check")
+    run_package("run", "scenarios/subdirectory_bundle/consumer", ":docs_check")
+    run_package("run", "scenarios/subdirectory_bundle/consumer", ":docs_link_check")

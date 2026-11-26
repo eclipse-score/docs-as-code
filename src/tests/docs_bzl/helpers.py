@@ -27,9 +27,13 @@ from typing import cast
 from src.helper_lib import find_git_root
 
 TEST_ROOT = Path(__file__).parent
-# A separate Bazel module that uses docs-as-code like a real consumer does.
-# Its packages are not part of docs-as-code; Bazel runs inside this directory.
-CONSUMER_ROOT = TEST_ROOT / "consumer"
+# The scenarios are a separate Bazel module that uses docs-as-code like a real
+# project does. Its packages are not part of docs-as-code; Bazel runs inside
+# this directory.
+SCENARIOS_ROOT = TEST_ROOT / "scenarios"
+# Scenarios that docs-as-code's own BUILD mounts into its documentation. They
+# must stay packages of docs-as-code.
+IN_TREE_SCENARIOS_ROOT = TEST_ROOT / "in_tree_scenarios"
 
 # GitHub Actions exposes this variable to the documentation build. Supplying
 # the same repository identity locally makes generated GitHub links (such as
@@ -48,7 +52,7 @@ def repo_root() -> Path:
 
 def workspace_root(path: Path) -> Path:
     """The root of the Bazel workspace that ``path`` belongs to."""
-    return CONSUMER_ROOT if path.is_relative_to(CONSUMER_ROOT) else repo_root()
+    return SCENARIOS_ROOT if path.is_relative_to(SCENARIOS_ROOT) else repo_root()
 
 
 @contextmanager
@@ -205,14 +209,15 @@ def run_scenario(
     expect_error: bool = False,
     env: Mapping[str, str] | None = None,
 ) -> RunResult:
-    """Run one general docs() scenario, in the consumer module if it lives there."""
+    """Run one general docs() scenario, wherever it lives."""
     return run_package(bazel_cmd, scenario_package(scenario), target, expect_error, env)
 
 
 def scenario_package(scenario: str) -> str:
     """The test package (relative to ``TEST_ROOT``) where a scenario lives."""
-    in_consumer = (CONSUMER_ROOT / scenario).is_dir()
-    return f"consumer/{scenario}" if in_consumer else f"scenarios/{scenario}"
+    in_tree = (IN_TREE_SCENARIOS_ROOT / scenario).is_dir()
+    root = IN_TREE_SCENARIOS_ROOT if in_tree else SCENARIOS_ROOT
+    return f"{root.relative_to(TEST_ROOT).as_posix()}/{scenario}"
 
 
 def built_output(package: str, filename: str) -> Path:

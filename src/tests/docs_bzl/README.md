@@ -9,9 +9,18 @@
 # Public `docs.bzl` scenario tests
 
 These pytest tests exercise the public `docs()` and `docs_bundle()` macros
-through real Bazel builds and runs. Fixtures live below `scenarios/`; the test
-modules are `test_docs_bzl_scenarios.py` and
-`test_expected_output_consistency.py`.
+through real Bazel builds and runs. The tests are the `test_*.py` files in this
+directory. Fixtures live in two places:
+
+- `scenarios/`: a separate Bazel module (`score_scenarios`) that uses
+  docs-as-code through `@score_docs_as_code`, the way a real project does. It is
+  listed in `.bazelignore`, and the tests run Bazel inside this directory. Add
+  new scenarios here.
+- `in_tree_scenarios/`: packages of docs-as-code itself. Only scenarios that
+  docs-as-code's own `BUILD` mounts into its documentation live here.
+
+`helpers.scenario_package()` finds a scenario in either place, so tests refer
+to a scenario by its name only.
 
 ## Run
 

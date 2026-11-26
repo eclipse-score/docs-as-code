@@ -33,9 +33,10 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from src.tests.docs_bzl.helpers import (
-    CONSUMER_ROOT,
     GITHUB_ENV,
     GITHUB_REPOSITORY,
+    IN_TREE_SCENARIOS_ROOT,
+    SCENARIOS_ROOT,
     TEST_ROOT,
     bazel_package,
     built_output,
@@ -145,7 +146,7 @@ def discover_expected_scenarios() -> list[str]:
     """Find scenario packages that opt into golden-output verification."""
     return sorted(
         str(expected_root.parent.relative_to(scenarios_root))
-        for scenarios_root in (TEST_ROOT / "scenarios", CONSUMER_ROOT)
+        for scenarios_root in (IN_TREE_SCENARIOS_ROOT, SCENARIOS_ROOT)
         for expected_root in scenarios_root.rglob("_expected")
         if expected_root.is_dir()
     )

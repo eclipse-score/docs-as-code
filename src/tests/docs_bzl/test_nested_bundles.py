@@ -28,12 +28,13 @@ from src.tests.docs_bzl.helpers import (
     load_needs,
     repo_root,
     run_scenario,
+    scenario_package,
     toctree_links,
     toctrees,
 )
 
 SCENARIO = "nested_bundles"
-PACKAGE = f"scenarios/{SCENARIO}"
+PACKAGE = scenario_package(SCENARIO)
 SCENARIO_PATH = (TEST_ROOT / PACKAGE).relative_to(repo_root()).as_posix()
 PARENT_MOUNT = "concepts/example_bundle"
 CHILD_MOUNT = f"{PARENT_MOUNT}/child"
