@@ -62,6 +62,11 @@ from src.helper_lib.needlinks import (
 from src.helper_lib.repo_info import DefaultRepoInfo, RepoInfo, get_github_link
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_need(*, extras: dict[str, Any] | None = None, **kwargs: Any) -> NeedItem:
     """Convenience function to create a NeedItem object with some defaults."""
 

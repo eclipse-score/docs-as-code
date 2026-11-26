@@ -15,6 +15,7 @@
 
 # from sphinx.application import Sphinx
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 
 from src.extensions.score_metamodel.checks import standards
 from src.extensions.score_metamodel.tests import need  # ,fake_check_logger
@@ -397,6 +398,11 @@ class TestStandards:
     #                    │                            END OF TEMP DISABLING            │
     #                    ╰─────────────────────────────────────────────────────────────╯
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_my_pie_linked_standard_requirements(self):
         """
         Simulate results  for my_pie_linked_standard_requirements function and
@@ -457,6 +463,11 @@ class TestStandards:
         ], "For function my_pie_linked_standard_requirements expected [1, 1] but got "
         f"{results}"
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_my_pie_linked_standard_workproducts(self):
         """
         Simulate results  for test_my_pie_linked_standard_workproducts function
@@ -510,6 +521,11 @@ class TestStandards:
         ], "For function my_pie_linked_standard_workproducts expected [1, 1] but got "
         f"{results}"
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_my_pie_workproducts_contained_in_exactly_one_workflow(self):
         """
         Simulate results  for test_my_pie_workproducts_contained_in_exactly_one_workflow
@@ -633,6 +649,11 @@ class TestStandards:
         ], "For function my_pie_workproducts_contained_in_exactly_one_workflow expected"
         f"[1, 1, 1] but got {results}"
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_get_standards_needs(self):
         """
         Test if get_standards_needs works as expected with a positive and negative test.
@@ -663,6 +684,11 @@ class TestStandards:
         assert need_1 in result.values()
         assert need_2 not in result.values()
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_get_standards_workproducts(self):
         """
         Test if get_standards_workproducts works as expected with a
@@ -693,6 +719,11 @@ class TestStandards:
         assert need_1 in result.values()
         assert need_2 not in result.values()
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_get_compliance_req_needs(self):
         """
         Test if get_compliance_req_needs works as expected with a positive
@@ -741,6 +772,11 @@ class TestStandards:
         assert need_1.get("complies", [])[0] not in result
         assert need_2.get("complies", [])[0] in result
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_get_compliance_wp_needs(self):
         """
         Test if get_compliance_wp_needs works as expected with a positive and
@@ -785,6 +821,11 @@ class TestStandards:
         assert need_1.get("complies", [])[0] not in result
         assert need_2.get("complies", [])[0] in result
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_get_workflows(self):
         """
         Test if get_workflows works as expected with a positive and negative test.
@@ -828,6 +869,11 @@ class TestStandards:
         assert need_1 not in result.values()
         assert need_2 in result.values()
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="explorative-testing",
+    )
     def test_get_workproducts(self):
         """
         Test if get_workproducts works as expected with a positive and negative test.
@@ -872,6 +918,11 @@ class TestStandards:
         assert need_1 in result.values()
         assert need_2 not in result.values()
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="equivalence-classes",
+    )
     def test_positive_case_mixed_linked_and_unlinked(self):
         """Test case where some needs with the tag are linked and some are not."""
         # Setup mock needs data
@@ -916,6 +967,11 @@ class TestStandards:
         # REQ_001 and REQ_002 are linked (in compliance), REQ_004 is not linked
         assert results == [2, 1]  # [count_linked, count_non_linked]
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="error-guessing",
+    )
     def test_negative_case_no_needs_with_tag(self):
         """Test case where no needs have the specified tag."""
         needs = [
@@ -937,6 +993,11 @@ class TestStandards:
         # No needs found with the tag
         assert results == [0, 0]  # [count_linked, count_non_linked]
 
+    @add_test_properties(
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="error-guessing",
+    )
     def test_assert_multiple_kwargs(self):
         """Test case that triggers the assertion error for multiple kwargs."""
         needs = [need(id="REQ_001", tags=["test_tag"], type="gd_requirement")]

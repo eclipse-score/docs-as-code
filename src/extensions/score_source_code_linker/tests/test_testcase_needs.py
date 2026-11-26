@@ -65,12 +65,18 @@ def test_short_hash_consistency_and_format():
         ),
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_construct_and_add_need_uses_source_url_or_placeholder(
     monkeypatch: pytest.MonkeyPatch,
     repo: RepoInfo | None,
     line: str | None,
     expected_url: str,
 ):
+    """A pinned repo yields its real URL; missing pins use the placeholder."""
     calls: list[dict[str, object]] = []
 
     def _fake_add_external_need(**kwargs: object) -> object:

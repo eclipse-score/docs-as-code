@@ -124,7 +124,13 @@ class TestCheckOptions:
         )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_milestone_parsing():
+    """Version strings become milestone tuples, padding the patch part."""
     assert parse_milestone("v0.5") == (0, 5, 0)
     assert parse_milestone("v1.0") == (1, 0, 0)
     assert parse_milestone("v1.0.1") == (1, 0, 1)

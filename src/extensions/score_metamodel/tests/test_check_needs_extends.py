@@ -17,6 +17,7 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 from score_metamodel.checks import check_needs_extends
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.config import NeedsSphinxConfig
 from sphinx_needs.data import NeedsExtendType, NeedsMutable, SphinxNeedsData
@@ -50,6 +51,11 @@ def _make_needextend(target: str, *, target_is_id: bool) -> NeedsExtendType:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_id_shorthand_warns_for_a_need_in_another_document(
     monkeypatch: pytest.MonkeyPatch,
 ):
@@ -81,6 +87,11 @@ def test_id_shorthand_warns_for_a_need_in_another_document(
     assert "Matching needs: remote-need." in log_warning_mock.call_args.args[1]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_both_passes_use_the_document_index(monkeypatch: pytest.MonkeyPatch):
     """Check two filters in a document with one local Need.
 
@@ -115,6 +126,11 @@ def test_both_passes_use_the_document_index(monkeypatch: pytest.MonkeyPatch):
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_local_needextend_can_match_fields_set_by_an_earlier_directive(
     tmp_path: Path,
 ):

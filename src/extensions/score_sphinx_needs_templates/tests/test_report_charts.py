@@ -45,6 +45,11 @@ def _texts(figure: Figure) -> list[tuple[str, str]]:
         ([0, 0, 5], [("5 (100%)", "white"), ("5", "#6c757d")]),
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_draw_report_bars_sizes_segment_numbers_by_width(
     sizes: list[int], expected: list[tuple[str, str]]
 ) -> None:
@@ -61,6 +66,11 @@ def test_draw_report_bars_sizes_segment_numbers_by_width(
 
 
 @pytest.mark.parametrize("color", ["#37a12d", "#f5c518", "#f0a500", "#ca2828"])
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_segment_text_meets_wcag_contrast_on_every_report_colour(color: str) -> None:
     """Segment labels are normal-size text, so they need at least 4.5:1 (WCAG AA)."""
     luminance = vars(report_charts)["_relative_luminance"]
@@ -70,6 +80,11 @@ def test_segment_text_meets_wcag_contrast_on_every_report_colour(color: str) -> 
     assert (lighter + 0.05) / (darker + 0.05) >= 4.5
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_draw_report_bars_puts_all_rows_on_one_shared_axis() -> None:
     """More bars make the figure taller, never narrower, so charts line up."""
     row = BarRow("Status", [1, 1], ["g", "r"], ["a", "b"])
@@ -242,6 +257,11 @@ Report
 
 
 @pytest.mark.parametrize("percent", [0, 1, 67, 99, 100])
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_coverage_bar_labels_never_invent_hit_counts(percent: int) -> None:
     """Rounded percentages describe segment sizes, not exact source-item counts."""
     figure = draw_report_bars(
@@ -321,6 +341,11 @@ def _summary(
         ),
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_coverage_report_preserves_availability_and_independent_dimensions(
     render_coverage_report: Callable[[dict[str, Any] | None], nodes.container],
     summary: dict[str, Any] | None,
@@ -336,6 +361,11 @@ def test_coverage_report_preserves_availability_and_independent_dimensions(
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_coverage_chart_urls_follow_displayed_values(
     render_coverage_report: Callable[[dict[str, Any] | None], nodes.container],
 ) -> None:

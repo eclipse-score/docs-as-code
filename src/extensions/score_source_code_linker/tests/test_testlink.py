@@ -65,7 +65,13 @@ def test_testlink_serialization_roundtrip():
     assert loaded == link
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_testlink_encoder_handles_path():
+    """The encoder keeps a Path as its plain string form."""
     data = {"file": Path("some/thing.py")}
     encoded = json.dumps(data, cls=DataForTestLink_JSON_Encoder)
     assert '"file": "some/thing.py"' in encoded
@@ -186,6 +192,11 @@ def test_store_and_load_testlinks_roundtrip(tmp_path: Path):
         assert isinstance(link, DataForTestLink)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_datafortestlink_to_dict_full():
     """Cover line 85: to_dict_full includes all fields"""
     link = DataForTestLink(
@@ -208,6 +219,11 @@ def test_datafortestlink_to_dict_full():
     assert result["name"] == "test_full"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_datafortestlink_equality_with_non_testlink():
     """Cover line 69: __eq__ with non-DataForTestLink returns NotImplemented"""
     link = DataForTestLink(
@@ -226,6 +242,11 @@ def test_datafortestlink_equality_with_non_testlink():
 #            ──────────────────────[ DataOfTestCase ]──────────────────────
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_dataoftestcase_check_verifies_fields_missing_both():
     """Cover lines 200-206: check_verifies_fields returns False when both are None"""
     case = DataOfTestCase(
@@ -244,6 +265,11 @@ def test_dataoftestcase_check_verifies_fields_missing_both():
     assert case.check_verifies_fields() is False
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_dataoftestcase_is_valid_fails_on_none_field():
     """Cover lines 232-238: is_valid returns False when required field is None"""
     case = DataOfTestCase(
@@ -261,6 +287,11 @@ def test_dataoftestcase_is_valid_fails_on_none_field():
     assert case.is_valid() is False
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_dataoftestcase_get_test_links_returns_empty_when_invalid():
     """Cover line 245: get_test_links returns [] when is_valid is False"""
     case = DataOfTestCase(
@@ -277,6 +308,11 @@ def test_dataoftestcase_get_test_links_returns_empty_when_invalid():
     assert links == []
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_dataoftestcase_decoder_valid_dict():
     """Cover lines 314-324: Decoder reconstructs DataOfTestCase from valid dict"""
     json_data = {
@@ -300,6 +336,11 @@ def test_dataoftestcase_decoder_valid_dict():
     assert result.file == "src/test.py"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_dataoftestcase_decoder_non_testcase_dict():
     """Cover line 326: Decoder returns dict unchanged for non-TestCase data"""
     json_data = {"some": "other", "data": "here"}
@@ -307,6 +348,11 @@ def test_dataoftestcase_decoder_non_testcase_dict():
     assert result == json_data
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_store_and_load_data_of_test_case_roundtrip(tmp_path: Path):
     """Cover lines 376-386: store and load DataOfTestCase roundtrip"""
     test_cases = [
@@ -343,6 +389,11 @@ def test_store_and_load_data_of_test_case_roundtrip(tmp_path: Path):
     assert loaded == test_cases
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_load_data_of_test_case_validates_list(tmp_path: Path):
     """Cover line 380: Load validates result is a list"""
     test_file = tmp_path / "not_list.json"
@@ -352,6 +403,11 @@ def test_load_data_of_test_case_validates_list(tmp_path: Path):
         _ = load_data_of_test_case_json(test_file)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_load_data_of_test_case_validates_items(tmp_path: Path):
     """Cover line 383: Load validates all items are DataOfTestCase"""
     test_file = tmp_path / "invalid_items.json"
@@ -361,6 +417,11 @@ def test_load_data_of_test_case_validates_items(tmp_path: Path):
         _ = load_data_of_test_case_json(test_file)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_dataoftestcase_encoder_fallback():
     """Cover line 299: Encoder falls back to parent for unknown types"""
     encoder = DataOfTestCase_JSON_Encoder()
@@ -370,6 +431,11 @@ def test_dataoftestcase_encoder_fallback():
         _ = encoder.default(object())
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_datafortestlink_encoder_fallback():
     """Cover line 103: DataForTestLink encoder falls back to parent for unknown types"""
     from src.extensions.score_source_code_linker.testlink import (
@@ -383,6 +449,11 @@ def test_datafortestlink_encoder_fallback():
         _ = encoder.default(object())
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_datafortestlink_decoder_non_testlink_dict():
     """Cover line 132: DataForTestLink decoder returns dict unchanged"""
     from src.extensions.score_source_code_linker.testlink import (

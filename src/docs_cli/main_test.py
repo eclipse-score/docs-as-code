@@ -147,6 +147,11 @@ def test_docs_build_dir_overrides_interactive_output_dir(
 
 
 @pytest.mark.parametrize("value", [".", "..", "/", "/workspace", "docs"])
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_docs_build_dir_rejects_paths_that_cleanup_could_destroy(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -160,6 +165,11 @@ def test_docs_build_dir_rejects_paths_that_cleanup_could_destroy(
         DocsCliConfig.from_environment()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_failed_build_returns_exit_code_and_forces_next_build_clean(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,

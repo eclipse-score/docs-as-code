@@ -21,6 +21,7 @@ import pytest
 # Adjust this import path if your project layout differs.
 import score_metamodel.checks.graph_checks as graph_checks
 from score_metamodel.tests import fake_check_logger, need as test_need
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx_needs.config import NeedType
 from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
@@ -48,6 +49,11 @@ class DummyNeedsView:
         )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_eval_need_check_invalid_check_parts_raises_value_error() -> None:
     """Raise error when a check does not contain exactly three parts."""
     log = fake_check_logger()
@@ -57,6 +63,11 @@ def test_eval_need_check_invalid_check_parts_raises_value_error() -> None:
         graph_checks.eval_need_check(need, "status==valid", log)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_eval_need_check_unknown_operator_raises_value_error() -> None:
     """Raise error when an unsupported binary operator is used."""
     log = fake_check_logger()
@@ -66,6 +77,11 @@ def test_eval_need_check_unknown_operator_raises_value_error() -> None:
         graph_checks.eval_need_check(need, "status <> valid", log)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_eval_need_check_missing_attribute_logs_and_returns_false() -> None:
     """Return False and log warning when referenced attribute is not present."""
     log = fake_check_logger()
@@ -92,6 +108,11 @@ def test_eval_need_check_missing_attribute_logs_and_returns_false() -> None:
     ],
     ids=["empty-equals", "empty-differs", "linked-equals", "linked-differs"],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_link_conditions_compare_against_an_empty_list(
     links: list[str], condition: str, expected: bool
 ) -> None:
@@ -106,6 +127,11 @@ def test_link_conditions_compare_against_an_empty_list(
     assert log.warnings == 0
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_eval_need_condition_invalid_type_raises_value_error() -> None:
     """Raise error for condition values that are neither string nor dict."""
     log = fake_check_logger()
@@ -115,6 +141,11 @@ def test_eval_need_condition_invalid_type_raises_value_error() -> None:
         graph_checks.eval_need_condition(need, 123, log)  # type: ignore[arg-type]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_eval_need_condition_not_with_wrong_operand_count_raises_value_error() -> None:
     """Raise error when 'not' does not receive exactly one operand."""
     log = fake_check_logger()
@@ -128,6 +159,11 @@ def test_eval_need_condition_not_with_wrong_operand_count_raises_value_error() -
         )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_eval_need_condition_and_or_xor_branches() -> None:
     """Evaluate logical combination branches and, or and xor."""
     log = fake_check_logger()
@@ -161,6 +197,11 @@ def test_eval_need_condition_and_or_xor_branches() -> None:
         )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_filter_needs_by_criteria_invalid() -> None:
     """Raise error when include/exclude selector key is invalid."""
     log = fake_check_logger()
@@ -194,6 +235,11 @@ def test_filter_needs_by_criteria_invalid() -> None:
         )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_filter_needs_by_criteria_unknown_type_logs_warning() -> None:
     """Log warning when selected pattern contains unknown need type."""
     log = fake_check_logger()
@@ -259,6 +305,11 @@ def run_graph_check(check_config: dict[str, Any], parent_ids: list[str]):
     ],
     ids=["missing", "old_check_key", "both"],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_invalid_check_keys_raise_value_error(
     check_keys: tuple[str, ...], error: str
 ) -> None:
@@ -267,6 +318,11 @@ def test_invalid_check_keys_raise_value_error(
         run_graph_check(graph_check_config(*check_keys), ["qm_1"])
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_check_all_warns_once_per_failing_parent() -> None:
     """Report every linked need that does not fulfill the condition."""
     log = run_graph_check(graph_check_config("check_all"), ["safe_1", "qm_1", "qm_2"])
@@ -288,6 +344,11 @@ def test_check_all_warns_once_per_failing_parent() -> None:
         (["unknown_parent"], 1),
     ],
     ids=["one_fulfills", "none_fulfill", "no_parents", "unknown_parent"],
+)
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_check_one(parent_ids: list[str], expected_warnings: int) -> None:
     """Pass if at least one linked need fulfills the condition."""
@@ -314,6 +375,11 @@ def test_check_one(parent_ids: list[str], expected_warnings: int) -> None:
     ],
     ids=["all_default", "all_false", "all_true", "one_default", "one_true"],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_info_only(
     check_key: str,
     options: dict[str, Any],
@@ -326,6 +392,11 @@ def test_info_only(
     assert (log.warnings, log.infos) == (expected_warnings, expected_infos)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_info_only_keeps_message() -> None:
     """Report the same message as info that would otherwise be a warning."""
     log = run_graph_check(
