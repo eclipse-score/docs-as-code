@@ -756,6 +756,7 @@ needs_types:
       failure_id: ^.+$
       # req-Id: tool_req__docs_saf_attr_fmea_failure_effect
       failure_effect: ^.+$
+      # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(draft|valid|invalid)$
       # req-Id: tool_req__docs_common_attr_description
@@ -971,6 +972,7 @@ needs_types:
     mandatory_options:
       threat_scenario_id: ^(AS_01_(01|02|04|05|06|07|09|10)|CO_01_0[1-7]|SC_01_0[2-5]|SI_01_0[2-5]|UI_01_(0[1-9]|1[0-2]))$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_sec_attrs_mandatory
       sufficient: ^(yes|no)$
       threat_effect: ^.+$
       # req-Id: tool_req__docs_common_attr_description
@@ -991,6 +993,7 @@ needs_types:
     mandatory_options:
       threat_scenario_id: ^(AS_01_(01|02|04|05|06|07|09|10)|CO_01_0[1-7]|SC_01_0[2-5]|SI_01_0[2-5]|UI_01_(0[1-9]|1[0-2]))$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_sec_attrs_mandatory
       sufficient: ^(yes|no)$
       threat_effect: ^.+$
       # req-Id: tool_req__docs_common_attr_description
@@ -1320,6 +1323,7 @@ graph_checks:
           - id contains std_wp
     explanation: Workproducts may only link to ASPICE 40 IIC stakeholder requirements. Please ensure that the linked requirement is an ASPICE 40 IIC stakeholder requirement.
 
+  # req-Id: tool_req__docs_saf_attrs_sufficient_check
   # req-Id: tool_req__docs_saf_attrs_mitigated_by
   tool_req__docs_saf_attrs_mitigated_by:
     needs:
