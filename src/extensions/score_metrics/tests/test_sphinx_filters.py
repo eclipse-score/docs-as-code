@@ -161,71 +161,6 @@ def test_get_key_values_appends_values_when_metrics_loaded() -> None:
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
-def test_get_metrics_with_overall_total_considered_when_metrics_loaded() -> None:
-    """It computes remainder from overall total and selected metrics."""
-    sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
-    results: list[int] = []
-
-    sphinx_filters.get_metrics_with_first_value_total(
-        needs=[],
-        results=results,
-        total="overall_metrics:total",
-        code="overall_metrics:with_code_link",
-        test="overall_metrics:with_test_link",
-        fully="overall_metrics:fully_linked",
-    )
-
-    assert results == [10, 46, 3, 2]
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_get_metrics_with_custom_type_total_considered_with_total_suffix() -> None:
-    """It uses trailing ':total' as baseline and computes remainder."""
-    sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
-    results: list[int] = []
-
-    sphinx_filters.get_metrics_with_first_value_total(
-        needs=[],
-        results=results,
-        total="metrics_by_type:tool_req:total",
-        code="metrics_by_type:tool_req:with_code_link",
-        test="metrics_by_type:tool_req:with_test_link",
-    )
-    print(results)
-
-    assert results == [12, 46, 3]
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_get_metrics_with_custom_type_total_considered_without_total_suffix() -> None:
-    """It appends values directly when trailing ':total' is not provided."""
-    sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
-    results: list[int] = []
-
-    sphinx_filters.get_metrics_with_first_value_total(
-        needs=[],
-        results=results,
-        code="metrics_by_type:tool_req:with_code_link",
-        test="metrics_by_type:tool_req:with_test_link",
-    )
-    print(results)
-
-    assert results == [43, 3]
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
 def test_get_just_metrics_appends_values_when_metrics_loaded() -> None:
     """It appends selected values without remainder logic."""
     sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
@@ -239,22 +174,6 @@ def test_get_just_metrics_appends_values_when_metrics_loaded() -> None:
     )
 
     assert results == [61, 16]
-
-
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_get_metrics_with_custom_type_total_considered_empty_kwargs_raises_index_error() -> (
-    None
-):
-    """Current behavior: empty kwargs raises IndexError."""
-    sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
-    results: list[int] = []
-
-    with pytest.raises(IndexError):
-        sphinx_filters.get_metrics_with_first_value_total(needs=[], results=results)
 
 
 _PROPS: dict[str, Any] = {

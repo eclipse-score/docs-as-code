@@ -28,13 +28,12 @@ docs-as-code as a Bazel dependency.
 Pages
 -----
 
-- ``tooling_verification`` describes verification evidence for the tooling
-  itself, including test results and testcase metadata.
-- ``requirement_coverage`` shows per-requirement test and code linkage,
-  using the same metrics as CI quality gates.
 - ``tool_verification`` is the authoritative Tool Verification Report, including
   the owned use cases, potential malfunctions, qualification evidence and
-  lifecycle state.
+  lifecycle state. Its conclusion summarizes how the qualification-relevant
+  tool requirements are verified, and counts the tool requirements and
+  testcases of the module that the report does not reach. The uncovered tool
+  requirements are listed; individual testcases are not.
 
 .. toctree::
    :maxdepth: 1
@@ -42,6 +41,4 @@ Pages
    capabilities
    process_overview
    requirements
-   requirement_coverage
-   tooling_verification
    tool_verification
