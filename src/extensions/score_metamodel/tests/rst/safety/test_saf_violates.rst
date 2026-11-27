@@ -22,6 +22,7 @@
 
    * plat_saf_dfa -> feat_arc_sta
    * feat_saf_dfa -> feat_arc_sta
+   * feat_saf_dfa -> feat (optional)
    * comp_saf_dfa -> comp_arc_sta
    * feat_saf_fmea -> feat_arc_dyn, feat_arc_sta
    * comp_saf_fmea -> comp_arc_dyn, comp_arc_sta
@@ -32,6 +33,9 @@
 
 .. feat_arc_dyn:: Stub Feature Dynamic Architecture
    :id: feat_arc_dyn__001
+
+.. feat:: Stub Feature
+   :id: feat__001
 
 .. comp_arc_sta:: Stub Component Static Architecture
    :id: comp_arc_sta__001
@@ -172,13 +176,14 @@
    :expect: must reference Component Sequence Diagram
 
 
-.. feat_saf_dfa:: Missing violates link
-   :id: feat_saf_dfa__viol__missing_001
-   :failure_id: df_missing_violates
-   :failure_effect: missing link
+.. feat_saf_dfa:: feat DFA violates feat
+   :id: feat_saf_dfa__viol__feat_001
+   :failure_id: df_feat_link
+   :failure_effect: shared resource exhausted
    :sufficient: no
    :status: valid
-   :expect: is missing required link: `violates`
+   :violates: feat__001
+   :expect_not: as 'violates'
 
 
 .. comp_saf_dfa:: Missing violates link
