@@ -609,10 +609,16 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
         "2 of its 2 potential malfunctions can affect safety" in conclusion
     )
     assert "Qualification scope: 1 tool requirement to be verified" in conclusion
+    assert (
+        "Verification: 0 are linked to a fully verifying testcase, "
+        "0 only to partially verifying ones, 1 to none. "
+        "No testcase verifies them yet." in conclusion
+    )
     assert "Coverage: 0 of 2 malfunctions are fully covered" in conclusion
     assert "2 of 2 potential malfunctions can affect safety; for 2 of these" in (
         derivation
     )
+    assert '<section id="verifying-testcases">' not in html
     assert '<section id="qualification-evidence">' not in html
     assert '<section id="traceability-evidence">' not in html
 

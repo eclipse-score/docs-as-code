@@ -67,6 +67,20 @@
     {{- need_list(matching.items) -}}
 {%- endmacro -%}
 
+{#- "``value`` (count)" per distinct *field* value of *tests*, plus the tests without one. -#}
+{%- macro counts_by(tests, field) -%}
+    {%- set seen = namespace(parts=[], known=0) -%}
+    {%- for value in tests|map(attribute=field)|select|unique|sort -%}
+        {%- set count = tests|selectattr(field, "equalto", value)|list|length -%}
+        {%- set seen.known = seen.known + count -%}
+        {%- set seen.parts = seen.parts + ["``" ~ value ~ "`` (" ~ count ~ ")"] -%}
+    {%- endfor -%}
+    {%- if tests|length > seen.known -%}
+        {%- set seen.parts = seen.parts + ["not set (" ~ (tests|length - seen.known) ~ ")"] -%}
+    {%- endif -%}
+    {{- seen.parts|join(", ") or "—" -}}
+{%- endmacro -%}
+
 {#- ===== Use cases and malfunctions ========================================== -#}
 
 {%- set usecases = linked_needs(id, "belongs_to_back")|selectattr("type", "equalto", "tool_usecase")|list -%}
@@ -141,20 +155,35 @@
     {%- endif -%}
 {%- endfor -%}
 
-{#- ===== Tool requirements =================================================== -#}
+{#- ===== Tool requirements and their testcases ================================ -#}
 
 {#-
   Walk every tool requirement that a malfunction of this report violates once.
-  Those outside the qualification scope are either still open or need no
-  qualification.
+  The qualification scope feeds the verification summary. The remaining
+  requirements are either still open or need no qualification.
 -#}
 {%- set report_scope = namespace(requirement_ids=[], open=0, without_qualification=0) -%}
+{%- set verification = namespace(fully=0, partially=0, unverified=0, test_ids=[], tests=[]) -%}
 {%- for malfunction_id in malfunction_scope.ids -%}
     {%- for requirement in linked_needs(malfunction_id, "violates")|selectattr("type", "equalto", "tool_req") -%}
         {%- if requirement["id"] not in report_scope.requirement_ids -%}
             {%- set report_scope.requirement_ids = report_scope.requirement_ids + [requirement["id"]] -%}
+            {%- set fully_verifying_tests = linked_needs(requirement["id"], "fully_verifies_back")|list -%}
+            {%- set partially_verifying_tests = linked_needs(requirement["id"], "partially_verifies_back")|list -%}
             {%- if requirement["id"] in qualification_requirement_scope.ids -%}
-                {#- In the qualification scope. -#}
+                {%- if fully_verifying_tests -%}
+                    {%- set verification.fully = verification.fully + 1 -%}
+                {%- elif partially_verifying_tests -%}
+                    {%- set verification.partially = verification.partially + 1 -%}
+                {%- else -%}
+                    {%- set verification.unverified = verification.unverified + 1 -%}
+                {%- endif -%}
+                {%- for test in fully_verifying_tests + partially_verifying_tests -%}
+                    {%- if test["id"] not in verification.test_ids -%}
+                        {%- set verification.test_ids = verification.test_ids + [test["id"]] -%}
+                        {%- set verification.tests = verification.tests + [test] -%}
+                    {%- endif -%}
+                {%- endfor -%}
             {%- elif requirement["id"] in open_requirement_scope.ids -%}
                 {%- set report_scope.open = report_scope.open + 1 -%}
             {%- else -%}
@@ -162,7 +191,33 @@
             {%- endif -%}
         {%- endif -%}
     {%- endfor -%}
-{%- endfor %}
+{%- endfor -%}
+
+{#- One sentence on the results of the verifying testcases; every result is accounted for. -#}
+{%- set result_parts = namespace(items=[], known=0) -%}
+{%- for result, singular, plural_wording in [("passed", "passed", "passed"), ("failed", "failed", "failed"), ("skipped", "was skipped", "were skipped"), ("disabled", "is disabled", "are disabled")] -%}
+    {%- set result_count = verification.tests|selectattr("result", "equalto", result)|list|length -%}
+    {%- set result_parts.known = result_parts.known + result_count -%}
+    {%- if result_count -%}
+        {%- set result_parts.items = result_parts.items + [result_count ~ " " ~ (singular if result_count == 1 else plural_wording)] -%}
+    {%- endif -%}
+{%- endfor -%}
+{%- for result in verification.tests|map(attribute="result")|select|unique|sort if result not in ["passed", "failed", "skipped", "disabled"] -%}
+    {%- set result_count = verification.tests|selectattr("result", "equalto", result)|list|length -%}
+    {%- set result_parts.known = result_parts.known + result_count -%}
+    {%- set result_parts.items = result_parts.items + [result_count ~ (" has" if result_count == 1 else " have") ~ " result ``" ~ result ~ "``"] -%}
+{%- endfor -%}
+{%- set results_missing = verification.tests|length - result_parts.known -%}
+{%- if results_missing -%}
+    {%- set result_parts.items = result_parts.items + [results_missing ~ (" has" if results_missing == 1 else " have") ~ " no result"] -%}
+{%- endif -%}
+{%- if not verification.tests -%}
+    {%- set verification_results = "No testcase verifies them yet." -%}
+{%- elif verification.tests|selectattr("result", "equalto", "passed")|list|length == verification.tests|length -%}
+    {%- set verification_results = ("The verifying testcase passed." if verification.tests|length == 1 else "All " ~ verification.tests|length ~ " verifying testcases passed.") -%}
+{%- else -%}
+    {%- set verification_results = "Of " ~ plural(verification.tests|length, "verifying testcase") ~ ", " ~ result_parts.items|join(", ") ~ "." -%}
+{%- endif %}
 
 Purpose and intended use
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -202,6 +257,9 @@ malfunction is documented.
 
 {% if summary.detection_no %}
 * **Qualification scope:** {{ plural(qualification_requirement_scope.ids|length, "tool requirement") }} to be verified by testcases.
+* **Verification:** {{ verification.fully }} {{ "is" if verification.fully == 1 else "are" }} linked to a fully verifying testcase,
+  {{ verification.partially }} only to partially verifying ones, {{ verification.unverified }} to none.
+  {{ verification_results }}
 * **Coverage:** {{ summary.fully_covered }} of {{ plural(summary.detection_no, "malfunction") }} {{ "is" if summary.fully_covered == 1 else "are" }} fully covered by passed testcases.
 {% endif %}
 
@@ -456,4 +514,18 @@ verification link.
      - —
      - —
      - —
+{% endif %}
+
+{% if verification.tests %}
+
+Verifying testcases
+^^^^^^^^^^^^^^^^^^^
+
+*Generated from linked report records.*
+
+The {{ plural(verification.tests|length, "testcase") }} that {{ "verifies" if verification.tests|length == 1 else "verify" }} the tool requirements in the
+qualification scope {{ "was" if verification.tests|length == 1 else "were" }} designed as follows:
+
+* **Test types:** {{ counts_by(verification.tests, "test_type") }}.
+* **Derivation techniques:** {{ counts_by(verification.tests, "derivation_technique") }}.
 {% endif %}
