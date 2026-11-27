@@ -102,8 +102,8 @@ z
    </g>
    <g id="patch_11">
     <path d="M 59.239063 254.341398 
-L 388.888293 254.341398 
-L 388.888293 276.334125 
+L 416.359063 254.341398 
+L 416.359063 276.334125 
 L 59.239063 276.334125 
 z
 " clip-path="url(#p943d77a3f3)" style="fill: #008000"/>
@@ -173,10 +173,10 @@ z
 " clip-path="url(#p943d77a3f3)" style="fill: #ffa500"/>
    </g>
    <g id="patch_20">
-    <path d="M 388.888293 254.341398 
-L 388.888293 254.341398 
-L 388.888293 276.334125 
-L 388.888293 276.334125 
+    <path d="M 416.359063 254.341398 
+L 416.359063 254.341398 
+L 416.359063 276.334125 
+L 416.359063 276.334125 
 z
 " clip-path="url(#p943d77a3f3)" style="fill: #ffa500"/>
    </g>
@@ -245,10 +245,10 @@ z
 " clip-path="url(#p943d77a3f3)" style="fill: #ff0000"/>
    </g>
    <g id="patch_29">
-    <path d="M 388.888293 254.341398 
+    <path d="M 416.359063 254.341398 
 L 416.359063 254.341398 
 L 416.359063 276.334125 
-L 388.888293 276.334125 
+L 416.359063 276.334125 
 z
 " clip-path="url(#p943d77a3f3)" style="fill: #ff0000"/>
    </g>
@@ -1361,10 +1361,10 @@ z
     </g>
    </g>
    <g id="text_25">
-    <!-- 12 -->
-    <g transform="translate(217.701178 267.935418) scale(0.1 -0.1)">
+    <!-- 13 -->
+    <g transform="translate(231.436563 267.935418) scale(0.1 -0.1)">
      <use xlink:href="#DejaVuSans-14"/>
-     <use xlink:href="#DejaVuSans-15" transform="translate(63.625 0)"/>
+     <use xlink:href="#DejaVuSans-16" transform="translate(63.625 0)"/>
     </g>
    </g>
    <g id="text_26">
@@ -1417,7 +1417,7 @@ z
    </g>
    <g id="text_34">
     <!-- 0 -->
-    <g transform="translate(385.707043 267.935418) scale(0.1 -0.1)">
+    <g transform="translate(413.177813 267.935418) scale(0.1 -0.1)">
      <use xlink:href="#DejaVuSans-13"/>
     </g>
    </g>
@@ -1470,9 +1470,9 @@ z
     </g>
    </g>
    <g id="text_43">
-    <!-- 1 -->
-    <g transform="translate(399.442428 267.935418) scale(0.1 -0.1)">
-     <use xlink:href="#DejaVuSans-14"/>
+    <!-- 0 -->
+    <g transform="translate(413.177813 267.935418) scale(0.1 -0.1)">
+     <use xlink:href="#DejaVuSans-13"/>
     </g>
    </g>
    <g id="text_44">
