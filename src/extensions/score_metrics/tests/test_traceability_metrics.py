@@ -18,7 +18,7 @@ from unittest.mock import MagicMock
 import pytest
 import score_metrics.traceability_metrics as metrics
 from score_metamodel import ScoreNeedType
-from score_metamodel.tests import need as test_need
+from score_metamodel.tests import need as make_need
 from score_pytest.attribute_plugin import add_test_properties
 from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import NeedsView, SphinxNeedsData
@@ -165,10 +165,10 @@ def test_safe_percent_zero(value1: int, value2: int, expected: float) -> None:
 def test_calculate_requirement_metrics_counts_links_and_missing_ids() -> None:
     """Count code/test links and derive missing identifier lists."""
     current_requirement_needs: list[NeedItem] = [
-        test_need(id="REQ_1", source_code_link="src/main.c", testlink="TC_1"),
-        test_need(id="REQ_2", source_code_link=" ", testlink="TC_2"),
-        test_need(id="REQ_3", source_code_link="src/lib.rs", testlink=""),
-        test_need(id="REQ_4", source_code_link="", testlink=""),
+        make_need(id="REQ_1", source_code_link="src/main.c", testlink="TC_1"),
+        make_need(id="REQ_2", source_code_link=" ", testlink="TC_2"),
+        make_need(id="REQ_3", source_code_link="src/lib.rs", testlink=""),
+        make_need(id="REQ_4", source_code_link="", testlink=""),
     ]
 
     result = metrics.calculate_requirement_metrics(current_requirement_needs)
@@ -191,10 +191,10 @@ def test_calculate_requirement_metrics_counts_links_and_missing_ids() -> None:
 def test_calculate_requirement_metrics_non_fully_linked() -> None:
     """Count code/test links and derive missing identifier lists."""
     current_requirement_needs: list[NeedItem] = [
-        test_need(id="REQ_1", source_code_link="src/main.c", testlink=""),
-        test_need(id="REQ_2", source_code_link=" ", testlink="TC_2"),
-        test_need(id="REQ_3", source_code_link="src/lib.rs", testlink=""),
-        test_need(id="REQ_4", source_code_link="", testlink=""),
+        make_need(id="REQ_1", source_code_link="src/main.c", testlink=""),
+        make_need(id="REQ_2", source_code_link=" ", testlink="TC_2"),
+        make_need(id="REQ_3", source_code_link="src/lib.rs", testlink=""),
+        make_need(id="REQ_4", source_code_link="", testlink=""),
     ]
 
     result = metrics.calculate_requirement_metrics(current_requirement_needs)
@@ -217,10 +217,10 @@ def test_calculate_requirement_metrics_non_fully_linked() -> None:
 def test_calculate_requirement_metrics_non_fully_linked_2() -> None:
     """Count code/test links and derive missing identifier lists."""
     current_requirement_needs: list[NeedItem] = [
-        test_need(id="REQ_1", source_code_link="", testlink=""),
-        test_need(id="REQ_2", source_code_link="", testlink="TC_2"),
-        test_need(id="REQ_3", source_code_link="src/main.c", testlink=""),
-        test_need(id="REQ_4", source_code_link=" ", testlink="TC_4"),
+        make_need(id="REQ_1", source_code_link="", testlink=""),
+        make_need(id="REQ_2", source_code_link="", testlink="TC_2"),
+        make_need(id="REQ_3", source_code_link="src/main.c", testlink=""),
+        make_need(id="REQ_4", source_code_link=" ", testlink="TC_4"),
     ]
 
     result = metrics.calculate_requirement_metrics(current_requirement_needs)
@@ -246,18 +246,18 @@ def test_calculate_requirement_metrics_non_fully_linked_2() -> None:
 def test_calculate_test_metrics_counts_linked_tests_and_broken_refs() -> None:
     """Count linked testcases and list references to missing needs."""
     test_needs: list[NeedItem] = [
-        test_need(id="TC_1", partially_verifies=["REQ_1"], fully_verifies=[]),
-        test_need(
+        make_need(id="TC_1", partially_verifies=["REQ_1"], fully_verifies=[]),
+        make_need(
             id="TC_2", partially_verifies=[], fully_verifies=["REQ_2", "REQ_404"]
         ),
-        test_need(id="TC_3", partially_verifies=[], fully_verifies=[]),
+        make_need(id="TC_3", partially_verifies=[], fully_verifies=[]),
     ]
 
     all_needs = cast(
         NeedsView,
         {
-            "REQ_1": test_need(id="REQ_1"),
-            "REQ_2": test_need(id="REQ_2"),
+            "REQ_1": make_need(id="REQ_1"),
+            "REQ_2": make_need(id="REQ_2"),
         },
     )
 
@@ -297,29 +297,29 @@ def test_calculate_full_need_metrics_optional_external_feature_scope(
 ) -> None:
     """Scope external requirements by feature without hiding untested requirements."""
     external_requirements = [
-        test_need(
+        make_need(
             id="feat_req__linked",
             type="feat_req",
             satisfied_by=["feat__lifecycle"],
             testlink="TC_1",
         ),
-        test_need(
+        make_need(
             id="feat_req__untested",
             type="feat_req",
             satisfied_by=["feat__lifecycle"],
         ),
-        test_need(
+        make_need(
             id="feat_req__unrelated",
             type="feat_req",
             satisfied_by=["feat__other"],
         ),
-        test_need(
+        make_need(
             id="feat_req__shared",
             type="feat_req",
             satisfied_by=["feat__lifecycle", "feat__other"],
         ),
-        test_need(id="feat_req__unassigned", type="feat_req"),
-        test_need(id="comp_req__external", type="comp_req"),
+        make_need(id="feat_req__unassigned", type="feat_req"),
+        make_need(id="comp_req__external", type="comp_req"),
     ]
     for need in external_requirements:
         monkeypatch.setattr(
@@ -329,9 +329,9 @@ def test_calculate_full_need_metrics_optional_external_feature_scope(
         )
     needs = [
         *external_requirements,
-        test_need(id="feat_req__local", type="feat_req"),
-        test_need(id="comp_req__local", type="comp_req"),
-        test_need(id="TC_1", type="testcase", fully_verifies=["feat_req__linked"]),
+        make_need(id="feat_req__local", type="feat_req"),
+        make_need(id="comp_req__local", type="comp_req"),
+        make_need(id="TC_1", type="testcase", fully_verifies=["feat_req__linked"]),
     ]
     monkeypatch.setattr(metrics, "CALCULATED_METRICS", {})
     app = MagicMock()

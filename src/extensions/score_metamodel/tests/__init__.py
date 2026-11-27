@@ -14,7 +14,6 @@ from typing import Any, cast
 from unittest.mock import MagicMock
 
 import pytest
-from score_pytest.attribute_plugin import add_test_properties
 from sphinx.util.logging import SphinxLoggerAdapter
 from sphinx_needs.data import NeedsInfoType
 from sphinx_needs.need_item import (
@@ -122,11 +121,6 @@ def fake_check_logger():
     return FakeCheckLogger()
 
 
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
 def need(**kwargs: Any) -> NeedItem:
     """Convenience function to create a NeedItem object with some defaults."""
 
