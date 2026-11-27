@@ -588,6 +588,9 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid|valid_inspected)$
       maturity: ^(preview|experimental|release)$
+    # A module without maturity is a preview module.
+    option_defaults:
+      maturity: preview
     mandatory_links:
       # req-Id: tool_req__arch_linkage_safety
       includes: comp
