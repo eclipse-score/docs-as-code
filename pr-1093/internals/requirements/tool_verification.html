@@ -903,7 +903,7 @@ using the configured Sphinx, Python, and diagram-generation toolchains.</p>
 </section>
 <section id="report-record">
 <h2>Report record<a class="headerlink" href="#report-record" title="Link to this heading">#</a></h2>
-<div class="need_container docutils container" id="SNCB-232adff8">
+<div class="need_container docutils container" id="SNCB-c02c70c7">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_doc_tool table" id="doc_tool__score_docs_as_code">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -974,19 +974,36 @@ detailed evaluation is shown in the sections below.</p>
 <section id="conclusion">
 <h3>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h3>
 <p><em>Generated from linked report records.</em></p>
-<p>The generated conclusion is summarized from the owned
-<code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code> records:</p>
-<ul class="simple">
-<li><p><strong>Safety:</strong> <code class="docutils literal notranslate"><span class="pre">8/9</span></code> potential tool
-malfunctions affect safety → <code class="docutils literal notranslate"><span class="pre">safety_affected:</span> <span class="pre">YES</span></code>.</p></li>
-<li><p><strong>Detection:</strong> <code class="docutils literal notranslate"><span class="pre">7/8</span></code> safety-
-relevant malfunctions have insufficient detection → <code class="docutils literal notranslate"><span class="pre">tcl:</span> <span class="pre">LOW</span></code>.</p></li>
-<li><p><strong>Qualification:</strong> → qualification of <code class="docutils literal notranslate"><span class="pre">48</span></code> tool
-requirements is <strong>required</strong>.</p></li>
-<li><p><strong>Testcase coverage:</strong> <code class="docutils literal notranslate"><span class="pre">1/7</span></code>
-qualification-relevant malfunctions are fully covered by passed,
-fully-verifying testcases.</p></li>
-</ul>
+<p>This section states the result of the evaluation. The sections after it
+contain the evidence it is derived from.</p>
+<p><strong>Classification.</strong> 8 of 9 potential tool malfunctions
+can affect safety. For 7 of these, the safety
+measures in place do not detect the malfunction reliably before its output is
+relied on. The tool confidence level is therefore
+<code class="docutils literal notranslate"><span class="pre">tcl:</span> <span class="pre">LOW</span></code>.</p>
+<p><strong>Qualification.</strong> Because of these 7 malfunctions, the tool
+<strong>must be qualified</strong>.
+The malfunctions of this report violate
+49 tool requirements in total. Qualification covers the
+47 of them that these malfunctions violate: each has to be
+verified by testcases. The other 2 are violated only by
+malfunctions that cannot affect safety or are detected reliably, so they need
+no qualification.</p>
+<p><strong>Verification.</strong> Of these 47 tool requirements,
+35 are linked to a fully verifying testcase,
+5 only to partially verifying testcases, and 7 to no
+testcase at all.
+81 testcases verify them;
+all of them passed.
+A malfunction counts as covered once every tool requirement it violates is
+fully verified by a passed testcase. This holds for 2 of
+7 malfunctions.</p>
+<p><strong>Outside this report.</strong> The report only sees what its own records link to.
+The <code class="docutils literal notranslate"><span class="pre">score_docs_as_code</span></code> Bazel module also contains
+23 tool requirements that no potential malfunction of this report violates, and 503 testcases that verify none of the 49 tool requirements of this report (488 of them verify no requirement at all).
+Either they are irrelevant for the evaluated use cases, or a use case or
+malfunction is missing from this report. The requirements are listed
+at the end of this report.</p>
 <div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
 <div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
 <div class="sd-col sd-d-flex-column docutils">
@@ -1543,10 +1560,7 @@ verification link.</p>
 <div class="line"><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_fulfils_aou" title="tool_req__docs_arch_link_fulfils_aou"><em class="xref need">tool_req__docs_arch_link_fulfils_aou</em></a></div>
 </div>
 </td>
-<td><div class="line-block">
-<div class="line"><a class="reference internal" href="requirements.html#tool_req__docs_req_types" title="tool_req__docs_req_types"><em class="xref need">tool_req__docs_req_types</em></a></div>
-</div>
-</td>
+<td><p>—</p></td>
 <td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><div class="line-block">
@@ -1570,35 +1584,45 @@ verification link.</p>
 </table>
 </div>
 </section>
-<section id="requirements-and-tests">
-<h3>Requirements and tests<a class="headerlink" href="#requirements-and-tests" title="Link to this heading">#</a></h3>
+<section id="verifying-testcases">
+<h3>Verifying testcases<a class="headerlink" href="#verifying-testcases" title="Link to this heading">#</a></h3>
 <p><em>Generated from linked report records.</em></p>
+<p>The 81 testcases that verify the tool requirements in the
+qualification scope were designed as follows:</p>
 <ul class="simple">
-<li><p><strong>Requirements:</strong> the potential malfunctions violate
-<code class="docutils literal notranslate"><span class="pre">50</span></code> tool requirements, of which
-<code class="docutils literal notranslate"><span class="pre">42</span></code> are verified by at least one testcase.</p></li>
-<li><p><strong>Test results:</strong> <code class="docutils literal notranslate"><span class="pre">86</span></code> testcases verify these
-requirements, of which
-<code class="docutils literal notranslate"><span class="pre">86</span></code> passed,
-<code class="docutils literal notranslate"><span class="pre">0</span></code> failed,
-<code class="docutils literal notranslate"><span class="pre">0</span></code> were skipped and
-<code class="docutils literal notranslate"><span class="pre">0</span></code> were disabled.</p></li>
-<li><p><strong>Test types:</strong> interface-test <code class="docutils literal notranslate"><span class="pre">42</span></code>, requirements-based <code class="docutils literal notranslate"><span class="pre">44</span></code>.</p></li>
-<li><p><strong>Derivation techniques:</strong> boundary-values <code class="docutils literal notranslate"><span class="pre">9</span></code>, design-analysis <code class="docutils literal notranslate"><span class="pre">1</span></code>, equivalence-classes <code class="docutils literal notranslate"><span class="pre">11</span></code>, explorative-testing <code class="docutils literal notranslate"><span class="pre">34</span></code>, requirements-analysis <code class="docutils literal notranslate"><span class="pre">31</span></code>.</p></li>
+<li><p><strong>Test types:</strong> <code class="docutils literal notranslate"><span class="pre">interface-test</span></code> (37), <code class="docutils literal notranslate"><span class="pre">requirements-based</span></code> (44).</p></li>
+<li><p><strong>Derivation techniques:</strong> <code class="docutils literal notranslate"><span class="pre">boundary-values</span></code> (9), <code class="docutils literal notranslate"><span class="pre">design-analysis</span></code> (1), <code class="docutils literal notranslate"><span class="pre">equivalence-classes</span></code> (11), <code class="docutils literal notranslate"><span class="pre">explorative-testing</span></code> (29), <code class="docutils literal notranslate"><span class="pre">requirements-analysis</span></code> (31).</p></li>
 </ul>
 </section>
 <section id="not-covered-by-this-report">
 <h3>Not covered by this report<a class="headerlink" href="#not-covered-by-this-report" title="Link to this heading">#</a></h3>
 <p><em>Generated from the Bazel module that owns this report.</em></p>
-<p>The <code class="docutils literal notranslate"><span class="pre">score_docs_as_code</span></code> Bazel module contains requirements and tests that
-the sections above do not mention:</p>
+<p>No potential malfunction of this report violates the following tool
+requirements of the <code class="docutils literal notranslate"><span class="pre">score_docs_as_code</span></code> Bazel module:</p>
 <ul class="simple">
-<li><p><strong>Requirements:</strong> <code class="docutils literal notranslate"><span class="pre">22</span></code> tool requirements are
-not violated by any potential malfunction of this report:
-<a class="reference internal" href="requirements.html#tool_req__docs_arch_attr_mandatory" title="tool_req__docs_arch_attr_mandatory"><em class="xref need">tool_req__docs_arch_attr_mandatory</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_arch_link_qm_to_safety_req" title="tool_req__docs_arch_link_qm_to_safety_req"><em class="xref need">tool_req__docs_arch_link_qm_to_safety_req</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_arch_links" title="tool_req__docs_arch_links"><em class="xref need">tool_req__docs_arch_links</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_arch_types" title="tool_req__docs_arch_types"><em class="xref need">tool_req__docs_arch_types</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_common_attr_status_invalid" title="tool_req__docs_common_attr_status_invalid"><em class="xref need">tool_req__docs_common_attr_status_invalid</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_common_attr_suspicious" title="tool_req__docs_common_attr_suspicious"><em class="xref need">tool_req__docs_common_attr_suspicious</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_dd_feature_flag" title="tool_req__docs_dd_feature_flag"><em class="xref need">tool_req__docs_dd_feature_flag</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_dd_link_source_code_link" title="tool_req__docs_dd_link_source_code_link"><em class="xref need">tool_req__docs_dd_link_source_code_link</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_dec_rec_type" title="tool_req__docs_dec_rec_type"><em class="xref need">tool_req__docs_dec_rec_type</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_doc_generic_optional" title="tool_req__docs_doc_generic_optional"><em class="xref need">tool_req__docs_doc_generic_optional</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_req_attr_testcov" title="tool_req__docs_req_attr_testcov"><em class="xref need">tool_req__docs_req_attr_testcov</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_restrict_needextend" title="tool_req__docs_restrict_needextend"><em class="xref need">tool_req__docs_restrict_needextend</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_dfa_failure_id" title="tool_req__docs_saf_attr_dfa_failure_id"><em class="xref need">tool_req__docs_saf_attr_dfa_failure_id</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_root_cause" title="tool_req__docs_saf_attrs_root_cause"><em class="xref need">tool_req__docs_saf_attrs_root_cause</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_safety_relevant" title="tool_req__docs_saf_attrs_safety_relevant"><em class="xref need">tool_req__docs_saf_attrs_safety_relevant</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_saf_types" title="tool_req__docs_saf_types"><em class="xref need">tool_req__docs_saf_types</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_sec_attrs_optional" title="tool_req__docs_sec_attrs_optional"><em class="xref need">tool_req__docs_sec_attrs_optional</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_sec_types" title="tool_req__docs_sec_types"><em class="xref need">tool_req__docs_sec_types</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_stdreq_types" title="tool_req__docs_stdreq_types"><em class="xref need">tool_req__docs_stdreq_types</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_stdwp_types" title="tool_req__docs_stdwp_types"><em class="xref need">tool_req__docs_stdwp_types</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_wf_types" title="tool_req__docs_wf_types"><em class="xref need">tool_req__docs_wf_types</em></a>, <a class="reference internal" href="requirements.html#tool_req__docs_wp_types" title="tool_req__docs_wp_types"><em class="xref need">tool_req__docs_wp_types</em></a>.</p></li>
-<li><p><strong>Tests:</strong> <code class="docutils literal notranslate"><span class="pre">499</span></code> testcases do not verify a requirement of
-this report; <code class="docutils literal notranslate"><span class="pre">488</span></code> of them verify no requirement at
-all.</p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_attr_mandatory" title="tool_req__docs_arch_attr_mandatory"><em class="xref need">Architecture Mandatory Attributes (tool_req__docs_arch_attr_mandatory)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_qm_to_safety_req" title="tool_req__docs_arch_link_qm_to_safety_req"><em class="xref need">Ensure qm architecture elements do not fulfill safety requirements (tool_req__docs_arch_link_qm_to_safety_req)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_links" title="tool_req__docs_arch_links"><em class="xref need">Architecture diagram links (tool_req__docs_arch_links)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_types" title="tool_req__docs_arch_types"><em class="xref need">Architecture Types (tool_req__docs_arch_types)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_status_invalid" title="tool_req__docs_common_attr_status_invalid"><em class="xref need">Status: skip checks for invalid needs (tool_req__docs_common_attr_status_invalid)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_suspicious" title="tool_req__docs_common_attr_suspicious"><em class="xref need">Suspicious: Enforce attribute (tool_req__docs_common_attr_suspicious)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_dd_feature_flag" title="tool_req__docs_dd_feature_flag"><em class="xref need">Feature Flags (tool_req__docs_dd_feature_flag)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_dd_link_source_code_link" title="tool_req__docs_dd_link_source_code_link"><em class="xref need">Supports linking to source code (tool_req__docs_dd_link_source_code_link)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_dec_rec_type" title="tool_req__docs_dec_rec_type"><em class="xref need">Decision Record Type (tool_req__docs_dec_rec_type)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_generic_optional" title="tool_req__docs_doc_generic_optional"><em class="xref need">Optional links of Generic Documents (tool_req__docs_doc_generic_optional)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_testcov" title="tool_req__docs_req_attr_testcov"><em class="xref need">Support requirements test coverage (tool_req__docs_req_attr_testcov)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_req_types" title="tool_req__docs_req_types"><em class="xref need">Requirements Types (tool_req__docs_req_types)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_restrict_needextend" title="tool_req__docs_restrict_needextend"><em class="xref need">Restrict needextend usage (tool_req__docs_restrict_needextend)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_dfa_failure_id" title="tool_req__docs_saf_attr_dfa_failure_id"><em class="xref need">DFA: failure id attribute (tool_req__docs_saf_attr_dfa_failure_id)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_root_cause" title="tool_req__docs_saf_attrs_root_cause"><em class="xref need">FMEA: Root Cause Attribute (tool_req__docs_saf_attrs_root_cause)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_safety_relevant" title="tool_req__docs_saf_attrs_safety_relevant"><em class="xref need">Safety Analysis Safety Relevant Attribute (tool_req__docs_saf_attrs_safety_relevant)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_types" title="tool_req__docs_saf_types"><em class="xref need">Safety Analysis Need Types (tool_req__docs_saf_types)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_sec_attrs_optional" title="tool_req__docs_sec_attrs_optional"><em class="xref need">Security Analysis Optional Attributes (tool_req__docs_sec_attrs_optional)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_sec_types" title="tool_req__docs_sec_types"><em class="xref need">Security Analysis Need Types (tool_req__docs_sec_types)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_stdreq_types" title="tool_req__docs_stdreq_types"><em class="xref need">Standard Requirement Types (tool_req__docs_stdreq_types)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_stdwp_types" title="tool_req__docs_stdwp_types"><em class="xref need">Standard Workproduct Types (tool_req__docs_stdwp_types)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_wf_types" title="tool_req__docs_wf_types"><em class="xref need">Workflow Types (tool_req__docs_wf_types)</em></a></p></li>
+<li><p><a class="reference internal" href="requirements.html#tool_req__docs_wp_types" title="tool_req__docs_wp_types"><em class="xref need">Workproduct Types (tool_req__docs_wp_types)</em></a></p></li>
 </ul>
 </section>
 </section>
@@ -1621,7 +1645,7 @@ Rendering/preview defects affect reviewer convenience, not safety evidence.</p><
 </ul>
 <p>Each of the following tool capabilities is evaluated as an intended use case
 with its corresponding potential malfunction.</p>
-<div class="need_container docutils container" id="SNCB-b8c047b1">
+<div class="need_container docutils container" id="SNCB-b93ecb9a">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__metamodel">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1655,7 +1679,7 @@ security, safety, and realizes. See, for example,
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_attr_status">gd_req__doc_attr_status</a>, <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_uid">gd_req__req_attr_uid</a>,
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_safety">gd_req__req_attr_safety</a>, <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attr_safety">gd_req__arch_attr_safety</a>,
 and <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_check_mandatory">gd_req__req_check_mandatory</a>.</p>
-<div class="need_container docutils container" id="SNCB-b593a9bb">
+<div class="need_container docutils container" id="SNCB-fdd32d21">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m1">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1726,7 +1750,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-26fe476d">
+<div class="need_container docutils container" id="SNCB-5f9210e9">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__safety_links">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1757,7 +1781,7 @@ Confidence (automatic calculation): low.</p>
 </tr>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Enforce that links between safety-relevant needs preserve the required
 safety relationships. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_linkage_safety">gd_req__req_linkage_safety</a>.</p>
-<div class="need_container docutils container" id="SNCB-19857696">
+<div class="need_container docutils container" id="SNCB-f6e3cc34">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m2">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1831,7 +1855,7 @@ carry the same “target at least as safe” obligation as the checked
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-f0572b08">
+<div class="need_container docutils container" id="SNCB-095846a6">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__coverage">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1863,7 +1887,7 @@ carry the same “target at least as safe” obligation as the checked
 <tr class="content row-odd"><td class="content" colspan="6"><p>Count, per requirement type, the requirements carrying a <code class="docutils literal notranslate"><span class="pre">testlink</span></code> and
 compute link-coverage percentages. See
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_reporting">gd_req__verification_reporting</a>.</p>
-<div class="need_container docutils container" id="SNCB-0ba270db">
+<div class="need_container docutils container" id="SNCB-74965384">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m3">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1932,7 +1956,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-5503e505">
+<div class="need_container docutils container" id="SNCB-e5dd4ba4">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__architecture">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1962,7 +1986,7 @@ Confidence (automatic calculation): low.</p>
 <td class="meta" colspan="3"></td>
 </tr>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Generate architecture diagrams. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_viewpoints">gd_req__arch_viewpoints</a>.</p>
-<div class="need_container docutils container" id="SNCB-6fb1c0b0">
+<div class="need_container docutils container" id="SNCB-54036ce9">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m4">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2033,7 +2057,7 @@ Confidence (automatic calculation): high.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-d9edc056">
+<div class="need_container docutils container" id="SNCB-5e6a82f3">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__test_linkage">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2066,7 +2090,7 @@ Confidence (automatic calculation): high.</p>
 <code class="docutils literal notranslate"><span class="pre">partially_verifies</span></code>/<code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code> references against the needs set.
 See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_testlink">gd_req__req_attr_testlink</a> and
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_reporting">gd_req__verification_reporting</a>.</p>
-<div class="need_container docutils container" id="SNCB-6e4f6824">
+<div class="need_container docutils container" id="SNCB-7c50062c">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m5">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2136,7 +2160,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-599a86ec">
+<div class="need_container docutils container" id="SNCB-ea710217">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__test_refs">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2167,7 +2191,7 @@ Confidence (automatic calculation): low.</p>
 </tr>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Check that test references are present and point to the intended
 requirements. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_testlink">gd_req__req_attr_testlink</a>.</p>
-<div class="need_container docutils container" id="SNCB-fc7a8324">
+<div class="need_container docutils container" id="SNCB-9406211d">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m6">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2238,7 +2262,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-321ee895">
+<div class="need_container docutils container" id="SNCB-c625d692">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__assumptions">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2270,7 +2294,7 @@ Confidence (automatic calculation): low.</p>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Use <code class="docutils literal notranslate"><span class="pre">needtable</span></code> to communicate safety-critical assumptions of use in
 safety manuals. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_management/guidance/guideline_safety_management.html#gd_guidl__saf_man">gd_guidl__saf_man</a> and
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_management/safety_management_workproducts.html#wp__platform_safety_manual">wp__platform_safety_manual</a>.</p>
-<div class="need_container docutils container" id="SNCB-c8f70d4b">
+<div class="need_container docutils container" id="SNCB-fe8c4a3f">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m7">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2296,7 +2320,7 @@ safety manuals. See <a class="external_link reference external" href="https://ec
 <div class="line"><span class="needs_version"><span class="needs_label">version: </span>1</span></div>
 </span></span></div>
 <div class="line"><span><div class="line">contained by: <span class="parent_needs"><span><a class="reference internal" href="#tool_usecase__docs_as_code__assumptions" title="potential_tool_malfunction__docs_as_code__m7">tool_usecase__docs_as_code__assumptions</a></span></span></div>
-<div class="line">violates: <span class="violates"><span><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_fulfils_aou" title="potential_tool_malfunction__docs_as_code__m7">tool_req__docs_arch_link_fulfils_aou</a>, <a class="reference internal" href="requirements.html#tool_req__docs_req_link_covers_aou" title="potential_tool_malfunction__docs_as_code__m7">tool_req__docs_req_link_covers_aou</a>, <a class="reference internal" href="requirements.html#tool_req__docs_req_types" title="potential_tool_malfunction__docs_as_code__m7">tool_req__docs_req_types</a></span></span></div>
+<div class="line">violates: <span class="violates"><span><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_fulfils_aou" title="potential_tool_malfunction__docs_as_code__m7">tool_req__docs_arch_link_fulfils_aou</a>, <a class="reference internal" href="requirements.html#tool_req__docs_req_link_covers_aou" title="potential_tool_malfunction__docs_as_code__m7">tool_req__docs_req_link_covers_aou</a></span></span></div>
 </span></div>
 </div>
 </td>
@@ -2340,7 +2364,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-5416e5b2">
+<div class="need_container docutils container" id="SNCB-f279c09d">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__backlinks">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2371,7 +2395,7 @@ Confidence (automatic calculation): low.</p>
 </tr>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Generate correct backlinks for links between Needs items to provide
 bi-directional traceability. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/general_concepts/score_traceability_concept.html#doc_concept__general_traceability">doc_concept__general_traceability</a>.</p>
-<div class="need_container docutils container" id="SNCB-5ab276ba">
+<div class="need_container docutils container" id="SNCB-d172777e">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m8">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2440,7 +2464,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-e428a1a3">
+<div class="need_container docutils container" id="SNCB-89f497b8">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__generation">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2472,7 +2496,7 @@ Confidence (automatic calculation): low.</p>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Generate complete and correct HTML apart from the aspects covered by the
 other use cases. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_attributes_manual">gd_req__doc_attributes_manual</a> and
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_attr_status">gd_req__doc_attr_status</a>.</p>
-<div class="need_container docutils container" id="SNCB-2622fe4e">
+<div class="need_container docutils container" id="SNCB-8eaace5d">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m9">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2655,7 +2679,7 @@ source-controlled inputs and writing generated output.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-verification-graph">Tool verification graph</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation-overview">Evaluation overview</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-qualification-matrix">Tool qualification matrix</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#requirements-and-tests">Requirements and tests</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verifying-testcases">Verifying testcases</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#not-covered-by-this-report">Not covered by this report</a></li>
 </ul>
 </li>
