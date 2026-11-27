@@ -11,6 +11,10 @@
 
 {#- ===== Helpers =========================================================== -#}
 
+{%- macro plural(count, singular, plural_form="") -%}
+    {{- count }} {{ singular if count == 1 else (plural_form or singular ~ "s") -}}
+{%- endmacro -%}
+
 {%- macro text(value, fallback="—") -%}
     {{- (value|default("", true)|replace("\n", " ")|trim) or fallback -}}
 {%- endmacro -%}
@@ -149,19 +153,25 @@ Conclusion
 
 *Generated from linked report records.*
 
-The generated conclusion is summarized from the owned
-``potential_tool_malfunction`` records:
+{% if summary.detection_no %}
+The tool **must be qualified** (``tcl: LOW``): {{ "its potential malfunction" if summary.total == 1 else summary.detection_no ~ " of its " ~ summary.total ~ " potential malfunctions" }}
+can affect safety without being detected reliably.
+{% elif summary.detection_unassessed %}
+The tool **cannot be classified yet**: the detection of
+{{ plural(summary.detection_unassessed, "safety-relevant malfunction") }} is not assessed, so the tool
+confidence level is still open.
+{% elif summary.total %}
+The tool **does not need to be qualified** (``tcl: HIGH``): {{ "its potential malfunction cannot" if summary.total == 1 else "none of its " ~ summary.total ~ " potential malfunctions can" }}
+affect safety without being detected reliably.
+{% else %}
+The tool **does not need to be qualified** (``tcl: HIGH``): no potential
+malfunction is documented.
+{% endif %}
 
-* **Safety:** ``{{ summary.safety }}/{{ summary.total }}`` potential tool
-  malfunctions affect safety → ``safety_affected: {{ "YES" if summary.safety else "NO" }}``.
-* **Detection:** ``{{ summary.detection_no }}/{{ summary.safety }}`` safety-
-  relevant malfunctions have insufficient detection → ``tcl: {{ "LOW" if summary.detection_no else "HIGH" }}``.
-* **Qualification:** → qualification of ``{{ qualification_requirement_scope.ids|length }}`` tool
-  requirements is **{{ "required" if summary.detection_no else "not required" }}**.
-* **Testcase coverage:** ``{{ summary.fully_covered }}/{{ summary.detection_no }}``
-  qualification-relevant malfunctions are fully covered by passed,
-  fully-verifying testcases.
-
+{% if summary.detection_no %}
+* **Qualification scope:** {{ plural(qualification_requirement_scope.ids|length, "tool requirement") }} to be verified by testcases.
+* **Coverage:** {{ summary.fully_covered }} of {{ plural(summary.detection_no, "malfunction") }} {{ "is" if summary.fully_covered == 1 else "are" }} fully covered by passed testcases.
+{% endif %}
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -217,6 +227,35 @@ The generated conclusion is summarized from the owned
          type == "tool_req" and id in {{ id_filter_list(qualification_requirement_scope.ids) }} and fully_verifies_back
          type == "tool_req" and id in {{ id_filter_list(qualification_requirement_scope.ids) }} and partially_verifies_back and not fully_verifies_back
          type == "tool_req" and id in {{ id_filter_list(qualification_requirement_scope.ids) }} and not fully_verifies_back and not partially_verifies_back
+
+{% if summary.total %}
+How the conclusion is derived
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Generated from linked report records.*
+
+**Classification.** A potential malfunction needs qualification if it can
+affect safety and the safety measures in place do not detect it reliably before
+its output is relied on; one such malfunction is enough to set the tool
+confidence level to ``LOW``. {% if summary.total == 1 %}The potential malfunction {{ "can" if summary.safety else "cannot" }}
+affect safety{% if summary.detection_no %}, and its detection is insufficient{% elif summary.detection_yes %}, but its detection is sufficient{% endif %}.{% else %}{{ summary.safety }} of {{ summary.total }} potential malfunctions can
+affect safety{% if summary.safety %}; for {{ summary.detection_no }} of these, detection is insufficient{% endif %}.{% endif %}{% if summary.detection_unassessed %}
+The detection of {{ plural(summary.detection_unassessed, "safety-relevant malfunction") }} is not assessed
+yet{% if not summary.detection_no %}; until it is, the tool confidence level cannot be determined{% endif %}.{% endif %}
+
+{% if summary.detection_no %}
+**Qualification scope.** The scope consists of the
+{{ plural(qualification_requirement_scope.ids|length, "tool requirement") }} that the malfunctions needing
+qualification violate; each has to be verified by testcases.
+
+**Verification.** "Fully" and "partially" describe how a testcase is linked
+to a tool requirement (``fully_verifies`` or ``partially_verifies``), not its
+result. A malfunction counts as covered once every tool requirement it violates
+is fully verified by a passed testcase. The tool qualification matrix shows
+these links per malfunction.
+
+{% endif %}
+{% endif %}
 
 Tool verification graph
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -326,7 +365,7 @@ Evaluation overview
      - {{ text(malfunction.get("safety_affected")) }}
      - {{ text(malfunction.get("safety_measures")) }}
      - {{ text(malfunction.get("detection_sufficient")) }}
-     - {{ "LOW" if malfunction.get("safety_affected") == "YES" and malfunction.get("detection_sufficient") == "NO" else "HIGH" }}
+     - {% if malfunction.get("safety_affected") != "YES" or malfunction.get("detection_sufficient") == "YES" %}HIGH{% elif malfunction.get("detection_sufficient") == "NO" %}LOW{% else %}open{% endif %}
 {% endfor %}
 {% endfor %}
 {% if not usecases %}
