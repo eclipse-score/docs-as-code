@@ -1560,9 +1560,10 @@ feat_arc_sta ..&gt; aou_req : fulfils
 feat_req --&gt; feat : satisfied_by
 feat_req ..&gt; aou_req : covers
 feat_req ..&gt; stkh_req : derived_from
-feat_saf_dfa --&gt; feat_arc_sta : violates
 feat_saf_dfa ..&gt; feat_req : mitigated_by
 feat_saf_dfa ..&gt; aou_req : mitigated_by
+feat_saf_dfa ..&gt; feat_arc_sta : violates
+feat_saf_dfa ..&gt; feat : violates
 feat_saf_fmea --&gt; feat_arc_dyn : violates
 feat_saf_fmea --&gt; feat_arc_sta : violates
 feat_saf_fmea ..&gt; feat_req : mitigated_by
@@ -4481,6 +4482,22 @@ class feat_req {
   +testlink [optional]*
   +valid_until [optional]*
 }
+class feat_saf_dfa {
+  +content
+  +failure_effect
+  +failure_id
+  +id
+  +status
+  +sufficient
+  +version
+  +bazel_module [optional]*
+  +bazel_target [optional]*
+  +bazel_type [optional]*
+  +mitigation_issue [optional]*
+  +safety_relevant [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
 class logic_arc_int {
   +id
   +safety
@@ -4514,11 +4531,13 @@ feat ..&gt; logic_arc_int_op : uses
 feat_arc_dyn --&gt; feat : belongs_to
 feat_arc_sta --&gt; feat : belongs_to
 feat_req --&gt; feat : satisfied_by
+feat_saf_dfa ..&gt; feat : violates
 logic_arc_int --&gt; feat : included_by
 style comp fill:#D5E8D4,stroke:#666,color:#000
 style feat_arc_dyn fill:#FFF2CC,stroke:#666,color:#000
 style feat_arc_sta fill:#FFF2CC,stroke:#666,color:#000
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
+style feat_saf_dfa fill:#FFF2CC,stroke:#666,color:#000
 style logic_arc_int fill:#FFF2CC,stroke:#666,color:#000
 style logic_arc_int_op fill:#FFF2CC,stroke:#666,color:#000
 style feat fill:#FFF2CC,stroke:#000,stroke-width:3px,color:#000
@@ -4528,6 +4547,7 @@ click feat href &quot;#feat&quot; &quot;Open feat details&quot;
 click feat_arc_dyn href &quot;#feat-arc-dyn&quot; &quot;Open feat_arc_dyn details&quot;
 click feat_arc_sta href &quot;#feat-arc-sta&quot; &quot;Open feat_arc_sta details&quot;
 click feat_req href &quot;#feat-req&quot; &quot;Open feat_req details&quot;
+click feat_saf_dfa href &quot;#feat-saf-dfa&quot; &quot;Open feat_saf_dfa details&quot;
 click logic_arc_int href &quot;#logic-arc-int&quot; &quot;Open logic_arc_int details&quot;
 click logic_arc_int_op href &quot;#logic-arc-int-op&quot; &quot;Open logic_arc_int_op details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
@@ -4912,7 +4932,7 @@ feat_arc_sta --&gt; logic_arc_int : includes
 feat_arc_sta --&gt; logic_arc_int_op : includes
 feat_arc_sta ..&gt; feat_req : fulfils
 feat_arc_sta ..&gt; aou_req : fulfils
-feat_saf_dfa --&gt; feat_arc_sta : violates
+feat_saf_dfa ..&gt; feat_arc_sta : violates
 feat_saf_fmea --&gt; feat_arc_sta : violates
 plat_saf_dfa --&gt; feat_arc_sta : violates
 style aou_req fill:#FCFCFC,stroke:#666,color:#000
@@ -5394,6 +5414,18 @@ class aou_req {
   +testcovered [optional]*
   +testlink [optional]*
 }
+class feat {
+  +id
+  +safety
+  +security
+  +status
+  +version
+  +bazel_module [optional]*
+  +bazel_target [optional]*
+  +bazel_type [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
 class feat_arc_sta {
   +id
   +safety
@@ -5440,14 +5472,17 @@ class feat_saf_dfa {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-feat_saf_dfa --&gt; feat_arc_sta : violates
 feat_saf_dfa ..&gt; feat_req : mitigated_by
 feat_saf_dfa ..&gt; aou_req : mitigated_by
+feat_saf_dfa ..&gt; feat_arc_sta : violates
+feat_saf_dfa ..&gt; feat : violates
 style aou_req fill:#FCFCFC,stroke:#666,color:#000
+style feat fill:#FFF2CC,stroke:#666,color:#000
 style feat_arc_sta fill:#FFF2CC,stroke:#666,color:#000
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
 style feat_saf_dfa fill:#FFF2CC,stroke:#000,stroke-width:3px,color:#000
 click aou_req href &quot;#aou-req&quot; &quot;Open aou_req details&quot;
+click feat href &quot;#feat&quot; &quot;Open feat details&quot;
 click feat_arc_sta href &quot;#feat-arc-sta&quot; &quot;Open feat_arc_sta details&quot;
 click feat_req href &quot;#feat-req&quot; &quot;Open feat_req details&quot;
 click feat_saf_dfa href &quot;#feat-saf-dfa&quot; &quot;Open feat_saf_dfa details&quot;
@@ -5531,13 +5566,13 @@ click feat_saf_dfa href &quot;#feat-saf-dfa&quot; &quot;Open feat_saf_dfa detail
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Mandatory</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">violates</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">feat_arc_sta</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>Optional</p></td>
+<tr class="row-even"><td><p>Optional</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mitigated_by</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">feat_req,</span> <span class="pre">aou_req</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">violates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">feat_arc_sta,</span> <span class="pre">feat</span></code></p></td>
 </tr>
 </tbody>
 </table>
