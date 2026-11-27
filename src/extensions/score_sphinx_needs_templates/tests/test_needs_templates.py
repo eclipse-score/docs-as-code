@@ -821,7 +821,57 @@ def test_tool_qualification_report_without_detection_assessment_is_open(
     assert "the tool confidence level cannot be determined" in derivation
     # A single malfunction is not counted as "1 of 1".
     assert "The potential malfunction can affect safety." in derivation
+    # The violated requirement is neither in nor out of scope yet.
+    assert (
+        "Qualification scope. No malfunction is known to need qualification yet. "
+        "Whether 1 tool requirement belongs to the scope is still open" in derivation
+    )
     # The per-malfunction classification agrees with the conclusion.
     overview = html.split('<section id="evaluation-overview">', 1)[1]
     assert "<td><p>open</p></td>" in overview
     assert "<td><p>HIGH</p></td>" not in overview
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_tool_qualification_report_keeps_unassessed_requirements_open(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Requirements of an unassessed malfunction are not out of scope.
+
+    Another malfunction already forces qualification. The requirement violated
+    only by the unassessed malfunction may still belong to the qualification
+    scope, so it must not be explained as needing no qualification.
+    """
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
+    html = _render_tool_report(
+        tmp_path,
+        _UNASSESSED_MALFUNCTION
+        + """
+   .. potential_tool_malfunction:: Malfunction needing qualification
+      :id: potential_tool_malfunction__low
+      :violates: tool_req__checked
+      :safety_affected: YES
+      :detection_sufficient: NO
+      :safety_measures: None
+
+.. tool_req:: Checked tool requirement
+   :id: tool_req__checked
+
+   The tool shall satisfy the evaluated capability.
+""",
+    )
+
+    conclusion = _section_text(html, "conclusion")
+    derivation = _section_text(html, "how-the-conclusion-is-derived")
+    assert "The tool must be qualified" in conclusion
+    assert "Qualification scope: 1 tool requirement to be verified" in conclusion
+    assert (
+        "Whether 1 other tool requirement belongs to the scope is still open: "
+        "only malfunctions without a detection assessment violate it." in derivation
+    )
+    assert "further tool requirement" not in derivation
