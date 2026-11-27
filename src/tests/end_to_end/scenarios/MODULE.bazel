@@ -45,3 +45,12 @@ local_path_override(
     module_name = "score_docs_as_code",
     path = "../../../..",
 )
+
+# A second documentation module, mounted by the tool_qualification_report
+# scenario. Its directory is listed in .bazelignore, so it exists only as this
+# external module and not also as packages of score_scenarios.
+bazel_dep(name = "score_tool_report_mounted", version = "0.0.0")
+local_path_override(
+    module_name = "score_tool_report_mounted",
+    path = "tool_qualification_report/mounted_module",
+)
