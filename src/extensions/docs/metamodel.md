@@ -102,17 +102,6 @@ needs_types:
     parts: 2 # has to have exactly one `__` inside the ID
 ```
 
-`option_defaults` sets the value of an option for the needs of the type that do not set it, e.g.
-a `mod` need without `maturity` is a `preview` module. The value must follow the pattern of the option.
-
-```yaml
-  mod:
-    optional_options:
-      maturity: ^(preview|experimental|release)$
-    option_defaults:
-      maturity: preview
-```
-
 ### 2. Generic Graph Checks (Configuration-Based)
 Generic graph checks are defined in the metamodel.yaml under `graph_checks`.
 These checks follow the same structure:

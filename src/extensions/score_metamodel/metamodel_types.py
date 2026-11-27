@@ -14,7 +14,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import NotRequired
 
 from sphinx_needs.config import NeedType
 
@@ -34,8 +33,6 @@ class ScoreNeedType(NeedType):
 
     mandatory_options: dict[str, str]
     optional_options: dict[str, str]
-    # Value of an option the need does not set.
-    option_defaults: NotRequired[dict[str, str]]
 
     mandatory_links_str: dict[str, str]
     optional_links_str: dict[str, str]
