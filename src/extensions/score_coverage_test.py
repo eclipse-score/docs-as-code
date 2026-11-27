@@ -20,6 +20,7 @@ from types import SimpleNamespace
 from typing import cast
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx.testing.util import SphinxTestApp
@@ -37,6 +38,11 @@ from src.extensions import score_coverage
     ],
 )
 @pytest.mark.parametrize("configure_summary", [False, True])
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_summary_is_rendered_only_inside_the_matching_need(
     tmp_path: Path,
     total: int | None,
@@ -108,6 +114,11 @@ def test_summary_is_rendered_only_inside_the_matching_need(
         app.cleanup()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_unconfigured_coverage_leaves_needs_unchanged(tmp_path: Path) -> None:
     """Needs exports and documentation checks work without a summary input."""
     (tmp_path / "conf.py").write_text(
@@ -127,6 +138,11 @@ def test_unconfigured_coverage_leaves_needs_unchanged(tmp_path: Path) -> None:
         app.cleanup()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_content_only_layout_keeps_coverage_out_of_the_content(tmp_path: Path) -> None:
     """A layout without metadata must not receive an attribute in its prose."""
     summary = tmp_path / "coverage.json"
@@ -167,6 +183,11 @@ def test_content_only_layout_keeps_coverage_out_of_the_content(tmp_path: Path) -
         app.cleanup()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_summary_changes_invalidate_consumers_without_bundle_file_dependencies(
     tmp_path: Path,
 ) -> None:
@@ -207,6 +228,11 @@ def test_summary_changes_invalidate_consumers_without_bundle_file_dependencies(
 
 
 @pytest.mark.parametrize("builder", ["needs", "linkcheck"])
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_documentation_checks_ignore_summary_changes(builder: str) -> None:
     """Export and check builders neither track nor open coverage inputs."""
     env = cast(BuildEnvironment, SimpleNamespace(metadata={}))

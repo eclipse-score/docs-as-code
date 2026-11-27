@@ -259,6 +259,11 @@ def test_any_req_in_report_version_false_if_no_requirement_matches() -> None:
     assert templates.any_req_in_report_version([a, b], "v1.0") is False  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_safety_chart_row_qm_counts_inspected_as_valid() -> None:
     """QM has no inspected segment; ``valid_inspected`` QM Needs count as valid."""
     safety_chart_row = vars(templates)["_SafetyChartRow"]()
@@ -277,7 +282,13 @@ def test_safety_chart_row_qm_counts_inspected_as_valid() -> None:
     assert ":class: safety-class-heading safety-asil-b" in asil
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_safety_chart_row_empty_class_renders_one_slim_placeholder() -> None:
+    """A class without requirements renders exactly one slim placeholder."""
     safety_chart_row = vars(templates)["_SafetyChartRow"]()
 
     row = safety_chart_row("Comp", "Requirements", "BASE", "QM", "QM", 0, True)
@@ -286,7 +297,13 @@ def test_safety_chart_row_empty_class_renders_one_slim_placeholder() -> None:
     assert row.count('<div class="empty-chart">no QM requirements</div>') == 1
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_safety_chart_row_reference_bar_only_on_request() -> None:
+    """Reference coverage bars appear only when the option is requested."""
     safety_chart_row = vars(templates)["_SafetyChartRow"]()
 
     without = safety_chart_row("", "Stakeholder Requirements", "B", "QM", "QM", 2)
@@ -305,6 +322,11 @@ def test_safety_chart_row_reference_bar_only_on_request() -> None:
     assert ".. score-report-bars:: Stakeholder Requirements (QM)\n" in with_ref
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_chart_legend_is_one_raw_line_with_reference_on_request() -> None:
     """The legend repeats per section, so it is one line with tooltips."""
     chart_legend = vars(templates)["_ChartLegend"]()
@@ -320,6 +342,11 @@ def test_chart_legend_is_one_raw_line_with_reference_on_request() -> None:
     assert plain.count('class="chart-legend-dot"') == 16
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_chart_legend_explains_every_colour_without_a_tooltip() -> None:
     """Keyboard users cannot open ``title`` tooltips, so a ``<details>`` repeats them."""
     legend = vars(templates)["_ChartLegend"]()(True)
@@ -335,6 +362,11 @@ def test_chart_legend_explains_every_colour_without_a_tooltip() -> None:
     assert details.startswith("<summary>")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_safety_chart_row_indent_nests_every_line() -> None:
     """``indent`` nests the chart into a grid item without touching blank lines."""
     safety_chart_row = vars(templates)["_SafetyChartRow"]()
@@ -347,14 +379,26 @@ def test_safety_chart_row_indent_nests_every_line() -> None:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_id_filter_list_renders_quoted_literal() -> None:
+    """The id filter list is rendered as a quoted JSON-like literal."""
     id_filter_list = vars(templates)["_IdFilterList"]()
 
     assert id_filter_list(["a", "b"]) == '["a", "b"]'
     assert id_filter_list([]) == "[]"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_workproduct_rows_filter_by_owner_then_slug() -> None:
+    """Workproduct rows filter by owner before falling back to the id slug."""
     workproduct_rows = vars(templates)["_WorkproductRows"]()
 
     rows = workproduct_rows(
@@ -373,7 +417,13 @@ def test_workproduct_rows_filter_by_owner_then_slug() -> None:
     assert rows.count('and "wp__fmea" in realizes') == 2
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_workproduct_rows_filter_prefers_belongs_to_over_id() -> None:
+    """A matching belongs_to value wins over the id-slug fallback."""
     rows = vars(templates)["_WorkproductRows"]()(
         "comp__engine_core", "enginecore", [["wp__dfa", "DFA"]]
     )

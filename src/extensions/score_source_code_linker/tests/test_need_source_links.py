@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 
 from src.extensions.score_source_code_linker.need_source_links import (
     NeedSourceLinks,
@@ -105,13 +106,25 @@ def sample_source_code_links(
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_encoder_outputs_serializable_dict(sample_source_code_links: SourceCodeLinks):
+    """The custom JSON encoder produces a dict serialization."""
     encoded = json.dumps(sample_source_code_links, cls=SourceCodeLinks_JSON_Encoder)
     assert isinstance(encoded, str)
     assert "REQ_001" in encoded
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_decoder_reconstructs_object(sample_source_code_links: SourceCodeLinks):
+    """Round-tripping through the custom decoder restores the object graph."""
     encoded = json.dumps(sample_source_code_links, cls=SourceCodeLinks_JSON_Encoder)
     decoded = json.loads(encoded, object_hook=SourceCodeLinks_JSON_Decoder)
     assert isinstance(decoded, SourceCodeLinks)
@@ -120,7 +133,13 @@ def test_decoder_reconstructs_object(sample_source_code_links: SourceCodeLinks):
     assert decoded.links.CodeLinks[0].need == "REQ_001"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_store_and_load_json(tmp_path: Path, sample_source_code_links: SourceCodeLinks):
+    """Stored combined links survive a write-then-read round trip."""
     test_file = tmp_path / "combined_links.json"
     store_source_code_links_combined_json(test_file, [sample_source_code_links])
     assert test_file.exists()
@@ -132,7 +151,13 @@ def test_store_and_load_json(tmp_path: Path, sample_source_code_links: SourceCod
     assert loaded[0].need == sample_source_code_links.need
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_load_invalid_json_type(tmp_path: Path):
+    """A non-list JSON payload is rejected with a descriptive assertion."""
     test_file = tmp_path / "invalid.json"
     test_file.write_text('{"not_a_list": true}', encoding="utf-8")
 
@@ -140,7 +165,13 @@ def test_load_invalid_json_type(tmp_path: Path):
         _ = load_source_code_links_combined_json(test_file)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_load_invalid_json_items(tmp_path: Path):
+    """A list of non-SourceCodeLinks items is rejected."""
     test_file = tmp_path / "bad_items.json"
     # This is a list but doesn't contain SourceCodeLinks
     test_file.write_text('[{"some": "thing"}]', encoding="utf-8")

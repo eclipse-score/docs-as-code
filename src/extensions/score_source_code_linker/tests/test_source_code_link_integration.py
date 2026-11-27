@@ -658,6 +658,11 @@ def test_source_link_integration_ok(
         app.cleanup()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_source_link_integration_non_existent_id(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_non_existent: dict[str, list[str]],

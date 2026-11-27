@@ -153,9 +153,9 @@ def tmp_xml_dirs(
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_find_xml_files(
     tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
@@ -175,6 +175,11 @@ def test_find_xml_files(
     assert set(found) == expected
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_find_xml_folder(
     tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
 ):
@@ -186,9 +191,15 @@ def test_find_xml_folder(
     assert found == root
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_find_xml_folder_test_reports(
     tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
 ):
+    """A tests-report folder is preferred over bazel-testlogs for parsing."""
     # root is the 'tests-report' folder inside tmp_path
     root, _, _, _, _ = tmp_xml_dirs(test_folder="tests-report")
     # We pass the PARENT of 'tests-report' as the workspace root
@@ -197,6 +208,11 @@ def test_find_xml_folder_test_reports(
     assert found == root
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_find_xml_files_test_reports(
     tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
 ):
@@ -216,6 +232,11 @@ def test_find_xml_files_test_reports(
     assert set(found) == expected
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_early_return(tmp_path: Path):
     """
     Ensure that if tests-report & bazel-testlogs is not found,
@@ -228,9 +249,9 @@ def test_early_return(tmp_path: Path):
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
 )
 def test_parse_testcase_result():
     """Ensure Testcase results are parsed as intended"""
@@ -261,9 +282,9 @@ def test_parse_testcase_result():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
 )
 def test_parse_properties():
     """Ensure properties of testcases are parsed as intended"""
@@ -277,7 +298,7 @@ def test_parse_properties():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
+    partially_verifies=[],
     fully_verifies=[
         "potential_tool_malfunction__docs_as_code__m5",
         "potential_tool_malfunction__docs_as_code__m6",
@@ -339,6 +360,11 @@ def test_read_test_xml_file(
     assert missing_props4 == ["tc_with_missing_props"]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_parse_test_xml_files_without_sphinx(
     tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
 ):
@@ -359,9 +385,9 @@ def test_parse_test_xml_files_without_sphinx(
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_is_testcase_in_scope_empty_allow_list_is_unfiltered():
     """An empty allow-list disables filtering: everything is in scope."""
@@ -371,9 +397,9 @@ def test_is_testcase_in_scope_empty_allow_list_is_unfiltered():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_is_testcase_in_scope_positive_match():
     """A file located under an allowed dir is in scope (positive match)."""
@@ -384,9 +410,9 @@ def test_is_testcase_in_scope_positive_match():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_is_testcase_in_scope_not_under_any_allowed_dir():
     """A file outside every allowed dir is out of scope."""
@@ -394,9 +420,9 @@ def test_is_testcase_in_scope_not_under_any_allowed_dir():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
 )
 def test_is_testcase_in_scope_none_file_with_allow_list():
     """With a non-empty allow-list a testcase without a `file` is out of scope."""
@@ -404,9 +430,9 @@ def test_is_testcase_in_scope_none_file_with_allow_list():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_is_testcase_in_scope_no_string_prefix_match():
     """Matching is component-wise, not a raw string-prefix match."""
@@ -421,9 +447,9 @@ def test_is_testcase_in_scope_no_string_prefix_match():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
 )
 def test_parse_testcase_source_dirs():
     """`str(list)` config values are parsed into a list of paths."""
@@ -433,9 +459,9 @@ def test_parse_testcase_source_dirs():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_link_testcase"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
 )
 def test_parse_testcase_source_dirs_non_list_raises():
     """A malformed (non-list) config value fails loudly instead of downstream."""
@@ -446,7 +472,13 @@ def test_parse_testcase_source_dirs_non_list_raises():
 #            ─────────────[ Boilerplate generated by CoPilot ]─────────────
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_clean_test_file_name_local_path():
+    """The local bazel-testlogs prefix is stripped from a test file path."""
     raw_path = Path(
         "/home/root/folder/docs-as-code/bazel-testlogs/src/extensions/score_any_folder/score_any_folder_tests/test.xml"
     )
@@ -456,7 +488,13 @@ def test_clean_test_file_name_local_path():
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_clean_test_file_name_combo_path():
+    """An external repository prefix is kept after the bazel-testlogs marker."""
     raw_path = Path(
         "/root/bazel-testlogs/external/score_docs_as_code+/src/extensions/score_any_folder/score_any_folder_tests/test.xml"
     )
@@ -466,19 +504,37 @@ def test_clean_test_file_name_combo_path():
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_clean_test_file_name_tests_report_path():
+    """A tests-report prefix is stripped from a test file path."""
     raw_path = Path("/some/path/tests-report/test-report/unit/test_module.xml")
     result = xml_parser.clean_test_file_name(raw_path)
     assert result == Path("test-report/unit/test_module.xml")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_clean_test_file_name_nested_bazel_testlogs():
+    """Only the last bazel-testlogs marker starts the cleaned path."""
     raw_path = Path("/deeply/nested/bazel-testlogs/bazel-testlogs/final/path.xml")
     result = xml_parser.clean_test_file_name(raw_path)
     assert result == Path("final/path.xml")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_clean_test_file_name_invalid_path_raises_error():
+    """A path without bazel-testlogs or tests-report markers is rejected."""
     raw_path = Path("/invalid/path/without/markers/test.xml")
     with pytest.raises(
         ValueError, match="Filepath does not have 'bazel-testlogs' nor 'tests-report'"
@@ -486,7 +542,13 @@ def test_clean_test_file_name_invalid_path_raises_error():
         xml_parser.clean_test_file_name(raw_path)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_clean_test_file_name_empty_path_raises_error():
+    """An empty path is rejected as a test file path."""
     raw_path = Path("")
     with pytest.raises(
         ValueError, match="Filepath does not have 'bazel-testlogs' nor 'tests-report'"
@@ -525,6 +587,11 @@ _COMBO_TEST_PATH = Path(
 )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_metadata_from_test_path_local():
     """The local report ignores a known-good pin for its own module."""
     local_path = Path(
@@ -538,6 +605,11 @@ def test_get_metadata_from_test_path_local():
     assert md.url == ""
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_get_metadata_from_test_path_combo_with_hash():
     """Combo builds with 'hash' in known_good.json populate metadata correctly."""
     md = xml_parser.get_metadata_from_test_path(
@@ -548,6 +620,11 @@ def test_get_metadata_from_test_path_combo_with_hash():
     assert md.url == "https://github.com/eclipse-score/docs-as-code"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_get_metadata_from_test_path_combo_with_version():
     """Combo builds with 'version' in known_good.json populate metadata correctly."""
     md = xml_parser.get_metadata_from_test_path(

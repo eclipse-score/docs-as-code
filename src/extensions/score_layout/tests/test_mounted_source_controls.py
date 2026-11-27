@@ -45,6 +45,11 @@ def test_default_logo_assets_are_available() -> None:
     assert logo["alt_text"] == "Eclipse S-CORE documentation - Home"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_version_switcher_is_not_fetched_at_build_time() -> None:
     """The switcher is rendered, but the build never downloads versions.json."""
     app = cast(

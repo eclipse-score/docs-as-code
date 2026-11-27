@@ -18,11 +18,17 @@ import subprocess
 from pathlib import Path
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 
 
 @pytest.mark.parametrize(
     "runfiles_mode",
     ["directory", "inferred", "standalone", "manifest", "adjacent_manifest"],
+)
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_direct_launcher_renders_svg_without_bazel_args(
     runfiles_mode: str,

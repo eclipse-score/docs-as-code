@@ -34,6 +34,7 @@ from score_metamodel.external_needs import (
     add_external_needs_json,
     get_external_needs_source,
 )
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.application import Sphinx
 from sphinx.config import Config
 from sphinx_needs.needsfile import NeedsList
@@ -44,6 +45,11 @@ from src.helper_lib.external_needs import (
 )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_extend_needs_json_exporter_uses_configured_value(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -61,6 +67,11 @@ def test_extend_needs_json_exporter_uses_configured_value(
     assert needs_list.needs_list["project_url"] == "https://example.test/after"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_extend_needs_json_exporter_can_override_export_metadata(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -97,13 +108,25 @@ def test_extend_needs_json_exporter_can_override_export_metadata(
         ),
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_external_needs_runfiles_path_is_environment_independent(
     source: ExternalNeedsSource, suffix: tuple[str, ...], expected: Path
 ) -> None:
+    """The runfiles path depends only on the source and suffix, not the environment."""
     assert _external_needs_runfiles_path(Path("/runfiles"), source, *suffix) == expected
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_parse_bazel_external_need_marks_same_repository_labels_local() -> None:
+    """A label without a repository prefix maps to the local module."""
     assert parse_bazel_external_need("//pkg:needs_json") == ExternalNeedsSource(
         bazel_module="",
         path_to_target="pkg",
@@ -112,7 +135,13 @@ def test_parse_bazel_external_need_marks_same_repository_labels_local() -> None:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_parse_external_needs_labels_filters_ordinary_data_labels() -> None:
+    """Only Bazel file and target labels produce external needs source entries."""
     assert parse_external_needs_labels(
         ["docs/index.rst", "//pkg:needs_json", "assets/logo.svg"]
     ) == [
@@ -146,15 +175,27 @@ def test_parse_external_needs_labels_filters_ordinary_data_labels() -> None:
         ),
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_external_needs_source_path_selects_target_layout(
     source: ExternalNeedsSource, expected: Path
 ) -> None:
+    """Each source kind selects the corresponding runfiles target layout."""
     assert _external_needs_source_path(Path("/runfiles"), source) == expected
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_configured_runfiles_dir_is_used_for_external_sources(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
+    """A configured runfiles directory is honored when resolving external sources."""
     config = Config()
     configured_runfiles = tmp_path / "configured.runfiles"
     config.runfiles_dir = str(configured_runfiles)
@@ -168,7 +209,13 @@ def test_configured_runfiles_dir_is_used_for_external_sources(
     assert _runfiles_dir(config) == configured_runfiles
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_external_needs_source_config_parses_labels() -> None:
+    """Config labels parse into external needs source descriptors."""
     raw = json.dumps(
         ["@vendor//:needs_json"],
     )
@@ -187,7 +234,13 @@ def test_external_needs_source_config_parses_labels() -> None:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_external_needs_source_rejects_descriptors() -> None:
+    """Non-label descriptor shapes are rejected with a ValueError."""
     with pytest.raises(ValueError, match="Bazel label strings"):
         get_external_needs_source(
             json.dumps(
@@ -202,6 +255,11 @@ def test_external_needs_source_rejects_descriptors() -> None:
         )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_add_external_needs_json_appends_entry(
     tmp_path: Path,
 ) -> None:
@@ -230,6 +288,11 @@ def test_add_external_needs_json_appends_entry(
     assert Path(entry["json_path"]) == json_path
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_add_external_needs_json_appends_entry_local(
     tmp_path: Path,
 ) -> None:
@@ -262,6 +325,11 @@ def test_add_external_needs_json_appends_entry_local(
     assert Path(entry["json_path"]) == json_path
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_add_needs_json_file_appends_entry(
     tmp_path: Path,
 ) -> None:
@@ -295,6 +363,11 @@ def test_add_needs_json_file_appends_entry(
     assert Path(entry["json_path"]) == json_path
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_add_external_needs_json_missing_file_keeps_list_empty(
     tmp_path: Path,
 ) -> None:
@@ -345,6 +418,11 @@ def _external_source(repo: str, target: str) -> ExternalNeedsSource:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_duplicate_external_need_ids_with_same_base_url_are_reported(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -401,6 +479,11 @@ def test_duplicate_external_need_ids_with_same_base_url_are_reported(
     assert len(config.needs_external_needs) == 2
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_duplicate_external_need_ids_with_different_base_urls_do_not_warn(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -431,6 +514,11 @@ def test_duplicate_external_need_ids_with_different_base_urls_do_not_warn(
     _warn_for_duplicate_external_need_ids(sources, tmp_path)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_same_base_url_without_duplicate_ids_does_not_warn(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,

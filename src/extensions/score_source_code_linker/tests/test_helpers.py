@@ -105,6 +105,11 @@ def known_good_json(tmp_path: Path):
 
 
 # Tests for parse_info_from_known_good
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_parse_info_from_known_good_happy_path(known_good_json: Path):
     """Test parsing repo info from valid known_good.json."""
     hash_result, repo_result = parse_info_from_known_good(
@@ -115,6 +120,11 @@ def test_parse_info_from_known_good_happy_path(known_good_json: Path):
     assert repo_result == "https://github.com/eclipse-score/baselibs"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_parse_info_from_known_good_different_category(known_good_json: Path):
     """Test finding repo in different category."""
     hash_result, repo_result = parse_info_from_known_good(
@@ -125,12 +135,22 @@ def test_parse_info_from_known_good_different_category(known_good_json: Path):
     assert repo_result == "https://github.com/eclipse-score/docs-as-code"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_parse_info_from_known_good_repo_not_found(known_good_json: Path):
     """Test that KeyError is raised when repo doesn't exist."""
     with pytest.raises(KeyError, match="Module nonexistent not found"):
         parse_info_from_known_good(load_known_good(known_good_json), "nonexistent")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_load_known_good_empty_json(tmp_path: Path):
     """Test that it errors when given an empty JSON file."""
     json_file = tmp_path / "example.json"
@@ -143,6 +163,11 @@ def test_load_known_good_empty_json(tmp_path: Path):
         _ = load_known_good(json_file)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_load_known_good_no_modules_key(tmp_path: Path):
     """Test that assertion works when repo not in top level keys"""
     json_file = tmp_path / "example.json"
@@ -157,6 +182,11 @@ def test_load_known_good_no_modules_key(tmp_path: Path):
         _ = load_known_good(json_file)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_load_known_good_empty_modules(tmp_path: Path):
     """Test that assertion works if repo dictionary is empty"""
     json_file = tmp_path / "emample.json"
@@ -195,6 +225,11 @@ def known_good_json_with_version(tmp_path: Path):
     return json_file
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_parse_info_from_known_good_with_version(known_good_json_with_version: Path):
     """Test that 'version' is accepted as a fallback when 'hash' is absent."""
     hash_result, repo_result = parse_info_from_known_good(
@@ -205,6 +240,11 @@ def test_parse_info_from_known_good_with_version(known_good_json_with_version: P
     assert repo_result == "https://github.com/eclipse-score/baselibs"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_parse_info_from_known_good_with_version_different_category(
     known_good_json_with_version: Path,
 ):
@@ -217,6 +257,11 @@ def test_parse_info_from_known_good_with_version_different_category(
     assert repo_result == "https://github.com/eclipse-score/docs-as-code"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_parse_info_from_known_good_neither_hash_nor_version(tmp_path: Path):
     """Test that KeyError is raised when neither 'hash' nor 'version' is present."""
     json_file = tmp_path / "broken.json"
@@ -240,7 +285,13 @@ def test_parse_info_from_known_good_neither_hash_nor_version(tmp_path: Path):
 
 
 # Tests for resolve_repo
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_resolve_repo_fills_hash_and_url():
+    """Fill repo hash and URL from a known-good entry when they are absent."""
     repo = resolve_repo(
         "score_docs_as_code", VALID_KNOWN_GOOD, local_module="host_module"
     )
@@ -259,6 +310,11 @@ def test_resolve_repo_fills_hash_and_url():
         ("dependency", None),
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_resolve_repo_nothing_to_look_up(
     repo_name: str, known_good: dict[str, object] | None
 ):
@@ -266,12 +322,23 @@ def test_resolve_repo_nothing_to_look_up(
     assert not resolve_repo(repo_name, known_good, local_module="score_docs_as_code")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_resolve_repo_unknown_repo_raises():
+    """An unknown module without a known-good pin raises a KeyError."""
     with pytest.raises(KeyError, match="Module nonexistent not found"):
         _ = resolve_repo("nonexistent", VALID_KNOWN_GOOD, local_module="host_module")
 
 
 # Tests for get_github_link
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_github_link_with_hash():
     """Combo build: hash and url come from the repo info (known_good)."""
     metadata = RepoInfo(
@@ -288,7 +355,13 @@ def test_get_github_link_with_hash():
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="boundary-values",
+)
 def test_get_github_link_with_line_zero():
+    """A line cursor of zero is preserved in the blob URL."""
     metadata = RepoInfo(
         name="test_repo", url="https://github.com/test/repo", hash="hash123"
     )
@@ -298,6 +371,11 @@ def test_get_github_link_with_line_zero():
     assert result == "https://github.com/test/repo/blob/hash123/file.py#L0"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_get_github_link_plain_links_gives_placeholder():
     """Bazel sandbox builds: placeholder, even with full repo info."""
     metadata = RepoInfo(name="some_repo", url="https://github.com/org/repo", hash="h")
@@ -307,6 +385,11 @@ def test_get_github_link_plain_links_gives_placeholder():
     assert result == f"{PLACEHOLDER_URL}/src/example.py#L42"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_get_github_link_no_repo_gives_placeholder_with_defaults():
     """Testcase without repo info and without file/line."""
     result = get_github_link(None, None, None)
@@ -314,6 +397,11 @@ def test_get_github_link_no_repo_gives_placeholder_with_defaults():
     assert result == f"{PLACEHOLDER_URL}/<placeholder_file>#L1"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_github_link_git_without_remote_gives_none(tmp_path: Path):
     """Local build where git has no remote: no URL, the caller falls back."""
     _ = subprocess.run(["git", "init"], cwd=tmp_path, check=True, capture_output=True)
@@ -360,6 +448,11 @@ def git_repo(temp_dir: Path) -> Path:
     return git_dir
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_git_lookup_is_cached_until_cleared(git_repo: Path) -> None:
     """Git is asked once per build. clear_git_cache picks up a new commit."""
     clear_git_cache()
@@ -381,6 +474,11 @@ def test_git_lookup_is_cached_until_cleared(git_repo: Path) -> None:
     assert second is not None and new_hash in second
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     """
     Test generating GitHub link without url/hash.
@@ -414,6 +512,11 @@ def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_complete_workflow(known_good_json: Path):
     """Test complete workflow from path to GitHub link."""
 

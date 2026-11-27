@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 
 from src.helper_lib import (
     config_setdefault,
@@ -36,13 +37,25 @@ class _FakeConfig:
         self._raw_config = raw
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_config_setdefault_sets_when_not_in_raw_config():
+    """A config key absent from the raw dict is set to the requested value."""
     cfg = _FakeConfig(raw={})
     config_setdefault(cfg, "html_copy_source", False)  # pyright: ignore [reportArgumentType]
     assert cfg.html_copy_source is False  # pyright: ignore [reportAttributeAccessIssue]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_config_setdefault_does_not_overwrite_user_value():
+    """A user-provided config value is never overwritten by the default."""
     cfg = _FakeConfig(raw={"html_copy_source": True})
     cfg.html_copy_source = True  # pyright: ignore[reportAttributeAccessIssue]
     config_setdefault(cfg, "html_copy_source", False)  # pyright: ignore [reportArgumentType]
@@ -84,6 +97,11 @@ def git_repo(temp_dir: Path) -> Path:
     return git_dir
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_find_git_root_ignores_bazel_sandbox_ancestor_git_repo(
     temp_dir: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -169,6 +187,11 @@ def git_repo_with_https_remote(temp_dir: Path) -> Path:
 
 
 # Test error handling
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_git_operations_with_no_commits(
     temp_dir: Path, monkeypatch: pytest.MonkeyPatch
 ):
@@ -188,6 +211,11 @@ def test_git_operations_with_no_commits(
         get_current_git_hash(git_dir)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_git_repo_with_no_remotes(temp_dir: Path):
     """Test git repository with no remotes."""
     git_dir: Path = temp_dir / "no_remote_repo"
@@ -212,6 +240,11 @@ def test_git_repo_with_no_remotes(temp_dir: Path):
 
 
 # Test git-related functions
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_parse_git_output_ssh_format():
     """Test parsing git remote output in SSH format."""
     git_line = "origin	git@github.com:test-user/test-repo.git (fetch)"
@@ -219,6 +252,11 @@ def test_parse_git_output_ssh_format():
     assert result == "test-user/test-repo"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_parse_git_output_https_format():
     """Test parsing git remote output in HTTPS format."""
     git_line = "origin	https://github.com/test-user/test-repo.git (fetch)"
@@ -226,6 +264,11 @@ def test_parse_git_output_https_format():
     assert result == "test-user/test-repo"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_parse_git_output_ssh_format_without_git_suffix():
     """Test parsing git remote output in SSH format without .git suffix."""
     git_line = "origin	git@github.com:test-user/test-repo (fetch)"
@@ -233,6 +276,11 @@ def test_parse_git_output_ssh_format_without_git_suffix():
     assert result == "test-user/test-repo"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_parse_git_output_invalid_format():
     """Test parsing invalid git remote output."""
     git_line = "invalid"
@@ -240,6 +288,11 @@ def test_parse_git_output_invalid_format():
     assert result == ""
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_parse_git_output_empty_string():
     """Test parsing empty git remote output."""
     git_line = ""
@@ -247,24 +300,44 @@ def test_parse_git_output_empty_string():
     assert result == ""
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_get_github_repo_info_ssh_remote(git_repo: Path):
     """Test getting GitHub repository information with SSH remote."""
     result = get_github_repo_info(git_repo)
     assert result == "test-user/test-repo"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_get_github_repo_info_https_remote(git_repo_with_https_remote: Path):
     """Test getting GitHub repository information with HTTPS remote."""
     result = get_github_repo_info(git_repo_with_https_remote)
     assert result == "test-user/test-repo"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_get_github_repo_info_multiple_remotes(git_repo_multiple_remotes: Path):
     """Test GitHub repo info retrieval with multiple remotes (origin preferred)."""
     result = get_github_repo_info(git_repo_multiple_remotes)
     assert result == "test-user/test-repo"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_current_git_hash(git_repo: Path):
     """Test getting current git hash."""
     result = get_current_git_hash(git_repo)
@@ -274,12 +347,22 @@ def test_get_current_git_hash(git_repo: Path):
     assert all(c in "0123456789abcdef" for c in result)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_get_current_git_hash_invalid_repo(temp_dir: Path):
     """Test getting git hash from invalid repository."""
     with pytest.raises(subprocess.CalledProcessError):
         get_current_git_hash(temp_dir)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_runfiles_dir_found(temp_dir: Path, monkeypatch: pytest.MonkeyPatch):
     """Test Runfiles dir found when provided and it's actually there"""
     runfiles_dir = temp_dir / "runfiles_here"
@@ -290,6 +373,11 @@ def test_runfiles_dir_found(temp_dir: Path, monkeypatch: pytest.MonkeyPatch):
     assert Path(result) == runfiles_dir
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_runfiles_dir_missing_triggers_exit(
     temp_dir: Path, monkeypatch: pytest.MonkeyPatch
 ):
@@ -302,6 +390,11 @@ def test_runfiles_dir_missing_triggers_exit(
     assert "Could not find runfiles_dir" in str(e.value)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_git_root_search_success(git_repo: Path, monkeypatch: pytest.MonkeyPatch):
     """Testing if Git Root can be found successfully with unset RUNFILES"""
     docs_dir = git_repo / "docs"
@@ -318,6 +411,11 @@ def test_git_root_search_success(git_repo: Path, monkeypatch: pytest.MonkeyPatch
     os.environ.pop("RUNFILES_DIR", None)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_git_root_search_not_found(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     """
     Test fallback when no .git is found (should sys.exit).

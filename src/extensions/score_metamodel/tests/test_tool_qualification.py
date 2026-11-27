@@ -16,6 +16,7 @@ from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx_needs.need_item import NeedItem
 
 from src.extensions.score_metamodel.checks.tool_qualification import (
@@ -89,6 +90,11 @@ def _low_report(
         ("YES", "YES", "", "non-empty `safety_measures`"),
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_safety_malfunction_requires_conditional_evaluation_data(
     safety_affected: str,
     detection_sufficient: str | None,
@@ -109,6 +115,11 @@ def test_safety_malfunction_requires_conditional_evaluation_data(
     logger.assert_warning(message)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_positive_detection_with_measure_is_valid():
     """A safety-relevant malfunction may be HIGH when its measure is documented."""
     logger = _run_local(
@@ -124,6 +135,11 @@ def test_positive_detection_with_measure_is_valid():
     logger.assert_no_warnings()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_safety_malfunction_with_insufficient_detection_needs_no_measure():
     """LOW evaluation is valid without a measure because it requires qualification."""
     logger = _run_local(
@@ -138,6 +154,11 @@ def test_safety_malfunction_with_insufficient_detection_needs_no_measure():
     logger.assert_no_warnings()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_non_safety_malfunction_does_not_need_detection():
     """Non-safety malfunctions omit detection because it is not meaningful there."""
     logger = _run_local(
@@ -151,6 +172,11 @@ def test_non_safety_malfunction_does_not_need_detection():
     logger.assert_no_warnings()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_non_safety_malfunction_rejects_meaningless_detection():
     """The local check rejects detection data that has no safety meaning."""
     logger = _run_local(
@@ -165,6 +191,11 @@ def test_non_safety_malfunction_rejects_meaningless_detection():
     logger.assert_warning("must not define `detection_sufficient`")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_low_malfunction_with_tool_requirement_is_valid():
     """A LOW malfunction is qualification-ready when it violates a tool requirement."""
     logger = fake_check_logger()
@@ -173,6 +204,11 @@ def test_low_malfunction_with_tool_requirement_is_valid():
     logger.assert_no_warnings()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_report_summary_is_derived_when_summary_fields_are_omitted():
     """A TVR stores summary values derived from its malfunction graph."""
     all_needs = _low_report()
@@ -186,6 +222,11 @@ def test_report_summary_is_derived_when_summary_fields_are_omitted():
     assert report["tcl"] == "LOW"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_report_without_usecase_is_left_unchanged():
     """Legacy reports without use cases remain compatible with the workflow check."""
     report = need(
@@ -204,6 +245,11 @@ def test_report_without_usecase_is_left_unchanged():
     assert report["tcl"] == ""
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_low_malfunction_with_only_upstream_requirement_is_invalid():
     """An upstream requirement alone cannot receive tool qualification evidence."""
     upstream = need(id="stkh_req__test_report__requirement", type="stkh_req")
@@ -218,6 +264,11 @@ def test_low_malfunction_with_only_upstream_requirement_is_invalid():
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_mixed_use_cases_derive_low_from_one_low_malfunction():
     """One LOW malfunction keeps a report LOW even when another use case is HIGH."""
     all_needs = _low_report()
@@ -242,6 +293,11 @@ def test_mixed_use_cases_derive_low_from_one_low_malfunction():
     logger.assert_no_warnings()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_qualified_low_report_requires_successful_full_evidence():
     """A qualified LOW report needs passed full-verification evidence."""
     all_needs = _low_report(status="qualified")
@@ -252,6 +308,11 @@ def test_qualified_low_report_requires_successful_full_evidence():
     logger.assert_warning("qualification evidence is incomplete")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_qualified_low_report_with_passed_full_evidence_is_valid():
     """A passed testcase with full verification completes LOW qualification."""
     testcase = need(
@@ -268,6 +329,11 @@ def test_qualified_low_report_with_passed_full_evidence_is_valid():
     logger.assert_no_warnings()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_qualified_low_report_requires_evidence_for_each_requirement():
     """Qualification evidence is required for every LOW tool requirement."""
     testcase = need(
@@ -300,6 +366,11 @@ def test_qualified_low_report_requires_evidence_for_each_requirement():
     logger.assert_warning("tool_req__test_report__second_requirement")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_partial_evidence_alone_does_not_complete_low_qualification():
     """Partial verification is traceability evidence, not complete qualification."""
     testcase = need(
@@ -317,6 +388,11 @@ def test_partial_evidence_alone_does_not_complete_low_qualification():
     logger.assert_warning("qualification evidence is incomplete")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
+)
 def test_released_low_report_also_requires_successful_full_evidence():
     """Release cannot bypass qualification for a LOW report."""
     all_needs = _low_report(status="released")
@@ -327,6 +403,11 @@ def test_released_low_report_also_requires_successful_full_evidence():
     logger.assert_warning("qualification evidence is incomplete")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_high_report_does_not_require_qualification():
     """HIGH reports may be evaluated or released without qualification tests."""
     report = need(
@@ -356,6 +437,11 @@ def test_high_report_does_not_require_qualification():
     logger.assert_no_warnings()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_qualification_does_not_reclassify_detection_or_tcl():
     """Successful qualification leaves the malfunction and derived TCL unchanged."""
     malfunction = need(

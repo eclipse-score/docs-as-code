@@ -347,6 +347,11 @@ def test_mounted_watch_dirs_use_data_directories_for_pure_data_bundles(
     ]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_coverage_summary_is_a_sentinel_preserved_during_output_cleanup(
     docs_workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -418,6 +423,11 @@ def test_coverage_summary_is_a_sentinel_preserved_during_output_cleanup(
     assert (build_dir / "output").exists()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_cleanup_preserves_generated_sentinels_and_removes_stale_outputs(
     fs: FFS,
 ) -> None:
@@ -441,6 +451,11 @@ def test_cleanup_preserves_generated_sentinels_and_removes_stale_outputs(
 
 
 @pytest.mark.parametrize("action", ["check", "linkcheck"])
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
+)
 def test_checks_ignore_coverage_even_with_a_configured_file_list(
     docs_workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
