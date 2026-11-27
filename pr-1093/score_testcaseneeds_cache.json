@@ -4510,7 +4510,7 @@
   {
     "name": "test_needs_templates__test_tool_qualification_report_keeps_unassessed_requirements_open",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "841",
+    "line": "846",
     "result": "passed",
     "repo_name": "score_docs_as_code",
     "hash": "",
