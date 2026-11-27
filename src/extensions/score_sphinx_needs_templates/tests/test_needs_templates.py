@@ -618,7 +618,12 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
     assert "2 of 2 potential malfunctions can affect safety; for 2 of these" in (
         derivation
     )
+    # This project is not built through Bazel, so the report has no Bazel
+    # module whose other tool requirements and testcases it could count.
+    assert "Outside this report" not in conclusion
+    assert "Outside this report" not in derivation
     assert '<section id="verifying-testcases">' not in html
+    assert '<section id="not-covered-by-this-report">' not in html
     assert '<section id="qualification-evidence">' not in html
     assert '<section id="traceability-evidence">' not in html
 
