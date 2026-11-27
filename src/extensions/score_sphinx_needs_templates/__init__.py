@@ -19,10 +19,12 @@ from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
+from src.extensions.score_mounts import get_document_bundle
 from src.helper_lib import config_setdefault
 
 from . import report_charts
 
+_application: Sphinx | None = None
 _build_environment: BuildEnvironment | None = None
 
 # Post-templates containing this marker need a second read after parallel Need
@@ -188,6 +190,26 @@ class _NeedsOfType:
 
 
 _needs_of_type_callable = _NeedsOfType()
+
+
+class _DocumentBazelModule:
+    """Provide the Bazel module of the bundle that supplied a document.
+
+    A template cannot read ``bazel_module`` from its own Need: Sphinx-Needs
+    renders a ``post_template`` while it creates the Need, and the field is
+    only assigned once all documents have been collected. Document ownership
+    is known by the time marked templates are rendered again, so they ask for
+    it by document name instead.
+    """
+
+    def __call__(self, docname: str | None) -> str:
+        if _application is None or docname is None:
+            return ""
+        owner = get_document_bundle(_application, docname)
+        return owner.bazel_module if owner else ""
+
+
+_document_bazel_module_callable = _DocumentBazelModule()
 
 
 def parse_version(value: str) -> tuple[int, int, int]:
@@ -678,13 +700,14 @@ def _reread_post_template_pages(app: Sphinx, env: BuildEnvironment) -> list[str]
 
 
 def _capture_build_environment(app: Sphinx) -> None:
-    """Give the link helper the environment in which it should resolve Needs.
+    """Give the template helpers the application and its build environment.
 
-    The helper is registered during ``setup()``, but Sphinx creates ``app.env``
+    The helpers are registered during ``setup()``, but Sphinx creates ``app.env``
     only after extension setup has completed. ``builder-inited`` is the first
     lifecycle event at which the final build environment is available.
     """
-    global _build_environment
+    global _application, _build_environment
+    _application = app
     _build_environment = app.env
 
 
@@ -697,6 +720,9 @@ def setup(app: Sphinx) -> dict[str, object]:
     )
     app.config.needs_render_context.setdefault("linked_needs", _linked_needs_callable)
     app.config.needs_render_context.setdefault("needs_of_type", _needs_of_type_callable)
+    app.config.needs_render_context.setdefault(
+        "document_bazel_module", _document_bazel_module_callable
+    )
     app.config.needs_render_context.setdefault(
         "req_in_report_version", _req_in_report_version_callable
     )
