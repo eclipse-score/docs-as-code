@@ -553,6 +553,7 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
 
 @pytest.mark.parametrize("import_mode", ["reports", "cache"])
 @add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
     fully_verifies=[
         "potential_tool_malfunction__docs_as_code__m8",
         "potential_tool_malfunction__docs_as_code__m9",

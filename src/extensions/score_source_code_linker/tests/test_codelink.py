@@ -62,12 +62,7 @@ from src.helper_lib.needlinks import (
 from src.helper_lib.repo_info import DefaultRepoInfo, RepoInfo, get_github_link
 
 
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
-def test_need(*, extras: dict[str, Any] | None = None, **kwargs: Any) -> NeedItem:
+def make_need(*, extras: dict[str, Any] | None = None, **kwargs: Any) -> NeedItem:
     """Convenience function to create a NeedItem object with some defaults."""
 
     kwargs.setdefault("id", "test_need")
@@ -280,7 +275,7 @@ def test_get_cache_filename():
 # Done to appease the LSP Gods
 def make_needs(needs_dict: dict[str, dict[str, Any]]) -> NeedsMutable:
     return NeedsMutable(
-        {need_id: test_need(**params) for need_id, params in needs_dict.items()}
+        {need_id: make_need(**params) for need_id, params in needs_dict.items()}
     )
 
 
@@ -330,11 +325,11 @@ def test_inject_links_matches_versioned_need_across_modules(
     """Keep links from both modules and warn about the outdated reference."""
     env = cast(BuildEnvironment, SimpleNamespace())
     needs_data = SphinxNeedsData(env)
-    matched_need = test_need(
+    matched_need = make_need(
         id="TREQ_ID_1",
         extras={"version": 2, "source_code_link": "", "testlink": ""},
     )
-    untouched_need = test_need(id="TREQ_ID_2")
+    untouched_need = make_need(id="TREQ_ID_2")
     needs_data.add_need(matched_need)
     needs_data.add_need(untouched_need)
     untouched_fields = dict(untouched_need)
@@ -380,7 +375,7 @@ def test_inject_links_renders_each_test_link_with_its_repository() -> None:
     env = cast(BuildEnvironment, SimpleNamespace())
     needs_data = SphinxNeedsData(env)
     needs_data.add_need(
-        test_need(id="TREQ_ID_1", extras={"source_code_link": "", "testlink": ""})
+        make_need(id="TREQ_ID_1", extras={"source_code_link": "", "testlink": ""})
     )
     first_module_test = DataForTestLink(
         name="test_first",

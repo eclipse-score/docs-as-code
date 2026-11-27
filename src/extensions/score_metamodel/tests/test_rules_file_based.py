@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import Any, cast
 
 import pytest
-from score_metamodel.tests import need as test_need
+from score_metamodel.tests import need as make_need
 from score_pytest.attribute_plugin import add_test_properties, apply_test_metadata
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import NeedsExtendType, SphinxNeedsData
@@ -222,7 +222,7 @@ def _validate_need_count(
 
 
 def _get_default_metadata_need() -> NeedItem:
-    return test_need(
+    return make_need(
         fully_verifies=[],
         partially_verifies=[],
         test_type="",

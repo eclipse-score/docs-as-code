@@ -202,6 +202,7 @@ def test_find_xml_folder_test_reports(
     """A tests-report folder is preferred over bazel-testlogs for parsing."""
     # root is the 'tests-report' folder inside tmp_path
     root, _, _, _, _ = tmp_xml_dirs(test_folder="tests-report")
+    (root.parent / "bazel-testlogs").mkdir()
     # We pass the PARENT of 'tests-report' as the workspace root
     found = xml_parser.find_test_folder(base_path=root.parent)
     assert found is not None

@@ -191,11 +191,6 @@ def test_missing_hash_file_triggers_clean(fs: FFS) -> None:
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
 def test_successful_build_reuses_output_until_module_changes(
     docs_workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
