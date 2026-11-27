@@ -1279,10 +1279,6 @@ graph_checks:
 
 
 
-
-
-
-
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:
     needs:
