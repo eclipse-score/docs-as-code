@@ -1,0 +1,134 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+"""data_files_runfiles: bundles made of generated, and declared sources."""
+
+import re
+from pathlib import Path
+
+import pytest
+
+from src.tests.end_to_end.helpers import (
+    GITHUB_EDIT_URL,
+    GITHUB_ENV,
+    TEST_ROOT,
+    bazel_package,
+    built_output,
+    edit_link,
+    load_needs,
+    load_needs_json,
+    repo_root,
+    run_bazel,
+    run_scenario,
+    scenario_package,
+    toctree_links,
+)
+
+SCENARIO = "data_files_runfiles"
+PACKAGE = scenario_package(SCENARIO)
+SCENARIO_PATH = (TEST_ROOT / PACKAGE).relative_to(repo_root()).as_posix()
+
+
+def _title(page: Path) -> str:
+    """Return the text of a rendered page's <h1>."""
+    match = re.search(r"<h1>([^<]*)", page.read_text(encoding="utf-8"))
+    assert match, f"no <h1> in {page}"
+    return match[1].strip()
+
+
+@pytest.fixture(scope="module")
+def build_dir() -> Path:
+    # GITHUB_ENV makes the "Edit on GitHub" links render, as they do in CI.
+    return run_scenario("run", SCENARIO, ":docs", env=GITHUB_ENV).build_dir
+
+
+@pytest.mark.bazel_slow
+def test_host_page_links_every_mounted_bundle(build_dir: Path):
+    """Both bundles use attach_to = "index" and show up in its toctree."""
+    assert sorted(toctree_links(build_dir / "index.html")) == [
+        "data_test/index.html",
+        "isolated_test/index.html",
+    ]
+
+
+@pytest.mark.bazel_slow
+def test_generated_rst_in_srcs_becomes_a_page(build_dir: Path):
+    """A genrule output listed in docs_bundle(srcs=...) is rendered as a page."""
+    assert _title(build_dir / "data_test" / "index.html") == "Generated Data Page"
+
+
+@pytest.mark.bazel_slow
+def test_generated_companion_file_is_readable_but_not_a_page(build_dir: Path):
+    """The generated .mmd next to the .rst feeds the mermaid directive and is
+    not registered as a Sphinx document of its own."""
+    html = (build_dir / "data_test" / "index.html").read_text(encoding="utf-8")
+    diagram = re.search(
+        r'<pre id="generated-data-diagram" class="mermaid">(.*?)</pre>', html, re.S
+    )
+
+    assert diagram, "mermaid diagram from generated_data.mmd is missing"
+    assert "class GeneratedData" in diagram[1]
+    assert not (build_dir / "data_test" / "generated_data.html").exists()
+
+
+@pytest.mark.bazel_slow
+def test_explicit_source_bundle_renders_only_declared_pages(build_dir: Path):
+    """isolated/undeclared.rst sits next to the declared page but is not in srcs."""
+    isolated = build_dir / "isolated_test"
+
+    assert _title(isolated / "index.html") == "Isolated Declared Page"
+    assert not (isolated / "undeclared.html").exists()
+
+
+@pytest.mark.bazel_slow
+def test_mounted_page_edit_link_points_to_its_real_source(build_dir: Path):
+    """The edit link uses the file in the repository, not the mount path."""
+    link = edit_link(build_dir / "isolated_test" / "index.html")
+
+    assert link is not None, "mounted page has no edit link"
+    assert link == f"{GITHUB_EDIT_URL}/{SCENARIO_PATH}/isolated/index.rst"
+
+
+@pytest.mark.bazel_slow
+def test_generated_page_has_no_edit_link(build_dir: Path):
+    """A page generated below bazel-out has no file in the repository to edit."""
+    assert edit_link(build_dir / "data_test" / "index.html") is None
+
+
+@pytest.mark.bazel_cached
+def test_needs_export_uses_the_host_project_name():
+    result = run_scenario("build", SCENARIO, ":needs_json")
+    assert result.artifacts is not None
+
+    data = load_needs_json(result.artifacts["needs.json"])
+    assert data["project"] == "Data Files Runfiles Test"
+
+
+@pytest.mark.bazel_cached
+def test_bundle_needs_exports_build_for_generated_and_declared_sources():
+    """Each bundle's own Needs export builds, named after the bundle.
+
+    Neither docs() target depends on these per-bundle exports, so only this
+    test builds them. The bundles hold no Needs, so the exports are empty.
+    """
+    bundles = ["data_bundle", "isolated_source_bundle"]
+    targets = [f"{bundle}.__internal__.needs_local" for bundle in bundles]
+    package = bazel_package(PACKAGE)
+    run_bazel(
+        ["build", *[f"{package.label}:{target}" for target in targets]],
+        cwd=package.cwd,
+    )
+
+    for bundle, target in zip(bundles, targets, strict=True):
+        needs_json = built_output(PACKAGE, f"{target}/needs.json")
+        assert load_needs_json(needs_json)["project"] == bundle
+        assert load_needs(needs_json) == {}
