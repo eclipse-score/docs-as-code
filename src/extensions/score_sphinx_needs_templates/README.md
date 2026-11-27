@@ -25,6 +25,10 @@ The extension provides:
   directory;
 * the `linked_needs(need_id, link_name)` helper for traversing Need links;
 * the `needs_of_type(need_type)` helper for selecting Needs by type;
+* the `document_bazel_module(docname)` helper for the Bazel module of the bundle
+  that supplied a document. A template passes its own `docname` to scope a
+  report to its module; its own `bazel_module` field is still empty while the
+  template is rendered;
 * the `id_filter_list`, `workproduct_rows`, `safety_chart_row` and
   `chart_legend` helpers, which render RST fragments shared by several report
   templates;

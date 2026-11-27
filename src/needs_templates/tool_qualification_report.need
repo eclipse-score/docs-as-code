@@ -2,103 +2,263 @@
   score: render-after-needs-collection
 
   Reusable post-template for a ``doc_tool`` qualification report.
-#}
-{% set usecases = linked_needs(id, "belongs_to_back")|selectattr("type", "equalto", "tool_usecase")|list %}
-{% set malfunction_scope = namespace(ids=[]) %}
-{% set qualification_requirement_scope = namespace(ids=[]) %}
-{% for usecase in usecases %}
-{% for malfunction in linked_needs(usecase["id"], "parent_needs_back") %}
-{% if malfunction["id"] not in malfunction_scope.ids %}
-{% set malfunction_scope.ids = malfunction_scope.ids + [malfunction["id"]] %}
-{% endif %}
-{% if malfunction.get("safety_affected") == "YES" and malfunction.get("detection_sufficient") == "NO" %}
-{% for requirement in linked_needs(malfunction["id"], "violates")|selectattr("type", "equalto", "tool_req")|list %}
-{% if requirement["id"] not in qualification_requirement_scope.ids %}
-{% set qualification_requirement_scope.ids = qualification_requirement_scope.ids + [requirement["id"]] %}
-{% endif %}
-{% endfor %}
-{% endif %}
-{% endfor %}
-{% endfor %}
 
-{% macro text(value, fallback="—") -%}
-{{ (value|default("", true)|replace("\n", " ")|trim) or fallback }}
-{%- endmacro %}
+  The template has two parts. This first part only computes; its tags use
+  ``{%- -%}`` whitespace control, so it can be indented freely without emitting
+  blank lines into the RST. The second part, starting at "Purpose and intended
+  use", is the RST of the report.
+-#}
 
-{% macro mermaid_text(value, fallback="—") -%}
-{{ ((value|default("", true)|replace("\n", " ")|trim) or fallback)|replace("\\", "\\\\")|replace('"', '\\"') }}
-{%- endmacro %}
+{#- ===== Helpers =========================================================== -#}
 
-{% set usecase_malfunction_scope = namespace(with_malfunctions=[], without_malfunctions=[]) %}
-{% for usecase in usecases %}
-{% if linked_needs(usecase["id"], "parent_needs_back")|list %}
-{% set usecase_malfunction_scope.with_malfunctions = usecase_malfunction_scope.with_malfunctions + [usecase["id"]] %}
-{% else %}
-{% set usecase_malfunction_scope.without_malfunctions = usecase_malfunction_scope.without_malfunctions + [usecase["id"]] %}
-{% endif %}
-{% endfor %}
+{%- macro plural(count, singular, plural_form="") -%}
+    {{- count }} {{ singular if count == 1 else (plural_form or singular ~ "s") -}}
+{%- endmacro -%}
 
-{% macro need_reference(need) -%}
-{% if need.get("external_url") %}`{{ need["id"] }} <{{ need["external_url"] }}>`_{% else %}:need:`[[id]] <{{ need["id"] }}>`{% endif %}
-{%- endmacro %}
+{%- macro text(value, fallback="—") -%}
+    {{- (value|default("", true)|replace("\n", " ")|trim) or fallback -}}
+{%- endmacro -%}
 
-{% macro need_title_reference(need) -%}
-{% if need.get("external_url") %}`{{ text(need.get("title")) }} <{{ need["external_url"] }}>`_{% else %}:need:`{{ text(need.get("title")) }} <{{ need["id"] }}>`{% endif %}
-{%- endmacro %}
+{%- macro mermaid_text(value, fallback="—") -%}
+    {{- ((value|default("", true)|replace("\n", " ")|trim) or fallback)|replace("\\", "\\\\")|replace('"', '\\"') -}}
+{%- endmacro -%}
 
-{% macro need_content(need) -%}
-{{ text(need.get("content", "").split("\n\n.. potential_tool_malfunction::", 1)[0]) }}
-{%- endmacro %}
+{%- macro need_reference(need) -%}
+    {%- if need.get("external_url") -%}
+        `{{ need["id"] }} <{{ need["external_url"] }}>`_
+    {%- else -%}
+        :need:`[[id]] <{{ need["id"] }}>`
+    {%- endif -%}
+{%- endmacro -%}
 
-{% macro need_list(needs) -%}
-{%- if needs -%}
-{%- for need in needs -%}
-{{ "| " if loop.first else "\n       | " }}{{ need_reference(need) }}{{ "," if not loop.last else "" }}
+{%- macro need_title_reference(need) -%}
+    {%- if need.get("external_url") -%}
+        `{{ text(need.get("title")) }} <{{ need["external_url"] }}>`_
+    {%- else -%}
+        :need:`{{ text(need.get("title")) }} <{{ need["id"] }}>`
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro need_content(need) -%}
+    {{- text(need.get("content", "").split("\n\n.. potential_tool_malfunction::", 1)[0]) -}}
+{%- endmacro -%}
+
+{#- A line block of need references, continued at list-table cell indentation. -#}
+{%- macro need_list(needs) -%}
+    {%- for need in needs -%}
+        {{- "| " if loop.first else "\n       | " }}{{ need_reference(need) }}{{ "," if not loop.last else "" -}}
+    {%- else -%}
+        —
+    {%- endfor -%}
+{%- endmacro -%}
+
+{#- Tool requirements of *malfunction*, grouped by their strongest verification link. -#}
+{%- macro requirements_for(malfunction, link) -%}
+    {%- set matching = namespace(items=[]) -%}
+    {%- for requirement in linked_needs(malfunction["id"], "violates")|selectattr("type", "equalto", "tool_req") -%}
+        {%- set fully_verifying_tests = linked_needs(requirement["id"], "fully_verifies_back")|list -%}
+        {%- set partially_verifying_tests = linked_needs(requirement["id"], "partially_verifies_back")|list -%}
+        {%- if (link == "fully" and fully_verifying_tests)
+              or (link == "partially" and partially_verifying_tests and not fully_verifying_tests)
+              or (link == "unlinked" and not fully_verifying_tests and not partially_verifying_tests) -%}
+            {%- set matching.items = matching.items + [requirement] -%}
+        {%- endif -%}
+    {%- endfor -%}
+    {{- need_list(matching.items) -}}
+{%- endmacro -%}
+
+{#- "``value`` (count)" per distinct *field* value of *tests*, plus the tests without one. -#}
+{%- macro counts_by(tests, field) -%}
+    {%- set seen = namespace(parts=[], known=0) -%}
+    {%- for value in tests|map(attribute=field)|select|unique|sort -%}
+        {%- set count = tests|selectattr(field, "equalto", value)|list|length -%}
+        {%- set seen.known = seen.known + count -%}
+        {%- set seen.parts = seen.parts + ["``" ~ value ~ "`` (" ~ count ~ ")"] -%}
+    {%- endfor -%}
+    {%- if tests|length > seen.known -%}
+        {%- set seen.parts = seen.parts + ["not set (" ~ (tests|length - seen.known) ~ ")"] -%}
+    {%- endif -%}
+    {{- seen.parts|join(", ") or "—" -}}
+{%- endmacro -%}
+
+{#- ===== Use cases and malfunctions ========================================== -#}
+
+{%- set tool_module = document_bazel_module(docname) -%}
+{%- set usecases = linked_needs(id, "belongs_to_back")|selectattr("type", "equalto", "tool_usecase")|list -%}
+
+{#- Use cases with and without malfunctions, for the pie chart. -#}
+{%- set usecase_malfunction_scope = namespace(with_malfunctions=[], without_malfunctions=[]) -%}
+{%- for usecase in usecases -%}
+    {%- if linked_needs(usecase["id"], "parent_needs_back")|list -%}
+        {%- set usecase_malfunction_scope.with_malfunctions = usecase_malfunction_scope.with_malfunctions + [usecase["id"]] -%}
+    {%- else -%}
+        {%- set usecase_malfunction_scope.without_malfunctions = usecase_malfunction_scope.without_malfunctions + [usecase["id"]] -%}
+    {%- endif -%}
 {%- endfor -%}
-{%- else -%}—{%- endif -%}
-{%- endmacro %}
 
-{% macro requirements_for(malfunction, verification) -%}
-{%- set matching = namespace(items=[]) -%}
-{%- for requirement in linked_needs(malfunction["id"], "violates")|selectattr("type", "equalto", "tool_req")|list -%}
-{%- set fully_verifying_tests = linked_needs(requirement["id"], "fully_verifies_back")|list -%}
-{%- set partially_verifying_tests = linked_needs(requirement["id"], "partially_verifies_back")|list -%}
-{%- if (verification == "fully" and fully_verifying_tests)
-      or (verification == "partially" and partially_verifying_tests and not fully_verifying_tests)
-      or (verification == "unlinked" and not fully_verifying_tests and not partially_verifying_tests) -%}
-{%- set matching.items = matching.items + [requirement] -%}
+{#-
+  Each malfunction is counted once. The tool requirements it violates are
+  - in the qualification scope if it needs qualification (safety affected,
+    detection insufficient),
+  - still open if it is safety affected but its detection is not assessed.
+-#}
+{%- set malfunction_scope = namespace(ids=[], malfunctions=[]) -%}
+{%- set qualification_requirement_scope = namespace(ids=[]) -%}
+{%- set open_requirement_scope = namespace(ids=[]) -%}
+{%- for usecase in usecases -%}
+    {%- for malfunction in linked_needs(usecase["id"], "parent_needs_back") -%}
+        {%- if malfunction["id"] not in malfunction_scope.ids -%}
+            {%- set malfunction_scope.ids = malfunction_scope.ids + [malfunction["id"]] -%}
+            {%- set malfunction_scope.malfunctions = malfunction_scope.malfunctions + [malfunction] -%}
+            {%- set violated_ids = linked_needs(malfunction["id"], "violates")|selectattr("type", "equalto", "tool_req")|map(attribute="id")|list -%}
+            {%- if malfunction.get("safety_affected") == "YES" and malfunction.get("detection_sufficient") == "NO" -%}
+                {%- for requirement_id in violated_ids -%}
+                    {%- if requirement_id not in qualification_requirement_scope.ids -%}
+                        {%- set qualification_requirement_scope.ids = qualification_requirement_scope.ids + [requirement_id] -%}
+                    {%- endif -%}
+                {%- endfor -%}
+            {%- elif malfunction.get("safety_affected") == "YES" and malfunction.get("detection_sufficient") != "YES" -%}
+                {%- for requirement_id in violated_ids -%}
+                    {%- if requirement_id not in open_requirement_scope.ids -%}
+                        {%- set open_requirement_scope.ids = open_requirement_scope.ids + [requirement_id] -%}
+                    {%- endif -%}
+                {%- endfor -%}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endfor -%}
+
+{#- Classification counts behind the conclusion. -#}
+{%- set summary = namespace(total=0, safety=0, detection_yes=0, detection_no=0, detection_unassessed=0, low=false, fully_covered=0) -%}
+{%- for malfunction in malfunction_scope.malfunctions -%}
+    {%- set summary.total = summary.total + 1 -%}
+    {%- if malfunction.get("safety_affected") == "YES" -%}
+        {%- set summary.safety = summary.safety + 1 -%}
+        {%- if malfunction.get("detection_sufficient") == "YES" -%}
+            {%- set summary.detection_yes = summary.detection_yes + 1 -%}
+        {%- elif malfunction.get("detection_sufficient") == "NO" -%}
+            {%- set summary.detection_no = summary.detection_no + 1 -%}
+            {%- set summary.low = true -%}
+            {#- Covered: every violated tool requirement is fully verified by a passed testcase. -#}
+            {%- set coverage = namespace(total=0, passed=0) -%}
+            {%- for requirement in linked_needs(malfunction["id"], "violates")|selectattr("type", "equalto", "tool_req") -%}
+                {%- set coverage.total = coverage.total + 1 -%}
+                {%- if linked_needs(requirement["id"], "fully_verifies_back")|selectattr("result", "equalto", "passed")|list -%}
+                    {%- set coverage.passed = coverage.passed + 1 -%}
+                {%- endif -%}
+            {%- endfor -%}
+            {%- if coverage.total > 0 and coverage.passed == coverage.total -%}
+                {%- set summary.fully_covered = summary.fully_covered + 1 -%}
+            {%- endif -%}
+        {%- else -%}
+            {%- set summary.detection_unassessed = summary.detection_unassessed + 1 -%}
+        {%- endif -%}
+    {%- endif -%}
+{%- endfor -%}
+
+{#- ===== Tool requirements and their testcases ================================ -#}
+
+{#-
+  Walk every tool requirement that a malfunction of this report violates once.
+  The report scope feeds the module gap check; the qualification scope feeds
+  the verification summary. The remaining requirements are either still open
+  or need no qualification.
+-#}
+{%- set report_scope = namespace(requirement_ids=[], test_ids=[], open=0, without_qualification=0) -%}
+{%- set verification = namespace(fully=0, partially=0, unverified=0, test_ids=[], tests=[]) -%}
+{%- for malfunction_id in malfunction_scope.ids -%}
+    {%- for requirement in linked_needs(malfunction_id, "violates")|selectattr("type", "equalto", "tool_req") -%}
+        {%- if requirement["id"] not in report_scope.requirement_ids -%}
+            {%- set report_scope.requirement_ids = report_scope.requirement_ids + [requirement["id"]] -%}
+            {%- set fully_verifying_tests = linked_needs(requirement["id"], "fully_verifies_back")|list -%}
+            {%- set partially_verifying_tests = linked_needs(requirement["id"], "partially_verifies_back")|list -%}
+            {%- for test in fully_verifying_tests + partially_verifying_tests -%}
+                {%- if test["id"] not in report_scope.test_ids -%}
+                    {%- set report_scope.test_ids = report_scope.test_ids + [test["id"]] -%}
+                {%- endif -%}
+            {%- endfor -%}
+            {%- if requirement["id"] in qualification_requirement_scope.ids -%}
+                {%- if fully_verifying_tests -%}
+                    {%- set verification.fully = verification.fully + 1 -%}
+                {%- elif partially_verifying_tests -%}
+                    {%- set verification.partially = verification.partially + 1 -%}
+                {%- else -%}
+                    {%- set verification.unverified = verification.unverified + 1 -%}
+                {%- endif -%}
+                {%- for test in fully_verifying_tests + partially_verifying_tests -%}
+                    {%- if test["id"] not in verification.test_ids -%}
+                        {%- set verification.test_ids = verification.test_ids + [test["id"]] -%}
+                        {%- set verification.tests = verification.tests + [test] -%}
+                    {%- endif -%}
+                {%- endfor -%}
+            {%- elif requirement["id"] in open_requirement_scope.ids -%}
+                {%- set report_scope.open = report_scope.open + 1 -%}
+            {%- else -%}
+                {%- set report_scope.without_qualification = report_scope.without_qualification + 1 -%}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endfor -%}
+
+{#- One sentence on the results of the verifying testcases; every result is accounted for. -#}
+{%- set result_parts = namespace(items=[], known=0) -%}
+{%- for result, singular, plural_wording in [("passed", "passed", "passed"), ("failed", "failed", "failed"), ("skipped", "was skipped", "were skipped"), ("disabled", "is disabled", "are disabled")] -%}
+    {%- set result_count = verification.tests|selectattr("result", "equalto", result)|list|length -%}
+    {%- set result_parts.known = result_parts.known + result_count -%}
+    {%- if result_count -%}
+        {%- set result_parts.items = result_parts.items + [result_count ~ " " ~ (singular if result_count == 1 else plural_wording)] -%}
+    {%- endif -%}
+{%- endfor -%}
+{%- for result in verification.tests|map(attribute="result")|select|unique|sort if result not in ["passed", "failed", "skipped", "disabled"] -%}
+    {%- set result_count = verification.tests|selectattr("result", "equalto", result)|list|length -%}
+    {%- set result_parts.known = result_parts.known + result_count -%}
+    {%- set result_parts.items = result_parts.items + [result_count ~ (" has" if result_count == 1 else " have") ~ " result ``" ~ result ~ "``"] -%}
+{%- endfor -%}
+{%- set results_missing = verification.tests|length - result_parts.known -%}
+{%- if results_missing -%}
+    {%- set result_parts.items = result_parts.items + [results_missing ~ (" has" if results_missing == 1 else " have") ~ " no result"] -%}
 {%- endif -%}
-{%- endfor -%}
-{{- need_list(matching.items) -}}
-{%- endmacro %}
+{%- if not verification.tests -%}
+    {%- set verification_results = "No testcase verifies them yet." -%}
+{%- elif verification.tests|selectattr("result", "equalto", "passed")|list|length == verification.tests|length -%}
+    {%- set verification_results = ("The verifying testcase passed." if verification.tests|length == 1 else "All " ~ verification.tests|length ~ " verifying testcases passed.") -%}
+{%- else -%}
+    {%- set verification_results = "Of " ~ plural(verification.tests|length, "verifying testcase") ~ ", " ~ result_parts.items|join(", ") ~ "." -%}
+{%- endif -%}
 
-{% set summary = namespace(total=0, safety=0, detection_yes=0, detection_no=0, detection_unassessed=0, low=false, fully_covered=0) %}
-{% for usecase in usecases %}
-{% for malfunction in linked_needs(usecase["id"], "parent_needs_back") %}
-{% set summary.total = summary.total + 1 %}
-{% if malfunction.get("safety_affected") == "YES" %}
-{% set summary.safety = summary.safety + 1 %}
-{% if malfunction.get("detection_sufficient") == "YES" %}
-{% set summary.detection_yes = summary.detection_yes + 1 %}
-{% elif malfunction.get("detection_sufficient") == "NO" %}
-{% set summary.detection_no = summary.detection_no + 1 %}
-{% set summary.low = true %}
-{% set coverage = namespace(total=0, passed=0) %}
-{% for requirement in linked_needs(malfunction["id"], "violates")|selectattr("type", "equalto", "tool_req")|list %}
-{% set coverage.total = coverage.total + 1 %}
-{% if linked_needs(requirement["id"], "fully_verifies_back")|selectattr("result", "equalto", "passed")|list %}
-{% set coverage.passed = coverage.passed + 1 %}
-{% endif %}
-{% endfor %}
-{% if coverage.total > 0 and coverage.passed == coverage.total %}
-{% set summary.fully_covered = summary.fully_covered + 1 %}
-{% endif %}
-{% else %}
-{% set summary.detection_unassessed = summary.detection_unassessed + 1 %}
-{% endif %}
-{% endif %}
-{% endfor %}
-{% endfor %}
+{#- ===== Module gaps ========================================================== -#}
+
+{#-
+  Tool requirements and testcases of the report's own Bazel module that it does
+  not reach. A local Need without a module yet belongs to the module of its
+  document; an imported Need belongs to the module of its inventory, so it
+  never falls back to the document that imports it.
+-#}
+{%- macro bazel_module_of(need) -%}
+    {%- if need.get("bazel_module") -%}
+        {{- need["bazel_module"] -}}
+    {%- elif not need.get("is_import") and not need.get("is_external") -%}
+        {{- document_bazel_module(need.get("docname")) -}}
+    {%- endif -%}
+{%- endmacro -%}
+{%- set gaps = namespace(requirements=[], tests=0, tests_unlinked=0) -%}
+{%- if tool_module -%}
+    {%- for requirement in needs_of_type("tool_req") -%}
+        {%- if requirement["id"] not in report_scope.requirement_ids
+              and bazel_module_of(requirement) == tool_module -%}
+            {%- set gaps.requirements = gaps.requirements + [requirement] -%}
+        {%- endif -%}
+    {%- endfor -%}
+    {%- for test in needs_of_type("testcase") -%}
+        {%- if test["id"] not in report_scope.test_ids
+              and bazel_module_of(test) == tool_module -%}
+            {%- set gaps.tests = gaps.tests + 1 -%}
+            {%- if not test.get("fully_verifies") and not test.get("partially_verifies") -%}
+                {%- set gaps.tests_unlinked = gaps.tests_unlinked + 1 -%}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endif %}
 
 Purpose and intended use
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -121,19 +281,34 @@ Conclusion
 
 *Generated from linked report records.*
 
-The generated conclusion is summarized from the owned
-``potential_tool_malfunction`` records:
+{% if summary.detection_no %}
+The tool **must be qualified** (``tcl: LOW``): {{ "its potential malfunction" if summary.total == 1 else summary.detection_no ~ " of its " ~ summary.total ~ " potential malfunctions" }}
+can affect safety without being detected reliably.
+{% elif summary.detection_unassessed %}
+The tool **cannot be classified yet**: the detection of
+{{ plural(summary.detection_unassessed, "safety-relevant malfunction") }} is not assessed, so the tool
+confidence level is still open.
+{% elif summary.total %}
+The tool **does not need to be qualified** (``tcl: HIGH``): {{ "its potential malfunction cannot" if summary.total == 1 else "none of its " ~ summary.total ~ " potential malfunctions can" }}
+affect safety without being detected reliably.
+{% else %}
+The tool **does not need to be qualified** (``tcl: HIGH``): no potential
+malfunction is documented.
+{% endif %}
 
-* **Safety:** ``{{ summary.safety }}/{{ summary.total }}`` potential tool
-  malfunctions affect safety → ``safety_affected: {{ "YES" if summary.safety else "NO" }}``.
-* **Detection:** ``{{ summary.detection_no }}/{{ summary.safety }}`` safety-
-  relevant malfunctions have insufficient detection → ``tcl: {{ "LOW" if summary.detection_no else "HIGH" }}``.
-* **Qualification:** → qualification of ``{{ qualification_requirement_scope.ids|length }}`` tool
-  requirements is **{{ "required" if summary.detection_no else "not required" }}**.
-* **Testcase coverage:** ``{{ summary.fully_covered }}/{{ summary.detection_no }}``
-  qualification-relevant malfunctions are fully covered by passed,
-  fully-verifying testcases.
-
+{% if summary.detection_no %}
+* **Qualification scope:** {{ plural(qualification_requirement_scope.ids|length, "tool requirement") }} to be verified by testcases.
+* **Verification:** {{ verification.fully }} {{ "is" if verification.fully == 1 else "are" }} linked to a fully verifying testcase,
+  {{ verification.partially }} only to partially verifying ones, {{ verification.unverified }} to none.
+  {{ verification_results }}
+* **Coverage:** {{ summary.fully_covered }} of {{ plural(summary.detection_no, "malfunction") }} {{ "is" if summary.fully_covered == 1 else "are" }} fully covered by passed testcases.
+{% endif %}
+{% if tool_module %}
+* **Outside this report:** {% if gaps.requirements or gaps.tests %}the ``{{ tool_module }}`` module also contains
+  {% if gaps.requirements %}{{ plural(gaps.requirements|length, "tool requirement") }}{% endif %}{% if gaps.requirements and gaps.tests %} and {% endif %}{% if gaps.tests %}{{ plural(gaps.tests, "testcase") }}{% endif %}
+  that this report does not reach.{% else %}nothing; the report reaches every tool
+  requirement and testcase of the ``{{ tool_module }}`` module.{% endif %}
+{% endif %}
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -189,6 +364,55 @@ The generated conclusion is summarized from the owned
          type == "tool_req" and id in {{ id_filter_list(qualification_requirement_scope.ids) }} and fully_verifies_back
          type == "tool_req" and id in {{ id_filter_list(qualification_requirement_scope.ids) }} and partially_verifies_back and not fully_verifies_back
          type == "tool_req" and id in {{ id_filter_list(qualification_requirement_scope.ids) }} and not fully_verifies_back and not partially_verifies_back
+
+{% if summary.total or gaps.requirements or gaps.tests %}
+How the conclusion is derived
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Generated from linked report records.*
+
+{% if summary.total %}
+**Classification.** A potential malfunction needs qualification if it can
+affect safety and the safety measures in place do not detect it reliably before
+its output is relied on; one such malfunction is enough to set the tool
+confidence level to ``LOW``. {% if summary.total == 1 %}The potential malfunction {{ "can" if summary.safety else "cannot" }}
+affect safety{% if summary.detection_no %}, and its detection is insufficient{% elif summary.detection_yes %}, but its detection is sufficient{% endif %}.{% else %}{{ summary.safety }} of {{ summary.total }} potential malfunctions can
+affect safety{% if summary.safety %}; for {{ summary.detection_no }} of these, detection is insufficient{% endif %}.{% endif %}{% if summary.detection_unassessed %}
+The detection of {{ plural(summary.detection_unassessed, "safety-relevant malfunction") }} is not assessed
+yet{% if not summary.detection_no %}; until it is, the tool confidence level cannot be determined{% endif %}.{% endif %}
+
+{% endif %}
+{% if summary.detection_no or report_scope.open %}
+**Qualification scope.** {% if summary.detection_no %}The scope consists of the
+{{ plural(qualification_requirement_scope.ids|length, "tool requirement") }} that the malfunctions needing
+qualification violate; each has to be verified by testcases.{% else %}No malfunction is known to need
+qualification yet.{% endif %}{% if report_scope.open %}
+Whether {{ plural(report_scope.open, ("other " if summary.detection_no else "") ~ "tool requirement") }} {{ "belongs" if report_scope.open == 1 else "belong" }} to the scope is still
+open: only malfunctions without a detection assessment violate {{ "it" if report_scope.open == 1 else "them" }}.{% endif %}{% if report_scope.without_qualification %}
+The malfunctions of this report violate {{ plural(report_scope.without_qualification, "further tool requirement") }}.
+Only malfunctions that need no qualification violate
+{{ "it, so it is" if report_scope.without_qualification == 1 else "them, so they are" }} out of scope.{% endif %}
+
+{% endif %}
+{% if summary.detection_no %}
+**Verification.** "Fully" and "partially" describe how a testcase is linked
+to a tool requirement (``fully_verifies`` or ``partially_verifies``), not its
+result. A malfunction counts as covered once every tool requirement it violates
+is fully verified by a passed testcase. The tool qualification matrix shows
+these links per malfunction.
+
+{% endif %}
+{% if gaps.requirements or gaps.tests %}
+**Outside this report.** The report only sees what its own records link to.
+{% if gaps.requirements %}The {{ plural(gaps.requirements|length, "tool requirement") }} outside this report
+{{ "is" if gaps.requirements|length == 1 else "are" }} violated by none of its potential malfunctions; {{ "it is" if gaps.requirements|length == 1 else "they are" }} listed at
+the end of this report.
+{% endif %}{% if gaps.tests %}The {{ plural(gaps.tests, "testcase") }} outside this report {{ "verifies" if gaps.tests == 1 else "verify" }} none of its
+tool requirements{% if gaps.tests_unlinked %}; {{ "it verifies" if gaps.tests == 1 else gaps.tests_unlinked ~ (" of them verifies" if gaps.tests_unlinked == 1 else " of them verify") }} no requirement at all{% endif %}.
+{% endif %}Either {{ "it is" if gaps.requirements|length + gaps.tests == 1 else "they are" }} irrelevant for the evaluated use cases, or a use case or
+malfunction is missing from this report.
+{% endif %}
+{% endif %}
 
 Tool verification graph
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -298,7 +522,7 @@ Evaluation overview
      - {{ text(malfunction.get("safety_affected")) }}
      - {{ text(malfunction.get("safety_measures")) }}
      - {{ text(malfunction.get("detection_sufficient")) }}
-     - {{ "LOW" if malfunction.get("safety_affected") == "YES" and malfunction.get("detection_sufficient") == "NO" else "HIGH" }}
+     - {% if malfunction.get("safety_affected") != "YES" or malfunction.get("detection_sufficient") == "YES" %}HIGH{% elif malfunction.get("detection_sufficient") == "NO" %}LOW{% else %}open{% endif %}
 {% endfor %}
 {% endfor %}
 {% if not usecases %}
@@ -349,4 +573,32 @@ verification link.
      - —
      - —
      - —
+{% endif %}
+
+{% if verification.tests %}
+
+Verifying testcases
+^^^^^^^^^^^^^^^^^^^
+
+*Generated from linked report records.*
+
+The {{ plural(verification.tests|length, "testcase") }} that {{ "verifies" if verification.tests|length == 1 else "verify" }} the tool requirements in the
+qualification scope {{ "was" if verification.tests|length == 1 else "were" }} designed as follows:
+
+* **Test types:** {{ counts_by(verification.tests, "test_type") }}.
+* **Derivation techniques:** {{ counts_by(verification.tests, "derivation_technique") }}.
+{% endif %}
+{% if gaps.requirements %}
+
+Not covered by this report
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Generated from the Bazel module that owns this report.*
+
+No potential malfunction of this report violates the following tool
+requirements of the ``{{ tool_module }}`` Bazel module:
+
+{% for requirement in gaps.requirements|sort(attribute="id") %}
+* {{ need_title_reference(requirement) }}
+{% endfor %}
 {% endif %}

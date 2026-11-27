@@ -1,0 +1,17 @@
+{
+  "current_version": "1",
+  "versions": {
+    "1": {
+      "needs": {
+        "tool_req__imported_capability": {
+          "id": "tool_req__imported_capability",
+          "type": "tool_req",
+          "title": "Imported capability",
+          "content": "Belongs to the module that exported it.",
+          "version": "1",
+          "satisfies": ["gd_req__tool_attr_uid"]
+        }
+      }
+    }
+  }
+}

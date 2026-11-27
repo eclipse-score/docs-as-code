@@ -30,6 +30,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = all_requirements + [
         "//src/extensions:score_coverage",
+        "//src/extensions/score_mounts",
         "@score_docs_as_code//src/helper_lib",
     ],
 )

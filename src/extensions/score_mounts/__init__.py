@@ -417,6 +417,15 @@ def get_document_bundles(app: Sphinx) -> dict[str, BundleMetadata]:
     return dict(getattr(app.env, "_score_document_bundles", {}))
 
 
+def get_document_bundle(app: Sphinx, docname: str) -> BundleMetadata | None:
+    """Return the bundle that supplied *docname*, or ``None`` if unknown.
+
+    Unlike :func:`get_document_bundles`, this does not copy the mapping, so it
+    is cheap enough to call once per Need.
+    """
+    return getattr(app.env, "_score_document_bundles", {}).get(docname)
+
+
 def get_root_bazel_module(app: Sphinx) -> str:
     """Return the declaring module of the composition's root bundle.
 

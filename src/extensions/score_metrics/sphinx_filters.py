@@ -219,25 +219,6 @@ def _get_key_values(results: list[int], argument_paths: list[str]):
         results.append(int(current))
 
 
-def get_metrics_with_first_value_total(
-    needs: list[Any], results: list[int], **kwargs: Any
-) -> None:
-    """
-    This function calculates the first parameter you give it as the 'total'.
-    E.g.
-        - <func_call>(metrics_by_type:tool_req:total, metrics_by_type:tool_req:with_test_link)
-    It will then treat the first arguemnt so 'tool_req-total' as the 'total number', and will
-    subtract all following numbers from it.
-    So in this case it would subtract the 'tool_req-with test link' number from the first.
-    That way you can have a 'missing' value as the first.
-    """
-    results.clear()
-    # As kwargs ordering is deterministic this will always put the first total into results[0]
-    _get_key_values(results, [str(value) for value in kwargs.values()])
-
-    results[0] -= sum(results[1:])
-
-
 def get_just_metrics(needs: list[Any], results: list[int], **kwargs: Any) -> None:
     """Append selected metric values without any total/remainder calculation.
 

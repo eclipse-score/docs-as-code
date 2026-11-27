@@ -1,0 +1,2 @@
+# Bazel module of its own, see MODULE.bazel.
+tool_qualification_report/mounted_module

@@ -12,6 +12,8 @@
 # *******************************************************************************
 """Tests for graph traversal helpers used by Sphinx-Needs templates."""
 
+import html as html_lib
+import re
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -19,6 +21,18 @@ import pytest
 import score_sphinx_needs_templates as templates
 from score_pytest.attribute_plugin import add_test_properties
 from sphinx.testing.util import SphinxTestApp
+
+
+def _section_text(page: str, section_id: str) -> str:
+    """Return the visible text of a rendered section, whitespace collapsed.
+
+    The text ends where the section closes or the next section starts, so
+    nested sections are not included.
+    """
+    body = page.split(f'<section id="{section_id}">', maxsplit=1)[1]
+    body = re.split(r"<section id=|</section>", body, maxsplit=1)[0]
+    text = html_lib.unescape(re.sub(r"<[^>]+>", " ", body))
+    return re.sub(r"\s+", " ", text).strip()
 
 
 class FakeLink:
@@ -588,6 +602,28 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
         )
         == 2
     )
+    conclusion = _section_text(html, "conclusion")
+    derivation = _section_text(html, "how-the-conclusion-is-derived")
+    assert (
+        "The tool must be qualified ( tcl: LOW ): "
+        "2 of its 2 potential malfunctions can affect safety" in conclusion
+    )
+    assert "Qualification scope: 1 tool requirement to be verified" in conclusion
+    assert (
+        "Verification: 0 are linked to a fully verifying testcase, "
+        "0 only to partially verifying ones, 1 to none. "
+        "No testcase verifies them yet." in conclusion
+    )
+    assert "Coverage: 0 of 2 malfunctions are fully covered" in conclusion
+    assert "2 of 2 potential malfunctions can affect safety; for 2 of these" in (
+        derivation
+    )
+    # This project is not built through Bazel, so the report has no Bazel
+    # module whose other tool requirements and testcases it could count.
+    assert "Outside this report" not in conclusion
+    assert "Outside this report" not in derivation
+    assert '<section id="verifying-testcases">' not in html
+    assert '<section id="not-covered-by-this-report">' not in html
     assert '<section id="qualification-evidence">' not in html
     assert '<section id="traceability-evidence">' not in html
 
@@ -711,3 +747,142 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
     # Referenced only outside the report scope, so it still counts as a gap.
     assert 'href="#stkh_req__only_out_of_scope"' in gap_table
     assert 'href="#stkh_req__referenced"' not in gap_table
+
+
+def _render_tool_report(tmp_path: Path, needs_rst: str) -> str:
+    """Render a ``doc_tool`` report followed by *needs_rst* and return the HTML."""
+    (tmp_path / "conf.py").write_text(
+        """
+extensions = ["sphinx_needs", "score_sphinx_needs_templates", "score_metamodel"]
+master_doc = "index"
+needs_id_regex = r"^[a-zA-Z0-9_]+$"
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "index.rst").write_text(
+        """
+.. doc_tool:: Report
+   :id: doc_tool__report
+   :status: evaluated
+   :security_affected: NO
+   :tool_version: v1
+   :post_template: tool_qualification_report
+
+"""
+        + needs_rst,
+        encoding="utf-8",
+    )
+    app = SphinxTestApp(
+        srcdir=tmp_path,
+        outdir=tmp_path / "_build",
+        buildername="html",
+        freshenv=True,
+    )
+    try:
+        app.build(force_all=True)
+        return (app.outdir / "index.html").read_text(encoding="utf-8")
+    finally:
+        app.cleanup()
+
+
+_UNASSESSED_MALFUNCTION = """
+.. tool_req:: Open tool requirement
+   :id: tool_req__open
+
+   The tool shall satisfy a capability whose malfunction is not assessed.
+
+.. tool_usecase:: Use case
+   :id: tool_usecase__report
+   :belongs_to: doc_tool__report
+
+   The tool is used to prepare a project artifact.
+
+   .. potential_tool_malfunction:: Malfunction without detection assessment
+      :id: potential_tool_malfunction__unassessed
+      :violates: tool_req__open
+      :safety_affected: YES
+      :safety_measures: Independent review
+"""
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_tool_qualification_report_without_detection_assessment_is_open(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A safety-relevant malfunction without a detection assessment.
+
+    The report must not conclude that qualification is unnecessary, because
+    the missing assessment could still turn out to be insufficient detection.
+    The metamodel rejects this input in a real build, so it cannot be an
+    end-to-end scenario; the report is still rendered while authors work on it.
+    """
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
+    html = _render_tool_report(tmp_path, _UNASSESSED_MALFUNCTION)
+
+    conclusion = _section_text(html, "conclusion")
+    derivation = _section_text(html, "how-the-conclusion-is-derived")
+    assert "The tool cannot be classified yet" in conclusion
+    assert "tcl: HIGH" not in conclusion
+    assert "does not need to be qualified" not in conclusion
+    assert "the tool confidence level cannot be determined" in derivation
+    # A single malfunction is not counted as "1 of 1".
+    assert "The potential malfunction can affect safety." in derivation
+    # The violated requirement is neither in nor out of scope yet.
+    assert (
+        "Qualification scope. No malfunction is known to need qualification yet. "
+        "Whether 1 tool requirement belongs to the scope is still open" in derivation
+    )
+    # The per-malfunction classification agrees with the conclusion.
+    overview = html.split('<section id="evaluation-overview">', 1)[1]
+    assert "<td><p>open</p></td>" in overview
+    assert "<td><p>HIGH</p></td>" not in overview
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_tool_qualification_report_keeps_unassessed_requirements_open(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Requirements of an unassessed malfunction are not out of scope.
+
+    Another malfunction already forces qualification. The requirement violated
+    only by the unassessed malfunction may still belong to the qualification
+    scope, so it must not be explained as needing no qualification.
+    """
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
+    html = _render_tool_report(
+        tmp_path,
+        _UNASSESSED_MALFUNCTION
+        + """
+   .. potential_tool_malfunction:: Malfunction needing qualification
+      :id: potential_tool_malfunction__low
+      :violates: tool_req__checked
+      :safety_affected: YES
+      :detection_sufficient: NO
+      :safety_measures: None
+
+.. tool_req:: Checked tool requirement
+   :id: tool_req__checked
+
+   The tool shall satisfy the evaluated capability.
+""",
+    )
+
+    conclusion = _section_text(html, "conclusion")
+    derivation = _section_text(html, "how-the-conclusion-is-derived")
+    assert "The tool must be qualified" in conclusion
+    assert "Qualification scope: 1 tool requirement to be verified" in conclusion
+    assert (
+        "Whether 1 other tool requirement belongs to the scope is still open: "
+        "only malfunctions without a detection assessment violate it." in derivation
+    )
+    assert "further tool requirement" not in derivation
