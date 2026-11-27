@@ -326,7 +326,6 @@ with its corresponding potential malfunction.
       :detection_sufficient: NO
       :safety_measures: PR review
       :violates:
-         tool_req__docs_req_types,
          tool_req__docs_req_link_covers_aou,
          tool_req__docs_arch_link_fulfils_aou
       :version: 1

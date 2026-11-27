@@ -1237,14 +1237,14 @@ is described in the platform.
 
 .. tool_req:: Safety Analysis Sufficient Check
   :id: tool_req__docs_saf_attrs_sufficient_check
-  :implemented: NO
+  :implemented: YES
   :version: 1
   :tags: Safety Analysis
   :satisfies: gd_req__saf_attr_sufficient[version==1]
   :parent_covered: YES
 
   Docs-As-Code shall ensure needs of type :need:`tool_req__docs_saf_types` with
-  `sufficient` == `yes` have a `mitigated_by` entry.
+  `status` == `valid` and `sufficient` == `yes` have a `mitigated_by` entry.
 
 
 .. tool_req:: Safety Analysis Mandatory Content
