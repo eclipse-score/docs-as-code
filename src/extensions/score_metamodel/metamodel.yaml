@@ -785,9 +785,6 @@ needs_types:
       # req-Id: tool_req__docs_saf_attrs_content
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
-    mandatory_links:
-      # req-Id: tool_req__docs_saf_attrs_violates
-      violates: feat_arc_sta
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       safety_relevant: ^(yes|no)$
@@ -797,10 +794,13 @@ needs_types:
       # req-Id: tool_req__docs_saf_attrs_mitigated_by
       # (only mandatory once valid status == valid)
       mitigated_by: feat_req, aou_req
+      # req-Id: tool_req__docs_saf_attrs_violates
+      violates: feat_arc_sta, feat
     tags:
       - dependent_failure_analysis
       - safety_analysis
     parts: 3
+
 
   # req-Id: tool_req__docs_saf_types
   comp_saf_dfa:

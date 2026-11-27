@@ -1282,12 +1282,17 @@ is described in the platform.
      Link Source    Allowed Link Target
      =============  ==========================
      plat_saf_dfa   feat_arc_sta
+     plat_saf_dfa   feat
      feat_saf_dfa   feat_arc_sta
      comp_saf_dfa   comp_arc_sta
      feat_saf_fmea  feat_arc_dyn, feat_arc_sta
      comp_saf_fmea  comp_arc_dyn, comp_arc_sta
      =============  ==========================
 
+  .. note::
+
+     To enable migration for :need:`gd_req__saf_linkage_check` v3,
+     the "plat_saf_dfa" link is only optional for now.
 
 
 .. tool_req:: FMEA: fault id attribute
