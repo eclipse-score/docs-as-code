@@ -1243,7 +1243,7 @@
     "DerivationTechnique": "explorative-testing",
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_saf_attrs_violates[version==2]"
+    "FullyVerifies": "tool_req__docs_saf_attrs_violates[version==3]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_mitigated_by.rst]",
