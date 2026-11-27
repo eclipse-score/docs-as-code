@@ -584,7 +584,7 @@ manifest entry into the <code class="docutils literal notranslate"><span class="
 <p>External short paths begin with <code class="docutils literal notranslate"><span class="pre">../&lt;repo&gt;+</span></code> relative to the runfiles
 <code class="docutils literal notranslate"><span class="pre">_main</span></code> directory. The resolver therefore prefixes <code class="docutils literal notranslate"><span class="pre">_main</span></code> before turning
 that path into an absolute path. This distinction is covered by unit tests and
-the public <code class="docutils literal notranslate"><span class="pre">docs_bzl</span></code> integration suite; do not resolve an external runtime path
+the public <code class="docutils literal notranslate"><span class="pre">end_to_end</span></code> integration suite; do not resolve an external runtime path
 relative to the manifest file, because the manifest can live below a Bazel
 package directory.</p>
 <p>Incremental builds use the same resolver in <code class="docutils literal notranslate"><span class="pre">src/docs_cli/cli.py</span></code> to add every
@@ -621,9 +621,9 @@ deduplication.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span> <span class="pre">//src/extensions/score_mounts:score_mounts_tests</span></code> for manifest
 parsing and path resolution;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">.venv_docs/bin/python</span> <span class="pre">-m</span> <span class="pre">pytest</span> <span class="pre">-vv</span> <span class="pre">src/tests/docs_bzl/test_nested_bundles.py</span>
-<span class="pre">src/tests/docs_bzl/test_external_bundle.py</span>
-<span class="pre">src/tests/docs_bzl/test_invalid_bundle_placements.py</span></code> for
+<li><p><code class="docutils literal notranslate"><span class="pre">.venv_docs/bin/python</span> <span class="pre">-m</span> <span class="pre">pytest</span> <span class="pre">-vv</span> <span class="pre">src/tests/end_to_end/test_nested_bundles.py</span>
+<span class="pre">src/tests/end_to_end/test_external_bundle.py</span>
+<span class="pre">src/tests/end_to_end/test_invalid_bundle_placements.py</span></code> for
 mounted rendering, toctree attachment, external bundles under <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span></code>,
 sandboxed external builds, and placement conflicts; and</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span> <span class="pre">//...</span></code> for the internal extension unit tests.</p></li>
