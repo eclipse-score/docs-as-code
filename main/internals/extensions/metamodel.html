@@ -592,15 +592,6 @@ They can be found inside the metamodel.yml and are how we define needs. See an e
 <span class="w">    </span><span class="nt">parts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span><span class="c1"># has to have exactly one `__` inside the ID</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">option_defaults</span></code> sets the value of an option for the needs of the type that do not set it, e.g.
-a <code class="docutils literal notranslate"><span class="pre">mod</span></code> need without <code class="docutils literal notranslate"><span class="pre">maturity</span></code> is a <code class="docutils literal notranslate"><span class="pre">preview</span></code> module. The value must follow the pattern of the option.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">mod</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">optional_options</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">maturity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^(preview|experimental|release)$</span>
-<span class="w">    </span><span class="nt">option_defaults</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">maturity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">preview</span>
-</pre></div>
-</div>
 </section>
 <section id="generic-graph-checks-configuration-based">
 <h3>2. Generic Graph Checks (Configuration-Based)<a class="headerlink" href="#generic-graph-checks-configuration-based" title="Link to this heading">#</a></h3>
